@@ -244,7 +244,7 @@ def main(cfg_exp) -> None:
     wandb_logger = None
     if cfg_exp.log.log_wandb and not nolog:
         wandb_logger = WandbLogger(
-            project=cfg_exp.log.wandb_project, id=run_name, entity="genair"
+            project=cfg_exp.log.wandb_project, id=run_name, entity="aisha-hodzic-org"
         )  # Hardcoded for now, can be moved to user info
 
     # checkpoints
