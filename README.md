@@ -39,6 +39,19 @@ Metrics:
 * Structure reconstruction (`all_atom_rmsd`)
 * Sequence recovery (`seq_rec_rate`)
 
+
+Results: 
+Evaluated on 4 protein structures. Total data size: 664. 
+
+CA-conditioned AE
+step 60k: RMSD 0.274 Å
+seq_rec_rate: 1.0
+
+CA-conditioned AE
+step 100k: RMSD 0.241 Å
+seq_rec_rate: 1.0
+
+
 ### 2. Train fully latent AE
 
 Evaluate structure reconstruction and sequence recovery.
