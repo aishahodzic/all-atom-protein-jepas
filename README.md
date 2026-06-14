@@ -11,6 +11,11 @@ https://wandb.ai/aisha-hodzic-org/protein_ae?nw=nwuseraishahodzic
 Training:
 
 ```bash
+sbatch jobs/train_ae.job
+```
+or 
+
+```bash
 python proteinfoundation/partial_autoencoder/train.py
 ```
 
@@ -23,6 +28,10 @@ Config changes:
 * Enabled W&B logging
 
 Evaluation:
+
+```bash
+sbatch jobs/inference_ae.job
+```
 
 ```bash
 python proteinfoundation/partial_autoencoder/inference.py --config_name inference_ae
@@ -41,6 +50,7 @@ Metrics:
 
 
 Results: 
+
 Evaluated on 4 protein structures. Total data size: 664. 
 
 CA-conditioned AE
