@@ -39,7 +39,7 @@ opt:
   accumulate_grad_batches: 1
   skip_nan_grad: False  # Skip updates with nan gradient
   grad_and_weight_analysis: True  # Log some statistics of gradients and weights
-  dist_strategy: ddp  # For multi GPU training, do not change
+  dist_strategy: auto  # For multi GPU training, do not change
   val_check_interval: 5000  # Number of training steps after which we check validation loss
   skip_large_grad_updates:
     use: False  # Do not skip updates large gradients
@@ -50,7 +50,7 @@ opt:
 # wandb logging and checkpoints
 log:
   wandb_project: protein_ae
-  log_wandb: False  # whether to log to wandb
+  log_wandb: True  # whether to log to wandb
   log_every_n_steps: 1  # wandb logging frequency
   checkpoint: True  # whether to store checkpoints
   checkpoint_every_n_steps: 10000  # How often we store a checkpoint, should be greater than val_check_interval in `opt`

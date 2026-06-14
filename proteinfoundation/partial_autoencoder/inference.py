@@ -75,9 +75,9 @@ def parse_args_and_cfg() -> Tuple[Dict, Dict, str]:
     # If config_subdir is None then use base inference config
     # Otherwise use config_subdir/some_config
     if args.config_subdir is None:
-        config_path = "../configs"
+        config_path = "../../configs"
     else:
-        config_path = f"../configs/{args.config_subdir}"
+        config_path = f"../../configs/{args.config_subdir}"
 
     with hydra.initialize(config_path, version_base=hydra.__version__):
         # If number provided use it, otherwise name
@@ -139,13 +139,13 @@ def load_dataloader(cfg):
     Loads data config file and returns dataloader.
     """
     if cfg.dataset == "genie2":
-        config_path = "../configs/dataset/afdb_fromraw"
+        config_path = "../../configs/dataset/afdb_fromraw"
         config_name = "genie2"
     elif cfg.dataset == "pdb":
-        config_path = "../configs/dataset/pdb"
-        config_name = "pdb_train"
+        config_path = "../../configs/dataset/pdb"
+        config_name = "pdb_train_ucond"
     elif cfg.dataset == "pdb_multimer":
-        config_path = "../configs/dataset/pdb_multimer"
+        config_path = "../../configs/dataset/pdb_multimer"
         config_name = "pdb_multimer_train"
     else:
         raise ValueError(f"Dataset {cfg.dataset} not implemented")
