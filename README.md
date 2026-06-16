@@ -4,6 +4,22 @@ https://github.com/NVIDIA-BioNeMo/la-proteina
 Weights & Biases project:
 https://wandb.ai/aisha-hodzic-org/protein_ae?nw=nwuseraishahodzic
 
+
+## Experiment Branches
+
+```text
+main
+├── ca-cond-baseline
+├── fully-latent
+└── {insert-future-ae}
+```
+
+### Branch descriptions
+
+- **main**: La Proteina codebase
+- **ca-cond-baseline**: CA-conditioned autoencoder baseline used
+- **fully-latent**: removes explicit CA-coordinate conditioning
+
 ## Autoencoder Experiments
 
 ### 1. Train AE with latent residues and PDB-given C-alpha (current setup)
