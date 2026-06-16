@@ -53,13 +53,10 @@ Results:
 
 Evaluated on 4 protein structures. Total data size: 664. 
 
-CA-conditioned AE
-step 60k: RMSD 0.274 Å
-seq_rec_rate: 1.0
-
-CA-conditioned AE
-step 100k: RMSD 0.241 Å
-seq_rec_rate: 1.0
+| Model | 60k RMSD | 60k Seq Rec. | 100k RMSD | 100k Seq Rec. |
+|---------|---------:|---------:|---------:|---------:|
+| CA-conditioned AE | 0.274 Å | 1.000 | 0.241 Å | 1.000 |
+| Fully Latent AE | 0.420 Å | 1.000 | 0.371 Å | 1.000 |
 
 
 ### 2. Train fully latent AE
