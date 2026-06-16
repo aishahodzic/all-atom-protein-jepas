@@ -43,6 +43,15 @@ Checkpoint:
 store/test_release_ae/checkpoints/last-EMA.ckpt
 ```
 
+### 2. Train fully latent AE
+
+Evaluate structure reconstruction and sequence recovery.
+
+Compare both setups. Initial expectation: the fully latent AE will perform worse, since the decoder no longer receives the true C-alpha coordinates.
+
+## 1 & 2 Results
+
+
 Metrics:
 
 * Structure reconstruction (`all_atom_rmsd`)
@@ -58,11 +67,5 @@ Evaluated on 4 protein structures. Total data size: 664.
 | CA-conditioned AE | 0.274 Å | 1.000 | 0.241 Å | 1.000 |
 | Fully Latent AE | 0.420 Å | 1.000 | 0.371 Å | 1.000 |
 
-
-### 2. Train fully latent AE
-
-Evaluate structure reconstruction and sequence recovery.
-
-Compare both setups. Initial expectation: the fully latent AE will perform worse, since the decoder no longer receives the true C-alpha coordinates.
 
 ### 3. Evaluate both latent representations on a downstream task
