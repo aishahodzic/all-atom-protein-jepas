@@ -125,7 +125,7 @@ class AutoEncoder(L.LightningModule):
     def decode(
         self,
         z_latent: Float[torch.Tensor, "b n d"],
-        ca_coors_nm: Float[torch.Tensor, "b n 3"],
+        # ca_coors_nm: Float[torch.Tensor, "b n 3"],
         mask: Bool[torch.Tensor, "b n"],
     ) -> Dict:
         """
@@ -133,7 +133,7 @@ class AutoEncoder(L.LightningModule):
         """
         input_decoder = {
             "z_latent": z_latent,
-            "ca_coors_nm": ca_coors_nm,
+            # "ca_coors_nm": ca_coors_nm,
             "residue_mask": mask,
             "mask": mask,
         }
@@ -168,8 +168,8 @@ class AutoEncoder(L.LightningModule):
 
         mask = batch["mask_dict"]["coords"][..., 0, 0]  # [b, n] boolean
         batch["mask"] = mask
-        ca_coors_nm = batch["coords_nm"][..., 1, :]  # [b, n, 3]
-        ca_coors_nm = ca_coors_nm * mask[..., None]  # [b, n, 3]
+        # ca_coors_nm = batch["coords_nm"][..., 1, :]  # [b, n, 3]
+        # ca_coors_nm = ca_coors_nm * mask[..., None]  # [b, n, 3]
         bs, n = mask.shape[0], mask.shape[1]
 
         output_enc = self.encoder(batch)
@@ -218,7 +218,7 @@ class AutoEncoder(L.LightningModule):
 
         input_decoder = {
             "z_latent": output_enc["z_latent"],
-            "ca_coors_nm": ca_coors_nm,
+            # "ca_coors_nm": ca_coors_nm,
             "residue_mask": mask,
             "mask": mask,
         }
@@ -801,8 +801,8 @@ class AutoEncoder(L.LightningModule):
         """
         mask = batch["mask_dict"]["coords"][..., 0, 0]  # [b, n] boolean
         batch["mask"] = mask
-        ca_coors_nm = batch["coords_nm"][..., 1, :]  # [b, n, 3]
-        ca_coors_nm = ca_coors_nm * mask[..., None]  # [b, n, 3]
+        # ca_coors_nm = batch["coords_nm"][..., 1, :]  # [b, n, 3]
+        # ca_coors_nm = ca_coors_nm * mask[..., None]  # [b, n, 3]
 
         output_enc = self.encoder(batch)
         # {
@@ -813,7 +813,7 @@ class AutoEncoder(L.LightningModule):
 
         input_decoder = {
             "z_latent": output_enc["z_latent"],
-            "ca_coors_nm": ca_coors_nm,
+            # "ca_coors_nm": ca_coors_nm,
             "residue_mask": mask,
             "mask": mask,
         }

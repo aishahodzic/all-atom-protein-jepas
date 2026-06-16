@@ -52,14 +52,14 @@ decoder:
   strict_feats: False  # if False, then fills missing features with default values (e.g. chain break with zero, residue sequence index by [0, 1, 2, ...], etc)
   # If True, if some feature is not provided, then it raises an error
 
-  feats_seq: ["ca_coors_nm", "z_latent_seq"]  # Sequence features to include in initial representation
+  feats_seq: ["z_latent_seq"]  # Sequence features to include in initial representation
   feats_cond_seq:  # Sequence features to include in conditioning variables
 
   # Parameters for the features we extract
   dim_cond: 128  # dimension of conditioning vector
   idx_emb_dim: 128  # dimension of the sequence position [0, 1, 2, ...] (if contiguous residues) embeddings
 
-  feats_pair_repr: ["rel_seq_sep", "ca_coors_nm_pair_dists"]  # Features to include in the pair representation
+  feats_pair_repr: ["rel_seq_sep"]  # Features to include in the pair representation
 
   seq_sep_dim: 127  # should be odd >= 5
   pair_repr_dim: 256

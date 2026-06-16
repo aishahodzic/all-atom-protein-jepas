@@ -1,4 +1,4 @@
-run_name_: test_release_ae
+run_name_: test_release_ae_fully_latent
 
 hardware:
   ncpus_per_task_train_: 24  # Number of CPUs per tast during training
