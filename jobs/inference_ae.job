@@ -2,8 +2,8 @@
 #SBATCH --job-name=laproteina_ae_eval
 #SBATCH --qos=medium
 #SBATCH --gres=gpu:1
-#SBATCH --cpus-per-task=24
-#SBATCH --time=2:00:00
+#SBATCH --cpus-per-task=8
+#SBATCH --time=00:30:00
 #SBATCH --output=logs/%x-%j.out
 
 source ~/.bashrc
