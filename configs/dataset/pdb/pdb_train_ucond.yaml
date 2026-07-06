@@ -12,14 +12,14 @@ datamodule:
     - _target_: "proteinfoundation.datasets.transforms.CenterStructureTransform"
     - _target_: "proteinfoundation.datasets.transforms.GlobalRotationTransform" # Transforms to apply to dataset examples
     - _target_: "proteinfoundation.datasets.transforms.ChainBreakPerResidueTransform"
-  batch_size: 4 # Batch size for dataloader
-  num_workers: 16 # Number of workers for dataloader
+  batch_size: 1 # Batch size for dataloader
+  num_workers: 0 # Number of workers for dataloader
   pin_memory: True # Pin memory for dataloader
 
   dataselector:
     _target_: "proteinfoundation.datasets.pdb_data.PDBDataSelector"
     data_dir: ${oc.env:DATA_PATH}/pdb_train/ # Directory where the dataset is stored
-    fraction: 1 # Fraction of dataset to use
+    fraction: 0.001 # Fraction of dataset to use
     molecule_type: "protein" # Type of molecule for which to select
     experiment_types: ["diffraction", "EM"] # other options are "NMR" and "other"
     min_length: 50 # Exclude peptides of length 50
@@ -28,6 +28,7 @@ datamodule:
     oligomeric_max: null 
     best_resolution: 0.0  # Include only proteins with resolution >= 0.0
     worst_resolution: 5.0 # Include only proteins with resolution <= 5.0
+    # ligand file cc-to-pdb.tdd is a dummy on local
     has_ligands: [] # Include only proteins containing the ligand `ZN`
     remove_ligands: [] # Exclude specific ligands from any available protein-ligand complexes
     remove_non_standard_residues: True # Include only proteins containing standard amino acid residues

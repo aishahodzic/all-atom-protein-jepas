@@ -4,8 +4,8 @@ latent_z_dim: &latent_z_dim 8
 
 encoder:
   nlayers: 12  # number of transformer layers
-  token_dim: 768  # dimension of the tokens in the sequence
-  nheads: 12  # number of attn heads
+  token_dim: 384  # dimension of the tokens in the sequence
+  nheads: 6  # number of attn heads
   parallel_mha_transition: False  # whether to compute mha and transition as parallel and add them up (AF3 style) or sequentially (normal transofrmers)
 
   strict_feats: False  # if False, then fills missing features with default values (e.g. chain break with zero, residue sequence index by [0, 1, 2, ...], etc)
@@ -37,7 +37,7 @@ encoder:
 
 decoder:
   nlayers: 12  # number of transformer layers
-  token_dim: 768  # dimension of the tokens in the sequence
+  token_dim: 384  # dimension of the tokens in the sequence
 
   abs_coors: False  # Compute absolute coors or use relative to CA
 
@@ -46,7 +46,7 @@ decoder:
   # nlayers: 12  # number of transformer layers
   # token_dim: 384  # dimension of the tokens dim in the sequence
 
-  nheads: 12  # number of attn heads
+  nheads: 6  # number of attn heads
   parallel_mha_transition: False  # whether to compute mha and transition as parallel and add them up (AF3 style) or sequentially (normal transofrmers)
 
   strict_feats: False  # if False, then fills missing features with default values (e.g. chain break with zero, residue sequence index by [0, 1, 2, ...], etc)
