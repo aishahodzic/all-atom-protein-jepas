@@ -4,6 +4,9 @@ https://github.com/NVIDIA-BioNeMo/la-proteina
 Weights & Biases project:
 https://wandb.ai/aisha-hodzic-org/protein_ae?nw=nwuseraishahodzic
 
+Hugging face: 
+https://huggingface.co/aishahodzic/datasets
+
 
 ## Experiment Branches
 
@@ -11,7 +14,7 @@ https://wandb.ai/aisha-hodzic-org/protein_ae?nw=nwuseraishahodzic
 main
 ├── ca-cond-baseline
 ├── fully-latent
-└── {insert-future-ae}
+└── jepa-latent
 ```
 
 ### Branch descriptions
@@ -35,13 +38,22 @@ or
 python proteinfoundation/partial_autoencoder/train.py
 ```
 
-Config changes:
+## Training config
 
-* DiT-B → DiT-S (`token_dim: 768→384`, `nheads: 12→6`)
-* Removed `x1_bb_angles`, `x1_sidechain_angles`
-* Kept `latent_z_dim = 8`
-* `dist_strategy: ddp → auto`
-* Enabled W&B logging
+| | Value |
+|---|---|
+| Per-GPU batch size | 2 |
+| `accumulate_grad_batches` | 2 |
+| GPUs (DDP) | 2 |
+| Effective global batch | 2 × 2 × 2 = 8 |
+| Dataloader workers per rank | 12 (`ncpus_per_task_train_`) |
+| Total dataloader worker processes | 24 (12 × 2 ranks) |
+| Model size | Full PDB run keeps DiT-B (`token_dim: 768`, `nheads: 12`). Demo: DiT-B → DiT-S (`token_dim: 768→384`, `nheads: 12→6`).  |
+| Sequence features | Removed `x1_bb_angles`, `x1_sidechain_angles` |
+| `latent_z_dim` | 8 (kept) |
+| `dist_strategy` | `ddp` → `auto` |
+
+
 
 Evaluation:
 
@@ -56,7 +68,7 @@ python proteinfoundation/partial_autoencoder/inference.py --config_name inferenc
 Checkpoint:
 
 ```text
-store/test_release_ae/checkpoints/last-EMA.ckpt
+store/{release-name}/checkpoints/last-EMA.ckpt
 ```
 
 ### 2. Train fully latent AE
@@ -65,14 +77,12 @@ Evaluate structure reconstruction and sequence recovery.
 
 Compare both setups. Initial expectation: the fully latent AE will perform worse, since the decoder no longer receives the true C-alpha coordinates.
 
-## 1 & 2 Results
-
+## Demo Results (data fraction: 0.001)
 
 Metrics:
 
 * Structure reconstruction (`all_atom_rmsd`)
 * Sequence recovery (`seq_rec_rate`)
-
 
 Results: 
 
@@ -83,5 +93,12 @@ Evaluated on 4 protein structures. Total data size: 664.
 | CA-conditioned AE | 0.274 Å | 1.000 | 0.241 Å | 1.000 |
 | Fully Latent AE | 0.420 Å | 1.000 | 0.371 Å | 1.000 |
 
+## Results on full PDB 
 
-### 3. Evaluate both latent representations on a downstream task
+Total structures: 344,065. Training: 338,787, val: 4,775, test: 503.
+
+<img width="747" height="602" alt="Screenshot 2026-07-09 at 14 10 46" src="https://github.com/user-attachments/assets/de4d1d5d-b272-409c-840a-2e417f3881ff" />
+
+
+
+### Next: Evaluate latent representations on a downstream task
