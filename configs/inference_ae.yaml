@@ -5,7 +5,7 @@
 #ckpt_file: /slurm-storage/aishod/projects/la-proteina/store/test_release_ae/checkpoints/chk_epoch=00001562_step=000000100000-EMA.ckpt
 
 #ckpt_file: /slurm-storage/aishod/projects/la-proteina/store/full_pdb_fully_latent_ae/checkpoints/chk_epoch=00000937_step=000000060000-EMA.ckpt
-ckpt_file: /slurm-storage/aishod/projects/la-proteina/store/full_pdb_test_release_ae/checkpoints/chk_epoch=00000035_step=000000100000-EMA.ckpt
+ckpt_file: /home/projects/msc-thesis/store/full_pdb_fully_latent_ae/checkpoints/chk_epoch=00000038_step=000000100000-EMA.ckpt
 
 #ckpt_file: /slurm-storage/aishod/projects/la-proteina/store/test_release_ae/checkpoints/last-EMA.ckpt
 

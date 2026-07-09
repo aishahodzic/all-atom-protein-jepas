@@ -311,6 +311,7 @@ class PDBDataSplitter:
             self.dfs_splits, self.clusterid_to_seqid_mappings = expand_cluster_splits(
                 cluster_rep_splits=splits,
                 clusterid_to_seqid_mapping=clusterid_to_seqid_mapping,
+                df_data=df_data,
             )
         return (
             self.dfs_splits,
@@ -406,6 +407,7 @@ class PDBLightningDataModule(BaseLightningDataModule):
         in_memory: bool = False,
         format: Literal["mmtf", "pdb", "cif", "ent"] = "cif",
         overwrite: bool = False,
+        skip_unprocessed: bool = False,
         store_het: bool = False,
         store_bfactor: bool = True,
         # arguments for BaseLightningDataModule
@@ -434,6 +436,11 @@ class PDBLightningDataModule(BaseLightningDataModule):
                 "mmtf", "pdb", "cif" or "ent". Defaults to "cif".
             overwrite (bool, optional): Whether to overwrite existing processed
                 data. Defaults to False.
+            skip_unprocessed (bool, optional): If True, drop any selected pdb/chain
+                entries that don't already have a processed .pt file on disk instead
+                of downloading/processing them. Use this to train immediately on
+                whatever's already processed, without waiting on new downloads or
+                the (slow, sequential) structure processing step. Defaults to False.
             store_het (bool, optional): Whether to store heteroatoms in the processed data.
                 Defaults to False.
             store_bfactor (bool, optional): Whether to store B factors in the processed data.
@@ -476,6 +483,7 @@ class PDBLightningDataModule(BaseLightningDataModule):
         self.sampling_mode = sampling_mode
         self.format = format
         self.overwrite = overwrite
+        self.skip_unprocessed = skip_unprocessed
         self.in_memory = in_memory
         self.store_het = store_het
         self.store_bfactor = store_bfactor
@@ -495,14 +503,30 @@ class PDBLightningDataModule(BaseLightningDataModule):
             else:
                 logger.info(f"{df_data_name} does not exist yet, creating dataset now.")
                 df_data = self.dataselector.create_dataset()
-                logger.info(
-                    f"Dataset created with {len(df_data)} entries. Now downloading structure data..."
-                )
-                self._download_structure_data(df_data["pdb"].tolist())
-                # process pdb files into seperate chains and save processed objects as .pt files
-                self._process_structure_data(
-                    df_data["pdb"].tolist(), df_data["chain"].tolist()
-                )
+                logger.info(f"Dataset created with {len(df_data)} entries.")
+
+                if self.skip_unprocessed:
+                    is_processed = df_data.apply(
+                        lambda row: (
+                            self.processed_dir / f"{row['pdb']}_{row['chain']}.pt"
+                        ).exists(),
+                        axis=1,
+                    )
+                    logger.info(
+                        f"skip_unprocessed=True: keeping {is_processed.sum()}/{len(df_data)} "
+                        "entries that are already processed, dropping the rest instead of "
+                        "downloading/processing them."
+                    )
+                    df_data = df_data[is_processed].reset_index(drop=True)
+                else:
+                    logger.info("Now downloading structure data...")
+                    self._download_structure_data(
+                        df_data["pdb"].tolist(), df_data["chain"].tolist()
+                    )
+                    # process pdb files into seperate chains and save processed objects as .pt files
+                    self._process_structure_data(
+                        df_data["pdb"].tolist(), df_data["chain"].tolist()
+                    )
 
                 # save df_data to disk for later use (in splitting, dataloading etc)
                 logger.info(f"Saving dataset csv to {df_data_name}")
@@ -697,15 +721,35 @@ class PDBLightningDataModule(BaseLightningDataModule):
         torch.save(graph, self.processed_dir / fname)
         return fname
 
-    def _download_structure_data(self, pdb_codes) -> None:
+    def _download_structure_data(self, pdb_codes, chains=None) -> None:
         if pdb_codes is not None:
+            # A pdb entry only needs its raw structure re-downloaded if we're still going
+            # to (re)process at least one of its chains. If the processed .pt for every
+            # requested chain of this pdb already exists, _process_structure_data will
+            # skip all of them anyway, so downloading the raw file would be wasted
+            # bandwidth (this matters a lot once raw/ has been cleaned up but processed/
+            # still holds most of the dataset). A pdb with a mix of processed/unprocessed
+            # chains still needs its raw file, since the unprocessed chains need it.
+            if chains is not None:
+                needs_processing = {
+                    pdb
+                    for pdb, chain in zip(pdb_codes, chains)
+                    if not (self.processed_dir / f"{pdb}_{chain}.pt").exists()
+                }
+            else:
+                needs_processing = {
+                    pdb
+                    for pdb in pdb_codes
+                    if not (self.processed_dir / f"{pdb}.pt").exists()
+                }
             to_download = (
                 pdb_codes
                 if self.overwrite
                 else [
                     pdb
                     for pdb in pdb_codes
-                    if not (
+                    if pdb in needs_processing
+                    and not (
                         (self.raw_dir / f"{pdb}.{self.format}").exists()
                         or (self.raw_dir / f"{pdb}.{self.format}.gz").exists()
                     )

@@ -122,8 +122,8 @@ def load_data_module(cfg_exp, is_cluster_run):
         else:
             cfg_data.datamodule.dataselector.exclude_ids = exclude_ids
     if not is_cluster_run:
-        cfg_data["datamodule"]["batch_size"] = 4
-        log_info("Local run, settign batch size to 4")
+        cfg_data["datamodule"]["batch_size"] = 2
+        log_info("Local run, settign batch size to 2")
     log_info(f"Data config {cfg_data}")
 
     datamodule = hydra.utils.instantiate(cfg_data.datamodule)
