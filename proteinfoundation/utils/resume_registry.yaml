@@ -1,8 +1,0 @@
-# Single source of truth for where each experiment's shared checkpoint lives on HF.
-# To add a new experiment: add one block below, keyed by that experiment's run_name_.
-# Nothing else needs to change (no per-experiment yaml edits).
-default_hf_repo: aishahodzic/checkpoints
-
-runs:
-  jepa_random_mask:
-    filename: jepa/random_masking/last.ckpt

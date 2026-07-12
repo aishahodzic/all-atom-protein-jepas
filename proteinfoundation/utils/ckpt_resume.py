@@ -9,7 +9,7 @@ import yaml
 from lightning.pytorch.utilities import rank_zero_only
 from loguru import logger
 
-REGISTRY_PATH = Path(__file__).parent / "resume_registry.yaml"
+REGISTRY_PATH = Path(__file__).parent / "ckpt_registry.yaml"
 
 
 @rank_zero_only
@@ -23,7 +23,7 @@ def _create_dir(path):
 
 
 def _lookup_hf_checkpoint(run_name: str) -> Tuple[Optional[str], Optional[str], Optional[str]]:
-    """Looks up (repo, filename, ema_filename) for run_name in resume_registry.yaml.
+    """Looks up (repo, filename, ema_filename) for run_name in ckpt_registry.yaml.
     Add a new experiment there, not here."""
     registry = yaml.safe_load(REGISTRY_PATH.read_text())
     entry = registry.get("runs", {}).get(run_name)
