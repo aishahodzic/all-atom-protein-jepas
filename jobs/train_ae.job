@@ -2,8 +2,9 @@
 #SBATCH --job-name=laproteina_ae
 #SBATCH --qos=medium
 #SBATCH --gres=gpu:2
+#SBATCH --ntasks-per-node=2
 #SBATCH --cpus-per-task=24
-#SBATCH --time=24:00:00
+#SBATCH --time=4:00:00
 #SBATCH --output=logs/%x-%j.out
 
 source ~/.bashrc
@@ -12,4 +13,6 @@ conda activate /data-gauss/$USER/envs/laproteina_env
 
 cd ~/projects/la-proteina
 
-python proteinfoundation/partial_autoencoder/train.py
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+
+srun python proteinfoundation/partial_autoencoder/train.py
