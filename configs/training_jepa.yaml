@@ -1,10 +1,10 @@
-run_name_: jepa_pdb_test
+run_name_: jepa_random_mask
 
 hardware:
   ncpus_per_task_train_: 24  # Number of CPUs per task during training
   ncpus_per_task_prepro_: 32  # Number of CPUs used for data preprocessing run
   accelerator: gpu
-  ngpus_per_node_: 1  # Number of GPUs per node
+  ngpus_per_node_: 2  # Number of GPUs per node
   nnodes_: 1  # Number of nodes
 
 defaults:
@@ -26,10 +26,10 @@ force_precision_f32: False  # If false will use bf16-mixed precision
 opt:
   lr: 0.0001
   max_epochs: 10000000
-  accumulate_grad_batches: 1
+  accumulate_grad_batches: 2
   skip_nan_grad: False  # Skip updates with nan gradient
   grad_and_weight_analysis: True  # Log some statistics of gradients and weights
-  dist_strategy: auto  # For multi GPU training, do not change
+  dist_strategy: auto  # For multi GPU training, do not change. The 2-GPU hang (2026-07-11) was actually a NCCL P2P/SHM transport issue, fixed via NCCL_P2P_DISABLE=1 NCCL_SHM_DISABLE=1 at launch -- find_unused_parameters was a ruled-out hypothesis (confirmed zero unused params, pure overhead).
   val_check_interval: 5000  # Number of training steps after which we check validation loss
   skip_large_grad_updates:
     use: False  # Do not skip updates large gradients

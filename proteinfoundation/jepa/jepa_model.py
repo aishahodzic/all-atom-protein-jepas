@@ -1,23 +1,20 @@
 """JEPA protein model.
 
-This is a pure JEPA (Joint-Embedding Predictive Architecture) objective: the model
-never reconstructs the input. Instead it learns by predicting, in latent space, the
-representations of a set of masked (target) residues from the representations of the
-remaining (context) residues.
+Context encoder receives n-k residues, and outputs n-k residue latents.
+Predictor receives n-k residues, and predicts the k target residues.
+Target encoder sees n residues, and outputs k target residues.
 
 Three components:
   * online encoder  - the existing VAE encoder architecture, trained by backprop. We
                       use only its ``mean`` output as the deterministic latent (no
                       sampling, no KL).
-  * EMA target encoder - an exact copy of the online encoder, updated as an exponential
-                      moving average of the online weights. It is never trained by
+  * EMA target encoder - an exact copy of the online encoder, updated as an EMA of the online weights. It is never trained by
                       backprop (requires_grad=False) and produces the prediction targets.
   * predictor       - cross-attention network mapping context latents -> target latents.
 
-The loss is a smooth-L1 between the predictor's output and the EMA encoder's target
-latents, over target residues only. Using an EMA target encoder (rather than the online
-encoder) provides stable, non-collapsing targets, which is what makes JEPA work without
-a reconstruction term.
+
+The loss is a smooth-L1 between the predictor's output and the encoder's target
+latents, over target residues only. 
 """
 
 import copy
@@ -33,6 +30,32 @@ from sklearn.decomposition import PCA
 from proteinfoundation.jepa.masking import apply_mask_to_latents, random_residue_mask
 from proteinfoundation.jepa.predictor import JEPAPredictor
 from proteinfoundation.partial_autoencoder.encoder import EncoderTransformer
+
+
+def mask_batch_for_encoder(batch: Dict, context_mask: torch.Tensor) -> Dict:
+    """Mask a batch so the online encoder only sees context residues (n-k residues).
+     
+    Target-residue coordinates are zeroed out and marked invalid.
+
+    Args:
+        batch:         dict with "coords" [B, L, 37, 3], "coords_nm" [B, L, 37, 3],
+                        and "mask_dict"["coords"] [B, L, 37, 3] bool
+        context_mask:  [B, L] bool, True for context residues
+
+    Returns a shallow copy of ``batch`` with "coords", "coords_nm", and "mask_dict"
+    replaced; every other key is the same reference as in the input batch. The input
+    batch itself is not modified.
+    """
+    keep = context_mask[..., None, None]  # [B, L, 1, 1], broadcasts over (37 atoms, 3 coords)
+
+    masked_batch = dict(batch)  # shallow copy: only the keys below are overwritten
+    masked_batch["coords"] = batch["coords"] * keep  # [B, L, 37, 3], target positions zeroed
+    masked_batch["coords_nm"] = batch["coords_nm"] * keep  # [B, L, 37, 3], target positions zeroed
+
+    masked_batch["mask_dict"] = dict(batch["mask_dict"])
+    masked_batch["mask_dict"]["coords"] = batch["mask_dict"]["coords"] & keep  # [B, L, 37, 3]
+
+    return masked_batch
 
 
 class JEPAModel(L.LightningModule):
@@ -86,38 +109,35 @@ class JEPAModel(L.LightningModule):
         mask = batch["mask_dict"]["coords"][..., 0, 0]  # [B, L] boolean
         batch["mask"] = mask
 
-        # Online encoder mean latents for all residues
-        online_mean = self._encode_mean(self.online_encoder, batch)  # [B, L, latent_z_dim]
+        # Split residues into context / target BEFORE encoding
+        context_mask, target_mask = random_residue_mask(batch)  # [B, L], [B, L]
 
-        # Std of the online latents over real (non-padding) residues, per latent dim,
-        # averaged over dims. A collapsing encoder (all latents converging to the same
-        # vector) shows up as this dropping toward 0, which the loss alone won't catch
-        # since predicting a collapsed target is "easy".
-        latent_std = online_mean[mask.bool()].std(dim=0).mean()
+        # Online encoder sees only the n-k context residues
+        masked_batch = mask_batch_for_encoder(batch, context_mask)
+        online_mean = self._encode_mean(self.online_encoder, masked_batch)  # [B, L, latent_z_dim], only context positions carry signal
 
-        # Full latent stats (max/min/mean/median/std + histogram), ported from the
-        # autoencoder's log_tensor_statistics.
+        # Std of the online latents over real context residues, per latent dim,
+        # averaged over dims. If the representation is collapsing, this drops to 0 
+        latent_std = online_mean[context_mask.bool()].std(dim=0).mean()
+
+        # Full latent stats (max/min/mean/median/std + histogram)
         self.log_tensor_statistics(
             bs=online_mean.shape[0],
             v=online_mean,
             log_prefix=f"{stage}_stats_latent_mean_LS",
-            mask=mask.bool(),
+            mask=context_mask.bool(),
             histogram_every_n=5000,
         )
 
-        # PCA scatter of the online latents, logged to wandb every `pca_every_n` steps.
-        # Ported from the autoencoder's train_stats_latent_z_PCA logging: lets you see
-        # the *shape* of the latent space (e.g. spread across several axes vs. squashed
-        # onto one), which latent_std alone doesn't show.
+        # PCA scatter of the online latents
         self.log_pca(
             v=online_mean,
-            mask=mask.bool(),
+            mask=context_mask.bool(),
             log_prefix=f"{stage}_stats_latent_z_PCA",
             every_n=5000,
         )
 
-        # Split residues into context / target and pack each set into dense tensors
-        context_mask, target_mask = random_residue_mask(batch)  # [B, L], [B, L]
+        # Pack the (context-only) online latents into dense context/target tensors
         masked_latents = apply_mask_to_latents(online_mean, context_mask, target_mask)
 
         # Predict target latents from context latents (+ positions)
@@ -128,9 +148,9 @@ class JEPAModel(L.LightningModule):
             key_padding_mask=masked_latents["context_padding_mask"], # [B, L_ctx]
         )  # [B, L_tgt, latent_z_dim]
 
-        # EMA target encoder mean latents (no grad), gathered at the same target residues.
+        # EMA target encoder mean latents.
         # Reusing apply_mask_to_latents with the same masks gives target latents in the
-        # exact order/padding as `predicted_latent`, so the two align position-by-position.
+        # exact order/padding as `predicted_latent`
         with torch.no_grad():
             ema_mean = self._encode_mean(self.ema_encoder, batch)  # [B, L, latent_z_dim]
         ema_masked_latents = apply_mask_to_latents(ema_mean, context_mask, target_mask)
@@ -144,11 +164,7 @@ class JEPAModel(L.LightningModule):
             ema_target[real_target_mask],        # [n_real_targets, latent_z_dim]
         )
 
-        # Predictor-output vs. target-encoder stats and their cosine similarity. AE has
-        # nothing analogous (no predictor to compare against a target), but for JEPA this
-        # is the closest thing to a "reconstruction quality" chart: predicted_latent should
-        # track ema_target in scale/spread (log_tensor_statistics on both) and direction
-        # (cosine similarity -> 1 as the predictor gets better, independent of magnitude).
+        # Predictor-output vs. target-encoder stats and their cosine similarity
         self.log_tensor_statistics(
             bs=predicted_latent.shape[0],
             v=predicted_latent,
@@ -178,7 +194,18 @@ class JEPAModel(L.LightningModule):
             add_dataloader_idx=False,
         )
 
-        return {"loss": loss, "latent_std": latent_std}
+        # Collapse-monitoring stds for the three components (online encoder, target encoder, predictor)
+        online_latent_std = online_mean[context_mask.bool()].std()
+        target_latent_std = ema_mean[mask.bool()].std()
+        pred_latent_std = predicted_latent[real_target_mask].std()
+
+        return {
+            "loss": loss,
+            "latent_std": latent_std,
+            "online_latent_std": online_latent_std,
+            "target_latent_std": target_latent_std,
+            "pred_latent_std": pred_latent_std,
+        }
 
     def training_step(self, batch: Dict, batch_idx: int):
         bs = batch["mask_dict"]["coords"].shape[0]
@@ -200,6 +227,37 @@ class JEPAModel(L.LightningModule):
             out["latent_std"],
             on_step=True,
             on_epoch=True,
+            prog_bar=False,
+            logger=True,
+            batch_size=bs,
+            sync_dist=True,
+            add_dataloader_idx=False,
+        )
+        # Collapse monitoring: online encoder, target (EMA) encoder, and predictor output stds
+        self.log(
+            "online_latent_std",
+            out["online_latent_std"],
+            on_step=True,
+            prog_bar=False,
+            logger=True,
+            batch_size=bs,
+            sync_dist=True,
+            add_dataloader_idx=False,
+        )
+        self.log(
+            "target_latent_std",
+            out["target_latent_std"],
+            on_step=True,
+            prog_bar=False,
+            logger=True,
+            batch_size=bs,
+            sync_dist=True,
+            add_dataloader_idx=False,
+        )
+        self.log(
+            "pred_latent_std",
+            out["pred_latent_std"],
+            on_step=True,
             prog_bar=False,
             logger=True,
             batch_size=bs,

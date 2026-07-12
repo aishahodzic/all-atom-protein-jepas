@@ -22,7 +22,7 @@ from loguru import logger
 from omegaconf import OmegaConf
 
 from proteinfoundation.jepa.jepa_model import JEPAModel
-from proteinfoundation.utils.fetch_last_ckpt import fetch_last_ckpt
+from proteinfoundation.utils.ckpt_resume import resolve_resume_checkpoint
 from proteinfoundation.utils.seed_callback import SeedCallback
 from proteinfoundation.utils.training_analysis_utils import (
     GradAndWeightAnalysisCallback,
@@ -64,9 +64,6 @@ def get_run_dirs(cfg_exp):
 def initialize_callbacks(cfg_exp):
     """
     Initializes general training callbacks.
-
-    Note: unlike the autoencoder trainer, there is NO whole-model EMA callback here.
-    JEPA maintains its own EMA of the target encoder inside JEPAModel.on_train_batch_end.
     """
     callbacks = [SeedCallback()]
 
@@ -107,13 +104,9 @@ def load_data_module(cfg_exp, is_cluster_run):
     """
     Loads data config file and creates corresponding datamodule.
     """
-    num_cpus = cfg_exp.hardware.ncpus_per_task_train_
-    log_info(
-        f"Number of CPUs per task used (will be used for number dataloader number of workers): {num_cpus}"
-    )
     cfg_data = cfg_exp.dataset
 
-    cfg_data.datamodule.num_workers = num_cpus  # Overwrite number of cpus
+    # num_workers is left as configured in dataset/*.yaml (num_workers: 0).
     if cfg_data.get("exclude_id_pkl_path") is not None:
         with open(cfg_data.exclude_id_pkl_path, "rb") as fin:
             exclude_ids = pickle.load(fin)
@@ -121,9 +114,6 @@ def load_data_module(cfg_exp, is_cluster_run):
             cfg_data.datamodule.dataselector.exclude_ids += exclude_ids
         else:
             cfg_data.datamodule.dataselector.exclude_ids = exclude_ids
-    if not is_cluster_run:
-        cfg_data["datamodule"]["batch_size"] = 4
-        log_info("Local run, settign batch size to 4")
     log_info(f"Data config {cfg_data}")
 
     datamodule = hydra.utils.instantiate(cfg_data.datamodule)
@@ -132,33 +122,11 @@ def load_data_module(cfg_exp, is_cluster_run):
 
 def get_model_n_ckpt_resume(cfg_exp, ckpt_path_store):
     """
-    Loads the model and the checkpoint to start training from. This could be just a set
-    of parameters (`pretrain_ckpt_path`) or resuming training (`last`).
+    Loads the model and the checkpoint to start training from.
     """
     model = JEPAModel(cfg_exp)
-
-    # get last ckpt if needs to resume training from there
-    last_ckpt_name = fetch_last_ckpt(ckpt_path_store)
-    last_ckpt_path = (
-        os.path.join(ckpt_path_store, last_ckpt_name)
-        if last_ckpt_name is not None
-        else None
-    )
-    log_info(f"Last checkpoint: {last_ckpt_path}")
-
-    # If this is the first run for fine-tuning, load pre-trained checkpoint and don't load optimizer states
-    pretrain_ckpt_path = cfg_exp.get("pretrain_ckpt_path", None)
-    if last_ckpt_path is None and pretrain_ckpt_path is not None:
-        log_info(f"Loading from pre-trained checkpoint path {pretrain_ckpt_path}")
-        ckpt = torch.load(pretrain_ckpt_path, map_location="cpu")
-        model.load_state_dict(ckpt["state_dict"], strict=False)
-
-    # If not resuming from `last` ckpt training set seed
-    if last_ckpt_path is None:
-        log_info(f"Seeding everything to seed {cfg_exp.seed}")
-        L.seed_everything(cfg_exp.seed)
-
-    return model, last_ckpt_path
+    resume_ckpt_path = resolve_resume_checkpoint(model, cfg_exp, ckpt_path_store)
+    return model, resume_ckpt_path
 
 
 def setup_ckpt(cfg_exp, ckpt_path_store):
