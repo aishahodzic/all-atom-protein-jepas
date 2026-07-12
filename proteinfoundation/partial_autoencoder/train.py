@@ -21,8 +21,8 @@ from loguru import logger
 from omegaconf import OmegaConf
 
 from proteinfoundation.partial_autoencoder.autoencoder import AutoEncoder
+from proteinfoundation.utils.ckpt_resume import resolve_resume_checkpoint
 from proteinfoundation.utils.ema_callback import EMA, EmaModelCheckpoint
-from proteinfoundation.utils.fetch_last_ckpt import fetch_last_ckpt
 from proteinfoundation.utils.seed_callback import SeedCallback
 from proteinfoundation.utils.training_analysis_utils import (
     GradAndWeightAnalysisCallback,
@@ -132,34 +132,11 @@ def load_data_module(cfg_exp, is_cluster_run):
 
 def get_model_n_ckpt_resume(cfg_exp, ckpt_path_store):
     """
-    Loads the model and the checkpoint to start training from. This could be just a set
-    of parameters (`pretrain_ckpt_path`) or resuming training (`last`). It also handles
-    LoRA layers if requested.
+    Loads the model and the checkpoint to start training from.
     """
     model = AutoEncoder(cfg_exp)
-
-    # get last ckpt if needs to resume training from there
-    last_ckpt_name = fetch_last_ckpt(ckpt_path_store)
-    last_ckpt_path = (
-        os.path.join(ckpt_path_store, last_ckpt_name)
-        if last_ckpt_name is not None
-        else None
-    )
-    log_info(f"Last checkpoint: {last_ckpt_path}")
-
-    # If this is the first run for fine-tuning, load pre-trained checkpoint and don't load optimizer states
-    pretrain_ckpt_path = cfg_exp.get("pretrain_ckpt_path", None)
-    if last_ckpt_path is None and pretrain_ckpt_path is not None:
-        log_info(f"Loading from pre-trained checkpoint path {pretrain_ckpt_path}")
-        ckpt = torch.load(pretrain_ckpt_path, map_location="cpu")
-        model.load_state_dict(ckpt["state_dict"], strict=False)
-
-    # If not resuming from `last` ckpt training set seed
-    if last_ckpt_path is None:
-        log_info(f"Seeding everything to seed {cfg_exp.seed}")
-        L.seed_everything(cfg_exp.seed)
-
-    return model, last_ckpt_path
+    resume_ckpt_path = resolve_resume_checkpoint(model, cfg_exp, ckpt_path_store)
+    return model, resume_ckpt_path
 
 
 def setup_ckpt(cfg_exp, ckpt_path_store):

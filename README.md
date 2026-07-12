@@ -1,3 +1,24 @@
+## Setup (collaborators)
+
+Prerequisites: conda, an NVIDIA GPU box. Check `nvcc --version` before step 2 — if it
+isn't cu126, edit the cu126 references in `setup_env.sh`.
+
+1. `git clone <repo-url> && cd msc-thesis`
+2. `export DATA_PATH=/path/to/data`, `export HF_TOKEN=<token provided to you>`, then
+   `conda activate py3.10 && bash setup_env.sh` (installs the env, downloads the
+   processed PDB dataset, writes `DATA_PATH`/`HF_TOKEN` to `.env`)
+3. `wandb login` (needs an invite to the `aisha-hodzic-org` wandb team first — ask Aisha)
+4. `git checkout jepa-latent` (or another branch, see below)
+5. `python proteinfoundation/jepa/train.py` — prompts for which checkpoint to resume
+   from; pick `download` to pull the latest shared checkpoint from HF and continue
+   training from it (needs `resume_hf_filename` set in `configs/training_jepa.yaml`)
+
+For branches other than `jepa-latent` (which use `partial_autoencoder/train.py`, no
+`download` option), fetch a checkpoint manually and point `pretrain_ckpt_path` at it:
+```bash
+hf download aishahodzic/pdb-checkpoints <filename> --repo-type dataset --local-dir "$DATA_PATH/checkpoints" --token "$HF_TOKEN"
+```
+
 Original NVIDIA La-Proteina repository and setup instructions:
 https://github.com/NVIDIA-BioNeMo/la-proteina
 
@@ -101,4 +122,4 @@ Total structures: 344,065. Training: 338,787, val: 4,775, test: 503.
 
 
 
-### Next: Evaluate latent representations on a downstream task
+### 3. Evaluate both latent representations on a downstream task
