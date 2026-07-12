@@ -3,6 +3,10 @@
 # Captures the fixes needed to get proteinfoundation/jepa/train.py running on a fresh
 # GPU instance with CUDA 12.6 toolkit installed (e.g. a fresh Jarvis Labs box).
 #
+# Before running: export DATA_PATH=/path/to/data and export HF_TOKEN=<token provided
+# to you>. Check `nvcc --version` first; if it isn't cu126, swap the cu126 references
+# below for the matching build.
+#
 # Usage: conda activate py3.10 && bash setup_env.sh
 set -euo pipefail
 
@@ -45,26 +49,25 @@ echo "== Downloading pre-processed PDB dataset from Hugging Face (skips re-downl
 if [ -d "$DATA_PATH/pdb_train/processed" ] && [ -n "$(ls -A "$DATA_PATH/pdb_train/processed" 2>/dev/null)" ]; then
     echo "Processed dataset already present at $DATA_PATH/pdb_train/processed, skipping download."
 else
-    : "${HF_TOKEN:?Set HF_TOKEN before running this script, e.g. export HF_TOKEN=hf_...}"
+    if [ -z "${HF_TOKEN:-}" ]; then
+        read -rsp "Please enter your HF read token: " HF_TOKEN
+        echo
+    fi
     hf download aishahodzic/pdb-processed processed.tar.gz --repo-type dataset --local-dir "$DATA_PATH" --token "$HF_TOKEN"
     tar -xzf "$DATA_PATH/processed.tar.gz" -C "$DATA_PATH/"
     mv "$DATA_PATH/processed" "$DATA_PATH/pdb_train/processed"
     rm "$DATA_PATH/processed.tar.gz"
 fi
 
-echo "== Checkpoint resume =="
-read -rp "Resume training from an existing checkpoint on Hugging Face, or train from scratch? [resume/scratch]: " CKPT_CHOICE
-if [[ "$CKPT_CHOICE" == "resume" ]]; then
-    : "${HF_TOKEN:?Set HF_TOKEN before running this script, e.g. export HF_TOKEN=hf_...}"
-    read -rp "HF repo id containing the checkpoint (e.g. aishahodzic/pdb-checkpoints): " CKPT_REPO
-    read -rp "Checkpoint filename in that repo (e.g. chk_epoch=...-EMA.ckpt): " CKPT_FILE
-    mkdir -p "$DATA_PATH/checkpoints"
-    hf download "$CKPT_REPO" "$CKPT_FILE" --repo-type dataset --local-dir "$DATA_PATH/checkpoints" --token "$HF_TOKEN"
-    echo "Downloaded checkpoint to $DATA_PATH/checkpoints/$CKPT_FILE"
-    echo "Set pretrain_ckpt_path: $DATA_PATH/checkpoints/$CKPT_FILE in your training config (e.g. training_local_latents.yaml) to resume from it."
-else
-    echo "Training from scratch (leave pretrain_ckpt_path unset in your training config)."
-fi
+echo "== Writing DATA_PATH, HF_TOKEN to .env so train.py picks these up automatically =="
+touch .env
+grep -v '^DATA_PATH=\|^HF_TOKEN=' .env > .env.tmp || true
+mv .env.tmp .env
+{
+    echo "DATA_PATH=$DATA_PATH"
+    echo "HF_TOKEN=${HF_TOKEN:-}"
+} >> .env
 
-echo "== Done. Verify with: =="
+echo "== Env ready. Checkpoint resume is now handled by train.py's interactive prompt, not this script. =="
+echo "== Verify install with: =="
 echo "  python -c \"import torch, torchvision, lightning, wandb, graphein, torch_scatter; print(torch.__version__, torch.version.cuda, torch.cuda.is_available())\""

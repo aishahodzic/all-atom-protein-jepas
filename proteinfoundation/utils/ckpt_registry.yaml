@@ -1,0 +1,13 @@
+# checkpoint registry
+# To add a new experiment: add a key by that experiment's run_name_.
+default_hf_repo: aishahodzic/checkpoints
+
+runs:
+  jepa_random_mask:
+    filename: jepa/random_masking/last.ckpt
+  full_pdb_test_release_ae:
+    filename: ae/ca-cond/last.ckpt
+    ema_filename: ae/ca-cond/last-EMA.ckpt
+  full_pdb_fully_latent_ae:
+    filename: ae/fully_latent/last.ckpt
+    ema_filename: ae/fully_latent/last-EMA.ckpt
