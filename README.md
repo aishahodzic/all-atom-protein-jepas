@@ -1,23 +1,54 @@
-## Setup (collaborators)
+## Setup
 
-Prerequisites: conda, an NVIDIA GPU box. Check `nvcc --version` before step 2 — if it
-isn't cu126, edit the cu126 references in `setup_env.sh`.
+Prerequisites: conda, an NVIDIA GPU box. 
 
-1. `git clone <repo-url> && cd msc-thesis`
-2. `export DATA_PATH=/path/to/data`, `export HF_TOKEN=<token provided to you>`, then
-   `conda activate py3.10 && bash setup_env.sh` (installs the env, downloads the
-   processed PDB dataset, writes `DATA_PATH`/`HF_TOKEN` to `.env`)
-3. `wandb login` (needs an invite to the `aisha-hodzic-org` wandb team first — ask Aisha)
-4. `git checkout jepa-latent` (or another branch, see below)
-5. `python proteinfoundation/jepa/train.py` — prompts for which checkpoint to resume
-   from; pick `download` to pull the latest shared checkpoint from HF and continue
-   training from it (needs `resume_hf_filename` set in `configs/training_jepa.yaml`)
+1. `git clone https://github.com/aishahodzic/msc-thesis.git && cd msc-thesis`
+2. `export DATA_PATH={/path/to/data} (e.g. export DATA_PATH=/home/data)`,
+3. `export HF_TOKEN=<your-token>`
+4. `source setup_env.sh` 
+5. `wandb login` (needs an invite to the `aisha-hodzic-org` wandb team. If command fails, run `export WANDB_API_KEY=<your-API-key>`)
+6. `git checkout <branch>` - each branch is a different experiment:
 
-For branches other than `jepa-latent` (which use `partial_autoencoder/train.py`, no
-`download` option), fetch a checkpoint manually and point `pretrain_ckpt_path` at it:
-```bash
-hf download aishahodzic/pdb-checkpoints <filename> --repo-type dataset --local-dir "$DATA_PATH/checkpoints" --token "$HF_TOKEN"
+   | Branch | Train command |
+   |---|---|
+   | `ca-cond-baseline` | `python proteinfoundation/partial_autoencoder/train.py` |
+   | `fully-latent` | `python proteinfoundation/partial_autoencoder/train.py` |
+   | `jepa-latent` | `python proteinfoundation/jepa/train.py` |
+
+7. Run the matching train command above. It prompts from which checkpoint to resume: pick `last` to pull the latest shared checkpoint or `scratch` to start fresh.
+
+### Hardware
+Defined in training_ae.yaml (for AE) and training_jepa.yaml (for Jepa).  
 ```
+hardware:
+  ncpus_per_task_train_: 24  # Number of CPUs per tast during training
+  ncpus_per_task_prepro_: 32  # Number of CPUs used for data preprocessing run
+  accelerator: gpu
+  ngpus_per_node_: 2  # Number of GPUs per node
+  nnodes_: 1  # Number of nodes
+```
+
+### Uploading checkpoints
+
+After training, upload `last.ckpt` (and `last-EMA.ckpt` for AE training) to HF:
+
+```bash
+export HF_TOKEN=<your-write-token>
+
+huggingface-cli upload msc-thesis-org/checkpoints \
+  store/<run_name>/checkpoints/last.ckpt <hf-path>/last.ckpt \
+  --repo-type dataset --token $HF_TOKEN
+```
+
+`<hf-path>` depends on the branch:
+
+| Branch | `<hf-path>` |
+|---|---|
+| `ca-cond-baseline` | `msc-thesis-org/checkpoints/ae/ca-cond` |
+| `fully-latent` | `msc-thesis-org/checkpoints/ae/fully_latent` |
+| `jepa-latent` | `msc-thesis-org/checkpoints/jepa/random_masking` |
+
+### Links
 
 Original NVIDIA La-Proteina repository and setup instructions:
 https://github.com/NVIDIA-BioNeMo/la-proteina
@@ -38,25 +69,27 @@ main
 └── jepa-latent
 ```
 
-### Branch descriptions
+#### Branch descriptions:
 
 - **main**: La Proteina codebase
 - **ca-cond-baseline**: CA-conditioned autoencoder baseline used
 - **fully-latent**: removes explicit CA-coordinate conditioning
+- **jepa-latent**: JEPA with random masking
 
-## Autoencoder Experiments
+## Experiments
 
-### 1. Train AE with latent residues and PDB-given C-alpha (current setup)
+| Stage | Where | Command |
+|---|---|---|
+| Training | Cluster | `sbatch jobs/train_ae.job` |
+| | Local | `python proteinfoundation/partial_autoencoder/train.py` |
+| Evaluation | Cluster | `sbatch jobs/inference_ae.job` |
+| | Local | `python proteinfoundation/partial_autoencoder/inference.py --config_name inference_ae` |
 
-Training:
 
-```bash
-sbatch jobs/train_ae.job
-```
-or 
+Checkpoints at:
 
-```bash
-python proteinfoundation/partial_autoencoder/train.py
+```text
+store/{release-name}/checkpoints/last-EMA.ckpt
 ```
 
 ## Training config
@@ -75,28 +108,6 @@ python proteinfoundation/partial_autoencoder/train.py
 | `dist_strategy` | `ddp` → `auto` |
 
 
-
-Evaluation:
-
-```bash
-sbatch jobs/inference_ae.job
-```
-
-```bash
-python proteinfoundation/partial_autoencoder/inference.py --config_name inference_ae
-```
-
-Checkpoint:
-
-```text
-store/{release-name}/checkpoints/last-EMA.ckpt
-```
-
-### 2. Train fully latent AE
-
-Evaluate structure reconstruction and sequence recovery.
-
-Compare both setups. Initial expectation: the fully latent AE will perform worse, since the decoder no longer receives the true C-alpha coordinates.
 
 ## Demo Results (data fraction: 0.001)
 
@@ -120,6 +131,3 @@ Total structures: 344,065. Training: 338,787, val: 4,775, test: 503.
 
 <img width="747" height="602" alt="Screenshot 2026-07-09 at 14 10 46" src="https://github.com/user-attachments/assets/de4d1d5d-b272-409c-840a-2e417f3881ff" />
 
-
-
-### 3. Evaluate both latent representations on a downstream task

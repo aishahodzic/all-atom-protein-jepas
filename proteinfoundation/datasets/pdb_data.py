@@ -436,10 +436,8 @@ class PDBLightningDataModule(BaseLightningDataModule):
             overwrite (bool, optional): Whether to overwrite existing processed
                 data. Defaults to False.
             skip_unprocessed (bool, optional): If True, drop any selected pdb/chain
-                entries that don't already have a processed .pt file on disk instead
-                of downloading/processing them. Use this to train immediately on
-                whatever's already processed, without waiting on new downloads or
-                the (slow, sequential) structure processing step. Defaults to False.
+                entries that don't already have a processed .pt file instead
+                of downloading/processing them. Defaults to False.
             store_het (bool, optional): Whether to store heteroatoms in the processed data.
                 Defaults to False.
             store_bfactor (bool, optional): Whether to store B factors in the processed data.
@@ -519,9 +517,7 @@ class PDBLightningDataModule(BaseLightningDataModule):
                     df_data = df_data[is_processed].reset_index(drop=True)
                 else:
                     logger.info("Now downloading structure data...")
-                    self._download_structure_data(
-                        df_data["pdb"].tolist(), df_data["chain"].tolist()
-                    )
+                    self._download_structure_data(df_data["pdb"].tolist())
                     # process pdb files into seperate chains and save processed objects as .pt files
                     self._process_structure_data(
                         df_data["pdb"].tolist(), df_data["chain"].tolist()
