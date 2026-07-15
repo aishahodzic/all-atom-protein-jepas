@@ -1,4 +1,4 @@
-run_name_: jepa_random_mask
+run_name_: jepa_random_mask_with_lr
 
 hardware:
   ncpus_per_task_train_: 24  # Number of CPUs per task during training

@@ -14,7 +14,7 @@ import lightning as L
 import torch
 import wandb
 from dotenv import load_dotenv
-from lightning.pytorch.callbacks import ModelCheckpoint
+from lightning.pytorch.callbacks import LearningRateMonitor, ModelCheckpoint
 from lightning.pytorch.loggers import WandbLogger
 from lightning.pytorch.plugins.environments import SLURMEnvironment
 from lightning.pytorch.utilities import rank_zero_only
@@ -82,6 +82,7 @@ def initialize_callbacks(cfg_exp):
 
     callbacks.append(LogEpochTimeCallback())
     callbacks.append(LogSetpTimeCallback())
+    callbacks.append(LearningRateMonitor(logging_interval="step"))
     return callbacks
 
 

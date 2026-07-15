@@ -90,14 +90,32 @@ class JEPAModel(L.LightningModule):
             p.numel() for p in self.predictor.parameters() if p.requires_grad
         )
 
+        self.lr_scheduler = None  # set in configure_optimizers, stepped manually in on_validation_end
+        self._pending_lr_scheduler_state = None  # applied in configure_optimizers once the scheduler exists
+
     def on_save_checkpoint(self, checkpoint):
         checkpoint["nsamples_processed"] = self.nsamples_processed
+        checkpoint["lr_scheduler_state"] = self.lr_scheduler.state_dict()
 
     def on_load_checkpoint(self, checkpoint):
         try:
             self.nsamples_processed = checkpoint["nsamples_processed"]
         except KeyError:
             self.nsamples_processed = 0
+        if "lr_scheduler_state" in checkpoint:
+            self._pending_lr_scheduler_state = checkpoint["lr_scheduler_state"]
+        elif checkpoint.get("lr_schedulers"):
+            # checkpoints saved before the switch to manual stepping
+            # kept scheduler state under Lightning's own "lr_schedulers" key instead.
+            self._pending_lr_scheduler_state = checkpoint["lr_schedulers"][0]
+
+    def on_validation_end(self):
+        # Manually stepped, not registered via configure_optimizers' scheduler dict:
+        if self.trainer.sanity_checking:
+            return
+        val_loss = self.trainer.callback_metrics.get("val_loss")
+        if val_loss is not None:
+            self.lr_scheduler.step(val_loss)
 
     def _encode_mean(self, encoder, batch: Dict) -> torch.Tensor:
         """Run an encoder and return only the deterministic mean latent (no variance /sampling)."""
@@ -233,7 +251,7 @@ class JEPAModel(L.LightningModule):
             sync_dist=True,
             add_dataloader_idx=False,
         )
-        # Collapse monitoring: online encoder, target (EMA) encoder, and predictor output stds
+
         self.log(
             "online_latent_std",
             out["online_latent_std"],
@@ -445,4 +463,12 @@ class JEPAModel(L.LightningModule):
             amsgrad=True,
             weight_decay=1e-2,
         )
+        # Cuts LR in half after 2 val check with no improvement
+        self.lr_scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+            optimizer, mode="min", factor=0.5, patience=2, threshold=1e-2, threshold_mode="rel",
+            min_lr=1e-6,
+        )
+        if self._pending_lr_scheduler_state is not None:
+            self.lr_scheduler.load_state_dict(self._pending_lr_scheduler_state)
+            self._pending_lr_scheduler_state = None
         return optimizer
