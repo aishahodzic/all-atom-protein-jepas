@@ -3,7 +3,7 @@
 default_hf_repo: msc-thesis-org/checkpoints
 
 runs:
-  jepa_random_mask:
+  jepa_random_mask_with_lr:
     filename: jepa/random_masking/last.ckpt
   full_pdb_test_release_ae:
     filename: ae/ca-cond/last.ckpt
