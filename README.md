@@ -15,7 +15,7 @@ Prerequisites: conda, an NVIDIA GPU box.
    | `fully-latent` | `python proteinfoundation/partial_autoencoder/train.py` |
    | `jepa-latent` | `python proteinfoundation/jepa/train.py` |
 
-7. Run the matching train command above. It prompts from which checkpoint to resume: pick `last` to pull the latest shared checkpoint or `scratch` to start fresh.
+7. Change the hardware settings (optional) and run the matching train command above. It prompts from which checkpoint to resume: pick `last` to pull the latest shared checkpoint or `scratch` to start fresh.
 
 ### Hardware
 Defined in training_ae.yaml (for AE) and training_jepa.yaml (for Jepa).  
