@@ -35,18 +35,18 @@ After training, upload `last.ckpt` (and `last-EMA.ckpt` for AE training) to HF:
 ```bash
 export HF_TOKEN=<your-write-token>
 
-huggingface-cli upload msc-thesis-org/checkpoints \
+hf upload msc-thesis-org/checkpoints \
   store/<run_name>/checkpoints/last.ckpt <hf-path>/last.ckpt \
-  --repo-type dataset --token $HF_TOKEN
+  --repo-type dataset 
 ```
 
-`<hf-path>` depends on the branch:
+`<run_name>` and `<hf-path>` depend on the branch:
 
-| Branch | `<hf-path>` |
-|---|---|
-| `ca-cond-baseline` | `msc-thesis-org/checkpoints/ae/ca-cond` |
-| `fully-latent` | `msc-thesis-org/checkpoints/ae/fully_latent` |
-| `jepa-latent` | `msc-thesis-org/checkpoints/jepa/random_masking` |
+| Branch | `<run_name>` | `<hf-path>` |
+|---|---|---|
+| `ca-cond-baseline` | `full_pdb_test_release_ae` | `ae/ca-cond` |
+| `fully-latent` | `full_pdb_fully_latent_ae` | `ae/fully_latent` |
+| `jepa-latent` | `jepa_random_mask_with_lr` | `jepa/random_masking` |
 
 ### Links
 
