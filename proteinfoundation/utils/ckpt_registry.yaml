@@ -1,6 +1,6 @@
 # checkpoint registry
 # To add a new experiment: add a key by that experiment's run_name_.
-default_hf_repo: aishahodzic/checkpoints
+default_hf_repo: msc-thesis-org/checkpoints
 
 runs:
   jepa_random_mask:

@@ -18,6 +18,7 @@ class CopyCoordinatesTransform(T.BaseTransform):
 
     def forward(self, graph: Data) -> Data:
         graph.coords_unmodified = graph.coords.clone()
+        return graph
 
 
 class ChainBreakCountingTransform(T.BaseTransform):
