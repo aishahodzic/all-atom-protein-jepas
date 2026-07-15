@@ -37,8 +37,8 @@ def resolve_resume_checkpoint(model, cfg_exp, ckpt_path_store) -> Optional[str]:
     """
     Always prompts for which checkpoint to resume from; never auto-selects one.
     Loads pretrain weights into `model` in-place for the "pretrain" choice. For
-    "last"/"download" the returned path is passed to trainer.fit(ckpt_path=...),
-    which restores full trainer state (optimizer, step count, RNG), not just weights.
+    "last" the returned path is passed to trainer.fit(ckpt_path=...), which restores
+    full trainer state (optimizer, step count, RNG), not just weights.
     """
     from proteinfoundation.utils.fetch_last_ckpt import fetch_last_ckpt
 
@@ -64,7 +64,7 @@ def resolve_resume_checkpoint(model, cfg_exp, ckpt_path_store) -> Optional[str]:
     if pretrain_ckpt_path is not None:
         options.append("pretrain")
     if last_ckpt_path is None and resume_hf_repo and resume_hf_filename:
-        options.append("download")
+        options.append("last")
 
     if "LOCAL_RANK" in os.environ:
         choice = os.environ["RESUME_CHOICE"]
@@ -75,10 +75,10 @@ def resolve_resume_checkpoint(model, cfg_exp, ckpt_path_store) -> Optional[str]:
         os.environ["RESUME_CHOICE"] = choice
 
     resume_ckpt_path = None
-    if choice == "last":
+    if choice == "last" and last_ckpt_path is not None:
         _log_info(f"Resuming from last checkpoint: {last_ckpt_path}")
         resume_ckpt_path = last_ckpt_path
-    elif choice == "download":
+    elif choice == "last":
         # Download only if LOCAL_RANK unset (spawned DDP ranks reuse the same file).
         resume_ckpt_path = os.path.join(ckpt_path_store, "last.ckpt")
         if "LOCAL_RANK" not in os.environ:
