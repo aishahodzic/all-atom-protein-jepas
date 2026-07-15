@@ -5,7 +5,7 @@ Prerequisites: conda, an NVIDIA GPU box.
 1. `git clone https://github.com/aishahodzic/msc-thesis.git && cd msc-thesis`
 2. `export DATA_PATH={/path/to/data} (e.g. export DATA_PATH=/home/data)`,
 3. `export HF_TOKEN=<your-token>`
-4. `source setup_env.sh` 
+4. `bash setup_env.sh` 
 5. `wandb login` (needs an invite to the `aisha-hodzic-org` wandb team. If command fails, run `export WANDB_API_KEY=<your-API-key>`)
 6. `git checkout <branch>` - each branch is a different experiment:
 
