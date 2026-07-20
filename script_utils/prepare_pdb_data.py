@@ -21,12 +21,12 @@ def main() -> None:
         cfg = compose(config_name="training_ae_partlatent")
 
     datamodule = hydra.utils.instantiate(cfg.dataset.datamodule)
+    datamodule.prepare_data()
     datamodule.setup(stage="fit")
     print(
         "Prepared full-PDB splits:",
         f"train={len(datamodule.train_ds)}",
         f"val={len(datamodule.val_ds)}",
-        f"test={len(datamodule.test_ds)}",
     )
 
 
