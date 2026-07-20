@@ -1,6 +1,7 @@
 """Prepare the shared full-PDB dataset metadata before distributed training."""
 
 import os
+import sys
 from pathlib import Path
 
 import hydra
@@ -10,6 +11,7 @@ from hydra import compose, initialize_config_dir
 
 def main() -> None:
     project_root = Path(__file__).resolve().parents[1]
+    sys.path.insert(0, str(project_root))
     load_dotenv(project_root / ".env")
 
     if not os.environ.get("DATA_PATH"):
