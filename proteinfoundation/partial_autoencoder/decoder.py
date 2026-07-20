@@ -34,6 +34,10 @@ class DecoderTransformer(torch.nn.Module):
         self.use_tri_mult = kwargs["decoder"]["use_tri_mult"]
         self.use_qkln = kwargs["decoder"]["use_qkln"]
         self.abs_coors = kwargs["decoder"].get("abs_coors", True)
+        self.ca_conditioned = (
+            "ca_coors_nm" in (kwargs["decoder"]["feats_seq"] or [])
+            or "ca_coors_nm_pair_dists" in (kwargs["decoder"]["feats_pair_repr"] or [])
+        )
 
         # To form initial representation
         self.init_repr_factory = FeatureFactory(
@@ -134,7 +138,7 @@ class DecoderTransformer(torch.nn.Module):
                 "atom_mask": boolean [b, n, 37], atom37 mask corresponding to aatype_max
             }
         """
-        ca_coors_nm = input["ca_coors_nm"]  # [b, n, 3]
+        ca_coors_nm = input.get("ca_coors_nm") if self.ca_conditioned else None
         mask = input["residue_mask"]  # [b, n] boolean
 
         # Conditioning variables
@@ -169,11 +173,12 @@ class DecoderTransformer(torch.nn.Module):
             coors_flat_nm, "b n (a t) -> b n a t", a=37, t=3
         )  # [b, n, 37, 3]
 
-        if self.abs_coors:
-            coors_a37_nm[..., 1, :] = coors_a37_nm[..., 1, :] * 0.0 + ca_coors_nm
-        else:
-            coors_a37_nm[..., 1, :] = coors_a37_nm[..., 1, :] * 0.0
-            coors_a37_nm = coors_a37_nm + ca_coors_nm[:, :, None, :]  # [b, n, 37, 3]
+        if ca_coors_nm is not None:
+            if self.abs_coors:
+                coors_a37_nm[..., 1, :] = coors_a37_nm[..., 1, :] * 0.0 + ca_coors_nm
+            else:
+                coors_a37_nm[..., 1, :] = coors_a37_nm[..., 1, :] * 0.0
+                coors_a37_nm = coors_a37_nm + ca_coors_nm[:, :, None, :]  # [b, n, 37, 3]
 
         # Get sequence
         aatype_max = torch.argmax(logits_out, dim=-1)  # [b, n]

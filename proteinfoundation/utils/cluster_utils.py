@@ -1,6 +1,7 @@
 # inspired from https://github.com/a-r-j/graphein/blob/master/graphein/ml/datasets/pdb_data.py
 
 import math
+import os
 import pathlib
 import random
 import shutil
@@ -295,19 +296,25 @@ def cluster_sequences(
             )
 
         mmseqs_exec = "mmseqs" if mmseqs_exec is None else mmseqs_exec
+        # Unique prefix/tmp dir per process: multiple DDP ranks call this concurrently
+        # with the same fasta_input_filepath, and mmseqs2's output naming is otherwise
+        # a fixed literal, so concurrent invocations clobber each other's output files.
+        run_prefix = f"pdb_cluster_{os.getpid()}"
+        tmp_dir = f"tmp_{os.getpid()}"
         if (
             efficient_linclust
         ):  # use efficient linclust algorithm that cales linearly with input size
-            cmd = f"{mmseqs_exec} easy-linclust {fasta_input_filepath} pdb_cluster tmp --min-seq-id {min_seq_id} -c {coverage} --cov-mode 1"
+            cmd = f"{mmseqs_exec} easy-linclust {fasta_input_filepath} {run_prefix} {tmp_dir} --min-seq-id {min_seq_id} -c {coverage} --cov-mode 1"
         else:  # use standard cascaded clustering algorithm
-            cmd = f"{mmseqs_exec} easy-cluster {fasta_input_filepath} pdb_cluster tmp --min-seq-id {min_seq_id} -c {coverage} --cov-mode 1"
+            cmd = f"{mmseqs_exec} easy-cluster {fasta_input_filepath} {run_prefix} {tmp_dir} --min-seq-id {min_seq_id} -c {coverage} --cov-mode 1"
         if silence_mmseqs_output:
             subprocess.run(cmd.split(), stdout=subprocess.DEVNULL)
         else:
             subprocess.run(cmd.split())
         # Rename output file
-        shutil.move("pdb_cluster_rep_seq.fasta", cluster_fasta_path)
-        shutil.move("pdb_cluster_cluster.tsv", cluster_tsv_path)
+        shutil.move(f"{run_prefix}_rep_seq.fasta", cluster_fasta_path)
+        shutil.move(f"{run_prefix}_cluster.tsv", cluster_tsv_path)
+        shutil.rmtree(tmp_dir, ignore_errors=True)
 
 
 def split_sequence_clusters(
@@ -341,6 +348,7 @@ def split_sequence_clusters(
 def expand_cluster_splits(
     cluster_rep_splits: Dict[str, pd.DataFrame],
     clusterid_to_seqid_mapping: Dict[str, List[str]],
+    df_data: pd.DataFrame = None,
     use_modin: bool = False,
 ) -> Dict[str, pd.DataFrame]:
     """
@@ -350,6 +358,9 @@ def expand_cluster_splits(
         cluster_rep_splits: A dictionary containing DataFrames for each split (e.g., 'train', 'val', 'test').
             Each DataFrame should have an 'id' column representing the cluster representative IDs.
         clusterid_to_seqid_mapping: A dictionary mapping cluster representative IDs to their corresponding cluster member IDs.
+        df_data: If provided, expanded members are filtered down to ids present in df_data. Needed because
+            clusterid_to_seqid_mapping comes from a cluster TSV that can be stale relative to df_data (e.g. an
+            id added to exclude_ids after the TSV was built), which would otherwise leak excluded ids back in.
         use_modin (bool): Whether to use Modin for dataframe operations, useful for big datasets. Defaults to False.
 
     Returns:
@@ -382,6 +393,13 @@ def expand_cluster_splits(
             ],
             columns=["cluster_id", "id"],
         )
+        if df_data is not None and len(split_cluster_members_df) > 0:
+            # clusterid_to_seqid_mapping comes from the cluster TSV, which can be stale
+            # relative to df_data (e.g. an id excluded after the TSV was built) - drop
+            # any expanded member that df_data no longer includes.
+            split_cluster_members_df = split_cluster_members_df[
+                split_cluster_members_df["id"].isin(df_data["id"])
+            ]
         # Split the 'id' column into 'pdb' and 'chain' columns
         if len(split_cluster_members_df) > 0:
             split_cluster_members_df[["pdb", "chain"]] = split_cluster_members_df[

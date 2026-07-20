@@ -1,0 +1,27 @@
+#!/bin/bash
+#SBATCH --job-name=ae_jepreconst
+#SBATCH --partition=hpc-mid
+#SBATCH --account=cw-sup
+#SBATCH --qos=normal
+#SBATCH --nodes=1
+#SBATCH --gres=gpu:8
+#SBATCH --ntasks-per-node=8
+#SBATCH --cpus-per-task=12
+#SBATCH --time=12:00:00
+#SBATCH --output=logs/%x-%j.out
+
+set -euo pipefail
+
+export MAMBA_ROOT_PREFIX="${MAMBA_ROOT_PREFIX:-/mnt/home/kdidi/.local/share/mamba}"
+eval "$(/usr/local/bin/micromamba shell hook --shell bash)"
+micromamba activate "${LAPROTEINA_ENV_NAME:-laproteina_env}"
+
+cd /mnt/home/kdidi/projects/msc-thesis-jepa-latent
+
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+export NCCL_P2P_DISABLE=1
+export NCCL_SHM_DISABLE=1
+export RESUME_CHOICE="${RESUME_CHOICE:-scratch}"
+export WANDB_MODE="${WANDB_MODE:-offline}"
+
+srun --kill-on-bad-exit=1 python proteinfoundation/jepa/train.py "$@"

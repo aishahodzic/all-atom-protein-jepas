@@ -1,0 +1,58 @@
+run_name_: ae_latent
+
+hardware:
+  ncpus_per_task_train_: 12
+  ncpus_per_task_prepro_: 32
+  accelerator: gpu
+  ngpus_per_node_: 8
+  nnodes_: 1
+
+defaults:
+  - nn_ae: nn_130m_latent
+  - dataset: pdb/pdb_train_ucond
+  - _self_
+
+pretrain_ckpt_path:
+
+loss:
+  kl:
+    weight: 1e-4
+    anneal: false
+    patience: 10000
+  struct:
+    type: l2
+    weight: 1.0
+  seq:
+    weight: 1.0
+
+force_precision_f32: false
+
+opt:
+  lr: 0.0001
+  max_epochs: 10000000
+  accumulate_grad_batches: 2
+  skip_nan_grad: false
+  grad_and_weight_analysis: true
+  dist_strategy: auto
+  val_check_interval: 5000
+  skip_large_grad_updates:
+    use: false
+    moving_avg_size: 100
+    factor_threshold: 10
+    min_opt_steps: 1500
+
+log:
+  wandb_project: protein_ae
+  log_wandb: true
+  log_every_n_steps: 1
+  checkpoint: true
+  checkpoint_every_n_steps: 20000
+  last_ckpt_every_n_steps: 1500
+
+seed: 42
+
+ema:
+  decay: 0.999
+  validate_original_weights: false
+  every_n_steps: 1
+  cpu_offload: false

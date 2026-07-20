@@ -66,7 +66,7 @@ def resolve_resume_checkpoint(model, cfg_exp, ckpt_path_store) -> Optional[str]:
     if last_ckpt_path is None and resume_hf_repo and resume_hf_filename:
         options.append("last")
 
-    if "LOCAL_RANK" in os.environ:
+    if "RESUME_CHOICE" in os.environ:
         choice = os.environ["RESUME_CHOICE"]
     else:
         choice = input(f"Start training from checkpoint? [{'/'.join(options)}]: ").strip().lower()

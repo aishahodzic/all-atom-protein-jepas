@@ -1,0 +1,43 @@
+name: transformer_ae
+
+latent_z_dim: &latent_z_dim 8
+
+encoder:
+  nlayers: 12
+  token_dim: 768
+  nheads: 12
+  parallel_mha_transition: false
+  strict_feats: false
+  feats_seq: [chain_break_per_res, x1_aatype, x1_a37coors_nm, x1_a37coors_nm_rel, chain_idx_seq]
+  feats_cond_seq:
+  dim_cond: 128
+  idx_emb_dim: 128
+  feats_pair_repr: [rel_seq_sep, x1_bb_pair_dists_nm, x1_bb_pair_orientation, chain_idx_pair]
+  seq_sep_dim: 127
+  pair_repr_dim: 256
+  update_pair_repr: false
+  update_pair_repr_every_n: 3
+  use_tri_mult: false
+  use_qkln: true
+  normalize_latent: false
+  latent_z_dim: *latent_z_dim
+
+decoder:
+  nlayers: 12
+  token_dim: 768
+  abs_coors: false
+  nheads: 12
+  parallel_mha_transition: false
+  strict_feats: false
+  feats_seq: [z_latent_seq]
+  feats_cond_seq:
+  dim_cond: 128
+  idx_emb_dim: 128
+  feats_pair_repr: [rel_seq_sep]
+  seq_sep_dim: 127
+  pair_repr_dim: 256
+  update_pair_repr: false
+  update_pair_repr_every_n: 3
+  use_tri_mult: false
+  use_qkln: true
+  latent_z_dim: *latent_z_dim

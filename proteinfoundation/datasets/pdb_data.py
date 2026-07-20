@@ -311,6 +311,7 @@ class PDBDataSplitter:
             self.dfs_splits, self.clusterid_to_seqid_mappings = expand_cluster_splits(
                 cluster_rep_splits=splits,
                 clusterid_to_seqid_mapping=clusterid_to_seqid_mapping,
+                df_data=df_data,
             )
         return (
             self.dfs_splits,
