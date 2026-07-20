@@ -22,6 +22,12 @@ export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 export NCCL_P2P_DISABLE=1
 export NCCL_SHM_DISABLE=1
 export RESUME_CHOICE="${RESUME_CHOICE:-scratch}"
-export WANDB_MODE="${WANDB_MODE:-offline}"
+
+WANDB_USER_INFO="${WANDB_USER_INFO:-/mnt/home/kdidi/projects/foundry-dev/projects/proteinfoundation/slurm_utils/.user_info_coreweave}"
+if [ -z "${WANDB_API_KEY:-}" ] && [ -f "$WANDB_USER_INFO" ]; then
+    source "$WANDB_USER_INFO"
+    export WANDB_API_KEY="${WANDBKEY:-}"
+fi
+export WANDB_MODE="${WANDB_MODE:-online}"
 
 srun --kill-on-bad-exit=1 python proteinfoundation/jepa/train.py "$@"
