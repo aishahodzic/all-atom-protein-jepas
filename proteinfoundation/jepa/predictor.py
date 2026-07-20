@@ -1,6 +1,6 @@
 import torch.nn as nn
 
-
+#block: q → norm(q) → MHA → q' = add_residual(q) → norm_q' → FF → p" = add_residual(q') -> output p" 
 class CrossAttentionBlock(nn.Module):
     """One cross-attention layer: queries (targets) attend to keys/values (context),
     followed by a feedforward network, both with pre-LayerNorm and residual."""
@@ -23,8 +23,8 @@ class CrossAttentionBlock(nn.Module):
         attn_out, _ = self.attn(
             self.norm_q(q), kv, kv, key_padding_mask=key_padding_mask
         )                                                # [B, L_tgt, hidden_dim]
-        q = q + attn_out                                 # residual
-        q = q + self.ff(self.norm_ff(q))                 # residual + feedforward
+        q = q + attn_out                                 # residual_q + attention
+        q = q + self.ff(self.norm_ff(q))                 # residual_q + feedforward
         return q  # [B, L_tgt, hidden_dim]
 
 
@@ -57,6 +57,7 @@ class JEPAPredictor(nn.Module):
         # project predicted queries back down to latent space
         self.out_proj = nn.Linear(hidden_dim, latent_z_dim)
 
+#forwad: kv latent + kv pos. embedding -> cross-attention (q vs kv) -> feedforward -> output latent
     def forward(self, context_latents, context_indices, target_indices, key_padding_mask=None):
         # context_latents: [B, L_ctx, latent_z_dim]  (encoder mean of visible residues)
         # context_indices: [B, L_ctx]  (long)  residue indices of context residues
@@ -65,10 +66,10 @@ class JEPAPredictor(nn.Module):
         assert int(target_indices.max()) < self.max_len, "target index exceeds max_len positional table"
         assert int(context_indices.max()) < self.max_len, "context index exceeds max_len positional table"
 
-        # target queries are purely positional embeddings of the target residues
+        # queries are just positional embeddings of the target residues
         q = self.pos_emb(target_indices)                    # [B, L_tgt, hidden_dim]
 
-        # context keys/values: projected context latents plus their positional embeddings
+        # keys/values: projected context latents plus their positional embeddings
         kv = self.context_proj(context_latents)             # [B, L_ctx, hidden_dim]
         kv = kv + self.pos_emb(context_indices)             # [B, L_ctx, hidden_dim]
 

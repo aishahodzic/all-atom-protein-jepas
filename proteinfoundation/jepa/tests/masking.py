@@ -67,16 +67,16 @@ def run_apply(batch, latent_z_dim=8, masked_pct=0.5):
     assert out["target_latents"].shape == (B, L_tgt, latent_z_dim)
     assert out["context_indices"].shape == (B, L_ctx) and out["context_indices"].dtype == torch.long
     assert out["target_indices"].shape == (B, L_tgt) and out["target_indices"].dtype == torch.long
-    assert out["context_padding_mask"].shape == (B, L_ctx)
-    assert out["target_padding_mask"].shape == (B, L_tgt)
+    assert out["context_padding"].shape == (B, L_ctx)
+    assert out["target_padding"].shape == (B, L_tgt)
 
     # L_ctx / L_tgt equal the batch-wide max count
     assert L_ctx == int(context_mask.sum(dim=1).max())
     assert L_tgt == int(target_mask.sum(dim=1).max())
 
     for i in range(B):
-        c_real = ~out["context_padding_mask"][i]
-        t_real = ~out["target_padding_mask"][i]
+        c_real = torch.logical_not(out["context_padding"][i])
+        t_real = torch.logical_not(out["target_padding"][i])
 
         # number of real (non-padding) entries matches the mask counts
         assert int(c_real.sum()) == int(context_mask[i].sum())
@@ -93,8 +93,8 @@ def run_apply(batch, latent_z_dim=8, masked_pct=0.5):
         assert target_mask[i, t_idx].all()
 
         # padded latents are zeroed, padded indices are 0
-        assert torch.equal(out["context_latents"][i][~c_real], torch.zeros(int((~c_real).sum()), latent_z_dim))
-        assert (out["context_indices"][i][~c_real] == 0).all()
+        assert torch.equal(out["context_latents"][i][torch.logical_not(c_real)], torch.zeros(int((torch.logical_not(c_real)).sum()), latent_z_dim))
+        assert (out["context_indices"][i][torch.logical_not(c_real)] == 0).all()
 
         print(f"  protein {i}: context={int(c_real.sum())}/{L_ctx} target={int(t_real.sum())}/{L_tgt}")
 

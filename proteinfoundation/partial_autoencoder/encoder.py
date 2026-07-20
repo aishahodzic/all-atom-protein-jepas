@@ -115,6 +115,7 @@ class EncoderTransformer(torch.nn.Module):
             Dictionary
             ...
         """
+        #read the mask from the coordinates
         mask = batch["mask_dict"]["coords"][..., 0, 0]  # [b, n] boolean
 
         # Conditioning variables
@@ -123,6 +124,7 @@ class EncoderTransformer(torch.nn.Module):
 
         # Iinitial sequence representation from features
         seq_f_repr = self.init_repr_factory(batch)  # [b, n, token_dim]
+        # mask everything else beyond just the coordinates (aatype etc)
         seqs = seq_f_repr * mask[..., None]  # [b, n, token_dim]
 
         pair_rep = self.pair_rep_factory(batch)  # [b, n, n, pair_dim]

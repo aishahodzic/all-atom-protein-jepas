@@ -76,7 +76,7 @@ class JEPAModel(L.LightningModule):
             p.requires_grad = False
 
         # Predictor: context latents + positions -> predicted target latents.
-        # max_len must be >= the dataset's max crop length (positional table size).
+        # max_len must be >= the dataset's max crop length (256).
         predictor_cfg = self.cfg.get("predictor", {}) or {}
         max_len = predictor_cfg.get("max_len", 256)
         self.predictor = JEPAPredictor(latent_z_dim=self.latent_dim, max_len=max_len)
@@ -118,7 +118,7 @@ class JEPAModel(L.LightningModule):
             self.lr_scheduler.step(val_loss)
 
     def _encode_mean(self, encoder, batch: Dict) -> torch.Tensor:
-        """Run an encoder and return only the deterministic mean latent (no variance /sampling)."""
+        """Encoder that only returns the deterministic mean latent (no var)."""
         return encoder(batch)["mean"]  # [B, L, latent_z_dim]
 
     def compute_loss(self, batch: Dict, stage: str = "train") -> Dict[str, torch.Tensor]:
@@ -134,6 +134,7 @@ class JEPAModel(L.LightningModule):
         masked_batch = mask_batch_for_encoder(batch, context_mask)
         online_mean = self._encode_mean(self.online_encoder, masked_batch)  # [B, L, latent_z_dim], only context positions carry signal
 
+        # Representation collape monitoring
         # Std of the online latents over real context residues, per latent dim,
         # averaged over dims. If the representation is collapsing, this drops to 0 
         latent_std = online_mean[context_mask.bool()].std(dim=0).mean()
@@ -163,23 +164,27 @@ class JEPAModel(L.LightningModule):
             masked_latents["context_latents"],                       # [B, L_ctx, latent_z_dim]
             masked_latents["context_indices"],                       # [B, L_ctx]
             masked_latents["target_indices"],                        # [B, L_tgt]
-            key_padding_mask=masked_latents["context_padding_mask"], # [B, L_ctx]
+            key_padding_mask=masked_latents["context_padding"], # [B, L_ctx]
         )  # [B, L_tgt, latent_z_dim]
 
         # EMA target encoder mean latents.
-        # Reusing apply_mask_to_latents with the same masks gives target latents in the
-        # exact order/padding as `predicted_latent`
         with torch.no_grad():
+            # Encoder sees all n residues 
             ema_mean = self._encode_mean(self.ema_encoder, batch)  # [B, L, latent_z_dim]
+        # split the encoded latents on context / target masks
         ema_masked_latents = apply_mask_to_latents(ema_mean, context_mask, target_mask)
-        ema_target = ema_masked_latents["target_latents"]  # [B, L_tgt, latent_z_dim]
+        # Select only k target latents from n encoded
+        ema_target = ema_masked_latents["target_latents"]  # regression target; [B, L_tgt, latent_z_dim]
+        # target latents is already padded (diff. proteins have different target counts)
 
         # Smooth-L1 over real target residues only (drop padding)
-        target_padding_mask = masked_latents["target_padding_mask"]  # [B, L_tgt], True = padding
-        real_target_mask = ~target_padding_mask
+        target_padding = masked_latents["target_padding"]  # [B, L_tgt], True = padding
+        real_target_residues = torch.logical_not(target_padding)
+
+        # L1 for large losses, L2 for small losses, beta at 1.0
         loss = F.smooth_l1_loss(
-            predicted_latent[real_target_mask],  # [n_real_targets, latent_z_dim]
-            ema_target[real_target_mask],        # [n_real_targets, latent_z_dim]
+            predicted_latent[real_target_residues],  # [n_real_targets, latent_z_dim]
+            ema_target[real_target_residues],        # [n_real_targets, latent_z_dim]
         )
 
         # Predictor-output vs. target-encoder stats and their cosine similarity
@@ -187,18 +192,18 @@ class JEPAModel(L.LightningModule):
             bs=predicted_latent.shape[0],
             v=predicted_latent,
             log_prefix=f"{stage}_stats_latent_predicted_LS",
-            mask=real_target_mask,
+            mask=real_target_residues,
             histogram_every_n=5000,
         )
         self.log_tensor_statistics(
             bs=ema_target.shape[0],
             v=ema_target,
             log_prefix=f"{stage}_stats_latent_target_LS",
-            mask=real_target_mask,
+            mask=real_target_residues,
             histogram_every_n=5000,
         )
         cos_sim = F.cosine_similarity(
-            predicted_latent[real_target_mask], ema_target[real_target_mask], dim=-1
+            predicted_latent[real_target_residues], ema_target[real_target_residues], dim=-1
         ).mean()
         self.log(
             f"{stage}_predicted_target_cosine_sim",
@@ -215,7 +220,7 @@ class JEPAModel(L.LightningModule):
         # Collapse-monitoring stds for the three components (online encoder, target encoder, predictor)
         online_latent_std = online_mean[context_mask.bool()].std()
         target_latent_std = ema_mean[mask.bool()].std()
-        pred_latent_std = predicted_latent[real_target_mask].std()
+        pred_latent_std = predicted_latent[real_target_residues].std()
 
         return {
             "loss": loss,
@@ -225,6 +230,7 @@ class JEPAModel(L.LightningModule):
             "pred_latent_std": pred_latent_std,
         }
 
+# compute loss -> log -> return loss
     def training_step(self, batch: Dict, batch_idx: int):
         bs = batch["mask_dict"]["coords"].shape[0]
         out = self.compute_loss(batch, stage="train")

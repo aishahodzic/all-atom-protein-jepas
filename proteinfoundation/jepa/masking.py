@@ -4,21 +4,20 @@ import torch
 def random_residue_mask(batch, masked_pct=0.5):
     """Split each protein's valid residues into context and target sets for JEPA.
 
-    For every protein we randomly assign ``masked_pct`` of its valid (non-padding)
-    residues to the target (masked) set and the remainder to the context set. The
-    predictor later uses the context residues' latents to predict the target
-    residues' latents.
+    For every protein we randomly assign ``masked_pct`` of its valid
+    residues to the target set and the remainder to the context set. 
 
     Returns two boolean masks over residues, each [n_proteins, n_residues]. They are
     mutually exclusive and only ever True on valid residues (padding is always False).
     """
+    # take valid residues - residues that are not padding
     valid_res = batch["mask_dict"]["coords"][..., 0, 0].bool()  # [n_proteins, n_residues]
     n_proteins, n_residues = valid_res.shape
 
     context_mask = torch.zeros_like(valid_res)  # [n_proteins, n_residues]
     target_mask = torch.zeros_like(valid_res)   # [n_proteins, n_residues]
 
-    # different random context/target split per protein in the batch
+    # for each protein, permute the residue indices and split into context and target sets
     for i in range(n_proteins):
         res_idx = torch.where(valid_res[i])[0]  # [n_valid_i] indices of this protein's valid residues
         n_valid = len(res_idx)
@@ -26,6 +25,7 @@ def random_residue_mask(batch, masked_pct=0.5):
         # permute this protein's valid residue indices to randomise the split
         perm = res_idx[torch.randperm(n_valid, device=valid_res.device)]  # [n_valid_i]
 
+        #take x% of valid residues as target, the rest as context
         n_target = int(n_valid * masked_pct)
         target_mask[i, perm[:n_target]] = True    # first n_target residues -> target (masked)
         context_mask[i, perm[n_target:]] = True   # remaining residues -> context
@@ -48,14 +48,15 @@ def apply_mask_to_latents(latents, context_mask, target_mask):
         context_indices:      [B, L_ctx] long           context residue positions (pad=0)
         target_latents:       [B, L_tgt, latent_z_dim]  padded target latents
         target_indices:       [B, L_tgt] long           target residue positions (pad=0)
-        context_padding_mask: [B, L_ctx] bool           True where context is padding
-        target_padding_mask:  [B, L_tgt] bool           True where target is padding
+        context_padding: [B, L_ctx] bool           True where context is padding
+        target_padding:  [B, L_tgt] bool           True where target is padding
     """
 
     B, L, latent_z_dim = latents.shape
     device = latents.device
 
-    # gather each protein's context/target latents and indices (variable length per protein)
+    #Variable lengths: each protein has a different num. of context/target residues
+    # gather each protein's context/target latents and indices
     context_lat_list, context_idx_list = [], []
     target_lat_list, target_idx_list = [], []
     for i in range(B):  # loop only over the batch dimension
@@ -66,7 +67,8 @@ def apply_mask_to_latents(latents, context_mask, target_mask):
         context_idx_list.append(c_idx)              # [n_ctx_i]
         target_idx_list.append(t_idx)               # [n_tgt_i]
 
-    # pad to the batch-wide maximum count so the sets can be stacked into one tensor
+    # Compute max num el. of each residue
+    # then pad to the batch's maximum count so the residues can be stacked into one tensor
     L_ctx = max(idx.numel() for idx in context_idx_list)  # max context residues across batch
     L_tgt = max(idx.numel() for idx in target_idx_list)   # max target residues across batch
 
@@ -74,9 +76,10 @@ def apply_mask_to_latents(latents, context_mask, target_mask):
     target_latents = torch.zeros(B, L_tgt, latent_z_dim, device=device, dtype=latents.dtype)
     context_indices = torch.zeros(B, L_ctx, device=device, dtype=torch.long)  # pad with 0
     target_indices = torch.zeros(B, L_tgt, device=device, dtype=torch.long)   # pad with 0
-    context_padding_mask = torch.ones(B, L_ctx, device=device, dtype=torch.bool)  # True = padding
-    target_padding_mask = torch.ones(B, L_tgt, device=device, dtype=torch.bool)   # True = padding
+    context_padding = torch.ones(B, L_ctx, device=device, dtype=torch.bool)  # True = padding
+    target_padding = torch.ones(B, L_tgt, device=device, dtype=torch.bool)   # True = padding
 
+    #Fixed length (with padding) - populate the tensors with valid latents + padding
     for i in range(B):  # loop only over the batch dimension
         n_ctx = context_idx_list[i].numel()
         n_tgt = target_idx_list[i].numel()
@@ -84,14 +87,14 @@ def apply_mask_to_latents(latents, context_mask, target_mask):
         target_latents[i, :n_tgt] = target_lat_list[i]     # [n_tgt_i, latent_z_dim]
         context_indices[i, :n_ctx] = context_idx_list[i]   # [n_ctx_i]
         target_indices[i, :n_tgt] = target_idx_list[i]     # [n_tgt_i]
-        context_padding_mask[i, :n_ctx] = False            # real entries are not padding
-        target_padding_mask[i, :n_tgt] = False
+        context_padding[i, :n_ctx] = False            # real entries are not padding
+        target_padding[i, :n_tgt] = False
 
     return {
         "context_latents": context_latents,            # [B, L_ctx, latent_z_dim]
         "context_indices": context_indices,            # [B, L_ctx]
         "target_latents": target_latents,              # [B, L_tgt, latent_z_dim]
         "target_indices": target_indices,              # [B, L_tgt]
-        "context_padding_mask": context_padding_mask,  # [B, L_ctx]
-        "target_padding_mask": target_padding_mask,    # [B, L_tgt]
+        "context_padding": context_padding,  # [B, L_ctx]
+        "target_padding": target_padding,    # [B, L_tgt]
     }
