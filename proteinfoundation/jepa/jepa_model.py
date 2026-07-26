@@ -152,9 +152,13 @@ class JEPAModel(L.LightningModule):
         batch["mask"] = mask
 
         # Split residues into context / target BEFORE encoding.
-        # `+block_mask=true` at the CLI switches to I-JEPA-style contiguous block masking 
-        mask_fn = block_residue_mask if self.cfg.get("block_mask", False) else random_residue_mask
-        context_mask, target_mask = mask_fn(batch)  # [B, L], [B, L]
+        # `+block_mask=true` at the CLI switches to block masking.
+        # `+masked_pct=0.7` overrides random_residue_mask's default 0.5 (ignored for block masking).
+        if self.cfg.get("block_mask", False):
+            context_mask, target_mask = block_residue_mask(batch)
+        else:
+            masked_pct = self.cfg.get("masked_pct", 0.5)
+            context_mask, target_mask = random_residue_mask(batch, masked_pct=masked_pct)
 
         # Online encoder sees only the n-k context residues
         masked_batch = mask_batch_for_encoder(batch, context_mask)

@@ -8,34 +8,23 @@
 #SBATCH --time=24:00:00
 #SBATCH --output=logs/%x-%j.out
 
-# Bypass ~/.bashrc for conda init: in a batch (non-interactive) shell it isn't
-# reliably wiring up the `conda activate` shell function on every node (seen
-# failing on hopper), so source the profile script directly instead.
+# conda init via ~/.bashrc doesn't work in batch jobs
 source /slurm-storage/miniconda3/etc/profile.d/conda.sh
 conda activate /slurm-storage/aishod/envs/la-proteina
 
-# Submitting shell's TMPDIR (set in .bashrc) points at /data-gauss, which is dead
-# while gauss is down. Override to something that exists on whichever node we land on.
+# /data-gauss is dead, use /tmp
 export TMPDIR=/tmp
 
-# DATA_PATH / HF_TOKEN come from the repo's .env, loaded explicitly here because the
-# run's cwd (below) is not the repo, so train.py's own load_dotenv() (which searches
-# from cwd) would not find it otherwise.
+# load DATA_PATH / HF_TOKEN from repo .env
 set -a
 source /mnt/data/slurm-storage/aishod/projects/la-proteina/.env
 set +a
 
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
-
-# train.py is invoked below by absolute path while cwd is the run dir (not the repo),
-# so Python would only put proteinfoundation/jepa/ on sys.path, not the repo root.
-# Add the repo root explicitly so `import proteinfoundation` resolves.
+# so `import proteinfoundation` resolves from any cwd
 export PYTHONPATH=/mnt/data/slurm-storage/aishod/projects/la-proteina:$PYTHONPATH
 
-# /mnt/hopper-raid is the NFS client-side mount name other nodes (klein/noether) use
-# for hopper:/mnt/raid. On hopper itself, that same storage is local at /mnt/raid, not
-# /mnt/hopper-raid. Rewrite both the data path and the run dir for whichever node this
-# job actually lands on.
+# hopper uses /mnt/raid locally, other nodes use /mnt/hopper-raid over NFS
 if [ "$(hostname -s)" = "hopper" ]; then
     export DATA_PATH="${DATA_PATH/\/mnt\/hopper-raid/\/mnt\/raid}"
     RAID_ROOT=/mnt/raid/aishod
@@ -43,19 +32,10 @@ else
     RAID_ROOT=/mnt/hopper-raid/aishod
 fi
 
-# v3: fresh run name, separate from the earlier jepa_random_masking_70 /
-# jepa_random_masking_70_v2 wandb runs/checkpoints, which are left untouched. Also
-# includes the L2-normalize-before-loss fix in jepa_model.py.
 mkdir -p "$RAID_ROOT/runs/jepa_random_masking_70_v3"
 cd "$RAID_ROOT/runs/jepa_random_masking_70_v3"
 
-# ckpt_resume.py prompts interactively ("Start training from checkpoint? [scratch]:")
-# and there's no terminal attached in a batch job. Answer it via stdin instead of
-# touching that code -- "scratch" is always a valid option since this is a fresh run.
-# +single=true tells train.py to configure Trainer for 1 GPU / 1 node (matches
-# this job's --gres=gpu:1), instead of the config's default ngpus_per_node_=2.
-# dataset.datamodule.num_workers=16 overrides pdb_train_ucond.yaml's num_workers=0
-# (flagged by Lightning as a dataloader bottleneck), validated already in
-# jepa_block_masking_v2 (before it was cancelled) -- independent of GPU count, no downside.
+# "scratch" answers train.py's resume-from-checkpoint prompt
+# flags: +single=true (1 GPU), +masked_pct=0.7, dataset.datamodule.num_workers=16
 echo "scratch" | srun python /mnt/data/slurm-storage/aishod/projects/la-proteina/proteinfoundation/jepa/train.py \
-    run_name_=jepa_random_masking_70_v3 +single=true dataset.datamodule.num_workers=16
+    run_name_=jepa_random_masking_70_v3 +single=true +masked_pct=0.7 dataset.datamodule.num_workers=16
