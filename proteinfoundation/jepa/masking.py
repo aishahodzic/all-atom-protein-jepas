@@ -33,6 +33,45 @@ def random_residue_mask(batch, masked_pct=0.5):
     return context_mask, target_mask
 
 
+def block_residue_mask(batch, num_blocks=4, min_block_ratio=0.15, max_block_ratio=0.30):
+    """Samples ``num_blocks`` independent contiguous blocks per protein, each with a
+    length in ``[min_block_ratio, max_block_ratio]`` of that protein's valid residue
+    count, at a random start position clipped at the sequence boundary (so edge
+    blocks can end up shorter than sampled). Blocks may overlap; their union is the
+    target set.
+
+    Returns two boolean masks over residues, each [n_proteins, n_residues]. They are
+    mutually exclusive and only ever True on valid residues (padding is always False).
+    """
+    valid_res = batch["mask_dict"]["coords"][..., 0, 0].bool()  # [n_proteins, n_residues]
+    n_proteins, n_residues = valid_res.shape
+
+    context_mask = torch.zeros_like(valid_res)  # [n_proteins, n_residues]
+    target_mask = torch.zeros_like(valid_res)   # [n_proteins, n_residues]
+
+    for i in range(n_proteins):
+        res_idx = torch.where(valid_res[i])[0]  # [n_valid_i] indices of this protein's valid residues
+        n_valid = len(res_idx)
+
+        min_len = max(1, int(min_block_ratio * n_valid))
+        max_len = max(min_len, int(max_block_ratio * n_valid))
+
+        block_mask_local = torch.zeros(n_valid, dtype=torch.bool, device=valid_res.device)  # [n_valid_i]
+        for _ in range(num_blocks if n_valid > 0 else 0):
+            block_len = torch.randint(min_len, max_len + 1, (1,), device=valid_res.device).item()
+            start = torch.randint(0, n_valid, (1,), device=valid_res.device).item()
+            end = min(start + block_len, n_valid)  # clip at boundary rather than constrain start
+            block_mask_local[start:end] = True
+
+        target_idx = res_idx[block_mask_local]   # [n_target_i] residue positions covered by a block
+        context_idx = res_idx[~block_mask_local]  # [n_context_i] remaining valid residues
+
+        target_mask[i, target_idx] = True
+        context_mask[i, context_idx] = True
+
+    return context_mask, target_mask
+
+
 def apply_mask_to_latents(latents, context_mask, target_mask):
     """
     Latents stay [B, L, latent_z_dim] in shape but we select the subset where mask is True.

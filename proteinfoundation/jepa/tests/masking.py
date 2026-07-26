@@ -5,7 +5,11 @@ Run with:  python -m proteinfoundation.jepa.tests.masking
 
 import torch
 
-from proteinfoundation.jepa.masking import apply_mask_to_latents, random_residue_mask
+from proteinfoundation.jepa.masking import (
+    apply_mask_to_latents,
+    block_residue_mask,
+    random_residue_mask,
+)
 
 
 def run(batch, masked_pct=0.5):
@@ -107,5 +111,51 @@ valid[1, 8:] = False  # protein 1: 8 valid -> 4 context / 4 target
 batch = {"coords": torch.randn(B, L, 37, 3), "mask_dict": {"coords": valid}}
 print("scenario 4 (apply_mask_to_latents, ragged):")
 run_apply(batch)
+
+def run_block(batch, num_blocks=4, min_block_ratio=0.15, max_block_ratio=0.30):
+    valid_res = batch["mask_dict"]["coords"][..., 0, 0].bool()  # [B, L]
+    context_mask, target_mask = block_residue_mask(
+        batch,
+        num_blocks=num_blocks,
+        min_block_ratio=min_block_ratio,
+        max_block_ratio=max_block_ratio,
+    )
+
+    # context and target never overlap, and together cover exactly the valid residues
+    assert not (context_mask & target_mask).any()
+    assert torch.equal(context_mask | target_mask, valid_res)
+
+    for i in range(valid_res.shape[0]):
+        n_valid = int(valid_res[i].sum())
+        tgt_idx = torch.where(target_mask[i])[0]
+
+        # no target residue past the last valid one for this protein
+        assert tgt_idx.numel() == 0 or int(tgt_idx.max()) < n_valid
+
+        print(
+            f"  protein {i}: valid={n_valid} "
+            f"context={int(context_mask[i].sum())} target={int(target_mask[i].sum())}"
+        )
+
+
+# Scenario 5: single protein, all residues valid -> block masking
+B, L = 1, 128  # batch size, sequence length
+batch = {
+    "coords": torch.randn(B, L, 37, 3),
+    "mask_dict": {"coords": torch.ones(B, L, 37, 3).bool()},
+}
+print("scenario 5 (block masking, B=1, all valid):")
+run_block(batch)
+
+# Scenario 6: padding incl. a small protein (tests edge-block clipping) and a
+# fully-padded protein (n_valid=0, must not crash)
+B, L = 3, 20
+valid = torch.ones(B, L, 37, 3).bool()
+valid[0, 12:] = False  # protein 0: 12 valid residues
+valid[1, 5:] = False  # protein 1: 5 valid residues, small enough to force edge clipping
+valid[2, :] = False  # protein 2: fully padded
+batch = {"coords": torch.randn(B, L, 37, 3), "mask_dict": {"coords": valid}}
+print("scenario 6 (block masking, with padding incl. fully-padded protein):")
+run_block(batch)
 
 print("all checks passed")

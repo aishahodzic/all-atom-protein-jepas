@@ -27,7 +27,11 @@ import torch.nn.functional as F
 import wandb
 from sklearn.decomposition import PCA
 
-from proteinfoundation.jepa.masking import apply_mask_to_latents, random_residue_mask
+from proteinfoundation.jepa.masking import (
+    apply_mask_to_latents,
+    block_residue_mask,
+    random_residue_mask,
+)
 from proteinfoundation.jepa.predictor import JEPAPredictor
 from proteinfoundation.partial_autoencoder.encoder import EncoderTransformer
 
@@ -93,9 +97,14 @@ class JEPAModel(L.LightningModule):
         self.lr_scheduler = None  # set in configure_optimizers, stepped manually in on_validation_end
         self._pending_lr_scheduler_state = None  # applied in configure_optimizers once the scheduler exists
 
+        # Grace period: don't let the LR scheduler react for the first N steps
+        self._lr_warmup_steps = 30000
+        self._grace_best_val_loss = None
+
     def on_save_checkpoint(self, checkpoint):
         checkpoint["nsamples_processed"] = self.nsamples_processed
         checkpoint["lr_scheduler_state"] = self.lr_scheduler.state_dict()
+        checkpoint["grace_best_val_loss"] = self._grace_best_val_loss
 
     def on_load_checkpoint(self, checkpoint):
         try:
@@ -108,14 +117,29 @@ class JEPAModel(L.LightningModule):
             # checkpoints saved before the switch to manual stepping
             # kept scheduler state under Lightning's own "lr_schedulers" key instead.
             self._pending_lr_scheduler_state = checkpoint["lr_schedulers"][0]
+        self._grace_best_val_loss = checkpoint.get("grace_best_val_loss")
 
     def on_validation_end(self):
         # Manually stepped, not registered via configure_optimizers' scheduler dict:
         if self.trainer.sanity_checking:
             return
         val_loss = self.trainer.callback_metrics.get("val_loss")
-        if val_loss is not None:
-            self.lr_scheduler.step(val_loss)
+        if val_loss is None:
+            return
+
+        if self.global_step < self._lr_warmup_steps:
+            # Grace period: don't step the scheduler at all, but track the true best value
+            val_loss_val = float(val_loss)
+            if self._grace_best_val_loss is None or val_loss_val < self._grace_best_val_loss:
+                self._grace_best_val_loss = val_loss_val
+            return
+
+        if self._grace_best_val_loss is not None:
+            # Grace period end; seed the scheduler with the true best seen so far
+            self.lr_scheduler.best = self._grace_best_val_loss
+            self._grace_best_val_loss = None  # only seed once
+
+        self.lr_scheduler.step(val_loss)
 
     def _encode_mean(self, encoder, batch: Dict) -> torch.Tensor:
         """Encoder that only returns the deterministic mean latent (no var)."""
@@ -127,8 +151,10 @@ class JEPAModel(L.LightningModule):
         mask = batch["mask_dict"]["coords"][..., 0, 0]  # [B, L] boolean
         batch["mask"] = mask
 
-        # Split residues into context / target BEFORE encoding
-        context_mask, target_mask = random_residue_mask(batch)  # [B, L], [B, L]
+        # Split residues into context / target BEFORE encoding.
+        # `+block_mask=true` at the CLI switches to I-JEPA-style contiguous block masking 
+        mask_fn = block_residue_mask if self.cfg.get("block_mask", False) else random_residue_mask
+        context_mask, target_mask = mask_fn(batch)  # [B, L], [B, L]
 
         # Online encoder sees only the n-k context residues
         masked_batch = mask_batch_for_encoder(batch, context_mask)
@@ -181,11 +207,12 @@ class JEPAModel(L.LightningModule):
         target_padding = masked_latents["target_padding"]  # [B, L_tgt], True = padding
         real_target_residues = torch.logical_not(target_padding)
 
+        # L2-normalize before the loss so magnitude drift between predicted and target latents doesn't dominate the loss
+        predicted_norm = F.normalize(predicted_latent[real_target_residues], dim=-1)
+        ema_target_norm = F.normalize(ema_target[real_target_residues], dim=-1)
+
         # L1 for large losses, L2 for small losses, beta at 1.0
-        loss = F.smooth_l1_loss(
-            predicted_latent[real_target_residues],  # [n_real_targets, latent_z_dim]
-            ema_target[real_target_residues],        # [n_real_targets, latent_z_dim]
-        )
+        loss = F.smooth_l1_loss(predicted_norm, ema_target_norm)
 
         # Predictor-output vs. target-encoder stats and their cosine similarity
         self.log_tensor_statistics(
@@ -469,9 +496,9 @@ class JEPAModel(L.LightningModule):
             amsgrad=True,
             weight_decay=1e-2,
         )
-        # Cuts LR in half after 2 val check with no improvement
+        # Cuts LR in half after 4 val checks with no improvement
         self.lr_scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
-            optimizer, mode="min", factor=0.5, patience=2, threshold=1e-2, threshold_mode="rel",
+            optimizer, mode="min", factor=0.5, patience=4, threshold=1e-2, threshold_mode="rel",
             min_lr=1e-6,
         )
         if self._pending_lr_scheduler_state is not None:
