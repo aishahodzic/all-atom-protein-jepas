@@ -1,0 +1,64 @@
+======================================================================
+Inspecting checkpoint: /mnt/hopper-raid/aishod/runs/jepa_block_masking_v3/store/jepa_block_masking_v3/checkpoints/last.ckpt
+Run: jepa_block_masking_v3_last_seed0
+Loaded model (cfg.run_name_=jepa_block_masking_v3, cfg.block_mask=True)
+Inspection masking used: random_residue_mask
+Seed: 0
+Loading 20 proteins from /mnt/hopper-raid/aishod/data/pdb_train/processed:
+  101m_A, 102l_A, 102m_A, 103l_A, 103m_A, 104l_A, 104l_B, 104m_A, 105m_A, 106m_A, 107l_A, 107m_A, 108l_A, 108m_A, 109l_A, 109m_A, 10af_A, 10ay_A, 10ay_D, 10dc_A
+
+--- Example protein (verbose) ---
+Protein ID: 101m_A
+Sequence length (valid residues): 154
+Context residues: 77   Target residues: 77
+
+--- Evenly-spaced target residues (front/~25%/middle/~75%/end), not just adjacent ---
+Sequence positions picked: [1, 41, 71, 120, 153] (out of 154 valid residues)
+  seq_pos=1:
+    predicted: -1.665 +3.993 +30.892 +15.057 +5.809 -17.757 -11.418 -6.231   ||pred||=41.449
+    target:    -0.800 +2.112 +18.835 +8.648 +4.357 -11.030 -7.068 -3.567   ||target||=25.258
+    cos(pred,target)=0.9991
+  seq_pos=41:
+    predicted: -0.692 +4.053 +29.670 +14.087 +5.308 -18.165 -11.035 -6.157   ||pred||=40.169
+    target:    -0.769 +2.385 +18.403 +9.246 +3.541 -11.406 -7.049 -3.462   ||target||=25.194
+    cos(pred,target)=0.9996
+  seq_pos=71:
+    predicted: -1.371 +3.886 +30.857 +14.436 +5.374 -18.851 -11.540 -6.016   ||pred||=41.607
+    target:    -0.414 +1.854 +18.731 +8.949 +3.786 -11.856 -7.334 -3.471   ||target||=25.598
+    cos(pred,target)=0.9993
+  seq_pos=120:
+    predicted: -1.314 +2.991 +30.354 +14.709 +5.118 -19.158 -11.365 -5.823   ||pred||=41.288
+    target:    -0.625 +1.845 +18.945 +8.800 +3.874 -11.421 -7.202 -3.693   ||target||=25.517
+    cos(pred,target)=0.9993
+  seq_pos=153:
+    predicted: -1.732 +4.217 +30.551 +15.223 +5.651 -18.989 -10.863 -5.741   ||pred||=41.586
+    target:    -0.291 +1.824 +18.754 +8.755 +4.181 -11.819 -7.371 -3.589   ||target||=25.616
+    cos(pred,target)=0.9980
+Mean cosine sim AMONG these 5 widely-spaced predicted latents: 0.9994
+
+--- Raw encoder output on FULL unmasked protein (no masking, no predictor) ---
+Raw ONLINE encoder output [first 5 of 154 residues]:
+  -0.900 +2.207 +18.743 +8.785 +4.157 -11.087 -6.940 -3.585
+  -0.794 +2.123 +18.837 +8.651 +4.346 -11.041 -7.068 -3.585
+  -0.911 +2.039 +18.791 +8.844 +3.743 -11.147 -7.055 -3.661
+  -0.806 +2.078 +18.806 +8.855 +3.769 -11.268 -7.088 -3.673
+  -0.822 +2.064 +18.784 +8.851 +3.853 -11.150 -7.020 -3.677
+Raw EMA encoder output [first 5]:
+  -0.907 +2.196 +18.740 +8.782 +4.168 -11.076 -6.940 -3.568
+  -0.800 +2.112 +18.835 +8.648 +4.357 -11.030 -7.068 -3.567
+  -0.918 +2.028 +18.788 +8.842 +3.754 -11.136 -7.055 -3.643
+  -0.812 +2.067 +18.803 +8.853 +3.780 -11.257 -7.088 -3.655
+  -0.829 +2.053 +18.781 +8.849 +3.865 -11.139 -7.020 -3.660
+Cosine sim, consecutive residues (online encoder): ['0.9999', '0.9997', '1.0000', '1.0000', '1.0000']
+Cosine sim, residue 0 vs residue 100 (same protein, far apart): 0.9995
+
+--- Aggregate stats across all proteins ---
+predicted.std(dim=0)  [8 dims]: ['0.453', '0.470', '0.674', '0.419', '1.008', '0.516', '0.506', '0.344']
+target.std(dim=0)     [8 dims]: ['0.310', '0.273', '0.216', '0.301', '0.737', '0.267', '0.212', '0.141']
+Mean cosine(predicted, target), same residue: 0.9993
+Mean cosine(predicted protein_i, predicted protein_j), i!=j: 0.9992
+Mean cosine(ONLINE ENCODER protein_i, protein_j), i!=j, no masking/predictor: 0.9989
+||predicted|| (raw norm): mean=40.6092  std=0.8077
+PCA explained variance ratio (PC1, PC2): 0.5768, 0.1389
+
+Saved PCA plot to inspect_out/collapse_inspection_jepa_block_masking_v3_last_seed0.png

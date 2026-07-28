@@ -131,3 +131,7 @@ Total structures: 344,065. Training: 338,787, val: 4,775, test: 503.
 
 <img width="747" height="602" alt="Screenshot 2026-07-09 at 14 10 46" src="https://github.com/user-attachments/assets/de4d1d5d-b272-409c-840a-2e417f3881ff" />
 
+## Reports
+
+Report for block masking collapse investigation can be found at [reports/collapse/block_masking](reports/collapse/block_masking).
+
