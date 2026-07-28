@@ -33,12 +33,10 @@ def random_residue_mask(batch, masked_pct=0.5):
     return context_mask, target_mask
 
 
-def block_residue_mask(batch, num_blocks=4, min_block_ratio=0.15, max_block_ratio=0.30):
-    """Samples ``num_blocks`` independent contiguous blocks per protein, each with a
-    length in ``[min_block_ratio, max_block_ratio]`` of that protein's valid residue
-    count, at a random start position clipped at the sequence boundary (so edge
-    blocks can end up shorter than sampled). Blocks may overlap; their union is the
-    target set.
+def block_residue_mask(batch, num_blocks=4, min_block_ratio=0.15, max_block_ratio=0.20):
+    """Splits each protein's valid residues into ``num_blocks`` equal regions and
+    samples one contiguous block per region, each with a length in
+    ``[min_block_ratio, max_block_ratio]`` of the protein's valid residue count.
 
     Returns two boolean masks over residues, each [n_proteins, n_residues]. They are
     mutually exclusive and only ever True on valid residues (padding is always False).
@@ -57,11 +55,20 @@ def block_residue_mask(batch, num_blocks=4, min_block_ratio=0.15, max_block_rati
         max_len = max(min_len, int(max_block_ratio * n_valid))
 
         block_mask_local = torch.zeros(n_valid, dtype=torch.bool, device=valid_res.device)  # [n_valid_i]
-        for _ in range(num_blocks if n_valid > 0 else 0):
-            block_len = torch.randint(min_len, max_len + 1, (1,), device=valid_res.device).item()
-            start = torch.randint(0, n_valid, (1,), device=valid_res.device).item()
-            end = min(start + block_len, n_valid)  # clip at boundary rather than constrain start
-            block_mask_local[start:end] = True
+        region_size = n_valid / num_blocks
+        for b in range(num_blocks if n_valid > 0 else 0):
+            region_start = int(b * region_size)
+            region_end = int((b + 1) * region_size) if b < num_blocks - 1 else n_valid
+            region_len = region_end - region_start
+            if region_len <= 0:
+                continue
+            block_len = min(
+                torch.randint(min_len, max_len + 1, (1,), device=valid_res.device).item(), region_len
+            )
+            max_offset = region_len - block_len
+            offset = torch.randint(0, max_offset + 1, (1,), device=valid_res.device).item()
+            start = region_start + offset
+            block_mask_local[start : start + block_len] = True
 
         target_idx = res_idx[block_mask_local]   # [n_target_i] residue positions covered by a block
         context_idx = res_idx[~block_mask_local]  # [n_context_i] remaining valid residues

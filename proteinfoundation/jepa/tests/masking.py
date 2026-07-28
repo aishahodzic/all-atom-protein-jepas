@@ -112,7 +112,7 @@ batch = {"coords": torch.randn(B, L, 37, 3), "mask_dict": {"coords": valid}}
 print("scenario 4 (apply_mask_to_latents, ragged):")
 run_apply(batch)
 
-def run_block(batch, num_blocks=4, min_block_ratio=0.15, max_block_ratio=0.30):
+def run_block(batch, num_blocks=4, min_block_ratio=0.15, max_block_ratio=0.20):
     valid_res = batch["mask_dict"]["coords"][..., 0, 0].bool()  # [B, L]
     context_mask, target_mask = block_residue_mask(
         batch,
@@ -157,5 +157,47 @@ valid[2, :] = False  # protein 2: fully padded
 batch = {"coords": torch.randn(B, L, 37, 3), "mask_dict": {"coords": valid}}
 print("scenario 6 (block masking, with padding incl. fully-padded protein):")
 run_block(batch)
+
+# Scenario 7: stratified structure -> at most num_blocks distinct masked runs
+B, L = 20, 200
+lengths = torch.randint(50, L + 1, (B,))
+valid = torch.zeros(B, L, 37, 3).bool()
+for i, n in enumerate(lengths):
+    valid[i, :n] = True
+batch = {"coords": torch.randn(B, L, 37, 3), "mask_dict": {"coords": valid}}
+print("scenario 7 (stratified structure, num_blocks upper-bounds run count):")
+num_blocks = 4
+context_mask, target_mask = block_residue_mask(batch, num_blocks=num_blocks)
+for i in range(B):
+    n = int(lengths[i])
+    row = target_mask[i, :n]
+    runs = int(((row[1:] & ~row[:-1]).sum() + row[0]).item()) if n > 0 else 0
+    assert runs <= num_blocks, f"protein {i}: got {runs} masked runs, expected <= {num_blocks}"
+print(f"  all {B} proteins had <= {num_blocks} masked runs")
+
+# Scenario 8: n_valid < num_blocks -> some regions are empty, must not crash
+B, L = 3, 10
+valid = torch.zeros(B, L, 37, 3).bool()
+valid[0, :2] = True   # 2 valid residues, fewer than num_blocks=4
+valid[1, :1] = True   # 1 valid residue
+valid[2, :4] = True   # exactly num_blocks valid residues
+batch = {"coords": torch.randn(B, L, 37, 3), "mask_dict": {"coords": valid}}
+print("scenario 8 (n_valid < num_blocks):")
+run_block(batch)
+
+# Scenario 9: coverage sanity check over a larger, varied-length batch
+B, L = 100, 256
+lengths = torch.randint(50, L + 1, (B,))
+valid = torch.zeros(B, L, 37, 3).bool()
+for i, n in enumerate(lengths):
+    valid[i, :n] = True
+batch = {"coords": torch.randn(B, L, 37, 3), "mask_dict": {"coords": valid}}
+context_mask, target_mask = block_residue_mask(batch)
+coverages = [
+    int(target_mask[i, : int(lengths[i])].sum()) / int(lengths[i]) for i in range(B)
+]
+avg_coverage = sum(coverages) / len(coverages)
+print(f"scenario 9 (coverage sanity, B={B}): avg_coverage={avg_coverage:.3f}")
+assert 0.5 < avg_coverage < 0.85, f"average coverage {avg_coverage:.3f} outside expected range"
 
 print("all checks passed")
