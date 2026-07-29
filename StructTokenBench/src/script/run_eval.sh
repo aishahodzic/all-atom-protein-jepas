@@ -18,7 +18,9 @@
 # missing dependencies into it. Assumes: checkpoints under
 # src/checkpoints/laproteina/{ae/ca-cond,ae/fully_latent,jepa/random_masking}/
 # are already correct (checkpoint download/verification is intentionally NOT
-# handled here).
+# handled here) -- last.ckpt/last-EMA.ckpt/100k-EMA.ckpt still need to be placed
+# there yourself; the jepa-random-masking encoder config json is already checked
+# in alongside where its checkpoint goes, so that one doesn't need downloading.
 
 set -euo pipefail
 
@@ -93,7 +95,10 @@ experiment_model_args () {
             ;;
         jepa-random-masking)
             TOKENIZERNAME="laproteina_jepa"
-            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$REPO_DIR/src/checkpoints/laproteina/jepa/random_masking/last.ckpt tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=/home/projects/msc-thesis/store/jepa_random_mask_with_lr/checkpoints/exp_config_jepa_random_mask_with_lr.json"
+            # exp_config_*.json describes the JEPA encoder architecture (needed to build the
+            # model before loading weights from last.ckpt) -- checked into the repo alongside
+            # the checkpoint dir it belongs to, so it doesn't need re-downloading/regenerating.
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$REPO_DIR/src/checkpoints/laproteina/jepa/random_masking/last.ckpt tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$REPO_DIR/src/checkpoints/laproteina/jepa/random_masking/exp_config_jepa_random_mask_with_lr.json"
             ;;
         *)
             echo "[Error] unknown experiment: $1" >&2
