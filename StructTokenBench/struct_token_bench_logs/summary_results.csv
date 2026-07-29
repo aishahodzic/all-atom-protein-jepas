@@ -1,0 +1,7 @@
+checkpoint,branch,task,metric,fold_test,superfamily_test
+100k,ca-cond-baseline,BindBio,auroc,0.5698,0.5791
+100k,fully_latent,BindBio,auroc,0.6539,0.6573
+100k,jepa-random-masking,BindBio,auroc,0.5571,0.5761
+100k,ca-cond-baseline,BindInt,auroc,0.4560,0.7625
+100k,fully_latent,BindInt,auroc,0.4440,0.8076
+100k,jepa-random-masking,BindInt,auroc,0.4419,0.7954

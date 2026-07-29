@@ -14,8 +14,9 @@ Prerequisites: conda, an NVIDIA GPU box.
    | `ca-cond-baseline` | `python proteinfoundation/partial_autoencoder/train.py` |
    | `fully-latent` | `python proteinfoundation/partial_autoencoder/train.py` |
    | `jepa-latent` | `python proteinfoundation/jepa/train.py` |
+   | `jepa-latent` (70% random mask) | `python proteinfoundation/jepa/train.py +masked_pct=0.7` |
 
-7. Run the matching train command above. It prompts from which checkpoint to resume: pick `last` to pull the latest shared checkpoint or `scratch` to start fresh.
+8. Change the hardware settings (optional) and run the matching train command above. It prompts from which checkpoint to resume: pick `last` to pull the latest shared checkpoint or `scratch` to start fresh.
 
 ### Hardware
 Defined in training_ae.yaml (for AE) and training_jepa.yaml (for Jepa).  
@@ -47,6 +48,8 @@ hf upload msc-thesis-org/checkpoints \
 | `ca-cond-baseline` | `full_pdb_test_release_ae` | `ae/ca-cond` |
 | `fully-latent` | `full_pdb_fully_latent_ae` | `ae/fully_latent` |
 | `jepa-latent` | `jepa_random_mask_with_lr` | `jepa/random_masking` |
+| `jepa-latent` (70% random mask) | `jepa_random_masking_70_v3` | `jepa/random_masking_70pct` |
+
 
 ### Links
 
@@ -74,7 +77,7 @@ main
 - **main**: La Proteina codebase
 - **ca-cond-baseline**: CA-conditioned autoencoder baseline used
 - **fully-latent**: removes explicit CA-coordinate conditioning
-- **jepa-latent**: JEPA with random masking
+- **jepa-latent**: JEPA with random masking (50% and 70%)
 
 ## Experiments
 
