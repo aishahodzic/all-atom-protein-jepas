@@ -58,16 +58,19 @@ class JEPAPredictor(nn.Module):
         self.out_proj = nn.Linear(hidden_dim, latent_z_dim)
 
 #forwad: kv latent + kv pos. embedding -> cross-attention (q vs kv) -> feedforward -> output latent
-    def forward(self, context_latents, context_indices, target_indices, key_padding_mask=None):
+    def forward(self, context_latents, context_indices, target_indices, key_padding_mask=None, action_z=None):
         # context_latents: [B, L_ctx, latent_z_dim]  (encoder mean of visible residues)
         # context_indices: [B, L_ctx]  (long)  residue indices of context residues
         # target_indices:  [B, L_tgt]  (long)  residue indices of target residues
         # key_padding_mask: [B, L_ctx] bool, True at padded context positions to ignore
+        # action_z: [B, 1, hidden_dim] or None
         assert int(target_indices.max()) < self.max_len, "target index exceeds max_len positional table"
         assert int(context_indices.max()) < self.max_len, "context index exceeds max_len positional table"
 
         # queries are just positional embeddings of the target residues
         q = self.pos_emb(target_indices)                    # [B, L_tgt, hidden_dim]
+        if action_z is not None:
+            q = q + action_z                                # [B, L_tgt, hidden_dim], broadcasts over L_tgt
 
         # keys/values: projected context latents plus their positional embeddings
         kv = self.context_proj(context_latents)             # [B, L_ctx, hidden_dim]

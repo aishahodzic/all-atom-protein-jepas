@@ -23,6 +23,7 @@ from typing import Dict, List
 import lightning as L
 import matplotlib.pyplot as plt
 import torch
+import torch.nn as nn
 import torch.nn.functional as F
 import wandb
 from sklearn.decomposition import PCA
@@ -62,13 +63,84 @@ def mask_batch_for_encoder(batch: Dict, context_mask: torch.Tensor) -> Dict:
     return masked_batch
 
 
+def uniform_sampling(exclude_idx: torch.Tensor) -> torch.Tensor:
+    """Samples one amino-acid index uniformly from the 20 AAs, excluding `exclude_idx`.
+
+    Args:
+        exclude_idx: [B] long, AA index to exclude per element; only 0-19 is excludable
+
+    Returns:
+        [B] long, sampled AA index; != exclude_idx whenever exclude_idx was in [0, 19]
+    """
+    B = exclude_idx.shape[0]
+    device = exclude_idx.device
+    can_exclude = (exclude_idx >= 0) & (exclude_idx <= 19)  # [B]
+    safe_exclude = exclude_idx.clamp(0, 19)  # [B]
+
+    full = torch.arange(20, device=device).expand(B, 20)  # [B, 20]
+    remaining = full[full != safe_exclude.unsqueeze(1)].view(B, 19)  # [B, 19]
+    pick_19 = torch.randint(0, 19, (B,), device=device)  # [B]
+    excluded_choice = remaining[torch.arange(B, device=device), pick_19]  # [B]
+
+    unrestricted_choice = torch.randint(0, 20, (B,), device=device)  # [B]
+    return torch.where(can_exclude, excluded_choice, unrestricted_choice)  # [B]
+
+
+def sample_mutation(valid_mask: torch.Tensor, residue_type: torch.Tensor):
+    """Samples one random point mutation per protein.
+
+    Args:
+        valid_mask:   [B, L] bool, True on non-padding residues
+        residue_type: [B, L] long, current (wildtype) amino-acid index (0-19) per residue
+
+    Returns:
+        mutation_positions: [B] long, sampled residue position per protein
+        mutated_aa: [B] long, sampled new amino-acid index (0-19) per protein
+    """
+    B, L = valid_mask.shape
+    device = valid_mask.device
+
+    scores = torch.rand(B, L, device=device)  # [B, L]
+    scores = scores.masked_fill(~valid_mask, float("-inf"))  # [B, L]
+    mutation_positions = scores.argmax(dim=-1)  # [B]
+
+    wildtype_aa = residue_type[torch.arange(B, device=device), mutation_positions]  # [B]
+    mutated_aa = uniform_sampling(wildtype_aa)  # [B]
+
+    return mutation_positions, mutated_aa  # [B] long, [B] long
+
+
+def apply_mutation(batch: Dict, position: torch.Tensor, mutated_aa: torch.Tensor) -> Dict:
+    """Returns a copy of `batch` with one residue's identity mutated per protein.
+
+    Args:
+        batch:          dict with "residue_type" [B, L] long
+        position:       [B] long, mutation position (index into L) per protein
+        mutated_aa: [B] long, new amino-acid index (0-19) per protein
+
+    Returns a shallow copy of `batch` with "residue_type" replaced at `[b, position[b]]`
+    for each protein b; every other key is the same reference as in the input batch.
+    """
+    B = batch["residue_type"].shape[0]
+    residue_type = batch["residue_type"].clone()  # [B, L]
+    residue_type[torch.arange(B, device=residue_type.device), position] = mutated_aa  # [B, L]
+
+    mutated_batch = dict(batch)
+    mutated_batch["residue_type"] = residue_type  # [B, L]
+    return mutated_batch
+
+
 class JEPAModel(L.LightningModule):
-    def __init__(self, cfg, ema_decay=0.996):
+    def __init__(self, cfg, ema_decay=0.996, use_le_jepa: bool = False):
         super().__init__()
         self.save_hyperparameters(ignore=["cfg"])
         self.cfg = cfg
         self.ema_decay = ema_decay
         self.latent_dim = self.cfg.nn_ae["latent_z_dim"]  # 8
+
+        self.use_le_jepa = use_le_jepa
+        if self.use_le_jepa:
+            self.mutation_embedding = nn.Embedding(20, 128)  # matches predictor hidden_dim
 
         # Online encoder: trained via backprop, reuses the existing encoder architecture
         self.online_encoder = EncoderTransformer(**self.cfg.nn_ae)
@@ -189,18 +261,32 @@ class JEPAModel(L.LightningModule):
         # Pack the (context-only) online latents into dense context/target tensors
         masked_latents = apply_mask_to_latents(online_mean, context_mask, target_mask)
 
-        # Predict target latents from context latents (+ positions)
+        action_z = None
+        ema_batch = batch
+        if self.use_le_jepa:
+            mutation_positions, mutated_aa = sample_mutation(
+                mask.bool(), batch["residue_type"]
+            )  # [B], [B]
+            ema_batch = apply_mutation(batch, mutation_positions, mutated_aa)
+
+            action_z = self.mutation_embedding(mutated_aa) + self.predictor.pos_emb(
+                mutation_positions
+            )  # [B, hidden_dim]
+            action_z = action_z.unsqueeze(1)  # [B, 1, hidden_dim], broadcasts over target queries
+
+        # Predict target latents from context latents (+ positions [+ action_z])
         predicted_latent = self.predictor(
             masked_latents["context_latents"],                       # [B, L_ctx, latent_z_dim]
             masked_latents["context_indices"],                       # [B, L_ctx]
             masked_latents["target_indices"],                        # [B, L_tgt]
             key_padding_mask=masked_latents["context_padding"], # [B, L_ctx]
+            action_z=action_z,
         )  # [B, L_tgt, latent_z_dim]
 
         # EMA target encoder mean latents.
         with torch.no_grad():
-            # Encoder sees all n residues 
-            ema_mean = self._encode_mean(self.ema_encoder, batch)  # [B, L, latent_z_dim]
+            # Encoder sees all n residues
+            ema_mean = self._encode_mean(self.ema_encoder, ema_batch)  # [B, L, latent_z_dim]
         # split the encoded latents on context / target masks
         ema_masked_latents = apply_mask_to_latents(ema_mean, context_mask, target_mask)
         # Select only k target latents from n encoded
@@ -216,7 +302,34 @@ class JEPAModel(L.LightningModule):
         ema_target_norm = F.normalize(ema_target[real_target_residues], dim=-1)
 
         # L1 for large losses, L2 for small losses, beta at 1.0
-        loss = F.smooth_l1_loss(predicted_norm, ema_target_norm)
+        jepa_loss = F.smooth_l1_loss(predicted_norm, ema_target_norm)
+        loss = jepa_loss
+
+        sigreg_loss = None
+        z_sensitivity = None
+        if self.use_le_jepa:
+            z2_aa = uniform_sampling(mutated_aa)  # [B], != z1's mutated AA
+            action_z2 = self.mutation_embedding(z2_aa) + self.predictor.pos_emb(
+                mutation_positions
+            )  # [B, hidden_dim]
+            action_z2 = action_z2.unsqueeze(1)  # [B, 1, hidden_dim]
+
+            predicted_latent_z2 = self.predictor(
+                masked_latents["context_latents"],
+                masked_latents["context_indices"],
+                masked_latents["target_indices"],
+                key_padding_mask=masked_latents["context_padding"],
+                action_z=action_z2,
+            )  # [B, L_tgt, latent_z_dim]
+
+            numerator = (
+                predicted_latent[real_target_residues] - predicted_latent_z2[real_target_residues]
+            ).norm(dim=-1).mean()
+            denominator = (action_z - action_z2).norm(dim=-1).mean() + 1e-8
+            z_sensitivity = numerator / denominator
+            sigreg_loss = -z_sensitivity
+
+            loss = loss + 0.01 * sigreg_loss
 
         # Predictor-output vs. target-encoder stats and their cosine similarity
         self.log_tensor_statistics(
@@ -255,10 +368,13 @@ class JEPAModel(L.LightningModule):
 
         return {
             "loss": loss,
+            "jepa_loss": jepa_loss,
             "latent_std": latent_std,
             "online_latent_std": online_latent_std,
             "target_latent_std": target_latent_std,
             "pred_latent_std": pred_latent_std,
+            "sigreg_loss": sigreg_loss,
+            "z_sensitivity": z_sensitivity,
         }
 
 # compute loss -> log -> return loss
@@ -319,6 +435,41 @@ class JEPAModel(L.LightningModule):
             sync_dist=True,
             add_dataloader_idx=False,
         )
+        if out["sigreg_loss"] is not None:
+            self.log(
+                "train_jepa_loss",
+                out["jepa_loss"],
+                on_step=True,
+                on_epoch=True,
+                prog_bar=False,
+                logger=True,
+                batch_size=bs,
+                sync_dist=True,
+                add_dataloader_idx=False,
+            )
+            self.log(
+                "train_sigreg_loss",
+                out["sigreg_loss"],
+                on_step=True,
+                on_epoch=False,
+                prog_bar=False,
+                logger=True,
+                batch_size=bs,
+                sync_dist=True,
+                add_dataloader_idx=False,
+            )
+            self.log(
+                "train_z_sensitivity",
+                out["z_sensitivity"],
+                on_step=True,
+                on_epoch=False,
+                prog_bar=False,
+                logger=True,
+                batch_size=bs,
+                sync_dist=True,
+                add_dataloader_idx=False,
+            )
+
         self.update_n_log_nsamples_processed(bs)
         self.log_nparams()
         return out["loss"]
@@ -348,6 +499,40 @@ class JEPAModel(L.LightningModule):
             sync_dist=True,
             add_dataloader_idx=False,
         )
+        if out["sigreg_loss"] is not None:
+            self.log(
+                "val_jepa_loss",
+                out["jepa_loss"],
+                on_step=False,
+                on_epoch=True,
+                prog_bar=False,
+                logger=True,
+                batch_size=bs,
+                sync_dist=True,
+                add_dataloader_idx=False,
+            )
+            self.log(
+                "val_sigreg_loss",
+                out["sigreg_loss"],
+                on_step=False,
+                on_epoch=True,
+                prog_bar=False,
+                logger=True,
+                batch_size=bs,
+                sync_dist=True,
+                add_dataloader_idx=False,
+            )
+            self.log(
+                "val_z_sensitivity",
+                out["z_sensitivity"],
+                on_step=False,
+                on_epoch=True,
+                prog_bar=False,
+                logger=True,
+                batch_size=bs,
+                sync_dist=True,
+                add_dataloader_idx=False,
+            )
         return out["loss"]
 
     def log_histogram(self, id_log: str, v: torch.Tensor):
