@@ -131,7 +131,14 @@ def apply_mutation(batch: Dict, position: torch.Tensor, mutated_aa: torch.Tensor
 
 
 class JEPAModel(L.LightningModule):
-    def __init__(self, cfg, ema_decay=0.996, use_le_jepa: bool = False):
+    def __init__(
+        self,
+        cfg,
+        ema_decay=0.996,
+        use_le_jepa: bool = False,
+        sigreg_warmup_steps: int = 25000,
+        sigreg_anneal_steps: int = 50000,
+    ):
         super().__init__()
         self.save_hyperparameters(ignore=["cfg"])
         self.cfg = cfg
@@ -139,6 +146,8 @@ class JEPAModel(L.LightningModule):
         self.latent_dim = self.cfg.nn_ae["latent_z_dim"]  # 8
 
         self.use_le_jepa = use_le_jepa
+        self.sigreg_warmup_steps = sigreg_warmup_steps
+        self.sigreg_anneal_steps = sigreg_anneal_steps
         if self.use_le_jepa:
             self.mutation_embedding = nn.Embedding(20, 128)  # matches predictor hidden_dim
 
@@ -171,12 +180,12 @@ class JEPAModel(L.LightningModule):
 
         # Grace period: don't let the LR scheduler react for the first N steps
         self._lr_warmup_steps = 30000
-        self._grace_best_val_loss = None
+        self._lr_scheduler_seeded = False  # reseed .best once, right when grace ends
 
     def on_save_checkpoint(self, checkpoint):
         checkpoint["nsamples_processed"] = self.nsamples_processed
         checkpoint["lr_scheduler_state"] = self.lr_scheduler.state_dict()
-        checkpoint["grace_best_val_loss"] = self._grace_best_val_loss
+        checkpoint["lr_scheduler_seeded"] = self._lr_scheduler_seeded
 
     def on_load_checkpoint(self, checkpoint):
         try:
@@ -189,7 +198,9 @@ class JEPAModel(L.LightningModule):
             # checkpoints saved before the switch to manual stepping
             # kept scheduler state under Lightning's own "lr_schedulers" key instead.
             self._pending_lr_scheduler_state = checkpoint["lr_schedulers"][0]
-        self._grace_best_val_loss = checkpoint.get("grace_best_val_loss")
+        # defaults False for checkpoints saved before this key existed, so the reseed
+        # below still fires once this (resumed) run crosses _lr_warmup_steps again
+        self._lr_scheduler_seeded = checkpoint.get("lr_scheduler_seeded", False)
 
     def on_validation_end(self):
         # Manually stepped, not registered via configure_optimizers' scheduler dict:
@@ -200,18 +211,27 @@ class JEPAModel(L.LightningModule):
             return
 
         if self.global_step < self._lr_warmup_steps:
-            # Grace period: don't step the scheduler at all, but track the true best value
-            val_loss_val = float(val_loss)
-            if self._grace_best_val_loss is None or val_loss_val < self._grace_best_val_loss:
-                self._grace_best_val_loss = val_loss_val
-            return
+            return  # grace period: don't step or seed the scheduler yet
 
-        if self._grace_best_val_loss is not None:
-            # Grace period end; seed the scheduler with the true best seen so far
-            self.lr_scheduler.best = self._grace_best_val_loss
-            self._grace_best_val_loss = None  # only seed once
+        if not self._lr_scheduler_seeded:
+            # seed with val_loss AT grace-end, not the min seen during grace ( min
+            # can reflect an early not-yet-diverged online/EMA state, not real learning)
+            self.lr_scheduler.best = float(val_loss)
+            self.lr_scheduler.num_bad_epochs = 0
+            self._lr_scheduler_seeded = True
 
         self.lr_scheduler.step(val_loss)
+
+    def _sigreg_lambda(self) -> float:
+        """Anneals the sigreg weight 0.01 -> 0.001 over sigreg_anneal_steps, after
+        sigreg_warmup_steps at the fixed 0.01."""
+        gs = self.global_step
+        if gs < self.sigreg_warmup_steps:
+            return 0.01
+        if gs < self.sigreg_warmup_steps + self.sigreg_anneal_steps:
+            progress = (gs - self.sigreg_warmup_steps) / self.sigreg_anneal_steps
+            return max(0.001, 0.01 - (0.01 - 0.001) * progress)
+        return 0.001
 
     def _encode_mean(self, encoder, batch: Dict) -> torch.Tensor:
         """Encoder that only returns the deterministic mean latent (no var)."""
@@ -262,6 +282,7 @@ class JEPAModel(L.LightningModule):
         masked_latents = apply_mask_to_latents(online_mean, context_mask, target_mask)
 
         action_z = None
+        mutation_positions = None
         ema_batch = batch
         if self.use_le_jepa:
             mutation_positions, mutated_aa = sample_mutation(
@@ -281,6 +302,7 @@ class JEPAModel(L.LightningModule):
             masked_latents["target_indices"],                        # [B, L_tgt]
             key_padding_mask=masked_latents["context_padding"], # [B, L_ctx]
             action_z=action_z,
+            action_position=mutation_positions,
         )  # [B, L_tgt, latent_z_dim]
 
         # EMA target encoder mean latents.
@@ -320,16 +342,36 @@ class JEPAModel(L.LightningModule):
                 masked_latents["target_indices"],
                 key_padding_mask=masked_latents["context_padding"],
                 action_z=action_z2,
+                action_position=mutation_positions,
             )  # [B, L_tgt, latent_z_dim]
 
-            numerator = (
-                predicted_latent[real_target_residues] - predicted_latent_z2[real_target_residues]
-            ).norm(dim=-1).mean()
-            denominator = (action_z - action_z2).norm(dim=-1).mean() + 1e-8
+            # L2-normalize before the distance so neither side can inflate its raw
+            # output scale to game z_sensitivity (caps numerator/denominator to [0, 2] each).
+            predicted_norm_z2 = F.normalize(predicted_latent_z2[real_target_residues], dim=-1)
+            numerator = (predicted_norm - predicted_norm_z2).norm(dim=-1).mean()
+            action_norm_z1 = F.normalize(action_z, dim=-1)
+            action_norm_z2 = F.normalize(action_z2, dim=-1)
+            denominator = (action_norm_z1 - action_norm_z2).norm(dim=-1).mean() + 1e-8
             z_sensitivity = numerator / denominator
             sigreg_loss = -z_sensitivity
 
-            loss = loss + 0.01 * sigreg_loss
+            lambda_sigreg = self._sigreg_lambda()
+            loss = loss + lambda_sigreg * sigreg_loss
+
+            debug_log_kwargs = dict(
+                on_step=True,
+                on_epoch=False,
+                prog_bar=False,
+                logger=True,
+                batch_size=predicted_latent.shape[0],
+                sync_dist=True,
+                add_dataloader_idx=False,
+            )
+            self.log(f"{stage}_debug/sigreg_lambda", lambda_sigreg, **debug_log_kwargs)
+            self.log(f"{stage}_debug/sigreg_numerator", numerator, **debug_log_kwargs)
+            self.log(f"{stage}_debug/sigreg_denominator", denominator, **debug_log_kwargs)
+            self.log(f"{stage}_debug/action_z_norm", action_z.norm(dim=-1).mean(), **debug_log_kwargs)
+            self.log(f"{stage}_debug/action_z2_norm", action_z2.norm(dim=-1).mean(), **debug_log_kwargs)
 
         # Predictor-output vs. target-encoder stats and their cosine similarity
         self.log_tensor_statistics(
