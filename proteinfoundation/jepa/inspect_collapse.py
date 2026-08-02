@@ -74,7 +74,7 @@ def load_model(checkpoint_path: str) -> JEPAModel:
         )
     cfg = OmegaConf.create(json.loads(exp_config_candidates[0].read_text()))
 
-    model = JEPAModel(cfg, use_le_jepa=cfg.get("use_le_jepa", False))
+    model = JEPAModel(cfg, use_action_conditioning=cfg.get("use_action_conditioning", False))
     state = torch.load(ckpt_path, map_location="cpu", weights_only=False)
     model.load_state_dict(state["state_dict"])
     model.eval()

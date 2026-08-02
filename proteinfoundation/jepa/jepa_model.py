@@ -135,9 +135,9 @@ class JEPAModel(L.LightningModule):
         self,
         cfg,
         ema_decay=0.996,
-        use_le_jepa: bool = False,
-        sigreg_warmup_steps: int = 25000,
-        sigreg_anneal_steps: int = 50000,
+        use_action_conditioning: bool = False,
+        action_reg_warmup_steps: int = 25000,
+        action_reg_anneal_steps: int = 50000,
     ):
         super().__init__()
         self.save_hyperparameters(ignore=["cfg"])
@@ -145,10 +145,10 @@ class JEPAModel(L.LightningModule):
         self.ema_decay = ema_decay
         self.latent_dim = self.cfg.nn_ae["latent_z_dim"]  # 8
 
-        self.use_le_jepa = use_le_jepa
-        self.sigreg_warmup_steps = sigreg_warmup_steps
-        self.sigreg_anneal_steps = sigreg_anneal_steps
-        if self.use_le_jepa:
+        self.use_action_conditioning = use_action_conditioning
+        self.action_reg_warmup_steps = action_reg_warmup_steps
+        self.action_reg_anneal_steps = action_reg_anneal_steps
+        if self.use_action_conditioning:
             self.mutation_embedding = nn.Embedding(20, 128)  # matches predictor hidden_dim
 
         # Online encoder: trained via backprop, reuses the existing encoder architecture
@@ -222,14 +222,14 @@ class JEPAModel(L.LightningModule):
 
         self.lr_scheduler.step(val_loss)
 
-    def _sigreg_lambda(self) -> float:
-        """Anneals the sigreg weight 0.01 -> 0.001 over sigreg_anneal_steps, after
-        sigreg_warmup_steps at the fixed 0.01."""
+    def _action_sensitivity_lambda(self) -> float:
+        """Anneals the action_reg weight 0.01 -> 0.001 over action_reg_anneal_steps, after
+        action_reg_warmup_steps at the fixed 0.01."""
         gs = self.global_step
-        if gs < self.sigreg_warmup_steps:
+        if gs < self.action_reg_warmup_steps:
             return 0.01
-        if gs < self.sigreg_warmup_steps + self.sigreg_anneal_steps:
-            progress = (gs - self.sigreg_warmup_steps) / self.sigreg_anneal_steps
+        if gs < self.action_reg_warmup_steps + self.action_reg_anneal_steps:
+            progress = (gs - self.action_reg_warmup_steps) / self.action_reg_anneal_steps
             return max(0.001, 0.01 - (0.01 - 0.001) * progress)
         return 0.001
 
@@ -284,7 +284,7 @@ class JEPAModel(L.LightningModule):
         action_z = None
         mutation_positions = None
         ema_batch = batch
-        if self.use_le_jepa:
+        if self.use_action_conditioning:
             mutation_positions, mutated_aa = sample_mutation(
                 mask.bool(), batch["residue_type"]
             )  # [B], [B]
@@ -327,9 +327,9 @@ class JEPAModel(L.LightningModule):
         jepa_loss = F.smooth_l1_loss(predicted_norm, ema_target_norm)
         loss = jepa_loss
 
-        sigreg_loss = None
+        action_sensitivity_reg = None
         z_sensitivity = None
-        if self.use_le_jepa:
+        if self.use_action_conditioning:
             z2_aa = uniform_sampling(mutated_aa)  # [B], != z1's mutated AA
             action_z2 = self.mutation_embedding(z2_aa) + self.predictor.pos_emb(
                 mutation_positions
@@ -353,10 +353,10 @@ class JEPAModel(L.LightningModule):
             action_norm_z2 = F.normalize(action_z2, dim=-1)
             denominator = (action_norm_z1 - action_norm_z2).norm(dim=-1).mean() + 1e-8
             z_sensitivity = numerator / denominator
-            sigreg_loss = -z_sensitivity
+            action_sensitivity_reg = -z_sensitivity
 
-            lambda_sigreg = self._sigreg_lambda()
-            loss = loss + lambda_sigreg * sigreg_loss
+            lambda_action_sensitivity = self._action_sensitivity_lambda()
+            loss = loss + lambda_action_sensitivity * action_sensitivity_reg
 
             debug_log_kwargs = dict(
                 on_step=True,
@@ -367,9 +367,9 @@ class JEPAModel(L.LightningModule):
                 sync_dist=True,
                 add_dataloader_idx=False,
             )
-            self.log(f"{stage}_debug/sigreg_lambda", lambda_sigreg, **debug_log_kwargs)
-            self.log(f"{stage}_debug/sigreg_numerator", numerator, **debug_log_kwargs)
-            self.log(f"{stage}_debug/sigreg_denominator", denominator, **debug_log_kwargs)
+            self.log(f"{stage}_debug/action_sensitivity_lambda", lambda_action_sensitivity, **debug_log_kwargs)
+            self.log(f"{stage}_debug/action_reg_numerator", numerator, **debug_log_kwargs)
+            self.log(f"{stage}_debug/action_reg_denominator", denominator, **debug_log_kwargs)
             self.log(f"{stage}_debug/action_z_norm", action_z.norm(dim=-1).mean(), **debug_log_kwargs)
             self.log(f"{stage}_debug/action_z2_norm", action_z2.norm(dim=-1).mean(), **debug_log_kwargs)
 
@@ -415,7 +415,7 @@ class JEPAModel(L.LightningModule):
             "online_latent_std": online_latent_std,
             "target_latent_std": target_latent_std,
             "pred_latent_std": pred_latent_std,
-            "sigreg_loss": sigreg_loss,
+            "action_sensitivity_reg": action_sensitivity_reg,
             "z_sensitivity": z_sensitivity,
         }
 
@@ -477,7 +477,7 @@ class JEPAModel(L.LightningModule):
             sync_dist=True,
             add_dataloader_idx=False,
         )
-        if out["sigreg_loss"] is not None:
+        if out["action_sensitivity_reg"] is not None:
             self.log(
                 "train_jepa_loss",
                 out["jepa_loss"],
@@ -490,8 +490,8 @@ class JEPAModel(L.LightningModule):
                 add_dataloader_idx=False,
             )
             self.log(
-                "train_sigreg_loss",
-                out["sigreg_loss"],
+                "train_action_sensitivity_reg",
+                out["action_sensitivity_reg"],
                 on_step=True,
                 on_epoch=False,
                 prog_bar=False,
@@ -541,7 +541,7 @@ class JEPAModel(L.LightningModule):
             sync_dist=True,
             add_dataloader_idx=False,
         )
-        if out["sigreg_loss"] is not None:
+        if out["action_sensitivity_reg"] is not None:
             self.log(
                 "val_jepa_loss",
                 out["jepa_loss"],
@@ -554,8 +554,8 @@ class JEPAModel(L.LightningModule):
                 add_dataloader_idx=False,
             )
             self.log(
-                "val_sigreg_loss",
-                out["sigreg_loss"],
+                "val_action_sensitivity_reg",
+                out["action_sensitivity_reg"],
                 on_step=False,
                 on_epoch=True,
                 prog_bar=False,

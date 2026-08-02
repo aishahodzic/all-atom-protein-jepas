@@ -1,11 +1,11 @@
 #!/bin/bash
-#SBATCH --job-name=le_jepa_v1
+#SBATCH --job-name=mut-jepa_v1
 #SBATCH --partition=h100
 #SBATCH --qos=medium
 #SBATCH --gres=gpu:1
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=16
-#SBATCH --time=24:00:00
+#SBATCH --time=30:00
 #SBATCH --output=logs/%x-%j.out
 
 # conda init via ~/.bashrc doesn't work in batch jobs
@@ -32,10 +32,10 @@ else
     RAID_ROOT=/mnt/hopper-raid/aishod
 fi
 
-mkdir -p "$RAID_ROOT/runs/le_jepa_v1"
-cd "$RAID_ROOT/runs/le_jepa_v1"
+mkdir -p "$RAID_ROOT/runs/mut-jepa_v1"
+cd "$RAID_ROOT/runs/mut-jepa_v1"
 
 # "scratch" answers train.py's resume-from-checkpoint prompt
-# flags: +single=true (1 GPU), +use_le_jepa=true, dataset.datamodule.num_workers=16
+# flags: +single=true (1 GPU), +use_action_conditioning=true, dataset.datamodule.num_workers=16
 echo "scratch" | srun python /mnt/data/slurm-storage/aishod/projects/la-proteina/proteinfoundation/jepa/train.py \
-    run_name_=le_jepa_v1 +single=true +use_le_jepa=true dataset.datamodule.num_workers=16
+    run_name_=mut-jepa_v1 +single=true +use_action_conditioning=true dataset.datamodule.num_workers=16
