@@ -125,7 +125,9 @@ def get_model_n_ckpt_resume(cfg_exp, ckpt_path_store):
     """
     Loads the model and the checkpoint to start training from.
     """
-    model = JEPAModel(cfg_exp)
+    model = JEPAModel(
+        cfg_exp, use_action_conditioning=cfg_exp.get("use_action_conditioning", False)
+    )
     resume_ckpt_path = resolve_resume_checkpoint(model, cfg_exp, ckpt_path_store)
     return model, resume_ckpt_path
 

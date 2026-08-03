@@ -68,7 +68,7 @@ class JEPAPredictor(nn.Module):
         assert int(target_indices.max()) < self.max_len, "target index exceeds max_len positional table"
         assert int(context_indices.max()) < self.max_len, "context index exceeds max_len positional table"
 
-        # queries are just positional embeddings of the target residues
+        # queries are just positional embeddings of the target residues ( + action if present)
         q = self.pos_emb(target_indices)                    # [B, L_tgt, hidden_dim]
         if action_z is not None:
             # mutation of target residue

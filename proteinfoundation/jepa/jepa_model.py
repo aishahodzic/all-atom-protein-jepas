@@ -1,4 +1,4 @@
-"""LeJEPA protein model. No action conditioning (dropped -- not used here).
+"""LeJEPA protein model, with optional action (mutation) conditioning.
 
 Context encoder receives n-k residues, and outputs n-k residue latents.
 Predictor receives n-k residues, and predicts the k target residues.
@@ -67,6 +67,74 @@ def mask_batch_for_encoder(batch: Dict, context_mask: torch.Tensor) -> Dict:
     return masked_batch
 
 
+def uniform_sampling(exclude_idx: torch.Tensor) -> torch.Tensor:
+    """Samples one amino-acid index uniformly from the 20 AAs, excluding `exclude_idx`.
+
+    Args:
+        exclude_idx: [B] long, AA index to exclude per element; only 0-19 is excludable
+
+    Returns:
+        [B] long, sampled AA index; != exclude_idx whenever exclude_idx was in [0, 19]
+    """
+    B = exclude_idx.shape[0]
+    device = exclude_idx.device
+    can_exclude = (exclude_idx >= 0) & (exclude_idx <= 19)  # [B]
+    safe_exclude = exclude_idx.clamp(0, 19)  # [B]
+
+    full = torch.arange(20, device=device).expand(B, 20)  # [B, 20]
+    remaining = full[full != safe_exclude.unsqueeze(1)].view(B, 19)  # [B, 19]
+    pick_19 = torch.randint(0, 19, (B,), device=device)  # [B]
+    excluded_choice = remaining[torch.arange(B, device=device), pick_19]  # [B]
+
+    unrestricted_choice = torch.randint(0, 20, (B,), device=device)  # [B]
+    return torch.where(can_exclude, excluded_choice, unrestricted_choice)  # [B]
+
+
+def sample_mutation(valid_mask: torch.Tensor, residue_type: torch.Tensor):
+    """Samples one random point mutation per protein.
+
+    Args:
+        valid_mask:   [B, L] bool, True on non-padding residues
+        residue_type: [B, L] long, current (wildtype) amino-acid index (0-19) per residue
+
+    Returns:
+        mutation_positions: [B] long, sampled residue position per protein
+        mutated_aa: [B] long, sampled new amino-acid index (0-19) per protein
+    """
+    B, L = valid_mask.shape
+    device = valid_mask.device
+
+    scores = torch.rand(B, L, device=device)  # [B, L]
+    scores = scores.masked_fill(~valid_mask, float("-inf"))  # [B, L]
+    mutation_positions = scores.argmax(dim=-1)  # [B]
+
+    wildtype_aa = residue_type[torch.arange(B, device=device), mutation_positions]  # [B]
+    mutated_aa = uniform_sampling(wildtype_aa)  # [B]
+
+    return mutation_positions, mutated_aa  # [B] long, [B] long
+
+#Note: we're only changing the residue_type in the batch, not the coordinates. The coordinates are still the wildtype coordinates. 
+#We want the model to learn the latent representation of the mutated residue, while being aware of the wildtype coordinates.
+def apply_mutation(batch: Dict, position: torch.Tensor, mutated_aa: torch.Tensor) -> Dict:
+    """Returns a copy of `batch` with one residue's identity mutated per protein.
+
+    Args:
+        batch:          dict with "residue_type" [B, L] long
+        position:       [B] long, mutation position (index into L) per protein
+        mutated_aa: [B] long, new amino-acid index (0-19) per protein
+
+    Returns a shallow copy of `batch` with "residue_type" replaced at `[b, position[b]]`
+    for each protein b; every other key is the same reference as in the input batch.
+    """
+    B = batch["residue_type"].shape[0]
+    residue_type = batch["residue_type"].clone()  # [B, L]
+    residue_type[torch.arange(B, device=residue_type.device), position] = mutated_aa  # [B, L]
+
+    mutated_batch = dict(batch)
+    mutated_batch["residue_type"] = residue_type  # [B, L]
+    return mutated_batch
+
+
 class SIGReg(nn.Module):
     """Sketched Isotropic Gaussian Regularization: projects embeddings onto random
     1D directions and tests (via the Epps-Pulley characteristic-function test on a
@@ -100,12 +168,16 @@ class SIGReg(nn.Module):
 
 
 class JEPAModel(L.LightningModule):
-    def __init__(self, cfg, lamb: float = 0.02):
+    def __init__(self, cfg, lamb: float = 0.02, use_action_conditioning: bool = False):
         super().__init__()
         self.save_hyperparameters(ignore=["cfg"])
         self.cfg = cfg
         self.lamb = lamb
         self.latent_dim = self.cfg.nn_ae["latent_z_dim"]  # 8
+
+        self.use_action_conditioning = use_action_conditioning
+        if self.use_action_conditioning:
+            self.mutation_embedding = nn.Embedding(20, 128)  # matches predictor hidden_dim
 
         # Used for both context and target passes -- no separate target network.
         self.online_encoder = EncoderTransformer(**self.cfg.nn_ae)
@@ -117,6 +189,9 @@ class JEPAModel(L.LightningModule):
         predictor_cfg = self.cfg.get("predictor", {}) or {}
         max_len = predictor_cfg.get("max_len", 256)
         self.predictor = JEPAPredictor(latent_z_dim=self.latent_dim, max_len=max_len)
+
+        # used for below (log_isotropy, log_mutation_sensitivity). 
+        self._diag_step = {"train": 0, "val": 0}
 
         # For scaling/* logging, mirroring the autoencoder (proteinfoundation/partial_autoencoder/autoencoder.py)
         self.nsamples_processed = 0
@@ -132,6 +207,7 @@ class JEPAModel(L.LightningModule):
 
     def on_save_checkpoint(self, checkpoint):
         checkpoint["nsamples_processed"] = self.nsamples_processed
+        checkpoint["diag_step"] = self._diag_step
         checkpoint["lr_scheduler_state"] = self.lr_scheduler.state_dict()
 
     def on_load_checkpoint(self, checkpoint):
@@ -139,6 +215,7 @@ class JEPAModel(L.LightningModule):
             self.nsamples_processed = checkpoint["nsamples_processed"]
         except KeyError:
             self.nsamples_processed = 0
+        self._diag_step = checkpoint.get("diag_step", {"train": 0, "val": 0})
         if "lr_scheduler_state" in checkpoint:
             self._pending_lr_scheduler_state = checkpoint["lr_scheduler_state"]
         elif checkpoint.get("lr_schedulers"):
@@ -161,6 +238,9 @@ class JEPAModel(L.LightningModule):
 
     def compute_loss(self, batch: Dict, stage: str = "train") -> Dict[str, torch.Tensor]:
         """Pure JEPA latent-prediction loss for one batch."""
+        self._diag_step[stage] = self._diag_step.get(stage, 0) + 1
+        diag_step = self._diag_step[stage]
+
         # this mask is for padding vs. real residues [1 0 1 1 0 ...]
         mask = batch["mask_dict"]["coords"][..., 0, 0]  # [B, L] boolean
         batch["mask"] = mask
@@ -203,16 +283,32 @@ class JEPAModel(L.LightningModule):
         # Pack the (context-only) online latents into dense context/target tensors
         masked_latents = apply_mask_to_latents(online_mean, context_mask, target_mask)
 
+        action_z = None
+        mutation_positions = None
+        target_batch = batch
+        if self.use_action_conditioning:
+            mutation_positions, mutated_aa = sample_mutation(
+                mask.bool(), batch["residue_type"]
+            )  # [B], [B]
+            target_batch = apply_mutation(batch, mutation_positions, mutated_aa)
+
+            action_z = self.mutation_embedding(mutated_aa) + self.predictor.pos_emb(
+                mutation_positions
+            )  # [B, hidden_dim]
+            action_z = action_z.unsqueeze(1)  # [B, 1, hidden_dim], broadcasts over target queries
+
         # Predict target latents from context latents (+ positions)
         predicted_latent = self.predictor(
             masked_latents["context_latents"],                       # [B, L_ctx, latent_z_dim]
             masked_latents["context_indices"],                       # [B, L_ctx]
             masked_latents["target_indices"],                        # [B, L_tgt]
             key_padding_mask=masked_latents["context_padding"], # [B, L_ctx]
+            action_z=action_z,
+            action_position=mutation_positions,
         )  # [B, L_tgt, latent_z_dim]
 
         # Target pass: same online_encoder, no stop-gradient.
-        target_mean = self._encode_mean(self.online_encoder, batch)  # [B, L, latent_z_dim]
+        target_mean = self._encode_mean(self.online_encoder, target_batch)  # [B, L, latent_z_dim]
         # split the encoded latents on context / target masks
         target_masked_latents = apply_mask_to_latents(target_mean, context_mask, target_mask)
         # Select only k target latents from n encoded
@@ -225,6 +321,16 @@ class JEPAModel(L.LightningModule):
 
         predicted_latent_flat = predicted_latent[real_target_residues]
         target_latent_flat = target_latent[real_target_residues]
+
+        if self.use_action_conditioning:
+            self.log_mutation_sensitivity(
+                masked_latents,
+                predicted_latent_flat,
+                real_target_residues,
+                log_prefix=f"{stage}_mutation_sensitivity",
+                diag_step=diag_step,
+                every_n=1000,
+            )
 
         with torch.no_grad():
             target_mean_baseline = target_latent_flat.mean(dim=0, keepdim=True)
@@ -242,9 +348,9 @@ class JEPAModel(L.LightningModule):
         predictor_sigreg = self.sigreg(predicted_latent_flat.unsqueeze(0))
         sigreg_loss = context_sigreg + target_sigreg + predictor_sigreg
 
-        self.log_isotropy(context_flat, log_prefix=f"{stage}_isotropy_context", every_n=5000)
-        self.log_isotropy(target_flat, log_prefix=f"{stage}_isotropy_target", every_n=5000)
-        self.log_isotropy(predicted_latent_flat, log_prefix=f"{stage}_isotropy_predictor", every_n=5000)
+        self.log_isotropy(context_flat, log_prefix=f"{stage}_isotropy_context", diag_step=diag_step, every_n=5000)
+        self.log_isotropy(target_flat, log_prefix=f"{stage}_isotropy_target", diag_step=diag_step, every_n=5000)
+        self.log_isotropy(predicted_latent_flat, log_prefix=f"{stage}_isotropy_predictor", diag_step=diag_step, every_n=5000)
 
         loss = (1 - self.lamb) * jepa_loss + self.lamb * sigreg_loss
 
@@ -519,35 +625,52 @@ class JEPAModel(L.LightningModule):
         if self.global_step % histogram_every_n == 0 and do_hist:
             self.log_histogram(id_log=f"{log_prefix}/histogram{suffix}", v=vals)
 
-    def log_isotropy(self, v: torch.Tensor, log_prefix: str, every_n: int = 5000) -> None:
-        """Logs per-dimension std [D] and isotropy_ratio (max/min dim std) of v: [N, D]."""
-        if self.global_step % every_n != 0:
+    def log_mutation_sensitivity(
+        self,
+        masked_latents: Dict[str, torch.Tensor],
+        predicted_latent_flat: torch.Tensor,
+        real_target_residues: torch.Tensor,
+        log_prefix: str,
+        diag_step: int,
+        every_n: int = 1000,
+    ) -> None:
+        """Logs how much the predictor's output changes when action_z is dropped, i.e.
+        whether the model is using the mutation signal at all (near-zero = ignoring it).
+
+        """
+        if diag_step % every_n != 0:
+            return
+        with torch.no_grad():
+            predicted_no_action = self.predictor(
+                masked_latents["context_latents"],
+                masked_latents["context_indices"],
+                masked_latents["target_indices"],
+                key_padding_mask=masked_latents["context_padding"],
+            )  # [B, L_tgt, latent_z_dim], action_z=None -> no-mutation baseline
+            diff = (
+                predicted_latent_flat - predicted_no_action[real_target_residues]
+            ).norm(dim=-1).mean()
+        try:
+            self.logger.experiment.log({f"{log_prefix}/pred_diff_norm": diff.item()})
+        except Exception:
+            pass
+
+    def log_isotropy(
+        self, v: torch.Tensor, log_prefix: str, diag_step: int, every_n: int = 5000
+    ) -> None:
+        """Logs per-dimension std [D] and isotropy_ratio (max/min dim std) of v: [N, D].
+
+        """
+        if diag_step % every_n != 0:
             return
         dim_std = v.detach().std(dim=0)  # [D]
-        for i, s in enumerate(dim_std.tolist()):
-            self.log(
-                f"{log_prefix}/dim_{i}_std",
-                s,
-                on_step=True,
-                on_epoch=False,
-                prog_bar=False,
-                logger=True,
-                batch_size=v.shape[0],
-                sync_dist=True,
-                add_dataloader_idx=False,
-            )
         ratio = dim_std.max() / dim_std.min().clamp_min(1e-8)
-        self.log(
-            f"{log_prefix}/isotropy_ratio",
-            ratio,
-            on_step=True,
-            on_epoch=False,
-            prog_bar=False,
-            logger=True,
-            batch_size=v.shape[0],
-            sync_dist=True,
-            add_dataloader_idx=False,
-        )
+        payload = {f"{log_prefix}/dim_{i}_std": s for i, s in enumerate(dim_std.tolist())}
+        payload[f"{log_prefix}/isotropy_ratio"] = ratio.item()
+        try:
+            self.logger.experiment.log(payload)
+        except Exception:
+            pass
 
     def log_nparams(self):
         """Logs param counts for encoder/predictor, ported from the autoencoder's
