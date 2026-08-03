@@ -13,10 +13,14 @@ Prerequisites: conda, an NVIDIA GPU box.
    |---|---|
    | `ca-cond-baseline` | `python proteinfoundation/partial_autoencoder/train.py` |
    | `fully-latent` | `python proteinfoundation/partial_autoencoder/train.py` |
-   | `jepa-latent` | `python proteinfoundation/jepa/train.py` |
+   | `jepa-latent` (50% random mask) | `python proteinfoundation/jepa/train.py` |
    | `jepa-latent` (70% random mask) | `python proteinfoundation/jepa/train.py +masked_pct=0.7` |
+   | `jepa-latent` (mutation action) | `python proteinfoundation/jepa/train.py +use_action_conditioning=true` |
+   | `le-jepa` (50% random mask) | `python proteinfoundation/jepa/train.py` |
+   | `le-jepa` (70% random mask) | `python proteinfoundation/jepa/train.py +masked_pct=0.7` |
+   | `le-jepa` (mutation action) | `python proteinfoundation/jepa/train.py +use_action_conditioning=true` |
 
-8. Change the hardware settings (optional) and run the matching train command above. It prompts from which checkpoint to resume: pick `last` to pull the latest shared checkpoint or `scratch` to start fresh.
+8. Change the hardware settings (optional) and run the matching train command above. It prompts from which checkpoint to resume: pick `last` to pull the latest shared checkpoint or `scratch` to start fresh. `le-jepa` (50% random mask) has no shared checkpoint yet, so pick `scratch`.
 
 ### Hardware
 Defined in training_ae.yaml (for AE) and training_jepa.yaml (for Jepa).  
@@ -47,9 +51,12 @@ hf upload msc-thesis-org/checkpoints \
 |---|---|---|
 | `ca-cond-baseline` | `full_pdb_test_release_ae` | `ae/ca-cond` |
 | `fully-latent` | `full_pdb_fully_latent_ae` | `ae/fully_latent` |
-| `jepa-latent` | `jepa_random_mask_with_lr` | `jepa/random_masking` |
+| `jepa-latent` (50% random mask) | `jepa_random_mask_with_lr` | `jepa/random_masking` |
 | `jepa-latent` (70% random mask) | `jepa_random_masking_70_v3` | `jepa/random_masking_70pct` |
-
+| `jepa-latent` (mutation action) | `mut-jepa_v1` | `jepa/mutation` |
+| `le-jepa` (50% random mask) | `le_jepa_rand50_v1.4` | `le-jepa/random_masking_50pct` |
+| `le-jepa` (70% random mask) |  |  | 
+| `le-jepa` (mutation action) | `le_jepa_mut_v1` | `le-jepa/mutation` |
 
 ### Links
 
@@ -69,7 +76,8 @@ https://huggingface.co/aishahodzic/datasets
 main
 ├── ca-cond-baseline
 ├── fully-latent
-└── jepa-latent
+├── jepa-latent
+└── le-jepa
 ```
 
 #### Branch descriptions:
@@ -77,7 +85,8 @@ main
 - **main**: La Proteina codebase
 - **ca-cond-baseline**: CA-conditioned autoencoder baseline used
 - **fully-latent**: removes explicit CA-coordinate conditioning
-- **jepa-latent**: JEPA with random masking (50% and 70%)
+- **jepa-latent**: I-JEPA-style JEPA (EMA target encoder + stop-gradient), random masking (50% and 70%), with an mutation-conditioning (action) variant
+- **le-jepa**: LeJEPA — single encoder, no EMA/stop-gradient, SIGReg regularizer instead. Random masking (50% and 70%), with an mutation-conditioning (action) variant
 
 ## Experiments
 
