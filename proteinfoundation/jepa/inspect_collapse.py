@@ -74,7 +74,7 @@ def load_model(checkpoint_path: str) -> JEPAModel:
         )
     cfg = OmegaConf.create(json.loads(exp_config_candidates[0].read_text()))
 
-    model = JEPAModel(cfg, use_action_conditioning=cfg.get("use_action_conditioning", False))
+    model = JEPAModel(cfg)
     state = torch.load(ckpt_path, map_location="cpu", weights_only=False)
     model.load_state_dict(state["state_dict"])
     model.eval()
@@ -113,8 +113,11 @@ def load_proteins(data_dir: str, n: int, log_lines):
 @torch.no_grad()
 def run_forward(model: JEPAModel, batch, use_block_mask: bool):
     """Replicates the forward-pass half of JEPAModel.compute_loss (masking -> online
-    encoder -> predictor -> ema encoder), without the wandb .log(...) calls (which
-    require an attached Trainer and would fail here)."""
+    encoder -> predictor -> target pass), without the wandb .log(...) calls (which
+    require an attached Trainer and would fail here).
+
+    LeJEPA has no separate target encoder: the target pass reuses the same
+    online_encoder on the full, unmasked batch (no EMA, no stop-gradient)."""
     mask = batch["mask_dict"]["coords"][..., 0, 0]
     batch["mask"] = mask
 
@@ -134,14 +137,13 @@ def run_forward(model: JEPAModel, batch, use_block_mask: bool):
         key_padding_mask=masked_latents["context_padding"],
     )  # [B, L_tgt, 8], raw, pre-normalization
 
-    ema_mean = model._encode_mean(model.ema_encoder, batch)
-    ema_masked_latents = apply_mask_to_latents(ema_mean, context_mask, target_mask)
-    ema_target = ema_masked_latents["target_latents"]  # [B, L_tgt, 8], raw
-
     # Raw encoder output on the FULL, unmasked protein -- no context/target split, no
     # predictor involved. Isolates whether the collapse lives in the encoder itself
-    # (as opposed to being introduced/amplified by masking or the predictor).
+    # (as opposed to being introduced/amplified by masking or the predictor). This is
+    # also literally the target pass (same online_encoder, no EMA), so one call covers both.
     online_mean_full = model._encode_mean(model.online_encoder, batch)  # [B, L, 8]
+    target_masked_latents = apply_mask_to_latents(online_mean_full, context_mask, target_mask)
+    target_latent = target_masked_latents["target_latents"]  # [B, L_tgt, 8], raw
 
     target_padding = masked_latents["target_padding"]
     real_target_residues = torch.logical_not(target_padding)
@@ -150,10 +152,9 @@ def run_forward(model: JEPAModel, batch, use_block_mask: bool):
         "context_mask": context_mask,
         "target_mask": target_mask,
         "predicted_latent": predicted_latent,
-        "ema_target": ema_target,
+        "target_latent": target_latent,
         "real_target_residues": real_target_residues,
         "online_mean_full": online_mean_full,
-        "ema_mean_full": ema_mean,
     }
 
 
@@ -183,9 +184,9 @@ def inspect_checkpoint(checkpoint_path, data_dir, n_proteins, use_block_mask, ou
     out = run_forward(model, batch, use_block_mask)
 
     context_mask, target_mask = out["context_mask"], out["target_mask"]
-    predicted_latent, ema_target = out["predicted_latent"], out["ema_target"]
+    predicted_latent, target_latent = out["predicted_latent"], out["target_latent"]
     real_target_residues = out["real_target_residues"]
-    online_mean_full, ema_mean_full = out["online_mean_full"], out["ema_mean_full"]
+    online_mean_full = out["online_mean_full"]
 
     # ---- verbose single-example protein ----
     i = 0
@@ -199,7 +200,7 @@ def inspect_checkpoint(checkpoint_path, data_dir, n_proteins, use_block_mask, ou
 
     real_i = real_target_residues[i]
     pred_i = predicted_latent[i][real_i]  # [n_tgt_i, 8]
-    targ_i = ema_target[i][real_i]  # [n_tgt_i, 8]
+    targ_i = target_latent[i][real_i]  # [n_tgt_i, 8]
 
     # ---- evenly-spaced target residues (front/~25%/middle/~75%/end) ----
     # Deliberately NOT "first 5 in sequence order" -- those can land on adjacent
@@ -240,11 +241,8 @@ def inspect_checkpoint(checkpoint_path, data_dir, n_proteins, use_block_mask, ou
     # Answers: is the target degenerate because the encoder itself is degenerate,
     # independent of anything masking/predictor-related?
     log_print(log_lines, "\n--- Raw encoder output on FULL unmasked protein (no masking, no predictor) ---")
-    log_print(log_lines, f"Raw ONLINE encoder output [first 5 of {n_valid} residues]:")
+    log_print(log_lines, f"Raw encoder output [first 5 of {n_valid} residues]:")
     for row in online_mean_full[i, :5]:
-        log_print(log_lines, "  " + " ".join(f"{v:+.3f}" for v in row.tolist()))
-    log_print(log_lines, f"Raw EMA encoder output [first 5]:")
-    for row in ema_mean_full[i, :5]:
         log_print(log_lines, "  " + " ".join(f"{v:+.3f}" for v in row.tolist()))
     cos_consecutive = F.cosine_similarity(online_mean_full[i, :5], online_mean_full[i, 1:6], dim=-1)
     log_print(log_lines, f"Cosine sim, consecutive residues (online encoder): {[f'{c:.4f}' for c in cos_consecutive.tolist()]}")
@@ -256,7 +254,7 @@ def inspect_checkpoint(checkpoint_path, data_dir, n_proteins, use_block_mask, ou
     log_print(log_lines, "\n--- Aggregate stats across all proteins ---")
 
     all_pred = predicted_latent[real_target_residues]  # [N_total_target, 8], raw
-    all_targ = ema_target[real_target_residues]  # [N_total_target, 8], raw
+    all_targ = target_latent[real_target_residues]  # [N_total_target, 8], raw
 
     pred_std = all_pred.std(dim=0)  # [8]
     targ_std = all_targ.std(dim=0)  # [8]
