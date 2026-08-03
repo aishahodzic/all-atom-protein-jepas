@@ -51,11 +51,11 @@ hf upload msc-thesis-org/checkpoints \
 |---|---|---|
 | `ca-cond-baseline` | `full_pdb_test_release_ae` | `ae/ca-cond` |
 | `fully-latent` | `full_pdb_fully_latent_ae` | `ae/fully_latent` |
-| `jepa-latent` (50% random mask) | `jepa_random_mask_with_lr` | `jepa/random_masking` |
+| `jepa-latent` (50% random mask) | train from scratch |  |
 | `jepa-latent` (70% random mask) | `jepa_random_masking_70_v3` | `jepa/random_masking_70pct` |
 | `jepa-latent` (mutation action) | `mut-jepa_v1` | `jepa/mutation` |
 | `le-jepa` (50% random mask) | `le_jepa_rand50_v1.4` | `le-jepa/random_masking_50pct` |
-| `le-jepa` (70% random mask) |  |  | 
+| `le-jepa` (70% random mask) | train from scratch |  | 
 | `le-jepa` (mutation action) | `le_jepa_mut_v1` | `le-jepa/mutation` |
 
 ### Links
