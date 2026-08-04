@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=le_jepa_rand50_v1.4
+#SBATCH --job-name=le_jepa_rand50_v1.3
 #SBATCH --partition=h100
 #SBATCH --qos=medium
 #SBATCH --gres=gpu:1
@@ -32,10 +32,12 @@ else
     RAID_ROOT=/mnt/hopper-raid/aishod
 fi
 
-mkdir -p "$RAID_ROOT/runs/le_jepa_rand50_v1.4"
-cd "$RAID_ROOT/runs/le_jepa_rand50_v1.4"
+mkdir -p "$RAID_ROOT/runs/le_jepa_rand50_v1.3"
+cd "$RAID_ROOT/runs/le_jepa_rand50_v1.3"
 
-# "scratch" answers train.py's resume-from-checkpoint prompt
+# "last" answers train.py's resume-from-checkpoint prompt (resumes from global_step=2500)
 # flags: +single=true (1 GPU), dataset.datamodule.num_workers=16
-echo "scratch" | srun python /mnt/data/slurm-storage/aishod/projects/la-proteina/proteinfoundation/jepa/train.py \
-    run_name_=le_jepa_rand50_v1.4 +single=true dataset.datamodule.num_workers=16
+# opt.lr=1e-4 explicit: v1.3 was trained at 1e-4, but training_jepa.yaml's default is
+# now 5e-4 (changed after v1.4), so this must stay an explicit override for this run
+echo "last" | srun python /mnt/data/slurm-storage/aishod/projects/la-proteina/proteinfoundation/jepa/train.py \
+    run_name_=le_jepa_rand50_v1.3 +single=true opt.lr=1e-4 dataset.datamodule.num_workers=16
