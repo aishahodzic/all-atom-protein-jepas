@@ -47,16 +47,16 @@ hf upload msc-thesis-org/checkpoints \
 
 `<run_name>` and `<hf-path>` depend on the branch:
 
-| Branch | `<run_name>` | `<hf-path>` |
-|---|---|---|
-| `ca-cond-baseline` | `full_pdb_test_release_ae` | `ae/ca-cond` |
-| `fully-latent` | `full_pdb_fully_latent_ae` | `ae/fully_latent` |
-| `jepa-latent` (50% random mask) | train from scratch |  |
-| `jepa-latent` (70% random mask) | `jepa_random_masking_70_v3` | `jepa/random_masking_70pct` |
-| `jepa-latent` (mutation action) | `mut-jepa_v1` | `jepa/mutation` |
-| `le-jepa` (50% random mask) | `le_jepa_rand50_v1.4` | `le-jepa/random_masking_50pct` |
-| `le-jepa` (70% random mask) | train from scratch |  | 
-| `le-jepa` (mutation action) | `le_jepa_mut_v1` | `le-jepa/mutation` |
+| Branch | `<run_name>` | `<hf-path>` | `<wadnb-display-name>` | 
+|---|---|---| ---|
+| `ca-cond-baseline` | `full_pdb_test_release_ae` | `ae/ca-cond` | `ae-ca-cond-baseline` |
+| `fully-latent` | `full_pdb_fully_latent_ae` | `ae/fully_latent` | `ae-fully-latent` |
+| `jepa-latent` (50% random mask) | `jepa_random_masking_50_v1` |  | `jepa-rand-mask-50`|
+| `jepa-latent` (70% random mask) | `jepa_random_masking_70_v3` | `jepa/random_masking_70pct` | `jepa-rand-mask-70` |
+| `jepa-latent` (mutation action) | `mut-jepa_v2` | `jepa/mutation` | `jepa-mutation`|
+| `le-jepa` (50% random mask) | `le_jepa_rand50_v1.3` | `le-jepa/random_masking_50pct` | `le-jepa-rand-mask-50` |
+| `le-jepa` (70% random mask) | `le_jepa_rand70_v1` |  | `le-jepa-rand-mask-70` |
+| `le-jepa` (mutation action) | `le_jepa_mut_v2` | `le-jepa/mutation` | `le-jepa-mutation` |
 
 ### Links
 
