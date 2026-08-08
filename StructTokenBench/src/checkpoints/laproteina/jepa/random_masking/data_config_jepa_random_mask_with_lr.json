@@ -1,0 +1,109 @@
+{
+    "datamodule": {
+        "_target_": "proteinfoundation.datasets.pdb_data.PDBLightningDataModule",
+        "batch_padding": true,
+        "batch_size": 2,
+        "data_dir": "/home/data/pdb_train/",
+        "dataselector": {
+            "_target_": "proteinfoundation.datasets.pdb_data.PDBDataSelector",
+            "best_resolution": 0.0,
+            "data_dir": "/home/data/pdb_train/",
+            "exclude_ids": [
+                "9b57",
+                "9b5p",
+                "9b5s",
+                "9b5n",
+                "9b5a",
+                "9b5k",
+                "9b5v",
+                "9b59",
+                "9b5w",
+                "9b5g",
+                "9b5i",
+                "9b5x",
+                "9b5d",
+                "9b5e",
+                "9b5t",
+                "9b5f",
+                "9b5o",
+                "9b58",
+                "9b5u",
+                "9b5c",
+                "9b5j",
+                "9b5b",
+                "9b5h",
+                "9b5q",
+                "9b5l",
+                "9b56",
+                "9b5m",
+                "9b5l",
+                "9b55",
+                "9b5r",
+                "9ij9",
+                "9iix",
+                "2ezq",
+                "1kld",
+                "1crr",
+                "2ezs",
+                "2ezr",
+                "1vve",
+                "7ll9_G",
+                "7i9a_B",
+                "7ll9_C",
+                "7ll9_D",
+                "7qiz",
+                "7suk",
+                "7ll9_H",
+                "9uol"
+            ],
+            "experiment_types": [
+                "diffraction",
+                "EM"
+            ],
+            "fraction": 1,
+            "has_ligands": [],
+            "max_length": 256,
+            "min_length": 50,
+            "molecule_type": "protein",
+            "oligomeric_max": null,
+            "oligomeric_min": null,
+            "remove_ligands": [],
+            "remove_non_standard_residues": true,
+            "remove_pdb_unavailable": true,
+            "worst_resolution": 5.0
+        },
+        "datasplitter": {
+            "_target_": "proteinfoundation.datasets.pdb_data.PDBDataSplitter",
+            "data_dir": "/home/data/pdb_train/",
+            "overwrite_sequence_clusters": false,
+            "split_sequence_similarity": 0.5,
+            "split_type": "sequence_similarity",
+            "train_val_test": [
+                0.98,
+                0.019,
+                0.001
+            ]
+        },
+        "format": "cif",
+        "in_memory": false,
+        "num_workers": 0,
+        "overwrite": false,
+        "pin_memory": true,
+        "sampling_mode": "cluster-random",
+        "skip_unprocessed": true,
+        "transforms": [
+            {
+                "_target_": "proteinfoundation.datasets.transforms.CoordsToNanometers"
+            },
+            {
+                "_target_": "proteinfoundation.datasets.transforms.CenterStructureTransform"
+            },
+            {
+                "_target_": "proteinfoundation.datasets.transforms.GlobalRotationTransform"
+            },
+            {
+                "_target_": "proteinfoundation.datasets.transforms.ChainBreakPerResidueTransform"
+            }
+        ]
+    }
+}

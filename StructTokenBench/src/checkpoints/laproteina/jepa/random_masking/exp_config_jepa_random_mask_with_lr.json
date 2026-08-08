@@ -1,0 +1,209 @@
+{
+    "dataset": {
+        "datamodule": {
+            "_target_": "proteinfoundation.datasets.pdb_data.PDBLightningDataModule",
+            "batch_padding": true,
+            "batch_size": 2,
+            "data_dir": "/home/data/pdb_train/",
+            "dataselector": {
+                "_target_": "proteinfoundation.datasets.pdb_data.PDBDataSelector",
+                "best_resolution": 0.0,
+                "data_dir": "/home/data/pdb_train/",
+                "exclude_ids": [
+                    "9b57",
+                    "9b5p",
+                    "9b5s",
+                    "9b5n",
+                    "9b5a",
+                    "9b5k",
+                    "9b5v",
+                    "9b59",
+                    "9b5w",
+                    "9b5g",
+                    "9b5i",
+                    "9b5x",
+                    "9b5d",
+                    "9b5e",
+                    "9b5t",
+                    "9b5f",
+                    "9b5o",
+                    "9b58",
+                    "9b5u",
+                    "9b5c",
+                    "9b5j",
+                    "9b5b",
+                    "9b5h",
+                    "9b5q",
+                    "9b5l",
+                    "9b56",
+                    "9b5m",
+                    "9b5l",
+                    "9b55",
+                    "9b5r",
+                    "9ij9",
+                    "9iix",
+                    "2ezq",
+                    "1kld",
+                    "1crr",
+                    "2ezs",
+                    "2ezr",
+                    "1vve",
+                    "7ll9_G",
+                    "7i9a_B",
+                    "7ll9_C",
+                    "7ll9_D",
+                    "7qiz",
+                    "7suk",
+                    "7ll9_H",
+                    "9uol"
+                ],
+                "experiment_types": [
+                    "diffraction",
+                    "EM"
+                ],
+                "fraction": 1,
+                "has_ligands": [],
+                "max_length": 256,
+                "min_length": 50,
+                "molecule_type": "protein",
+                "oligomeric_max": null,
+                "oligomeric_min": null,
+                "remove_ligands": [],
+                "remove_non_standard_residues": true,
+                "remove_pdb_unavailable": true,
+                "worst_resolution": 5.0
+            },
+            "datasplitter": {
+                "_target_": "proteinfoundation.datasets.pdb_data.PDBDataSplitter",
+                "data_dir": "/home/data/pdb_train/",
+                "overwrite_sequence_clusters": false,
+                "split_sequence_similarity": 0.5,
+                "split_type": "sequence_similarity",
+                "train_val_test": [
+                    0.98,
+                    0.019,
+                    0.001
+                ]
+            },
+            "format": "cif",
+            "in_memory": false,
+            "num_workers": 0,
+            "overwrite": false,
+            "pin_memory": true,
+            "sampling_mode": "cluster-random",
+            "skip_unprocessed": true,
+            "transforms": [
+                {
+                    "_target_": "proteinfoundation.datasets.transforms.CoordsToNanometers"
+                },
+                {
+                    "_target_": "proteinfoundation.datasets.transforms.CenterStructureTransform"
+                },
+                {
+                    "_target_": "proteinfoundation.datasets.transforms.GlobalRotationTransform"
+                },
+                {
+                    "_target_": "proteinfoundation.datasets.transforms.ChainBreakPerResidueTransform"
+                }
+            ]
+        }
+    },
+    "force_precision_f32": false,
+    "hardware": {
+        "accelerator": "gpu",
+        "ncpus_per_task_prepro_": 32,
+        "ncpus_per_task_train_": 24,
+        "ngpus_per_node_": 1,
+        "nnodes_": 1
+    },
+    "log": {
+        "checkpoint": true,
+        "checkpoint_every_n_steps": 10000,
+        "last_ckpt_every_n_steps": 1500,
+        "log_every_n_steps": 1,
+        "log_wandb": true,
+        "wandb_project": "protein_jepa"
+    },
+    "nn_ae": {
+        "decoder": {
+            "abs_coors": false,
+            "dim_cond": 128,
+            "feats_cond_seq": null,
+            "feats_pair_repr": [
+                "rel_seq_sep",
+                "ca_coors_nm_pair_dists"
+            ],
+            "feats_seq": [
+                "ca_coors_nm",
+                "z_latent_seq"
+            ],
+            "idx_emb_dim": 128,
+            "latent_z_dim": 8,
+            "nheads": 6,
+            "nlayers": 12,
+            "pair_repr_dim": 256,
+            "parallel_mha_transition": false,
+            "seq_sep_dim": 127,
+            "strict_feats": false,
+            "token_dim": 384,
+            "update_pair_repr": false,
+            "update_pair_repr_every_n": 3,
+            "use_qkln": true,
+            "use_tri_mult": false
+        },
+        "encoder": {
+            "dim_cond": 128,
+            "feats_cond_seq": null,
+            "feats_pair_repr": [
+                "rel_seq_sep",
+                "x1_bb_pair_dists_nm",
+                "x1_bb_pair_orientation",
+                "chain_idx_pair"
+            ],
+            "feats_seq": [
+                "chain_break_per_res",
+                "x1_aatype",
+                "x1_a37coors_nm",
+                "x1_a37coors_nm_rel",
+                "chain_idx_seq"
+            ],
+            "idx_emb_dim": 128,
+            "latent_z_dim": 8,
+            "nheads": 12,
+            "nlayers": 12,
+            "normalize_latent": false,
+            "pair_repr_dim": 256,
+            "parallel_mha_transition": false,
+            "seq_sep_dim": 127,
+            "strict_feats": false,
+            "token_dim": 768,
+            "update_pair_repr": false,
+            "update_pair_repr_every_n": 3,
+            "use_qkln": true,
+            "use_tri_mult": false
+        },
+        "latent_z_dim": 8,
+        "name": "transformer_ae"
+    },
+    "opt": {
+        "accumulate_grad_batches": 2,
+        "dist_strategy": "auto",
+        "grad_and_weight_analysis": true,
+        "lr": 0.0001,
+        "max_epochs": 10000000,
+        "skip_large_grad_updates": {
+            "factor_threshold": 10,
+            "min_opt_steps": 1500,
+            "moving_avg_size": 100,
+            "use": false
+        },
+        "skip_nan_grad": false,
+        "val_check_interval": 5000
+    },
+    "predictor": {
+        "max_len": 256
+    },
+    "pretrain_ckpt_path": null,
+    "run_name_": "jepa_random_mask_with_lr",
+    "seed": 42
+}
