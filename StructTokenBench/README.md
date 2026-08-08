@@ -17,6 +17,41 @@ PyTorch implementation of [StructTokenBench], a benchmark for comprehensive eval
 [StructTokenBench]: https://github.com/KatarinaYuan/StructTokenBench
 [AminoAseed]: https://arxiv.org/abs/2503.00089
 
+# La-Proteina integration notes
+
+This fork adds `WrappedLaProteinaTokenizer` (`src/tokenizer.py`) to benchmark
+la-proteina's own AE/JEPA/LeJEPA checkpoints against the tasks below. This section is specific to this integration.
+
+**Run eval jobs on `noether` only** (`jobs/struct_token_bench_eval_noether.job`),
+not gauss/klein/hopper. `struct_token_bench_release_data/`, the tokenized-graph
+caches, and `summary_results.csv` all live under this repo's own path
+(`/mnt/data/slurm-storage/...`), which is local disk on noether, NFS-mounted
+read/write on the others. Running eval on gauss/klein/hopper concurrent
+worker processes doing the resolve/parse/cache step over NFS hit cache staleness, drop entries (worked around by staying on noether).
+
+**Data placement**: mmCIF corpus (`$DIR/pdb_data`, see below) goes on
+`/mnt/hopper-raid` -- too big for `/mnt/data`. `100k-checkpoints/` needs the
+la-proteina checkpoints downloaded before running (not fetched by `run_eval.sh`). In process to move mmCIF to HF (will update)
+
+**Known-fixed bugs** (all in `src/tokenizer.py`, `src/dataset/base.py`,
+`src/model_module.py`). If FlexRMSF/FlexBFactor/FlexNEQ or
+Homo start failing again, check these first:
+- Atlas raw-file lookup collided across (pdb, chain) entries sharing one
+  cached symlink, and used a hardcoded `.cif` format for what are `.pdb` files.
+- Atlas's blank chain-ID placeholder (`" "`, correct for Bio.PDB) needs
+  chaning to `""` specifically where graphein parses it.
+- `matches_training_distribution_graph`'s exclude_ids/experiment_type/
+  resolution lookups need the bare PDB code, not Atlas's `{pdb}_{chain}`.
+- FlexRMSF/FlexBFactor/FlexNEQ share one cache file per checkpoint (no
+  target_field in the cache key) - a stale hit from a different Flex task
+  needs to be treated as a miss, not accepted.
+- TAPE/Homo's label-filtering (1195 raw folds -> 45 usable classes) only ran
+  on the cache-hit path; a freshly-built cache saved unfiltered labels,
+  crashing training later with an out-of-range `CrossEntropyLoss` target.
+- `proceed_global_prediction` (Homo) checked `input_ids.shape` to decide if
+  `input_mask` might be 3D; `input_mask` is always 2D regardless, so this
+  crashed for any continuous tokenizer on a global/per-protein task.
+
 # Overview
 
 **StructTokenBench** is a benchmark for comprehensively evaluating protein strcuture tokenization methods. We further developed **AminoAseed** that achieves an average of 6.31% performance improvement across 24 supervised tasks, 12.83% in sensitivity and 124.03%, compared to the leading model ESM3.
@@ -142,6 +177,9 @@ aws s3 cp s3://openfold/pdb_mmcif.zip $DOWNLOAD_DIR --no-sign-request
 unzip pdb_mmcif.zip
 wget https://files.pdbj.org/pub/pdb/data/status/obsolete.dat
 ```
+> **Disk note:** the extracted corpus is ~150-200GB, too large for `/mnt/data`. `$DIR/pdb_data`
+> is a symlink to `/mnt/hopper-raid/aishod/data/struct_token_bench_pdb_data`, which is NFS-mounted
+> and accessible from all cluster nodes (gauss, klein, noether, hopper).
 which should result in the following file structure:
 ```
 ├── pdb_data

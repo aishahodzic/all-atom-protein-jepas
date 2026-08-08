@@ -181,10 +181,10 @@ class SequenceClassificationModel(ProceedingBaseModel):
     def proceed_global_prediction(self, input_ids, input_mask, feature, targets):
 
         # averge pool for the last hidden state to get seq-level reprs.
-        num_of_tokens = (~input_mask).sum(dim=1, keepdim=True)  # (B, 1) or (B, 1, dim)
-        if len(input_ids.shape) == 3:
-            assert (num_of_tokens[:, :, :-1] == num_of_tokens[:, :,  :-1]).all()
-            num_of_tokens = num_of_tokens[:, :, 0] # (B, 1)
+        # input_mask is always [B, L] (collate_fn, base.py) regardless of
+        # input_ids' shape -- the removed "maybe (B, 1, dim)" branch checked
+        # the wrong tensor and crashed for any continuous tokenizer on Homo.
+        num_of_tokens = (~input_mask).sum(dim=1, keepdim=True)  # (B, 1)
 
         assert not (num_of_tokens == 0).any()
         keep_index = num_of_tokens.squeeze(1) != 0
