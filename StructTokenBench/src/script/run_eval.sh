@@ -15,17 +15,19 @@
 #   (--tasks accepts task names or their menu numbers, comma or space separated, or "all")
 #
 # Creates the pstbench conda env if it doesn't exist yet, and installs all
-# missing dependencies into it. Assumes: checkpoints under
-# src/checkpoints/laproteina/{ae/ca-cond,ae/fully_latent,jepa/random_masking}/
-# are already correct (checkpoint download/verification is intentionally NOT
-# handled here) -- last.ckpt/last-EMA.ckpt/100k-EMA.ckpt still need to be placed
-# there yourself; the jepa-random-masking encoder config json is already checked
-# in alongside where its checkpoint goes, so that one doesn't need downloading.
+# missing dependencies into it. Assumes: checkpoints are already staged under
+# 100k-checkpoints/{ae,jepa,le-jepa}/... (checkpoint download/verification is
+# intentionally NOT handled here) -- see 100k-checkpoints/shared/ for the encoder
+# config shared by all 6 jepa/le-jepa experiments.
 
 set -euo pipefail
 
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$REPO_DIR"
+
+# src/tokenizer.py imports the `openfold` package, which lives in the la-proteina
+# repo root (one level up) rather than being pip-installed.
+export PYTHONPATH="$(dirname "$REPO_DIR")${PYTHONPATH:+:$PYTHONPATH}"
 
 export DIR="$REPO_DIR"
 DRY_RUN="${DRY_RUN:-0}"
@@ -59,7 +61,7 @@ done
 # ---------------------------------------------------------------------------
 # 1. Env activation
 # ---------------------------------------------------------------------------
-source /root/miniconda3/etc/profile.d/conda.sh
+source /slurm-storage/miniconda3/etc/profile.d/conda.sh
 if ! conda env list | grep -q '^pstbench '; then
     echo "  conda env 'pstbench' not found; creating it (python=3.11) -- one-time, ~1min"
     conda create -y -n pstbench python=3.11
@@ -80,25 +82,53 @@ pkg_present () {
 #    dependency-install/data-download work, so you're not left waiting to be
 #    asked what to actually run.
 # ---------------------------------------------------------------------------
-EXPERIMENT_NAMES=(ca-cond-baseline fully_latent jepa-random-masking)
+# All checkpoints staged under 100k-checkpoints/ (see 100k-checkpoints/shared/ for the
+# jepa/le-jepa encoder config, reused across all 6 jepa/le-jepa rows since they share the
+# same nn_ae:nn_130m architecture and dataselector -- only the online_encoder weights and
+# the masking/action-conditioning behavior differ between them, and neither is read from
+# this config; see tokenizer.py's WrappedLaProteinaTokenizer for what's actually consumed).
+CKPT_ROOT="$REPO_DIR/100k-checkpoints"
+JEPA_ENCODER_CFG="$CKPT_ROOT/shared/exp_config_jepa_nn130m.json"
+
+EXPERIMENT_NAMES=(ca-cond-baseline fully-latent jepa-rand-mask-50 jepa-rand-mask-70 jepa-mutation le-jepa-rand-mask-50 le-jepa-rand-mask-70 le-jepa-mutation)
 
 experiment_model_args () {
     # sets TOKENIZERNAME and EXTRA_MODEL_ARGS for experiment name $1
     case "$1" in
         ca-cond-baseline)
             TOKENIZERNAME="laproteina_ca_cond"
-            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$REPO_DIR/src/checkpoints/laproteina/ae/ca-cond/100k-EMA.ckpt tokenizer_checkpoint_type=ae"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CKPT_ROOT/ae/ca-cond/100k-EMA.ckpt tokenizer_checkpoint_type=ae"
             ;;
-        fully_latent)
+        fully-latent)
             TOKENIZERNAME="laproteina_fully_latent"
-            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$REPO_DIR/src/checkpoints/laproteina/ae/fully_latent/last-EMA.ckpt tokenizer_checkpoint_type=ae"
+            # HF only has a "last-EMA" checkpoint (~103k steps); treated as the 100k snapshot.
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CKPT_ROOT/ae/fully_latent/100k-EMA.ckpt tokenizer_checkpoint_type=ae"
             ;;
-        jepa-random-masking)
-            TOKENIZERNAME="laproteina_jepa"
-            # exp_config_*.json describes the JEPA encoder architecture (needed to build the
-            # model before loading weights from last.ckpt) -- checked into the repo alongside
-            # the checkpoint dir it belongs to, so it doesn't need re-downloading/regenerating.
-            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$REPO_DIR/src/checkpoints/laproteina/jepa/random_masking/last.ckpt tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$REPO_DIR/src/checkpoints/laproteina/jepa/random_masking/exp_config_jepa_random_mask_with_lr.json"
+        jepa-rand-mask-50)
+            TOKENIZERNAME="laproteina_jepa_rand_mask_50"
+            # placeholder: jepa_random_masking_50_v1 hasn't reached step 100000 yet
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CKPT_ROOT/jepa/random_masking_50pct/100k.ckpt tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        jepa-rand-mask-70)
+            TOKENIZERNAME="laproteina_jepa_rand_mask_70"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CKPT_ROOT/jepa/random_masking_70pct/100k.ckpt tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        jepa-mutation)
+            TOKENIZERNAME="laproteina_jepa_mutation"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CKPT_ROOT/jepa/mutation/100k.ckpt tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        le-jepa-rand-mask-50)
+            TOKENIZERNAME="laproteina_le_jepa_rand_mask_50"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CKPT_ROOT/le-jepa/random_masking_50pct/100k.ckpt tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        le-jepa-rand-mask-70)
+            TOKENIZERNAME="laproteina_le_jepa_rand_mask_70"
+            # placeholder: le_jepa_rand50_70_v1 hasn't reached step 100000 yet
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CKPT_ROOT/le-jepa/random_masking_70pct/100k.ckpt tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        le-jepa-mutation)
+            TOKENIZERNAME="laproteina_le_jepa_mutation"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CKPT_ROOT/le-jepa/mutation/100k.ckpt tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
             ;;
         *)
             echo "[Error] unknown experiment: $1" >&2
@@ -111,6 +141,10 @@ TASK_NAMES=(BindInt BindBio BindShake CatInt CatBio Con Rep Ept FlexRMSF FlexBFa
 TASK_CONFIGS=(interpro.yaml biolip2.yaml proteinshake_binding_site.yaml interpro.yaml biolip2.yaml interpro.yaml interpro.yaml proteinglue_epitope_region.yaml atlas.yaml atlas.yaml atlas.yaml remote_homology.yaml)
 TASK_TARGET_FIELDS=(binding_label binding_label binding_site activesite_label catalytic_label conservedsite_label repeat_label epitope_label rmsf_score bfactor_score neq_score fold_label)
 TASK_PREFIXES=(bindint bindbio bindshake catint catbio con rep ept flexrmsf flexbfactor flexneq homo)
+# Matches upstream README's EXTRA_TASK_ARGS for FlexRMSF/FlexBFactor/FlexNEQ.
+# No-op today (AtlasDataset.retrieve_pdb_path uses data_path, not
+# pdb_data_dir) -- kept for README fidelity. Real fix for the flexrmsf/
+# flexbfactor/flexneq failures is in tokenizer.py's _get_native_datamodule.
 PHYSCHEM_EXTRA="data.pdb_data_dir=$DIR/struct_token_bench_release_data/data/physicochemical/ lightning.callbacks.checkpoint.monitor='validation_spearmanr'"
 TASK_EXTRA_ARGS=("" "" "" "" "" "" "" "" "$PHYSCHEM_EXTRA" "$PHYSCHEM_EXTRA" "$PHYSCHEM_EXTRA" "optimization.micro_batch_size=64")
 
@@ -223,6 +257,7 @@ declare -A BASE_DEPS=(
     [tensorflow]="tensorflow"
     [Bio]="biopython"
     [seaborn]="seaborn"
+    [gdown]="gdown"
 )
 for import_name in "${!BASE_DEPS[@]}"; do
     if ! pkg_present "$import_name"; then
@@ -271,33 +306,53 @@ done
 # ---------------------------------------------------------------------------
 # 5. Data: PDB mmCIF files + downstream labels (skip if already present)
 # ---------------------------------------------------------------------------
-MMCIF_DIR="$DIR/pdb_data/mmcif_files"
-if [ -d "$MMCIF_DIR/mmcif_files" ] && [ -n "$(ls -A "$MMCIF_DIR/mmcif_files" 2>/dev/null)" ]; then
-    echo "== PDB mmCIF data already present, skipping download =="
+# $DIR/pdb_data is a symlink to /mnt/hopper-raid/aishod/data/struct_token_bench_pdb_data --
+# the extracted mmCIF corpus is ~150-200GB and didn't fit on /mnt/data (repo disk).
+# /mnt/hopper-raid is NOT mounted on hopper itself (confirmed: `mount` has no entry for
+# it there) -- it's hopper's storage exported *for other nodes*, not something hopper
+# loops back and mounts on itself. On hopper the same data lives locally at
+# /mnt/raid/aishod/data/struct_token_bench_pdb_data (confirmed present). This is the
+# same distinction the JEPA training job scripts already make for DATA_PATH.
+if [ "$(hostname -s)" = "hopper" ]; then
+    PDB_DATA_ROOT="/mnt/raid/aishod/data/struct_token_bench_pdb_data"
 else
-    echo "== Downloading PDB mmCIF data =="
-    mkdir -p "$MMCIF_DIR"
-    (
-        cd "$MMCIF_DIR"
-        aws s3 cp s3://openfold/pdb_mmcif.zip "$MMCIF_DIR" --no-sign-request
-        unzip -q pdb_mmcif.zip
-        [ -f obsolete.dat ] || wget https://files.pdbj.org/pub/pdb/data/status/obsolete.dat
-    )
+    PDB_DATA_ROOT="$DIR/pdb_data"
 fi
+export PDB_DATA_ROOT
 
-LABELS_DIR="$DIR/struct_token_bench_release_data/data"
-if [ -d "$LABELS_DIR" ] && [ -n "$(ls -A "$LABELS_DIR" 2>/dev/null)" ]; then
-    echo "== Downstream label data already present, skipping download =="
-else
-    echo "== Downloading downstream label data =="
-    (
-        cd "$DIR"
-        gdown https://drive.google.com/uc?id=1wJ4dSNdMyuF0985ET4UuwViHgV-clF4K
-        unzip -q struct_token_bench_release_data_download.zip
-        mv struct_token_bench_release_data_download struct_token_bench_release_data
-        rm -f struct_token_bench_release_data_download.zip
-    )
-fi
+# Guarded by a flock so concurrent eval jobs sharing $DIR over NFS don't all
+# probe/touch this section at once.
+(
+    flock -x 200
+
+    MMCIF_DIR="$PDB_DATA_ROOT/mmcif_files"
+    if [ -d "$MMCIF_DIR/mmcif_files" ] && [ -n "$(ls -A "$MMCIF_DIR/mmcif_files" 2>/dev/null)" ]; then
+        echo "== PDB mmCIF data already present, skipping download =="
+    else
+        echo "== Downloading PDB mmCIF data =="
+        mkdir -p "$MMCIF_DIR"
+        (
+            cd "$MMCIF_DIR"
+            aws s3 cp s3://openfold/pdb_mmcif.zip "$MMCIF_DIR" --no-sign-request
+            unzip -q pdb_mmcif.zip
+            [ -f obsolete.dat ] || wget https://files.pdbj.org/pub/pdb/data/status/obsolete.dat
+        )
+    fi
+
+    LABELS_DIR="$DIR/struct_token_bench_release_data/data"
+    if [ -d "$LABELS_DIR" ] && [ -n "$(ls -A "$LABELS_DIR" 2>/dev/null)" ]; then
+        echo "== Downstream label data already present, skipping download =="
+    else
+        echo "== Downloading downstream label data =="
+        (
+            cd "$DIR"
+            gdown https://drive.google.com/uc?id=1wJ4dSNdMyuF0985ET4UuwViHgV-clF4K
+            unzip -q struct_token_bench_release_data_download.zip
+            mv struct_token_bench_release_data_download struct_token_bench_release_data
+            rm -f struct_token_bench_release_data_download.zip
+        )
+    fi
+) 200>"$DIR/.data_setup.lock"
 
 # ---------------------------------------------------------------------------
 # 6. Run
@@ -316,7 +371,7 @@ for experiment in "${SELECTED_EXPERIMENTS[@]}"; do
         extra_task_args="${TASK_EXTRA_ARGS[$idx]}"
         export TASK_LABEL="${TASK_NAMES[$idx]}"
 
-        SHARED_ARGS="tokenizer=$tokenizer model.d_model=$d_model trainer.devices=[0] optimization.optimizer.lr=$lr data.target_field=$target_field data.num_workers=$NUM_WORKERS data.prefetch_factor=2 experiment_name=${experiment_prefix}_${TOKENIZERNAME}_lr${lr} run_name=tryout_test default_data_dir=$DIR/struct_token_bench_release_data/ data.pdb_data_dir=$DIR/pdb_data/mmcif_files/ trainer.default_root_dir=$DIR/struct_token_bench_logs/ ${extra_task_args} ${EXTRA_MODEL_ARGS}"
+        SHARED_ARGS="tokenizer=$tokenizer model.d_model=$d_model trainer.devices=[0] optimization.optimizer.lr=$lr data.target_field=$target_field data.num_workers=$NUM_WORKERS data.prefetch_factor=2 experiment_name=${experiment_prefix}_${TOKENIZERNAME}_lr${lr} run_name=tryout_test default_data_dir=$DIR/struct_token_bench_release_data/ data.pdb_data_dir=$PDB_DATA_ROOT/mmcif_files/ trainer.default_root_dir=$DIR/struct_token_bench_logs/ ${extra_task_args} ${EXTRA_MODEL_ARGS}"
         if [ -n "$PRECISION" ]; then
             SHARED_ARGS="$SHARED_ARGS trainer.precision=$PRECISION"
         fi

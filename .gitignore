@@ -27,3 +27,15 @@ wandb/
 /inference
 /ProteinMPNN/ca_model_weights/*.pt
 /ProteinMPNN/vanilla_model_weights/*.pt
+
+# StructTokenBench: staged checkpoints, extracted/symlinked mmCIF corpus,
+# downloaded downstream-task data, and per-run lightning logs (tfevents +
+# checkpoints) -- keep summary_results.csv and struct_token_bench_logs/results/
+# tracked, just not these.
+StructTokenBench/100k-checkpoints/
+StructTokenBench/pdb_data
+StructTokenBench/struct_token_bench_release_data/
+StructTokenBench/.data_setup.lock
+StructTokenBench/struct_token_bench_logs/*_lr*/
+StructTokenBench/struct_token_bench_logs/tryout_test/
+StructTokenBench/struct_token_bench_logs/summary_results.csv.bak_*

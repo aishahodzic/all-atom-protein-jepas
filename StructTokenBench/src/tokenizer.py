@@ -688,7 +688,7 @@ class WrappedLaProteinaTokenizer():
     _DATAMODULE_CACHE = {}
 
     @staticmethod
-    def _get_native_datamodule(mmcif_dir: str) -> "PDBLightningDataModule":
+    def _get_native_datamodule(mmcif_dir: str, format: str) -> "PDBLightningDataModule":
         """PDBLightningDataModule pointed at our existing mmcif dir via a
         symlinked raw/ (no copying), so LaProteina's own _load_and_process_pdb
         runs against files already on disk.
@@ -699,18 +699,31 @@ class WrappedLaProteinaTokenizer():
         are its 'transforms', applied per PDBDataset.__getitem__ call (after
         the atom reorder), not baked into the one-time processed/ cache. See
         _get_eval_transform, applied explicitly in _parse_graph.
+
+        root is hashed off mmcif_dir itself (not just its parent): Atlas gives
+        every (pdb, chain) its own dir, so keying off the parent alone
+        collapsed all of them onto one shared raw/ symlink. format comes from
+        the caller (real extension on disk) instead of hardcoded "cif".
         """
         if mmcif_dir in WrappedLaProteinaTokenizer._DATAMODULE_CACHE:
             return WrappedLaProteinaTokenizer._DATAMODULE_CACHE[mmcif_dir]
 
         import pathlib
-        root = pathlib.Path(mmcif_dir).parent / "laproteina_native_root"
+        import hashlib
+        resolved = pathlib.Path(mmcif_dir).resolve()
+        digest = hashlib.sha256(str(resolved).encode()).hexdigest()[:10]
+        root = resolved.parent / f"laproteina_native_root_{digest}"
         root.mkdir(parents=True, exist_ok=True)
         raw_link = root / "raw"
         if not raw_link.exists():
-            raw_link.symlink_to(pathlib.Path(mmcif_dir).resolve())
+            # concurrent workers can race here; same target either way, so a
+            # losing FileExistsError is spurious, not a real failure.
+            try:
+                raw_link.symlink_to(resolved)
+            except FileExistsError:
+                pass
 
-        dm = PDBLightningDataModule(data_dir=str(root), format="cif", store_het=False, store_bfactor=True)
+        dm = PDBLightningDataModule(data_dir=str(root), format=format, store_het=False, store_bfactor=True)
         WrappedLaProteinaTokenizer._DATAMODULE_CACHE[mmcif_dir] = dm
         return dm
 
@@ -764,6 +777,14 @@ class WrappedLaProteinaTokenizer():
         hit there is byte-identical to processing it ourselves); only
         processes via our own datamodule for pairs missing from it.
         """
+        # base.py's chain_id=" " (Atlas) matches Bio.PDB's blank-chain
+        # convention, correct for every other tokenizer. graphein (used below,
+        # only by us) parses the same blank column as "" instead -- normalize
+        # once, up front, so it's consistent everywhere below.
+        if chain_id == " ":
+            chain_id = ""
+        # full basename incl. chain suffix, not just the 4-char PDB code --
+        # correct: Atlas's raw file really is {pdb_id}_{chain_id}.pdb.
         pdb_id = os.path.splitext(os.path.basename(pdb_path))[0]
         fname = f"{pdb_id}_{chain_id}.pt"
         transform = WrappedLaProteinaTokenizer._get_eval_transform()
@@ -777,7 +798,10 @@ class WrappedLaProteinaTokenizer():
             return ds[0]
 
         mmcif_dir = os.path.dirname(pdb_path)
-        dm = WrappedLaProteinaTokenizer._get_native_datamodule(mmcif_dir)
+        # the real extension on disk -- .cif for the general corpus, .pdb for
+        # Atlas's per-entry files (see _get_native_datamodule)
+        fmt = os.path.splitext(pdb_path)[1].lstrip(".")
+        dm = WrappedLaProteinaTokenizer._get_native_datamodule(mmcif_dir, fmt)
         if not (dm.processed_dir / fname).exists():
             result = dm._load_and_process_pdb((0, pdb_id, chain_id))
             if result is None:
@@ -790,7 +814,7 @@ class WrappedLaProteinaTokenizer():
             chains=[chain_id],
             data_dir=dm.data_dir,
             transform=transform,
-            format="cif",
+            format=dm.format,
             in_memory=False,
             file_names=[f"{pdb_id}_{chain_id}"],
         )
@@ -859,23 +883,29 @@ class WrappedLaProteinaTokenizer():
         fallback for pdb_id/chain combos pdb_seqres.txt doesn't cover (e.g.
         AtlasDataset's placeholder chain_id). Only called after parsing, so
         offers no skip-the-parse benefit; use the metadata version first.
+
+        exclude_ids/experiment_type_lookup/resolution_lookup are keyed by the
+        bare PDB code (whole-entry properties), but pdb_id is "{pdb}_{chain}"
+        for Atlas -- metadata_pdb_id strips the chain back off for just these
+        3 lookups (no-op for the general corpus, no underscore there anyway).
         """
         n_residues = graph.coords.shape[0]
         if min_length is not None and n_residues < min_length:
             return False
         if max_length is not None and n_residues > max_length:
             return False
-        if pdb_id.lower() in exclude_ids:
+        metadata_pdb_id = pdb_id.split("_")[0].lower()
+        if metadata_pdb_id in exclude_ids:
             return False
         if remove_non_standard_residues and any(
             r not in WrappedLaProteinaTokenizer.STANDARD_RESIDUES for r in graph.residues
         ):
             return False
         if experiment_types:
-            if experiment_type_lookup.get(pdb_id.lower()) not in experiment_types:
+            if experiment_type_lookup.get(metadata_pdb_id) not in experiment_types:
                 return False
         if worst_resolution is not None or best_resolution is not None:
-            resolution = resolution_lookup.get(pdb_id.lower())
+            resolution = resolution_lookup.get(metadata_pdb_id)
             if resolution is None:
                 return False
             if worst_resolution is not None and resolution > worst_resolution:

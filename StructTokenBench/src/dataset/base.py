@@ -1,3 +1,4 @@
+import hashlib
 import os
 import time
 import multiprocessing as mp
@@ -661,7 +662,14 @@ class BaseDataset(Dataset):
             if isinstance(self.tokenizer, WrappedOurPretrainedTokenizer):
                 tokenizer_name += f"_{self.tokenizer.ckpt_name}"
             elif isinstance(self.tokenizer, WrappedLaProteinaTokenizer):
-                ckpt_id = os.path.splitext(os.path.basename(self.tokenizer.pretrained_ckpt_path))[0]
+                # basename alone collides (every checkpoint is 100k.ckpt or
+                # 100k-EMA.ckpt, differing only by parent dir) -- hash the
+                # resolved path too so different checkpoints get different caches.
+                ckpt_basename = os.path.splitext(os.path.basename(self.tokenizer.pretrained_ckpt_path))[0]
+                path_hash = hashlib.sha256(
+                    os.path.realpath(self.tokenizer.pretrained_ckpt_path).encode()
+                ).hexdigest()[:10]
+                ckpt_id = f"{ckpt_basename}_{path_hash}"
                 tokenizer_name += f"_{self.tokenizer.checkpoint_type}_{ckpt_id}"
 
             # use continous reprs
@@ -690,6 +698,19 @@ class BaseDataset(Dataset):
                         f"failed to load ({e}); treating as corrupt and re-caching")
                     os.remove(cache_file_name)
                     new_data = None
+                if (new_data and self.data_name == "AtlasDataset"
+                        and self.target_field not in new_data[0]):
+                    # get_target_file_name() has no target_field in it, so
+                    # FlexRMSF/FlexBFactor/FlexNEQ share one cache file per
+                    # checkpoint. A cache another Flex task built lacks *this*
+                    # task's target_field -- treat as a miss, not a hit, so it
+                    # gets populated here (main process) rather than later
+                    # inside a forked DataLoader worker (CUDA re-init crash).
+                    self.py_logger.info(
+                        f"[Warning] cached tokenized data at {cache_file_name} was "
+                        f"built for a different target_field (missing "
+                        f"'{self.target_field}'); treating as a miss and re-caching")
+                    new_data = None
                 if new_data is not None:
                     self.data = new_data
                     self.additional_label_filtering_for_TAPE_homo(tokenizer_name)
@@ -701,6 +722,11 @@ class BaseDataset(Dataset):
             raise NotImplementedError
                 
         
+        # cache-hit path (above) already calls this; fresh-build path didn't,
+        # so a freshly-saved cache kept TAPE's raw 1195 fold_label values
+        # instead of the 45-class subset num_labels expects -> out-of-range
+        # CrossEntropyLoss target -> "CUDA error: device-side assert triggered".
+        self.additional_label_filtering_for_TAPE_homo(tokenizer_name)
         self.additional_preprocessing_for_TAPE_homo(tokenizer_name)
 
         if isinstance(self.tokenizer, WrappedLaProteinaTokenizer):
