@@ -214,9 +214,16 @@ def main(cfg_exp) -> None:
     # logger
     wandb_logger = None
     if cfg_exp.log.log_wandb and not nolog:
-        wandb_logger = WandbLogger(
-            project=cfg_exp.log.wandb_project, id=run_name, entity="aisha-hodzic-org"
-        )  # Hardcoded for now, can be moved to user info
+        wandb_kwargs = dict(
+            project=cfg_exp.log.wandb_project,
+            id=run_name,
+            entity="aisha-hodzic-org",
+        )
+        # Continuation jobs can explicitly require the existing W&B run. Keep
+        # the historical default unchanged for fresh experiments.
+        if cfg_exp.get("wandb_resume", False):
+            wandb_kwargs["resume"] = "must"
+        wandb_logger = WandbLogger(**wandb_kwargs)  # Hardcoded entity for now
 
     # checkpoints
     if cfg_exp.log.checkpoint and not nolog:

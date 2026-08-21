@@ -1,0 +1,43 @@
+#!/bin/bash
+# Continuation of the existing 30k jepa_rand50_predictor run. This keeps the
+# trained mask-token predictor and random-50 setup, adds the scheduled EMA for
+# the continuation, and runs to 100k total optimizer steps. LayerNorm remains off.
+# EMA runs from 0.996 at step 1 to 1.0 at step 100000; its value is computed from
+# the restored global_step, so the resumed run continues at the correct point.
+#
+# Usage: sbatch jobs/train_jepa_rand50_ema_predictor_100k.job
+#SBATCH --job-name=jepa_rand50_ema_predictor_100k
+#SBATCH --partition=normal
+#SBATCH --qos=medium
+#SBATCH --gres=gpu:1
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=16
+#SBATCH --time=14:00:00
+#SBATCH --output=logs/%x-%j.out
+
+source /slurm-storage/miniconda3/etc/profile.d/conda.sh
+conda activate /slurm-storage/aishod/envs/la-proteina
+
+set -a
+source /mnt/data/slurm-storage/aishod/projects/la-proteina/.env
+set +a
+
+export TMPDIR=/tmp
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+export PYTHONPATH=/mnt/data/slurm-storage/aishod/projects/la-proteina:$PYTHONPATH
+
+if [ "$(hostname -s)" = "hopper" ]; then
+    export DATA_PATH="${DATA_PATH/\/mnt\/hopper-raid/\/mnt\/raid}"
+    RAID_ROOT=/mnt/raid/aishod
+else
+    RAID_ROOT=/mnt/hopper-raid/aishod
+fi
+
+mkdir -p "$RAID_ROOT/runs/jepa_rand50_predictor_30k"
+cd "$RAID_ROOT/runs/jepa_rand50_predictor_30k"
+
+echo "last" | srun python /mnt/data/slurm-storage/aishod/projects/la-proteina/proteinfoundation/jepa/train.py \
+    run_name_=jepa_rand50_predictor_30k +single=true +masked_pct=0.5 +opt.max_steps=100000 \
+    wandb_resume=true \
+    baseline_run_ema=true baseline_run_predictor=true \
+    dataset.datamodule.num_workers=16
