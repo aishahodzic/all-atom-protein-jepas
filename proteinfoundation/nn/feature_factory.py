@@ -1501,12 +1501,16 @@ class RelativeResidueOrientationPairFeat(Feature):
         coords = batch["coords"]  # [b, n, 37, 3]
         atom_mask = batch["coord_mask"]  # [b, n, 37]
         mask = atom_mask[:, :, 1]  # [b, n]
+        has_n = atom_mask[:, :, 0]  # [b, n] boolean, N's own mask bit (used in theta_12/theta_21)
         has_cb = atom_mask[:, :, 3]  # [b, n] boolean, indicates if corresponding
         pair_mask = mask[:, :, None] * mask[:, None, :]  # [b, n, n] boolean
         beta_carbon_pair_mask = (
             has_cb[:, :, None] * has_cb[:, :, None]
         )  # [b, n, n] boolean
         pair_mask = pair_mask * beta_carbon_pair_mask  # [b, n, n]
+        # gate on N's own mask bit too (theta_12/theta_21 use N_p1/N_p2), else a
+        # masked N leaks its real angle whenever CA/CB are still valid
+        pair_mask = pair_mask * (has_n[:, :, None] * has_n[:, None, :])  # [b, n, n]
 
         N = coords[:, :, 0, :]  # [b, n, 3]
         CA = coords[:, :, 1, :]  # [b, n, 3]
@@ -1557,6 +1561,8 @@ class BackbonePairDistancesNanometerPairFeat(Feature):
         atom_mask = batch["coord_mask"]  # [b, n, 37]
         mask = atom_mask[:, :, 1]  # [b, n]
         pair_mask = mask[:, None, :] * mask[:, :, None]  # [b, n, n]
+        has_n = atom_mask[:, :, 0]  # [b, n] boolean, N_j's own mask bit
+        has_c = atom_mask[:, :, 2]  # [b, n] boolean, C_j's own mask bit
         has_cb = atom_mask[:, :, 3]  # [b, n] boolean, indicates if corresponding
 
         N = coords[:, :, 0, :]  # [b, n, 3]
@@ -1575,7 +1581,10 @@ class BackbonePairDistancesNanometerPairFeat(Feature):
         )  # Each shape [b, n, n]
         # CA_X[..., i, j] has distance (nm) between CA[..., i] and X[..., j]
 
-        # Accomodate residues without CB
+        # Gate each column on its OWN atom's mask bit, not just CA's (else a masked
+        # N_j/C_j leaks its real distance whenever CA_j itself is still valid).
+        CA_N = CA_N * has_n[:, None, :]  # [b, n, n]
+        CA_C = CA_C * has_c[:, None, :]  # [b, n, n]
         CA_CB = CA_CB * has_cb[:, None, :]  # [b, n, n]
 
         # Fix for mask
@@ -1589,6 +1598,12 @@ class BackbonePairDistancesNanometerPairFeat(Feature):
             lambda v: bin_and_one_hot(v, bin_limits=bin_limits),
             (CA_N, CA_CA, CA_C, CA_CB),
         )  # Each [b, n, n, 21]
+
+        # bin_and_one_hot always emits a one-hot bin (a zeroed distance still lands
+        # in bin 0), so the has_n/has_c gate above doesn't survive binning -- zero
+        # the one-hot itself or a masked N/C still contributes a nonzero feature.
+        CA_N_feat = CA_N_feat * has_n[:, None, :, None]
+        CA_C_feat = CA_C_feat * has_c[:, None, :, None]
 
         feat = torch.cat(
             [CA_N_feat, CA_CA_feat, CA_C_feat, CA_CB_feat], dim=-1

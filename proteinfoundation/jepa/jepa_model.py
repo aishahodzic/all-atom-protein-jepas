@@ -63,6 +63,111 @@ def mask_batch_for_encoder(batch: Dict, context_mask: torch.Tensor) -> Dict:
     return masked_batch
 
 
+def mask_batch_for_encoder_chemmask_aa_only(batch: Dict, context_mask: torch.Tensor) -> Dict:
+    """Chemical masking scheme 1 ("AA only, no coords"): EVERY real residue's AA
+    identity reaches the context encoder, context and target alike. Only geometry
+    is masked, and only on target (non-context) residues.
+
+    Geometry is hidden via ``coord_mask`` (all 37 atom slots set False on target
+    residues), NOT by zeroing coordinates -- "coords" and "coords_nm" are left
+    untouched everywhere. ``mask_dict["coords"]`` is also left untouched (unlike
+    ``mask_batch_for_encoder``): EncoderTransformer.forward re-derives its
+    per-residue mask from mask_dict["coords"][..., 0, 0] and does
+    ``seqs = seq_f_repr * mask[..., None]`` AFTER all sequence features (including
+    x1_aatype) are computed (encoder.py:119-128) -- if mask_dict["coords"] were
+    False on target residues (as it is in mask_batch_for_encoder, where it's used
+    to exclude them entirely), that blanket step would zero AA identity too. Only
+    coord_mask governs geometry visibility here; mask_dict["coords"] keeps every
+    real (non-padding) residue "valid" so identity survives that step for all of
+    them.
+
+    Args:
+        batch:         dict with "coord_mask" [B, L, 37] bool and "mask_dict"["coords"]
+                        [B, L, 37, 3] bool; "coords"/"coords_nm"/"residue_type" are
+                        read only via the returned shallow copy's shared references
+        context_mask:  [B, L] bool, True for the 30% residues keeping full geometry
+
+    Returns a shallow copy of ``batch`` with only "coord_mask" replaced; every other
+    key (coords, coords_nm, residue_type, mask_dict, ...) is the same reference as
+    in the input batch, untouched. The input batch itself is not modified.
+    """
+    # Target (non-context) residues lose geometry: coord_mask -> False on every
+    # atom slot. Context residues' coord_mask is untouched (real, per-atom values
+    # from the raw structure). AA identity is never touched here at all -- it
+    # flows through unchanged for every real residue, context and target alike.
+    strip_geometry = (~context_mask)[..., None]  # [B, L, 1], True for target residues, broadcasts over 37 atom slots
+
+    masked_batch = dict(batch)  # shallow copy: only "coord_mask" is overwritten
+    masked_batch["coord_mask"] = batch["coord_mask"] & (~strip_geometry)
+
+    return masked_batch
+
+
+def mask_batch_for_encoder_chemmask_partial_coordinates(batch: Dict, mask_pct: float = 0.7) -> Dict:
+    """Variant 1 ("per-atom coordinate masking"): every residue keeps
+    AA identity; each residue independently has ``mask_pct`` of its OWN valid atom
+    slots hidden (only slots already True in coord_mask are eligible -- absent atoms,
+    e.g. Glycine's CG, stay False). No context/target residue split: every residue is
+    both context (contributes its unmasked atoms) and target (its full-atom latent is
+    predicted) -- use ``apply_mask_to_latents(latents, valid_mask, valid_mask)`` for
+    the overlapping context=target set, no new function needed there.
+
+    Same mechanism as chemmask_aa_only: coord_mask carries the mask, mask_dict is
+    untouched (protects AA identity through EncoderTransformer's blanket step).
+
+    Args:
+        batch:     dict with "coord_mask" [B, L, 37] bool
+        mask_pct:  fraction of each residue's valid atoms to hide
+
+    Returns a shallow copy of ``batch`` with only "coord_mask" replaced. The input
+    batch itself is not modified.
+    """
+    coord_mask = batch["coord_mask"]  # [B, L, 37]
+    n_valid = coord_mask.sum(dim=-1, keepdim=True)  # [B, L, 1]
+    n_hide = (n_valid * mask_pct).round().long()  # [B, L, 1]
+
+    # rank each atom slot's random score within its residue, restricted to valid slots
+    # (invalid slots pushed above any valid score so they're never among the n_hide lowest)
+    scores = torch.rand_like(coord_mask, dtype=torch.float32).masked_fill(~coord_mask, 2.0)
+    ranks = scores.argsort(dim=-1).argsort(dim=-1)  # [B, L, 37], 0 = lowest score in this residue
+    hide = ranks < n_hide  # [B, L, 37], the mask_pct lowest-scored valid atoms per residue
+
+    masked_batch = dict(batch)
+    masked_batch["coord_mask"] = coord_mask & (~hide)
+    return masked_batch
+
+
+def mask_batch_for_encoder_chemmask_partial_coords_and_identity(
+    batch: Dict, atom_mask_pct: float = 0.7, identity_mask_pct: float = 0.5
+) -> Dict:
+    """Variant 2: Variant 1 coordinate masking plus independent AA masking.
+
+    Coordinates are masked identically to ``chemmask_partial_coordinates``. Then,
+    for each protein, exactly ``round(identity_mask_pct * n_valid)`` valid residues
+    have their residue-type feature hidden by setting
+    ``mask_dict['residue_type']`` to False. Coordinate validity is deliberately
+    untouched, so identity-hidden residues remain context and target positions.
+    """
+    masked_batch = mask_batch_for_encoder_chemmask_partial_coordinates(
+        batch, mask_pct=atom_mask_pct
+    )
+    valid_residues = batch["mask_dict"]["coords"][..., 0, 0].bool()  # [B, L]
+    n_valid = valid_residues.sum(dim=-1, keepdim=True)
+    n_hide = (n_valid * identity_mask_pct).round().long()
+
+    # Draw a separate per-residue permutation from the coordinate-mask draw.
+    scores = torch.rand(valid_residues.shape, device=valid_residues.device)
+    scores = scores.masked_fill(~valid_residues, 2.0)
+    ranks = scores.argsort(dim=-1).argsort(dim=-1)
+    hide_identity = valid_residues & (ranks < n_hide)
+
+    masked_batch["mask_dict"] = dict(batch["mask_dict"])
+    masked_batch["mask_dict"]["residue_type"] = (
+        batch["mask_dict"]["residue_type"].bool() & ~hide_identity
+    )
+    return masked_batch
+
+
 def uniform_sampling(exclude_idx: torch.Tensor) -> torch.Tensor:
     """Samples one amino-acid index uniformly from the 20 AAs, excluding `exclude_idx`.
 
@@ -144,6 +249,20 @@ class JEPAModel(L.LightningModule):
         self.cfg = cfg
         self.ema_decay = ema_decay
         self.latent_dim = self.cfg.nn_ae["latent_z_dim"]  # 8
+        self.baseline_run_layernorm = self.cfg.get("baseline_run_layernorm", False)
+        self.baseline_run_ema = self.cfg.get("baseline_run_ema", False)
+        self.baseline_run_predictor = self.cfg.get("baseline_run_predictor", False)
+        self._last_ema_update_step = -1
+
+        if self.baseline_run_ema:
+            self.ema_schedule_steps = self.cfg.opt.get("max_steps", None)
+            if not isinstance(self.ema_schedule_steps, int) or self.ema_schedule_steps < 2:
+                raise ValueError(
+                    "baseline_run_ema=true requires opt.max_steps to be an integer >= 2 "
+                    "so the 0.996-to-1.0 EMA schedule has a defined endpoint."
+                )
+        else:
+            self.ema_schedule_steps = None
 
         self.use_action_conditioning = use_action_conditioning
         self.action_reg_warmup_steps = action_reg_warmup_steps
@@ -164,7 +283,16 @@ class JEPAModel(L.LightningModule):
         # max_len must be >= the dataset's max crop length (256).
         predictor_cfg = self.cfg.get("predictor", {}) or {}
         max_len = predictor_cfg.get("max_len", 256)
-        self.predictor = JEPAPredictor(latent_z_dim=self.latent_dim, max_len=max_len)
+        use_self_attn = predictor_cfg.get("use_self_attn", False)
+        predictor_type = (
+            "mask_token_transformer" if self.baseline_run_predictor else "cross_attention"
+        )
+        self.predictor = JEPAPredictor(
+            latent_z_dim=self.latent_dim,
+            max_len=max_len,
+            use_self_attn=use_self_attn,
+            predictor_type=predictor_type,
+        )
 
         # For scaling/* logging, mirroring the autoencoder (proteinfoundation/partial_autoencoder/autoencoder.py)
         self.nsamples_processed = 0
@@ -244,16 +372,44 @@ class JEPAModel(L.LightningModule):
         batch["mask"] = mask
 
         # Split residues into context / target BEFORE encoding.
+        # Partial-coordinate modes are overlapping: every valid
+        # residue is both context (contributes its partial-atom latent) and target
+        # (its full-atom latent is predicted) -- block_mask/masked_pct don't apply.
         # `+block_mask=true` at the CLI switches to block masking.
         # `+masked_pct=0.7` overrides random_residue_mask's default 0.5 (ignored for block masking).
-        if self.cfg.get("block_mask", False):
+        masking_mode = self.cfg.get("masking_mode", None)
+        if masking_mode in {
+            "chemmask_partial_coordinates",
+            "chemmask_partial_coords_and_identity",
+        }:
+            context_mask = target_mask = mask.bool()
+        elif self.cfg.get("block_mask", False):
             context_mask, target_mask = block_residue_mask(batch)
         else:
             masked_pct = self.cfg.get("masked_pct", 0.5)
             context_mask, target_mask = random_residue_mask(batch, masked_pct=masked_pct)
 
-        # Online encoder sees only the n-k context residues
-        masked_batch = mask_batch_for_encoder(batch, context_mask)
+        # Online encoder sees only the n-k context residues.
+        # `+masking_mode=chemmask_aa_only` switches context residues from "real
+        # coords, zeroed for target only" to "AA identity kept, all geometry hidden
+        # via coord_mask". Partial-coordinate modes hide
+        # `+atom_mask_pct=0.7` of EVERY residue's own atoms, identity always kept.
+        # Default (flag absent) is byte-identical to before.
+        if masking_mode is None:
+            masked_batch = mask_batch_for_encoder(batch, context_mask)
+        elif masking_mode == "chemmask_aa_only":
+            masked_batch = mask_batch_for_encoder_chemmask_aa_only(batch, context_mask)
+        elif masking_mode == "chemmask_partial_coordinates":
+            atom_mask_pct = self.cfg.get("atom_mask_pct", 0.7)
+            masked_batch = mask_batch_for_encoder_chemmask_partial_coordinates(batch, mask_pct=atom_mask_pct)
+        elif masking_mode == "chemmask_partial_coords_and_identity":
+            masked_batch = mask_batch_for_encoder_chemmask_partial_coords_and_identity(
+                batch,
+                atom_mask_pct=self.cfg.get("atom_mask_pct", 0.7),
+                identity_mask_pct=self.cfg.get("identity_mask_pct", 0.5),
+            )
+        else:
+            raise ValueError(f"Unknown masking_mode: {masking_mode!r}")
         online_mean = self._encode_mean(self.online_encoder, masked_batch)  # [B, L, latent_z_dim], only context positions carry signal
 
         # Representation collape monitoring
@@ -295,14 +451,44 @@ class JEPAModel(L.LightningModule):
             )  # [B, hidden_dim]
             action_z = action_z.unsqueeze(1)  # [B, 1, hidden_dim], broadcasts over target queries
 
+        # Context/target overlap under partial-coordinate modes (every residue is
+        # both) -- self_exclude blocks query i from attending to its own context
+        # entry, forcing it to reconstruct from neighbours instead of copying itself.
+        self_exclude = (
+            masking_mode in {
+                "chemmask_partial_coordinates",
+                "chemmask_partial_coords_and_identity",
+            }
+            and self.cfg.get("partial_coordinate_self_exclude", True)
+        )
+
+        if masking_mode == "chemmask_partial_coords_and_identity":
+            identity_hidden = (
+                mask.bool() & ~masked_batch["mask_dict"]["residue_type"].bool()
+            )
+            hidden_per_protein = identity_hidden.sum(dim=-1).float()
+            valid_per_protein = mask.sum(dim=-1).clamp_min(1).float()
+            hidden_fraction = hidden_per_protein / valid_per_protein
+            self.log(f"{stage}_identity_mask/fraction_mean", hidden_fraction.mean(), batch_size=mask.shape[0])
+            self.log(f"{stage}_identity_mask/fraction_min", hidden_fraction.min(), batch_size=mask.shape[0])
+            self.log(f"{stage}_identity_mask/fraction_max", hidden_fraction.max(), batch_size=mask.shape[0])
+            self.log(f"{stage}_identity_mask/n_hidden", hidden_per_protein.mean(), batch_size=mask.shape[0])
+            self.log(
+                f"{stage}_identity_mask/n_shown",
+                (valid_per_protein - hidden_per_protein).mean(),
+                batch_size=mask.shape[0],
+            )
+
         # Predict target latents from context latents (+ positions [+ action_z])
         predicted_latent = self.predictor(
             masked_latents["context_latents"],                       # [B, L_ctx, latent_z_dim]
             masked_latents["context_indices"],                       # [B, L_ctx]
             masked_latents["target_indices"],                        # [B, L_tgt]
             key_padding_mask=masked_latents["context_padding"], # [B, L_ctx]
+            target_padding_mask=masked_latents["target_padding"], # [B, L_tgt]
             action_z=action_z,
             action_position=mutation_positions,
+            self_exclude=self_exclude,
         )  # [B, L_tgt, latent_z_dim]
 
         # EMA target encoder mean latents.
@@ -319,12 +505,21 @@ class JEPAModel(L.LightningModule):
         target_padding = masked_latents["target_padding"]  # [B, L_tgt], True = padding
         real_target_residues = torch.logical_not(target_padding)
 
-        # L2-normalize before the loss so magnitude drift between predicted and target latents doesn't dominate the loss
-        predicted_norm = F.normalize(predicted_latent[real_target_residues], dim=-1)
-        ema_target_norm = F.normalize(ema_target[real_target_residues], dim=-1)
+        predicted_for_loss = predicted_latent[real_target_residues]
+        ema_target_for_loss = ema_target[real_target_residues]
+        if self.baseline_run_layernorm:
+            # I-JEPA normalizes teacher features per token, then asks the predictor
+            # to match them in the original latent scale.
+            ema_target_for_loss = F.layer_norm(
+                ema_target_for_loss, (ema_target_for_loss.shape[-1],)
+            )
+        else:
+            # Existing experiment behavior, kept unchanged unless explicitly opted in.
+            predicted_for_loss = F.normalize(predicted_for_loss, dim=-1)
+            ema_target_for_loss = F.normalize(ema_target_for_loss, dim=-1)
 
-        # L1 for large losses, L2 for small losses, beta at 1.0
-        jepa_loss = F.smooth_l1_loss(predicted_norm, ema_target_norm)
+        # Smooth-L1 latent prediction loss.
+        jepa_loss = F.smooth_l1_loss(predicted_for_loss, ema_target_for_loss)
         loss = jepa_loss
 
         action_sensitivity_reg = None
@@ -341,12 +536,15 @@ class JEPAModel(L.LightningModule):
                 masked_latents["context_indices"],
                 masked_latents["target_indices"],
                 key_padding_mask=masked_latents["context_padding"],
+                target_padding_mask=masked_latents["target_padding"],
                 action_z=action_z2,
                 action_position=mutation_positions,
+                self_exclude=self_exclude,
             )  # [B, L_tgt, latent_z_dim]
 
             # L2-normalize before the distance so neither side can inflate its raw
             # output scale to game z_sensitivity (caps numerator/denominator to [0, 2] each).
+            predicted_norm = F.normalize(predicted_latent[real_target_residues], dim=-1)
             predicted_norm_z2 = F.normalize(predicted_latent_z2[real_target_residues], dim=-1)
             numerator = (predicted_norm - predicted_norm_z2).norm(dim=-1).mean()
             action_norm_z1 = F.normalize(action_z, dim=-1)
@@ -712,11 +910,24 @@ class JEPAModel(L.LightningModule):
 
     def on_train_batch_end(self, outputs, batch, batch_idx):
         """EMA update of the target encoder after each training step."""
+        if self.baseline_run_ema:
+            # With gradient accumulation this hook runs on every batch, while
+            # global_step advances only after an optimizer step. Update once per
+            # optimizer step and interpolate from 0.996 at step 1 to 1.0 at max_steps.
+            if self.global_step == self._last_ema_update_step:
+                return
+            self._last_ema_update_step = self.global_step
+            progress = min(
+                max(self.global_step - 1, 0) / (self.ema_schedule_steps - 1), 1.0
+            )
+            ema_decay = self.ema_decay + progress * (1.0 - self.ema_decay)
+        else:
+            ema_decay = self.ema_decay
         with torch.no_grad():
             for online_p, ema_p in zip(
                 self.online_encoder.parameters(), self.ema_encoder.parameters()
             ):
-                ema_p.data = self.ema_decay * ema_p.data + (1 - self.ema_decay) * online_p.data
+                ema_p.data = ema_decay * ema_p.data + (1 - ema_decay) * online_p.data
 
     def configure_optimizers(self):
         # Only parameters with requires_grad=True are optimized, which excludes the

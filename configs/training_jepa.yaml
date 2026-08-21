@@ -15,6 +15,21 @@ defaults:
 # Pre-training checkpoint to start from there (JEPA trains from scratch by default)
 pretrain_ckpt_path:
 
+# Opt-in I-JEPA-aligned ablations. Defaults preserve the existing JEPA runs.
+baseline_run_layernorm: false  # Teacher LayerNorm + raw-prediction Smooth-L1 loss
+baseline_run_ema: false        # Linear teacher EMA schedule 0.996 -> 1.0; requires opt.max_steps
+baseline_run_predictor: false  # Joint self-attention predictor over context + target mask tokens
+# For overlapping partial-coordinate context/targets, block a target query from
+# directly reading its own context token. Set false to condition on its own
+# partial-geometry latent.
+partial_coordinate_self_exclude: true
+
+# batch_size=4/accumulate=1 keeps effective batch at 4 (same as batch_size=2/accumulate=2)
+# but does it in one GPU pass instead of two -- pure throughput win, H100 was sitting at ~30% util
+dataset:
+  datamodule:
+    batch_size: 4
+
 # Predictor (JEPA). max_len must be >= the dataset max crop length (see dataset.max_length).
 predictor:
   max_len: 256
@@ -26,7 +41,7 @@ force_precision_f32: False  # If false will use bf16-mixed precision
 opt:
   lr: 0.0001
   max_epochs: 10000000
-  accumulate_grad_batches: 2
+  accumulate_grad_batches: 1
   skip_nan_grad: False  # Skip updates with nan gradient
   grad_and_weight_analysis: True  # Log some statistics of gradients and weights
   dist_strategy: auto  # For multi GPU training, do not change. The 2-GPU hang (2026-07-11) was actually a NCCL P2P/SHM transport issue, fixed via NCCL_P2P_DISABLE=1 NCCL_SHM_DISABLE=1 at launch -- find_unused_parameters was a ruled-out hypothesis (confirmed zero unused params, pure overhead).
