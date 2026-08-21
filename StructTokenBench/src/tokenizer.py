@@ -595,7 +595,8 @@ class WrappedProteinMPNNTokenizer():
 class WrappedLaProteinaTokenizer():
 
     def __init__(self, device: torch.device | str = "cpu", pretrained_ckpt_path = None,
-                 checkpoint_type: str = "ae", encoder_cfg_path: str = None):
+                 checkpoint_type: str = "ae", encoder_cfg_path: str = None,
+                 force_remove_non_standard_residues: bool = None):
         self.device = device
         self.pad_token_id = 0 # for pipeline compatibility
         self.pretrained_ckpt_path = pretrained_ckpt_path
@@ -614,6 +615,17 @@ class WrappedLaProteinaTokenizer():
                 for k, v in ckpt["state_dict"].items()
                 if k.startswith("online_encoder.")
             }
+            # latent_z_dim inferred from the checkpoint's own weights, not assumed
+            # from encoder_cfg_path's default (8) -- lets dim-64 (or any future
+            # dim) checkpoints load correctly. latent_decoder_mean_n_log_scale.1
+            # is the encoder's final [mean, log_scale] projection, so its output
+            # width is 2 * latent_z_dim (mirrors Evaluation/linear_probing/checkpoints.py's
+            # _infer_latent_z_dim -- same fix, same reasoning).
+            latent_z_dim = online_encoder_weights["latent_decoder_mean_n_log_scale.1.weight"].shape[0] // 2
+            print(f"[tokenizer] {pretrained_ckpt_path}: latent_z_dim={latent_z_dim}")
+            cfg["nn_ae"]["latent_z_dim"] = latent_z_dim
+            cfg["nn_ae"]["encoder"]["latent_z_dim"] = latent_z_dim
+            cfg["nn_ae"]["decoder"]["latent_z_dim"] = latent_z_dim
             self.encoder = EncoderTransformer(**cfg["nn_ae"])
             self.encoder.load_state_dict(online_encoder_weights)
             train_cfg = cfg
@@ -630,6 +642,10 @@ class WrappedLaProteinaTokenizer():
         self.max_length = dataselector.get("max_length")
         self.exclude_ids = set(x.lower() for x in dataselector.get("exclude_ids", []))
         self.remove_non_standard_residues = dataselector.get("remove_non_standard_residues", False)
+        if force_remove_non_standard_residues is not None:
+            # AE1's dataselector has no such key (defaults False); non-standard residues then
+            # crash atom37_to_torsion_angles (x1_sidechain_angles). Override explicitly.
+            self.remove_non_standard_residues = force_remove_non_standard_residues
         self.best_resolution = dataselector.get("best_resolution") or None  # 0.0 is a PDBDataSelector no-op too
         self.worst_resolution = dataselector.get("worst_resolution")
         self.experiment_types = set(dataselector.get("experiment_types") or [])
@@ -704,14 +720,32 @@ class WrappedLaProteinaTokenizer():
         every (pdb, chain) its own dir, so keying off the parent alone
         collapsed all of them onto one shared raw/ symlink. format comes from
         the caller (real extension on disk) instead of hardcoded "cif".
+
+        The digest is computed off a node-normalized path, not the raw
+        resolved one: hopper reads this same physical disk at /mnt/raid
+        locally (run_eval.sh's PDB_DATA_ROOT override, for NFS-self-mount
+        reliability -- see struct_token_bench_eval_noether.job) while every
+        other node sees it at /mnt/hopper-raid over NFS. Hashing the raw
+        path made those two aliases of the identical directory collide on
+        different digests, so hopper silently built its own native-fallback
+        cache (laproteina_native_root_bccb1d8e13) instead of sharing
+        laproteina_native_root_5e731aadc7 with everyone else -- confirmed
+        100% redundant (zero unique files) when we found it. Actual I/O
+        below still goes through `resolved` (the fast local mount on
+        whichever node is running); only the string fed to the hash is
+        normalized, so every node writes into the same-named directory,
+        which -- since /mnt/raid and /mnt/hopper-raid are the same disk --
+        is the same directory on disk regardless of which alias got there.
         """
         if mmcif_dir in WrappedLaProteinaTokenizer._DATAMODULE_CACHE:
             return WrappedLaProteinaTokenizer._DATAMODULE_CACHE[mmcif_dir]
 
         import pathlib
         import hashlib
+        import re
         resolved = pathlib.Path(mmcif_dir).resolve()
-        digest = hashlib.sha256(str(resolved).encode()).hexdigest()[:10]
+        canonical = re.sub(r"^/mnt/raid/", "/mnt/hopper-raid/", str(resolved))
+        digest = hashlib.sha256(canonical.encode()).hexdigest()[:10]
         root = resolved.parent / f"laproteina_native_root_{digest}"
         root.mkdir(parents=True, exist_ok=True)
         raw_link = root / "raw"

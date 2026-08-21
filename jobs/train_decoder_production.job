@@ -1,0 +1,30 @@
+#!/bin/bash
+# Decoder-reconstruction production run (Evaluation/structure_rec/train_decoder.py):
+# fixed 50k-step budget (set from calibration: fully-latent plateaued under 1A
+# RMSD by step 50000; le-jepa-rand-mask-70 auto-stopped much earlier at 12000,
+# well below budget). No early stopping -- identical step count for every run.
+#
+# Usage: sbatch jobs/train_decoder_production.job --encoder <id> [--decoder-style X --group Y]
+#        sbatch jobs/train_decoder_production.job --encoder le-jepa-rand-mask-70 \
+#          --resume-from .../le-jepa-rand-mask-70_calib_final.pt --resume-step 12000
+#SBATCH --job-name=decoder_prod
+#SBATCH --partition=normal
+#SBATCH --nodelist=noether
+#SBATCH --qos=medium
+#SBATCH --gres=gpu:1
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=100G
+#SBATCH --time=24:00:00
+#SBATCH --output=logs/%x-%j.out
+
+set -a
+source /mnt/data/slurm-storage/aishod/projects/la-proteina/.env
+set +a
+
+cd /mnt/data/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec
+export PYTHONPATH=/mnt/data/slurm-storage/aishod/projects/la-proteina
+
+srun /data-gauss/$USER/envs/laproteina_env/bin/python3 train_decoder.py \
+  --max-steps 50000 --eval-every 2000 \
+  "$@"

@@ -1,0 +1,31 @@
+#!/bin/bash
+# AE1 (checkpoints_laproteina/AE1_ucond_512.ckpt) through the same 12-task
+# StructTokenBench protocol as the other 8 encoders -- one array task per
+# benchmark task. Registered as experiment "ae1-external" in run_eval.sh.
+# Verified via a one-protein load test before this was written: loads
+# cleanly via the plain "ae" path, auto-includes AE1's own angle features
+# (x1_bb_angles/x1_sidechain_angles), d_model=8 confirmed correct.
+#
+# %2 concurrency: noether has 4 GPUs, 2 already in use by the decoder
+# calibration runs -- caps this array at 2 concurrent so all 4 stay covered
+# without over-subscribing.
+#
+# Usage: sbatch --array=0-11%2 jobs/struct_token_bench_eval_ae1_noether.job
+#SBATCH --job-name=stb_ae1
+#SBATCH --partition=normal
+#SBATCH --nodelist=noether
+#SBATCH --qos=medium
+#SBATCH --gres=gpu:1
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=16
+#SBATCH --time=8:00:00
+#SBATCH --output=logs/%x-%A_%a.out
+
+set -a
+source /mnt/data/slurm-storage/aishod/projects/la-proteina/.env
+set +a
+
+cd /mnt/data/slurm-storage/aishod/projects/la-proteina/StructTokenBench
+
+TASK_IDX=$((SLURM_ARRAY_TASK_ID + 1))  # run_eval.sh's --tasks= is 1-indexed
+bash src/script/run_eval.sh --checkpoint=100k --experiment=ae1-external --tasks=$TASK_IDX

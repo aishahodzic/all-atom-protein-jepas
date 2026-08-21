@@ -1,0 +1,18 @@
+#!/bin/bash
+# Mean-subtraction collapse check (Evaluation/linear_probing/mean_subtraction_check.py):
+# cached latents only, no encoder forward passes, no PDB dataloading -- same
+# reasoning as collapse_diagnostics.job (no GPU, no hopper-raid, not pinned).
+#
+# Usage: sbatch jobs/mean_subtraction_check.job [--checkpoint NAME]
+#SBATCH --job-name=mean_subtraction_check
+#SBATCH --partition=normal
+#SBATCH --qos=medium
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=4
+#SBATCH --time=0:15:00
+#SBATCH --output=logs/%x-%j.out
+
+cd /mnt/data/slurm-storage/aishod/projects/la-proteina/Evaluation/linear_probing
+export PYTHONPATH=/mnt/data/slurm-storage/aishod/projects/la-proteina
+
+srun /data-gauss/$USER/envs/laproteina_env/bin/python3 mean_subtraction_check.py "$@"

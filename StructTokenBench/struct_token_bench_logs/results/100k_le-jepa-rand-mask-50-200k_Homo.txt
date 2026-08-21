@@ -1,0 +1,25 @@
+                         Branch: le-jepa-rand-mask-50-200k  |  Checkpoint: 100k  |  Task: Homo                          
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━┓
+┃ Metric                                                                                         ┃               Value ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━┩
+│ test_family_holdout_accuracy                                                                   │              0.2689 │
+│ test_family_holdout_auroc                                                                      │              0.1045 │
+│ test_family_holdout_f1_score                                                                   │              0.2622 │
+│ test_family_holdout_loss                                                                       │              1.9298 │
+│ test_family_holdout_mcc                                                                        │              0.1260 │
+│ test_fold_holdout_accuracy                                                                     │              0.1157 │
+│ test_fold_holdout_auroc                                                                        │              0.1685 │
+│ test_fold_holdout_f1_score                                                                     │              0.0921 │
+│ test_fold_holdout_loss                                                                         │              3.7765 │
+│ test_fold_holdout_mcc                                                                          │              0.1384 │
+│ test_superfamily_holdout_accuracy                                                              │              0.1319 │
+│ test_superfamily_holdout_auroc                                                                 │              0.1580 │
+│ test_superfamily_holdout_f1_score                                                              │              0.0872 │
+│ test_superfamily_holdout_loss                                                                  │              3.3315 │
+│ test_superfamily_holdout_mcc                                                                   │              0.1213 │
+│ validation_accuracy                                                                            │              0.1022 │
+│ validation_auroc                                                                               │              0.2979 │
+│ validation_f1_score                                                                            │              0.0597 │
+│ validation_loss                                                                                │              3.5362 │
+│ validation_mcc                                                                                 │              0.1378 │
+└────────────────────────────────────────────────────────────────────────────────────────────────┴─────────────────────┘

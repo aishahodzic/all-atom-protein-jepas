@@ -1,0 +1,17 @@
+                        Branch: jepa-rand50-predictor-30k  |  Checkpoint: 30k  |  Task: FlexRMSF                        
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Metric                                                                                    ┃                    Value ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│ fold_test_loss                                                                            │                   0.0194 │
+│ fold_test_pearsonr                                                                        │                   0.4248 │
+│ fold_test_r2                                                                              │                   0.1761 │
+│ fold_test_spearmanr                                                                       │                   0.4212 │
+│ superfamily_test_loss                                                                     │                   0.0215 │
+│ superfamily_test_pearsonr                                                                 │                   0.4044 │
+│ superfamily_test_r2                                                                       │                   0.1509 │
+│ superfamily_test_spearmanr                                                                │                   0.4171 │
+│ validation_loss                                                                           │                   0.0265 │
+│ validation_pearsonr                                                                       │                   0.4035 │
+│ validation_r2                                                                             │                   0.1232 │
+│ validation_spearmanr                                                                      │                   0.3935 │
+└───────────────────────────────────────────────────────────────────────────────────────────┴──────────────────────────┘

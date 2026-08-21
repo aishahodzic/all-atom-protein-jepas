@@ -1,0 +1,49 @@
+#!/bin/bash
+# One-protein StructTokenBench load test for AE1 (checkpoints_laproteina/AE1_ucond_512.ckpt),
+# via WrappedLaProteinaTokenizer's own "ae" loading path -- confirms points 1-3 from the
+# AE1 StructTokenBench request before committing the full ~6h x 12 sweep. Creates the
+# pstbench conda env if missing (one-time), same as run_eval.sh's own setup block.
+#SBATCH --job-name=ae1_stb_loadtest
+#SBATCH --partition=normal
+#SBATCH --nodelist=noether
+#SBATCH --qos=medium
+#SBATCH --gres=gpu:1
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=8
+#SBATCH --time=1:00:00
+#SBATCH --output=logs/%x-%j.out
+
+set -euo pipefail
+
+set -a
+source /mnt/data/slurm-storage/aishod/projects/la-proteina/.env
+set +a
+
+REPO_DIR="/mnt/data/slurm-storage/aishod/projects/la-proteina/StructTokenBench"
+cd "$REPO_DIR"
+export PYTHONPATH="$(dirname "$REPO_DIR")${PYTHONPATH:+:$PYTHONPATH}"
+export DIR="$REPO_DIR"
+
+source /slurm-storage/miniconda3/etc/profile.d/conda.sh
+if ! conda env list | grep -q '^pstbench '; then
+    echo "conda env 'pstbench' not found; creating it (python=3.11)"
+    conda create -y -n pstbench python=3.11
+fi
+conda activate pstbench
+hash -r
+
+# Same minimal dependency set src/tokenizer.py + this load test need -- run_eval.sh
+# installs the fuller set (data/task deps) lazily per-task; we only need enough to
+# import tokenizer.py and run encode_structure once.
+python -c "import torch" 2>/dev/null || pip install -q torch
+python -c "import lightning" 2>/dev/null || pip install -q lightning
+python -c "import graphein" 2>/dev/null || pip install -q "graphein"
+python -c "import biotite" 2>/dev/null || pip install -q biotite
+python -c "import Bio" 2>/dev/null || pip install -q biopython
+python -c "import einops" 2>/dev/null || pip install -q einops
+python -c "import omegaconf" 2>/dev/null || pip install -q omegaconf
+python -c "import jaxtyping" 2>/dev/null || pip install -q jaxtyping
+python -c "import loguru" 2>/dev/null || pip install -q loguru
+python -c "import torch_geometric" 2>/dev/null || pip install -q torch_geometric
+
+python /tmp/claude-3043/-mnt-data-slurm-storage-aishod-projects-la-proteina/092193cd-27dd-4944-9905-dd7a3d937caf/scratchpad/ae1_stb_loadtest.py

@@ -1,0 +1,30 @@
+#!/bin/bash
+# Extracts + caches 8-dim latents for the 4 rand50-ablation checkpoints only
+# (control/ema/layernorm/predictor, 30k steps) -- run.py's CLI has no
+# checkpoint-scoping flag (it always sweeps every id in CHECKPOINTS), so this
+# calls extract_latents.extract(checkpoint_ids=[...]) directly instead of
+# re-extracting all 8+ existing checkpoints. Same GPU/mount requirements as
+# linear_probing_noether.job (pinned to noether for /mnt/hopper-raid).
+#
+# Usage: sbatch jobs/extract_latents_rand50_ablations.job
+#SBATCH --job-name=extract_latents_rand50_ablations
+#SBATCH --partition=normal
+#SBATCH --nodelist=noether
+#SBATCH --qos=medium
+#SBATCH --gres=gpu:1
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=16
+#SBATCH --time=2:00:00
+#SBATCH --output=logs/%x-%j.out
+
+set -a
+source /mnt/data/slurm-storage/aishod/projects/la-proteina/.env
+set +a
+
+cd /mnt/data/slurm-storage/aishod/projects/la-proteina/Evaluation/linear_probing
+export PYTHONPATH=/mnt/data/slurm-storage/aishod/projects/la-proteina
+
+srun /data-gauss/$USER/envs/laproteina_env/bin/python3 -c "
+from extract_latents import extract
+extract(checkpoint_ids=['jepa-rand50-control-30k', 'jepa-rand50-ema-30k', 'jepa-rand50-layernorm-30k', 'jepa-rand50-predictor-30k'])
+"

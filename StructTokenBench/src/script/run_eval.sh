@@ -89,8 +89,14 @@ pkg_present () {
 # this config; see tokenizer.py's WrappedLaProteinaTokenizer for what's actually consumed).
 CKPT_ROOT="$REPO_DIR/100k-checkpoints"
 JEPA_ENCODER_CFG="$CKPT_ROOT/shared/exp_config_jepa_nn130m.json"
+# External reference checkpoint (NVIDIA's published La-Proteina AE, not one of "my 8") --
+# lives at the la-proteina repo root, not under 100k-checkpoints/. Same latent_z_dim=8,
+# loaded via the plain "ae" path (no encoder-cfg-path), verified via a one-protein load
+# test (encode_structure OK, feats_seq auto-includes x1_bb_angles/x1_sidechain_angles
+# since WrappedLaProteinaTokenizer reads each checkpoint's own saved config).
+AE1_CKPT="$(dirname "$REPO_DIR")/checkpoints_laproteina/AE1_ucond_512.ckpt"
 
-EXPERIMENT_NAMES=(ca-cond-baseline fully-latent jepa-rand-mask-50 jepa-rand-mask-70 jepa-mutation le-jepa-rand-mask-50 le-jepa-rand-mask-70 le-jepa-mutation)
+EXPERIMENT_NAMES=(ca-cond-baseline fully-latent jepa-rand-mask-50 jepa-rand-mask-70 jepa-mutation le-jepa-rand-mask-50 le-jepa-rand-mask-70 le-jepa-mutation jepa-rand-mask-70-dim64 le-jepa-rand-mask-70-dim64 jepa-rand-mask-50-selfattn jepa-rand-mask-70-selfattn le-jepa-rand-mask-50-200k ae1-external random-init jepa-rand50-control-30k jepa-rand50-ema-30k jepa-rand50-layernorm-30k jepa-rand50-predictor-30k)
 
 experiment_model_args () {
     # sets TOKENIZERNAME and EXTRA_MODEL_ARGS for experiment name $1
@@ -129,6 +135,69 @@ experiment_model_args () {
         le-jepa-mutation)
             TOKENIZERNAME="laproteina_le_jepa_mutation"
             EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CKPT_ROOT/le-jepa/mutation/100k.ckpt tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        jepa-rand-mask-70-dim64)
+            TOKENIZERNAME="laproteina_jepa_rand_mask_70_dim64"
+            # 64-dim latent (vs. the other jepa/le-jepa entries' 8-dim); both
+            # WrappedLaProteinaTokenizer's encoder and d_model (below, in the main
+            # loop) infer latent_z_dim from the checkpoint's own weights, so the
+            # same shared JEPA_ENCODER_CFG works here unchanged.
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CKPT_ROOT/bottle-inspect/64dim/jepa/100k.ckpt tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        le-jepa-rand-mask-70-dim64)
+            TOKENIZERNAME="laproteina_le_jepa_rand_mask_70_dim64"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CKPT_ROOT/bottle-inspect/64dim/le-jepa/100k.ckpt tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        jepa-rand-mask-50-selfattn)
+            TOKENIZERNAME="laproteina_jepa_rand_mask_50_selfattn"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CKPT_ROOT/bottle-inspect/self-attn/jepa/random_masking_50pct/100k.ckpt tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        jepa-rand-mask-70-selfattn)
+            TOKENIZERNAME="laproteina_jepa_rand_mask_70_selfattn"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CKPT_ROOT/bottle-inspect/self-attn/jepa/random_masking_70pct/100k.ckpt tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        le-jepa-rand-mask-50-200k)
+            # 200k steps, not 100k -- lives in its own top-level 200k-checkpoint/ dir, not
+            # under CKPT_ROOT. --checkpoint= is just this run's output/summary-row label,
+            # not a path component here, so running this under --checkpoint=100k is fine.
+            TOKENIZERNAME="laproteina_le_jepa_rand_mask_50_200k"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$REPO_DIR/200k-checkpoint/le-jepa/random_masking_50pct/200k.ckpt tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        ae1-external)
+            TOKENIZERNAME="laproteina_ae1_external"
+            # +force_remove_non_standard_residues=true: see tokenizer.py for why. "+" is required --
+            # none of the task configs (biolip2.yaml, interpro.yaml, etc.) declare this key, so a
+            # plain override is rejected by Hydra ("Key ... is not in struct").
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$AE1_CKPT tokenizer_checkpoint_type=ae +tokenizer_force_remove_non_standard_residues=true"
+            ;;
+        jepa-rand50-control-30k)
+            TOKENIZERNAME="laproteina_jepa_rand50_control_30k"
+            # 30k steps, matched-step baseline for the 3 rand-50 ablations below --
+            # not a 100k checkpoint, --checkpoint= is just this run's output label.
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CKPT_ROOT/baseline_ablations/control/last.ckpt tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        jepa-rand50-ema-30k)
+            TOKENIZERNAME="laproteina_jepa_rand50_ema_30k"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CKPT_ROOT/baseline_ablations/ema/last.ckpt tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        jepa-rand50-layernorm-30k)
+            TOKENIZERNAME="laproteina_jepa_rand50_layernorm_30k"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CKPT_ROOT/baseline_ablations/layernorm/last.ckpt tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        jepa-rand50-predictor-30k)
+            TOKENIZERNAME="laproteina_jepa_rand50_predictor_30k"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CKPT_ROOT/baseline_ablations/predictor/last.ckpt tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        random-init)
+            TOKENIZERNAME="laproteina_random_init"
+            # Untrained floor -- same EncoderTransformer config as all 8 in-house checkpoints
+            # (verified byte-identical in Evaluation/linear_probing/checkpoints.py), same fixed
+            # weights (seed=42) as the linear-probing/kNN-purity random-init floor, just repacked
+            # into the "jepa" checkpoint_type's expected {"state_dict": {"online_encoder.*": ...}}
+            # format (see 100k-checkpoints/random-init/100k.ckpt) so it loads through the exact
+            # same WrappedLaProteinaTokenizer path as every other checkpoint here -- not a special
+            # case downstream.
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CKPT_ROOT/random-init/100k.ckpt tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
             ;;
         *)
             echo "[Error] unknown experiment: $1" >&2
@@ -326,7 +395,7 @@ export PDB_DATA_ROOT
     flock -x 200
 
     MMCIF_DIR="$PDB_DATA_ROOT/mmcif_files"
-    if [ -d "$MMCIF_DIR/mmcif_files" ] && [ -n "$(ls -A "$MMCIF_DIR/mmcif_files" 2>/dev/null)" ]; then
+    if [ -d "$MMCIF_DIR" ] && [ -n "$(ls -A "$MMCIF_DIR" 2>/dev/null)" ]; then
         echo "== PDB mmCIF data already present, skipping download =="
     else
         echo "== Downloading PDB mmCIF data =="
@@ -358,12 +427,34 @@ export PDB_DATA_ROOT
 # 6. Run
 # ---------------------------------------------------------------------------
 tokenizer="WrappedLaProteinaTokenizer"
-d_model=8
 lr=0.001
 
 for experiment in "${SELECTED_EXPERIMENTS[@]}"; do
     experiment_model_args "$experiment"
     export EXPERIMENT_LABEL="$experiment"
+
+    # d_model must match this experiment's own latent_z_dim (the downstream probe's
+    # input width). Inferred from the checkpoint's own weights (same reasoning as
+    # _infer_latent_z_dim in Evaluation/linear_probing/checkpoints.py) rather than
+    # hardcoded -- ae checkpoints are fixed at 8 with no variation seen so far, so
+    # only jepa/le-jepa ones (where dimension actually varies across checkpoints,
+    # e.g. the dim64 experiments) pay for this peek.
+    if [[ "$EXTRA_MODEL_ARGS" == *"tokenizer_checkpoint_type=jepa"* ]]; then
+        ckpt_path=$(echo "$EXTRA_MODEL_ARGS" | grep -oP 'tokenizer_pretrained_ckpt_path=\K[^ ]+')
+        d_model=$("$PY" -c "
+import torch
+ckpt = torch.load('$ckpt_path', map_location='cpu', weights_only=False)
+w = None
+for k, v in ckpt['state_dict'].items():
+    if k.endswith('online_encoder.latent_decoder_mean_n_log_scale.1.weight'):
+        w = v
+        break
+print(w.shape[0] // 2)
+")
+        echo "== $experiment: inferred d_model=$d_model from $ckpt_path =="
+    else
+        d_model=8
+    fi
     for idx in "${SELECTED_TASK_IDX[@]}"; do
         config_name="${TASK_CONFIGS[$idx]}"
         target_field="${TASK_TARGET_FIELDS[$idx]}"

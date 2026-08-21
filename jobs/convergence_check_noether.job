@@ -1,0 +1,23 @@
+#!/bin/bash
+# Runs Evaluation/linear_probing/convergence_check.py: cached latents/labels
+# only (no encoder forward pass, no GPU needed), but build_protein_pool()
+# still needs /mnt/hopper-raid for DATA_PATH -- pinned to noether for that.
+#
+# Usage: sbatch jobs/convergence_check_noether.job
+#SBATCH --job-name=convergence_check
+#SBATCH --partition=normal
+#SBATCH --nodelist=noether
+#SBATCH --qos=medium
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=8
+#SBATCH --time=0:20:00
+#SBATCH --output=logs/%x-%j.out
+
+set -a
+source /mnt/data/slurm-storage/aishod/projects/la-proteina/.env
+set +a
+
+cd /mnt/data/slurm-storage/aishod/projects/la-proteina/Evaluation/linear_probing
+export PYTHONPATH=/mnt/data/slurm-storage/aishod/projects/la-proteina
+
+srun /data-gauss/$USER/envs/laproteina_env/bin/python3 convergence_check.py

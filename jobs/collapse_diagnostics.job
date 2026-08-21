@@ -1,0 +1,19 @@
+#!/bin/bash
+# Collapse diagnostics (Evaluation/linear_probing/collapse_diagnostics.py):
+# reads the already-cached per-residue latents, no encoder forward passes,
+# no PDB dataloading -- so unlike linear_probing_noether.job this needs
+# neither a GPU nor the /mnt/hopper-raid mount, and isn't pinned to noether.
+#
+# Usage: sbatch jobs/collapse_diagnostics.job [--no-wandb]
+#SBATCH --job-name=collapse_diagnostics
+#SBATCH --partition=normal
+#SBATCH --qos=medium
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=8
+#SBATCH --time=0:30:00
+#SBATCH --output=logs/%x-%j.out
+
+cd /mnt/data/slurm-storage/aishod/projects/la-proteina/Evaluation/linear_probing
+export PYTHONPATH=/mnt/data/slurm-storage/aishod/projects/la-proteina
+
+srun /data-gauss/$USER/envs/laproteina_env/bin/python3 collapse_diagnostics.py "$@"

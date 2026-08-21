@@ -1,13 +1,23 @@
 checkpoint:
     _target_: pytorch_lightning.callbacks.ModelCheckpoint
     every_n_train_steps: null
-    every_n_epochs: 1
+    every_n_epochs: 2
     save_top_k: 3
     monitor: "validation_f1_score"
     mode: "max"
     filename: "{epoch}-{step}-{validation_f1_score:.2f}"
     save_last: True
     dirpath: null
+
+early_stopping:
+    _target_: pytorch_lightning.callbacks.EarlyStopping
+    # tracks the same metric/direction as the checkpoint callback (interpolated, not
+    # duplicated) since run_eval.sh overrides checkpoint.monitor per task-type (e.g.
+    # validation_spearmanr for the Flex/regression tasks) -- stopping on a different
+    # metric than "best" is selected by would defeat the point.
+    monitor: ${..checkpoint.monitor}
+    mode: ${..checkpoint.mode}
+    patience: 10
 
 lr_monitor:
     _target_: pytorch_lightning.callbacks.LearningRateMonitor

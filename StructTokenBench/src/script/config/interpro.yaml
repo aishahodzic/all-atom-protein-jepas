@@ -28,7 +28,7 @@ tokenizer_pretrained_ckpt_path: null
 tokenizer_ckpt_name: null
 tokenizer_checkpoint_type: "ae" # "ae" or "jepa"; only used by WrappedLaProteinaTokenizer
 tokenizer_encoder_cfg_path: null # required when tokenizer_checkpoint_type == "jepa"
-max_steps: 10000
+max_steps: 2500
 experiment_name: test # used for tensorboard
 run_name: test_run
 validate_only: false

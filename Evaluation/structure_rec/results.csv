@@ -1,0 +1,3 @@
+run_id,encoder,group,decoder_style,step,rmsd_all_atom,rmsd_no_ca,seq_rec_rate,notes
+le-jepa-rand-mask-70_calib,le-jepa-rand-mask-70,latent-only,fully-latent,12000,2.737867344073826,2.9303793958053106,0.09506600255556305,calibration
+fully-latent,fully-latent,latent-only,fully-latent,50000,0.3153647895697064,0.3377565567301014,1.0,

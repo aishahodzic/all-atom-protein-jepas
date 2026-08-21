@@ -1,0 +1,29 @@
+#!/bin/bash
+# Runs Evaluation/linear_probing/run.py (8-encoder x 4-property linear probe
+# sweep over frozen La-Proteina/JEPA/LeJEPA encoders). Pinned to noether:
+# needs /mnt/hopper-raid (DATA_PATH in .env) for the PDB processed/ cache and
+# cluster-split files -- same reason StructTokenBench's eval job is pinned
+# here (gauss/klein don't have that mount).
+#
+# Usage: sbatch jobs/linear_probing_noether.job [--seed SEED] [--no-wandb]
+#SBATCH --job-name=linear_probing
+#SBATCH --partition=normal
+#SBATCH --nodelist=noether
+#SBATCH --qos=medium
+#SBATCH --gres=gpu:1
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=16
+#SBATCH --time=4:00:00
+#SBATCH --output=logs/%x-%j.out
+
+set -a
+source /mnt/data/slurm-storage/aishod/projects/la-proteina/.env
+set +a
+
+cd /mnt/data/slurm-storage/aishod/projects/la-proteina/Evaluation/linear_probing
+export PYTHONPATH=/mnt/data/slurm-storage/aishod/projects/la-proteina
+
+# `conda activate` needs conda's shell hooks, which this non-interactive batch
+# shell doesn't have (`.bashrc` bails out early for non-interactive shells,
+# so `conda: command not found`) -- call the env's python directly instead.
+srun /data-gauss/$USER/envs/laproteina_env/bin/python3 run.py "$@"

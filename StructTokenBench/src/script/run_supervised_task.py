@@ -13,6 +13,19 @@ from rich.table import Table
 from rich.text import Text
 
 torch.set_float32_matmul_precision("high")  # A30 has Tensor Cores; default "highest" leaves them unused
+# Env-var-gated, not a hardcoded call: this line reruns from scratch inside every
+# spawn-started worker process (spawn re-executes top-level module code on import,
+# unlike fork), including dataset/base.py's mp.get_context("spawn").Pool() used by
+# cache_all_tokenized() -- so a runtime torch.multiprocessing.set_sharing_strategy()
+# call made only in data_module.py's parent process never reaches those workers; they
+# independently re-hit this exact line and reset themselves to whatever's hardcoded
+# here. Env vars, unlike Python globals, ARE inherited by spawned children, so this is
+# the one lever that actually reaches them. Default "file_system" preserves the
+# original fix (avoids "received 0 items of ancdata" on the long multi-hour DataLoader);
+# data_module.py temporarily sets TORCH_SHARING_STRATEGY=file_descriptor around the
+# one-shot cache_all_tokenized() precompute, which needs the OTHER strategy instead
+# (file_system's per-tensor mmap blew through vm.max_map_count for large splits).
+torch.multiprocessing.set_sharing_strategy(os.environ.get("TORCH_SHARING_STRATEGY", "file_system"))
 
 # Metrics we care most about for generalization (held-out CATH folds/superfamilies,
 # not just i.i.d. validation): AUROC for classification tasks (bind/cat/con/rep/ept),
@@ -116,6 +129,7 @@ def setup_trainer(cfg):
     # callbacks
     callbacks = [
         hydra.utils.instantiate(cfg.lightning.callbacks.checkpoint),
+        hydra.utils.instantiate(cfg.lightning.callbacks.early_stopping),
         hydra.utils.instantiate(cfg.lightning.callbacks.lr_monitor),
         hydra.utils.instantiate(cfg.lightning.callbacks.progress_bar)
     ]
@@ -183,6 +197,7 @@ def main(cfg):
             "pretrained_ckpt_path": cfg.tokenizer_pretrained_ckpt_path,
             "checkpoint_type": checkpoint_type,
             "encoder_cfg_path": encoder_cfg_path,
+            "force_remove_non_standard_residues": getattr(cfg, "tokenizer_force_remove_non_standard_residues", None),
         }
     else:
         pretrained_model_cfg = {}

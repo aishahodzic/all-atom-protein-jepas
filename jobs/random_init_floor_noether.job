@@ -1,0 +1,26 @@
+#!/bin/bash
+# Runs Evaluation/linear_probing/run_random_init_floor.py (Script 2, Phase B):
+# untrained EncoderTransformer floor baseline through the same probe +
+# collapse pipeline, appended as one extra row. Pinned to noether for the
+# same reason as linear_probing_noether.job (needs /mnt/hopper-raid for
+# DATA_PATH).
+#
+# Usage: sbatch jobs/random_init_floor_noether.job [--seed SEED] [--no-wandb]
+#SBATCH --job-name=random_init_floor
+#SBATCH --partition=normal
+#SBATCH --nodelist=noether
+#SBATCH --qos=medium
+#SBATCH --gres=gpu:1
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=16
+#SBATCH --time=1:00:00
+#SBATCH --output=logs/%x-%j.out
+
+set -a
+source /mnt/data/slurm-storage/aishod/projects/la-proteina/.env
+set +a
+
+cd /mnt/data/slurm-storage/aishod/projects/la-proteina/Evaluation/linear_probing
+export PYTHONPATH=/mnt/data/slurm-storage/aishod/projects/la-proteina
+
+srun /data-gauss/$USER/envs/laproteina_env/bin/python3 run_random_init_floor.py "$@"

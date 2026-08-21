@@ -1,3 +1,5 @@
+import os
+
 import pytorch_lightning as pl
 import torch
 from torch.utils.data import DataLoader
@@ -102,7 +104,38 @@ class ProteinDataModule(pl.LightningDataModule):
             self.py_logger.info(
                 f"Precomputing tokenized ids on {process_global_rank} with world size {world_size}..."
             )
-            dataset.cache_all_tokenized()
+            # cache_all_tokenized() gathers ALL structures' results from its worker Pool at
+            # once (not streamed), so under the "file_system" sharing strategy (set globally
+            # in run_supervised_task.py for a *different* problem -- an ancdata crash on the
+            # long-running training DataLoader after hours of iteration) every tensor it
+            # returns is a separate mmap in this process. For a large split (e.g. biolip2's
+            # 8240 structures, ~8 tensors each) that blew straight through the kernel's
+            # per-process vm.max_map_count (65530 here) -- mmap failed with ENOMEM inside the
+            # Pool's background result-handling thread, which silently died and left the main
+            # process hung forever (still holding its GPU) instead of crashing loudly.
+            # "file_descriptor" doesn't mmap per tensor (bounded instead by ulimit -n, in the
+            # millions here), so it's the right strategy for this one-time bulk gather.
+            #
+            # Setting the strategy directly (torch.multiprocessing.set_sharing_strategy)
+            # here only changes THIS process's own state -- it does nothing for the Pool's
+            # workers, which dataset/base.py spawns via multiprocessing.get_context("spawn"):
+            # spawned children re-execute run_supervised_task.py's top-level code from
+            # scratch, including its own set_sharing_strategy() call, independently of
+            # whatever this process is doing. The env var IS inherited by spawned children
+            # and that top-level call now reads it (see run_supervised_task.py), so setting
+            # both here is what actually reaches the workers, not just this process.
+            _prev_env = os.environ.get("TORCH_SHARING_STRATEGY")
+            _prev_strategy = torch.multiprocessing.get_sharing_strategy()
+            os.environ["TORCH_SHARING_STRATEGY"] = "file_descriptor"
+            torch.multiprocessing.set_sharing_strategy("file_descriptor")
+            try:
+                dataset.cache_all_tokenized()
+            finally:
+                torch.multiprocessing.set_sharing_strategy(_prev_strategy)
+                if _prev_env is None:
+                    os.environ.pop("TORCH_SHARING_STRATEGY", None)
+                else:
+                    os.environ["TORCH_SHARING_STRATEGY"] = _prev_env
         
         if dataset.data_name not in ["ConformationalSwitchDataset", "CASP14Dataset", "CAMEODataset"]:
             for i in tqdm(range(len(dataset.data))):

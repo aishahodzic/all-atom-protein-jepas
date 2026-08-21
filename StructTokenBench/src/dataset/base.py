@@ -84,6 +84,30 @@ def _init_worker(resolution_lookup, experiment_type_lookup, seqres_lookup):
     _worker_lookups["seqres"] = seqres_lookup
 
 
+def _resolve_and_parse_worker_star(args):
+    """pool.imap() (unlike starmap) only takes a single-arg callable -- this
+    just unpacks the tuple. See _resolve_and_parse_worker_star's call site
+    for why imap (streamed) replaced starmap (blocking, all-at-once)."""
+    return _resolve_and_parse_worker(*args)
+
+
+def _detach_shared_tensors(obj):
+    """Clones every torch.Tensor attribute of a received graph object to
+    plain (non-shared) memory, so the shared-memory IPC handle it arrived
+    on (fd under "file_descriptor", mmap'd file under "file_system") can be
+    released right away instead of staying alive until the whole precompute
+    finishes. See the imap loop below for why this matters."""
+    if obj is None:
+        return obj
+    if isinstance(obj, torch.Tensor):
+        return obj.clone()
+    if hasattr(obj, "__dict__"):
+        for k, v in vars(obj).items():
+            if isinstance(v, torch.Tensor):
+                setattr(obj, k, v.clone())
+    return obj
+
+
 def _resolve_and_parse_worker(pdb_path, chain_id, is_atlas, pdb_data_dir,
                                min_length=None, max_length=None, exclude_ids=frozenset(),
                                remove_non_standard_residues=False, experiment_types=frozenset(),
@@ -760,15 +784,34 @@ class BaseDataset(Dataset):
                 initargs=(self.tokenizer.resolution_lookup, self.tokenizer.experiment_type_lookup,
                           self.tokenizer.seqres_lookup),
             ) as pool:
-                results = pool.starmap(
-                    _resolve_and_parse_worker,
-                    [(p, c, is_atlas, self.PDB_DATA_DIR,
-                      self.tokenizer.min_length, self.tokenizer.max_length,
-                      self.tokenizer.exclude_ids, self.tokenizer.remove_non_standard_residues,
-                      self.tokenizer.experiment_types, self.tokenizer.best_resolution,
-                      self.tokenizer.worst_resolution)
-                     for p, c in unique_pairs],
-                )
+                # imap (streamed, one result at a time), NOT starmap (blocking,
+                # gathers all len(unique_pairs) results before returning) --
+                # each result carries a graph with several torch tensors, and
+                # for a large split (e.g. biolip2's 8240 structures) having
+                # all of them alive simultaneously as shared-memory IPC
+                # objects blows through OS-level ceilings on EITHER sharing
+                # strategy: "file_system" hits vm.max_map_count (one mmap per
+                # tensor); "file_descriptor" hits the ancdata/SCM_MAX_FD limit
+                # on fd-passing. Both crash a background thread that the main
+                # process doesn't notice, leaving it hung forever still
+                # holding its GPU allocation. Streaming + cloning each result
+                # to plain (non-shared) memory immediately keeps at most
+                # ~num_workers results' worth of shared-memory handles alive
+                # at once, independent of how many structures there are.
+                args_list = [
+                    (p, c, is_atlas, self.PDB_DATA_DIR,
+                     self.tokenizer.min_length, self.tokenizer.max_length,
+                     self.tokenizer.exclude_ids, self.tokenizer.remove_non_standard_residues,
+                     self.tokenizer.experiment_types, self.tokenizer.best_resolution,
+                     self.tokenizer.worst_resolution)
+                    for p, c in unique_pairs
+                ]
+                results = []
+                for i, result in enumerate(pool.imap(_resolve_and_parse_worker_star, args_list, chunksize=1)):
+                    resolved_chain_id, graph, matches, was_pretrained_hit = result
+                    results.append((resolved_chain_id, _detach_shared_tensors(graph), matches, was_pretrained_hit))
+                    if (i + 1) % 1000 == 0 or (i + 1) == len(args_list):
+                        self.py_logger.info(f"  ...resolved+parsed {i + 1}/{len(args_list)}")
             pair_to_result = dict(zip(unique_pairs, results))
 
             # Two reasons an index can't go through as-is: resolution/parsing

@@ -1,0 +1,25 @@
+#!/bin/bash
+# random-init floor on StructTokenBench's Homo (remote homology) task only --
+# see run_eval.sh's "random-init" case (same fixed seed=42 untrained
+# EncoderTransformer as Evaluation/linear_probing/knn_purity's floor,
+# repacked into the jepa checkpoint format so it loads through the normal
+# path). Single task, small dataset (SCOP domains, nowhere near biolip2's
+# scale) -- no chunked/streamed precompute concerns expected here.
+#
+# Usage: sbatch jobs/struct_token_bench_random_init_homo.job
+#SBATCH --job-name=stb_random_init_homo
+#SBATCH --partition=normal
+#SBATCH --nodelist=noether
+#SBATCH --qos=medium
+#SBATCH --gres=gpu:1
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=16
+#SBATCH --time=4:00:00
+#SBATCH --output=logs/%x-%j.out
+
+set -a
+source /mnt/data/slurm-storage/aishod/projects/la-proteina/.env
+set +a
+
+cd /mnt/data/slurm-storage/aishod/projects/la-proteina/StructTokenBench
+bash src/script/run_eval.sh --checkpoint=100k --experiment=random-init --tasks=Homo

@@ -1,0 +1,32 @@
+#!/bin/bash
+# Decoder-reconstruction calibration run (Evaluation/structure_rec/train_decoder.py):
+# trains one fresh decoder against one frozen encoder, ceiling 150k steps,
+# auto-stops on RMSD plateau (patience=5 evals, 1% relative threshold).
+# Needs /mnt/hopper-raid for DATA_PATH (train + eval pools) -- pinned to
+# noether like every other extraction/training job in this project.
+#
+# Usage: sbatch jobs/train_decoder_calibration.job --encoder fully-latent
+#        sbatch jobs/train_decoder_calibration.job --encoder jepa-mutation
+#SBATCH --job-name=decoder_calib
+#SBATCH --partition=normal
+#SBATCH --nodelist=noether
+#SBATCH --qos=medium
+#SBATCH --gres=gpu:1
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=100G
+#SBATCH --time=24:00:00
+#SBATCH --output=logs/%x-%j.out
+
+set -a
+source /mnt/data/slurm-storage/aishod/projects/la-proteina/.env
+set +a
+
+cd /mnt/data/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec
+export PYTHONPATH=/mnt/data/slurm-storage/aishod/projects/la-proteina
+
+# train_decoder.py already defaults run_id to "{encoder}_calib" when --calibration is set.
+srun /data-gauss/$USER/envs/laproteina_env/bin/python3 train_decoder.py \
+  --max-steps 150000 --eval-every 2000 --calibration \
+  --patience-evals 5 --patience-threshold 0.01 \
+  "$@"

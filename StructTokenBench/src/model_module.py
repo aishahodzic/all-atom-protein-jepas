@@ -418,7 +418,7 @@ class PlModel(pl.LightningModule):
         """
 
         self.trainer.strategy.config["train_micro_batch_size_per_gpu"] = self.optimizer_cfg.micro_batch_size
-        self.model = model_init_fn(self.trainer, self.model_cfg, 
+        self.model = model_init_fn(self.trainer, self.model_cfg,
                         codebook_embedding=self.codebook_embedding)
         
         # get time here for first iteration at batch 0

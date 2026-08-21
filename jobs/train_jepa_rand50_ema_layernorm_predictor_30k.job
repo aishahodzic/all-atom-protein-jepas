@@ -1,0 +1,32 @@
+#!/bin/bash
+# Combined ablation: all 3 rand50 ablation flags together (EMA decay schedule,
+# LayerNorm loss normalization, mask-token predictor) -- orthogonal changes
+# (loss normalization / EMA schedule / predictor architecture), no conflict
+# combining them. Same matched-step setup as the 3 individual ablations +
+# control: masked_pct=0.5, 30k steps.
+#
+# Usage: sbatch jobs/train_jepa_rand50_ema_layernorm_predictor_30k.job
+#SBATCH --job-name=jepa_rand50_ema_layernorm_predictor_30k
+#SBATCH --partition=normal
+#SBATCH --qos=medium
+#SBATCH --gres=gpu:1
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=16
+#SBATCH --time=24:00:00
+#SBATCH --output=logs/%x-%j.out
+
+set -a
+source /mnt/data/slurm-storage/aishod/projects/la-proteina/.env
+set +a
+
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+export PYTHONPATH=/mnt/data/slurm-storage/aishod/projects/la-proteina:$PYTHONPATH
+
+RAID_ROOT=/mnt/hopper-raid/aishod
+mkdir -p "$RAID_ROOT/runs/jepa_rand50_ema_layernorm_predictor_30k"
+cd "$RAID_ROOT/runs/jepa_rand50_ema_layernorm_predictor_30k"
+
+echo "scratch" | srun python /mnt/data/slurm-storage/aishod/projects/la-proteina/proteinfoundation/jepa/train.py \
+    run_name_=jepa_rand50_ema_layernorm_predictor_30k +single=true +masked_pct=0.5 +opt.max_steps=30000 \
+    baseline_run_ema=true baseline_run_layernorm=true baseline_run_predictor=true \
+    dataset.datamodule.num_workers=16

@@ -1,0 +1,32 @@
+#!/bin/bash
+# Runs Evaluation/linear_probing/run_768.py: linear probes (all 4
+# properties) on the 768-dim pre-bottleneck hidden state for the 8 in-house
+# checkpoints + random-init floor. GPU extraction job, same pattern as
+# linear_probing_noether.job (needs /mnt/hopper-raid for DATA_PATH).
+# Extraction itself is cached (latents_768/) from the prior run -- this pass
+# is dominated by probe fitting. AA/SS LogisticRegression at 768 dims is
+# ~95s/fit with StandardScaler (was 570s+ConvergenceWarning without it); 9
+# checkpoints x 2 classification properties ~= 30min, plus RSA/bfactor
+# (closed-form LinearRegression, fast) and cache loading -- time bumped
+# accordingly, and --mem set explicitly rather than trusting the default.
+#
+# Usage: sbatch jobs/probe_768.job [--seed SEED] [--no-wandb]
+#SBATCH --job-name=probe_768
+#SBATCH --partition=normal
+#SBATCH --nodelist=noether
+#SBATCH --qos=medium
+#SBATCH --gres=gpu:1
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=100G
+#SBATCH --time=2:00:00
+#SBATCH --output=logs/%x-%j.out
+
+set -a
+source /mnt/data/slurm-storage/aishod/projects/la-proteina/.env
+set +a
+
+cd /mnt/data/slurm-storage/aishod/projects/la-proteina/Evaluation/linear_probing
+export PYTHONPATH=/mnt/data/slurm-storage/aishod/projects/la-proteina
+
+srun /data-gauss/$USER/envs/laproteina_env/bin/python3 run_768.py "$@"
