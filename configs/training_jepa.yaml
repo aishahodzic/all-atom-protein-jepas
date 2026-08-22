@@ -15,6 +15,10 @@ defaults:
 # Pre-training checkpoint to start from there (JEPA trains from scratch by default)
 pretrain_ckpt_path:
 
+# Optional JEPA ablations; all disabled by default.
+baseline_run_layernorm: false
+baseline_run_ema: false
+baseline_run_predictor: false
 # batch_size=4/accumulate=1 keeps effective batch at 4 (same as batch_size=2/accumulate=2)
 # but does it in one GPU pass instead of two -- pure throughput win, H100 was sitting at ~30% util
 dataset:

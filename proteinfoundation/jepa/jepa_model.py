@@ -22,6 +22,7 @@ The loss is (1-lamb)*jepa_loss + lamb*sigreg_loss:
                   I-JEPA-style architectures rely on.
 """
 
+import copy
 from typing import Dict, List
 
 import lightning as L
@@ -174,6 +175,18 @@ class JEPAModel(L.LightningModule):
         self.cfg = cfg
         self.lamb = lamb
         self.latent_dim = self.cfg.nn_ae["latent_z_dim"]  # 8
+        self.baseline_run_layernorm = self.cfg.get("baseline_run_layernorm", False)
+        self.baseline_run_ema = self.cfg.get("baseline_run_ema", False)
+        self.baseline_run_predictor = self.cfg.get("baseline_run_predictor", False)
+        self.ema_decay = 0.996
+        self._last_ema_update_step = -1
+
+        if self.baseline_run_ema:
+            self.ema_schedule_steps = self.cfg.opt.get("max_steps", None)
+            if not isinstance(self.ema_schedule_steps, int) or self.ema_schedule_steps < 2:
+                raise ValueError("baseline_run_ema=true requires opt.max_steps >= 2")
+        else:
+            self.ema_schedule_steps = None
 
         self.use_action_conditioning = use_action_conditioning
         if self.use_action_conditioning:
@@ -182,13 +195,22 @@ class JEPAModel(L.LightningModule):
         # Used for both context and target passes -- no separate target network.
         self.online_encoder = EncoderTransformer(**self.cfg.nn_ae)
 
+        if self.baseline_run_ema:
+            self.ema_encoder = copy.deepcopy(self.online_encoder)
+            for p in self.ema_encoder.parameters():
+                p.requires_grad = False
+
         self.sigreg = SIGReg(num_proj=32)
 
         # Predictor: context latents + positions -> predicted target latents.
         # max_len must be >= the dataset's max crop length (256).
         predictor_cfg = self.cfg.get("predictor", {}) or {}
         max_len = predictor_cfg.get("max_len", 256)
-        self.predictor = JEPAPredictor(latent_z_dim=self.latent_dim, max_len=max_len)
+        self.predictor = JEPAPredictor(
+            latent_z_dim=self.latent_dim,
+            max_len=max_len,
+            predictor_type=("mask_token_transformer" if self.baseline_run_predictor else "cross_attention"),
+        )
 
         # used for below (log_isotropy, log_mutation_sensitivity). 
         self._diag_step = {"train": 0, "val": 0}
@@ -307,8 +329,13 @@ class JEPAModel(L.LightningModule):
             action_position=mutation_positions,
         )  # [B, L_tgt, latent_z_dim]
 
-        # Target pass: same online_encoder, no stop-gradient.
-        target_mean = self._encode_mean(self.online_encoder, target_batch)  # [B, L, latent_z_dim]
+        # Target pass: preserve the original online-encoder path by default;
+        # EMA is opt-in and changes only the target encoder.
+        if self.baseline_run_ema:
+            with torch.no_grad():
+                target_mean = self._encode_mean(self.ema_encoder, target_batch)
+        else:
+            target_mean = self._encode_mean(self.online_encoder, target_batch)
         # split the encoded latents on context / target masks
         target_masked_latents = apply_mask_to_latents(target_mean, context_mask, target_mask)
         # Select only k target latents from n encoded
@@ -337,6 +364,8 @@ class JEPAModel(L.LightningModule):
             baseline_loss = (target_mean_baseline - target_latent_flat).square().mean()
 
         # Plain MSE, no normalization -- matches the LeJEPA reference scripts exactly.
+        if self.baseline_run_layernorm:
+            target_latent_flat = F.layer_norm(target_latent_flat, (target_latent_flat.shape[-1],))
         jepa_loss = (predicted_latent_flat - target_latent_flat).square().mean()
         pred_vs_baseline_gap = baseline_loss - jepa_loss  # >0 means predictor beats trivial mean-prediction
 
@@ -756,6 +785,18 @@ class JEPAModel(L.LightningModule):
                     ylabel=f"PC {j}",
                     log_id=f"{log_prefix}/{i}_{j}",
                 )
+
+    def on_train_batch_end(self, outputs, batch, batch_idx):
+        if not self.baseline_run_ema:
+            return
+        if self.global_step == self._last_ema_update_step:
+            return
+        self._last_ema_update_step = self.global_step
+        progress = min(max(self.global_step - 1, 0) / (self.ema_schedule_steps - 1), 1.0)
+        decay = self.ema_decay + progress * (1.0 - self.ema_decay)
+        with torch.no_grad():
+            for online_p, ema_p in zip(self.online_encoder.parameters(), self.ema_encoder.parameters()):
+                ema_p.data.mul_(decay).add_(online_p.data, alpha=1.0 - decay)
 
     def configure_optimizers(self):
         optimizer = torch.optim.AdamW(
