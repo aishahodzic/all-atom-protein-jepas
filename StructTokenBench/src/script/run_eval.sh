@@ -96,7 +96,7 @@ JEPA_ENCODER_CFG="$CKPT_ROOT/shared/exp_config_jepa_nn130m.json"
 # since WrappedLaProteinaTokenizer reads each checkpoint's own saved config).
 AE1_CKPT="$(dirname "$REPO_DIR")/checkpoints_laproteina/AE1_ucond_512.ckpt"
 
-EXPERIMENT_NAMES=(ca-cond-baseline fully-latent jepa-rand-mask-50 jepa-rand-mask-70 jepa-mutation le-jepa-rand-mask-50 le-jepa-rand-mask-70 le-jepa-mutation jepa-rand-mask-70-dim64 le-jepa-rand-mask-70-dim64 jepa-rand-mask-50-selfattn jepa-rand-mask-70-selfattn le-jepa-rand-mask-50-200k ae1-external random-init jepa-rand50-control-30k jepa-rand50-ema-30k jepa-rand50-layernorm-30k jepa-rand50-predictor-30k)
+EXPERIMENT_NAMES=(ca-cond-baseline fully-latent jepa-rand-mask-50 jepa-new-predictor jepa-rand-mask-70 jepa-mutation le-jepa-rand-mask-50 le-jepa-rand-mask-70 le-jepa-mutation jepa-rand-mask-70-dim64 le-jepa-rand-mask-70-dim64 jepa-rand-mask-50-selfattn jepa-rand-mask-70-selfattn le-jepa-rand-mask-50-200k ae1-external random-init jepa-rand50-control-30k jepa-rand50-ema-30k jepa-rand50-layernorm-30k jepa-rand50-predictor-30k)
 
 experiment_model_args () {
     # sets TOKENIZERNAME and EXTRA_MODEL_ARGS for experiment name $1
@@ -114,6 +114,10 @@ experiment_model_args () {
             TOKENIZERNAME="laproteina_jepa_rand_mask_50"
             # placeholder: jepa_random_masking_50_v1 hasn't reached step 100000 yet
             EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CKPT_ROOT/jepa/random_masking_50pct/100k.ckpt tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        jepa-new-predictor)
+            TOKENIZERNAME="laproteina_jepa_new_predictor"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CKPT_ROOT/jepa/new_predictor/100k/chk_epoch=00000019_step=000000100000.ckpt tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
             ;;
         jepa-rand-mask-70)
             TOKENIZERNAME="laproteina_jepa_rand_mask_70"

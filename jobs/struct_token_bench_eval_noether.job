@@ -6,8 +6,8 @@
 # Usage: sbatch jobs/struct_token_bench_eval_noether.job --checkpoint=100k --experiment=all --tasks=all
 # (any run_eval.sh flag works here, passed straight through)
 #SBATCH --job-name=struct_token_bench_eval_noether
-#SBATCH --partition=normal
-#SBATCH --nodelist=noether
+#SBATCH --partition=h100
+#SBATCH --nodelist=hopper
 #SBATCH --qos=medium
 #SBATCH --gres=gpu:1
 #SBATCH --ntasks-per-node=1
