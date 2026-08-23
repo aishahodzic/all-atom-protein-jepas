@@ -37,6 +37,7 @@ from proteinfoundation.jepa.masking import (
     apply_mask_to_latents,
     block_residue_mask,
     random_residue_mask,
+    spatial_3d_block_mask,
 )
 from proteinfoundation.jepa.predictor import JEPAPredictor
 from proteinfoundation.partial_autoencoder.encoder import EncoderTransformer
@@ -270,7 +271,12 @@ class JEPAModel(L.LightningModule):
         # Split residues into context / target BEFORE encoding.
         # `+block_mask=true` at the CLI switches to block masking.
         # `+masked_pct=0.7` overrides random_residue_mask's default 0.5 (ignored for block masking).
-        if self.cfg.get("block_mask", False):
+        masking_mode = self.cfg.get("masking_mode", None)
+        if masking_mode == "spatial_3d_block":
+            context_mask, target_mask = spatial_3d_block_mask(batch)
+        elif masking_mode is not None:
+            raise ValueError(f"Unknown masking_mode: {masking_mode!r}")
+        elif self.cfg.get("block_mask", False):
             context_mask, target_mask = block_residue_mask(batch)
         else:
             masked_pct = self.cfg.get("masked_pct", 0.5)
