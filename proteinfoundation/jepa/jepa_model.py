@@ -32,6 +32,7 @@ from proteinfoundation.jepa.masking import (
     apply_mask_to_latents,
     block_residue_mask,
     random_residue_mask,
+    spatial_3d_block_mask,
 )
 from proteinfoundation.jepa.predictor import JEPAPredictor
 from proteinfoundation.partial_autoencoder.encoder import EncoderTransformer
@@ -383,6 +384,8 @@ class JEPAModel(L.LightningModule):
             "chemmask_partial_coords_and_identity",
         }:
             context_mask = target_mask = mask.bool()
+        elif masking_mode == "spatial_3d_block":
+            context_mask, target_mask = spatial_3d_block_mask(batch)
         elif self.cfg.get("block_mask", False):
             context_mask, target_mask = block_residue_mask(batch)
         else:
@@ -395,7 +398,7 @@ class JEPAModel(L.LightningModule):
         # via coord_mask". Partial-coordinate modes hide
         # `+atom_mask_pct=0.7` of EVERY residue's own atoms, identity always kept.
         # Default (flag absent) is byte-identical to before.
-        if masking_mode is None:
+        if masking_mode is None or masking_mode == "spatial_3d_block":
             masked_batch = mask_batch_for_encoder(batch, context_mask)
         elif masking_mode == "chemmask_aa_only":
             masked_batch = mask_batch_for_encoder_chemmask_aa_only(batch, context_mask)

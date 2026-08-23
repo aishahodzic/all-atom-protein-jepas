@@ -1,3 +1,5 @@
+import warnings
+
 import torch
 
 
@@ -75,6 +77,154 @@ def block_residue_mask(batch, num_blocks=4, min_block_ratio=0.15, max_block_rati
 
         target_mask[i, target_idx] = True
         context_mask[i, context_idx] = True
+
+    return context_mask, target_mask
+
+
+def _spatial_3d_block_mask_for_single_protein(
+    ca_coords_nm,
+    num_seeds=4,
+    min_seed_distance_nm=1.5,
+    target_fraction=0.75,
+    min_fraction=0.60,
+    max_fraction=0.85,
+    max_radius_nm=3.0,
+):
+    """Build one spatial target mask and return it with probe metadata."""
+    n_valid = ca_coords_nm.shape[0]
+    if n_valid < 2:
+        raise ValueError("spatial_3d_block_mask requires at least two valid residues")
+
+    # Very small proteins use two anchors. Larger proteins try four, reducing the
+    # count only when the 15 A separation constraint cannot be satisfied.
+    desired_seeds = min(2 if n_valid < 20 else num_seeds, n_valid - 1)
+    pairwise = torch.cdist(ca_coords_nm.float(), ca_coords_nm.float())
+
+    best_seed_idx = None
+    n_trials = min(16, n_valid)
+    starts = torch.randperm(n_valid, device=ca_coords_nm.device)[:n_trials]
+    for first in starts:
+        selected = [first]
+        min_distance = pairwise[first].clone()
+        while len(selected) < desired_seeds:
+            eligible = min_distance >= min_seed_distance_nm
+            eligible[torch.stack(selected)] = False
+            if not eligible.any():
+                break
+            # Farthest-point sampling keeps the spheres spatially distributed.
+            next_idx = torch.where(eligible, min_distance, -torch.ones_like(min_distance)).argmax()
+            selected.append(next_idx)
+            min_distance = torch.minimum(min_distance, pairwise[next_idx])
+        candidate = torch.stack(selected)
+        if best_seed_idx is None or candidate.numel() > best_seed_idx.numel():
+            best_seed_idx = candidate
+        if best_seed_idx.numel() == desired_seeds:
+            break
+
+    separation_relaxed = False
+    if best_seed_idx.numel() < 2:
+        # No pair satisfies 15 A. Use the farthest pair so the split remains usable.
+        flat_idx = pairwise.argmax()
+        first = torch.div(flat_idx, n_valid, rounding_mode="floor")
+        second = flat_idx.remainder(n_valid)
+        best_seed_idx = torch.stack((first, second))
+        separation_relaxed = True
+        warnings.warn(
+            "spatial_3d_block_mask could not place two seeds 15 A apart; "
+            "using the farthest available pair",
+            RuntimeWarning,
+            stacklevel=2,
+        )
+    elif best_seed_idx.numel() < desired_seeds:
+        warnings.warn(
+            "spatial_3d_block_mask reduced the number of seeds because four "
+            "15 A-separated seeds did not fit",
+            RuntimeWarning,
+            stacklevel=2,
+        )
+
+    seed_coords = ca_coords_nm[best_seed_idx]
+    nearest_seed_distance = torch.cdist(
+        ca_coords_nm.float(), seed_coords.float()
+    ).min(dim=1).values
+
+    # Every distinct nearest-seed distance is a radius at which coverage changes.
+    # Choose the radius closest to 75% among candidates respecting the 60--85%
+    # band. If a 30 A cap prevents 60%, take the largest attainable coverage.
+    candidate_radii = torch.unique(
+        torch.cat(
+            (
+                nearest_seed_distance[nearest_seed_distance <= max_radius_nm],
+                nearest_seed_distance.new_tensor([max_radius_nm]),
+            )
+        ),
+        sorted=True,
+    )
+    fractions = torch.stack(
+        [(nearest_seed_distance <= radius).float().mean() for radius in candidate_radii]
+    )
+    in_band = (fractions >= min_fraction) & (fractions <= max_fraction)
+    if in_band.any():
+        candidate_ids = torch.where(in_band)[0]
+        chosen = candidate_ids[(fractions[candidate_ids] - target_fraction).abs().argmin()]
+    else:
+        below_cap = torch.where(fractions <= max_fraction)[0]
+        if below_cap.numel() > 0:
+            chosen = below_cap[fractions[below_cap].argmax()]
+        else:
+            chosen = fractions.argmin()
+
+    radius_nm = candidate_radii[chosen]
+    target_local = nearest_seed_distance <= radius_nm
+    seed_distances = pairwise[best_seed_idx][:, best_seed_idx]
+    upper_triangle = torch.triu_indices(
+        best_seed_idx.numel(), best_seed_idx.numel(), offset=1, device=ca_coords_nm.device
+    )
+    pair_distances = seed_distances[upper_triangle[0], upper_triangle[1]]
+    metadata = {
+        "seed_indices": best_seed_idx,
+        "seed_coords_nm": seed_coords,
+        "seed_pair_distances_nm": pair_distances,
+        "radius_nm": radius_nm,
+        "masked_fraction": target_local.float().mean(),
+        "separation_relaxed": separation_relaxed,
+    }
+    return target_local, metadata
+
+
+def spatial_3d_block_mask(batch):
+    """Mask spatially coherent residue neighbourhoods around spread C-alpha seeds.
+
+    Each protein independently selects up to four seeds separated by at least 15 A
+    and adapts a shared sphere radius (capped at 30 A) toward 75% target coverage.
+    Context and target are a disjoint partition of the valid residues.
+
+    Returns boolean ``context_mask`` and ``target_mask`` tensors with shape [B, L],
+    matching :func:`random_residue_mask`.
+    """
+    valid_res = batch["mask_dict"]["coords"][..., 0, 0].bool()
+    if "ca_coors_nm" in batch:
+        ca_coords_nm = batch["ca_coors_nm"]
+    elif "coords_nm" in batch:
+        ca_coords_nm = batch["coords_nm"][:, :, 1, :]
+    else:
+        raise KeyError("spatial_3d_block_mask requires 'ca_coors_nm' or 'coords_nm'")
+
+    if ca_coords_nm.shape[:2] != valid_res.shape or ca_coords_nm.shape[-1] != 3:
+        raise ValueError("C-alpha coordinates must have shape [B, L, 3]")
+
+    context_mask = torch.zeros_like(valid_res)
+    target_mask = torch.zeros_like(valid_res)
+    for protein_idx in range(valid_res.shape[0]):
+        residue_idx = torch.where(valid_res[protein_idx])[0]
+        coords = ca_coords_nm[protein_idx, residue_idx]
+        if not torch.isfinite(coords).all():
+            raise ValueError("valid residues contain non-finite C-alpha coordinates")
+        target_local, _ = _spatial_3d_block_mask_for_single_protein(coords)
+        target_idx = residue_idx[target_local]
+        context_idx = residue_idx[~target_local]
+        target_mask[protein_idx, target_idx] = True
+        context_mask[protein_idx, context_idx] = True
 
     return context_mask, target_mask
 
