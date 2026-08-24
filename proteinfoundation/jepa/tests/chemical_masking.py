@@ -5,12 +5,19 @@ Run with: python -m proteinfoundation.jepa.tests.chemical_masking
 
 import torch
 
-from proteinfoundation.jepa.masking import mask_partial_atom_coordinates
+from proteinfoundation.jepa.masking import (
+    BACKBONE_ATOM37_INDICES,
+    mask_partial_atom_coordinates,
+    mask_partial_sidechain_coordinates,
+    sidechain_atom_mask,
+    sidechain_chemical_context_target_masks,
+)
 from proteinfoundation.jepa.jepa_model import covariance_effective_rank
 from proteinfoundation.nn.feature_factory import (
     Atom37NanometersCoorsSeqFeat,
     BackbonePairDistancesNanometerPairFeat,
     RelativeResidueOrientationPairFeat,
+    ResidueTypeSeqFeat,
 )
 
 
@@ -27,6 +34,7 @@ batch = {
     "residue_type": torch.randint(0, 20, (B, L)),
     "mask_dict": {
         "coords": coord_mask[..., None].expand(-1, -1, -1, 3).clone(),
+        "residue_type": torch.ones(B, L, dtype=torch.bool),
     },
 }
 original_coords = batch["coords"].clone()
@@ -101,5 +109,59 @@ full_rank = torch.eye(8)
 assert torch.allclose(covariance_effective_rank(one_dimensional), torch.tensor(1.0))
 assert covariance_effective_rank(full_rank) > 6.9
 print("scenario 5: covariance effective rank detects dimensional collapse")
+
+# Side-chain-only masking uses the real atom37 backbone indices N/CA/C/O,
+# excludes GLY from the target when AA is visible, and masks exactly round(70%)
+# of each residue's observed side-chain atoms.
+chemical_mask = torch.zeros(1, 3, A, dtype=torch.bool)
+backbone = list(BACKBONE_ATOM37_INDICES)
+chemical_mask[0, 0, backbone + [3]] = True  # ALA: CB
+chemical_mask[0, 1, backbone] = True  # GLY: no side chain
+chemical_mask[0, 2, backbone + [3, 5, 11, 12]] = True  # LEU-like: four SC atoms
+chemical_coords = torch.randn(1, 3, A, 3)
+chemical_batch = {
+    "coords": chemical_coords.clone(),
+    "coords_nm": chemical_coords.clone(),
+    "ca_coors_nm": chemical_coords[:, :, 1].clone(),
+    "coord_mask": chemical_mask.clone(),
+    "residue_type": torch.tensor([[0, 7, 10]]),
+    "mask_dict": {
+        "coords": chemical_mask[..., None].expand(-1, -1, -1, 3).clone(),
+        "residue_type": torch.ones(1, 3, dtype=torch.bool),
+    },
+}
+torch.manual_seed(19)
+sc70 = mask_partial_sidechain_coordinates(chemical_batch, mask_pct=0.7)
+sc_hidden = chemical_mask & ~sc70["coord_mask"]
+assert not sc_hidden[..., backbone].any()
+assert torch.equal(sc_hidden.sum(dim=-1), torch.tensor([[1, 0, 3]]))
+assert not sc70["coords"][sc_hidden].any()
+assert torch.equal(sc70["ca_coors_nm"], chemical_batch["ca_coors_nm"])
+context, target = sidechain_chemical_context_target_masks(
+    chemical_batch, mask_aa_identity=False
+)
+assert torch.equal(context, torch.tensor([[True, True, True]]))
+assert torch.equal(target, torch.tensor([[True, False, True]]))
+print("scenario 6: SC70 preserves backbone and makes GLY context-only")
+
+# AA-hidden + SC50 clears both the explicit one-hot mask and the raw AA values,
+# while keeping every residue (including GLY) as a target.
+torch.manual_seed(23)
+noaa_sc50 = mask_partial_sidechain_coordinates(
+    chemical_batch, mask_pct=0.5, mask_aa_identity=True
+)
+assert not noaa_sc50["mask_dict"]["residue_type"].any()
+assert not noaa_sc50["residue_type"].any()
+assert not ResidueTypeSeqFeat()(noaa_sc50).any()
+assert chemical_batch["mask_dict"]["residue_type"].all()  # source is untouched
+assert torch.equal(
+    noaa_sc50["coord_mask"][..., backbone], chemical_mask[..., backbone]
+)
+context, target = sidechain_chemical_context_target_masks(
+    chemical_batch, mask_aa_identity=True
+)
+assert torch.equal(context, torch.tensor([[True, True, True]]))
+assert torch.equal(target, torch.tensor([[True, True, True]]))
+print("scenario 7: AA-hidden SC50 suppresses explicit identity and targets GLY")
 
 print("all checks passed")

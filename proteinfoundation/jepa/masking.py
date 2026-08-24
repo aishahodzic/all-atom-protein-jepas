@@ -3,6 +3,58 @@ import warnings
 import torch
 
 
+# OpenFold atom37 order starts [N, CA, C, CB, O, ...] and ends with OXT.
+# CB is a side-chain atom; the peptide backbone is N, CA, C, O and the optional
+# terminal oxygen OXT.
+BACKBONE_ATOM37_INDICES = (0, 1, 2, 4, 36)
+
+
+def _randomly_hide_eligible_atoms(coord_mask, eligible_atoms, mask_pct):
+    """Return a fixed-size random subset of eligible atoms for each residue."""
+    if not 0.0 <= mask_pct <= 1.0:
+        raise ValueError(f"mask_pct must be in [0, 1], got {mask_pct}")
+    eligible_atoms = coord_mask.bool() & eligible_atoms.bool()
+    n_eligible = eligible_atoms.sum(dim=-1, keepdim=True)
+    n_hide = (n_eligible * mask_pct).round().long()
+    scores = torch.rand(coord_mask.shape, device=coord_mask.device)
+    scores = scores.masked_fill(~eligible_atoms, 2.0)
+    ranks = scores.argsort(dim=-1).argsort(dim=-1)
+    return eligible_atoms & (ranks < n_hide)
+
+
+def _batch_with_hidden_coordinates(batch, hidden):
+    """Clone coordinate-bearing inputs and make ``hidden`` atoms unobservable."""
+    original_mask = batch["coord_mask"].bool()
+    visible = original_mask & ~hidden
+    masked_batch = dict(batch)
+    masked_batch["coord_mask"] = visible
+    for key in ("coords", "coords_nm"):
+        if key in batch:
+            masked_batch[key] = batch[key] * visible[..., None].to(batch[key].dtype)
+
+    # Some data pipelines cache CA coordinates separately. Keep that cache
+    # consistent with atom37 slot 1 so hiding CA cannot leak through it.
+    if "ca_coors_nm" in batch:
+        masked_batch["ca_coors_nm"] = (
+            batch["ca_coors_nm"]
+            * visible[..., 1, None].to(batch["ca_coors_nm"].dtype)
+        )
+    return masked_batch
+
+
+def sidechain_atom_mask(coord_mask):
+    """Return observed atom37 entries excluding the N/CA/C/O backbone."""
+    if coord_mask.ndim != 3:
+        raise ValueError("coord_mask must have shape [B, L, A]")
+    is_sidechain_slot = torch.ones(
+        coord_mask.shape[-1], dtype=torch.bool, device=coord_mask.device
+    )
+    for atom_idx in BACKBONE_ATOM37_INDICES:
+        if atom_idx < is_sidechain_slot.numel():
+            is_sidechain_slot[atom_idx] = False
+    return coord_mask.bool() & is_sidechain_slot
+
+
 def mask_partial_atom_coordinates(batch, mask_pct=0.5):
     """Hide a fixed fraction of each residue's observed atom coordinates.
 
@@ -16,8 +68,6 @@ def mask_partial_atom_coordinates(batch, mask_pct=0.5):
     input batch and ``mask_dict`` are not modified; keeping ``mask_dict['coords']``
     intact is what lets all real residues remain encoder tokens and JEPA targets.
     """
-    if not 0.0 <= mask_pct <= 1.0:
-        raise ValueError(f"mask_pct must be in [0, 1], got {mask_pct}")
     if "coord_mask" not in batch:
         raise KeyError("partial-coordinate masking requires batch['coord_mask']")
 
@@ -25,28 +75,65 @@ def mask_partial_atom_coordinates(batch, mask_pct=0.5):
     if coord_mask.ndim != 3:
         raise ValueError("batch['coord_mask'] must have shape [B, L, A]")
 
-    n_observed = coord_mask.sum(dim=-1, keepdim=True)
-    n_hide = (n_observed * mask_pct).round().long()
-    scores = torch.rand(coord_mask.shape, device=coord_mask.device)
-    scores = scores.masked_fill(~coord_mask, 2.0)
-    ranks = scores.argsort(dim=-1).argsort(dim=-1)
-    hidden = coord_mask & (ranks < n_hide)
-    visible = coord_mask & ~hidden
+    hidden = _randomly_hide_eligible_atoms(coord_mask, coord_mask, mask_pct)
+    return _batch_with_hidden_coordinates(batch, hidden)
 
-    masked_batch = dict(batch)
-    masked_batch["coord_mask"] = visible
-    for key in ("coords", "coords_nm"):
-        if key in batch:
-            masked_batch[key] = batch[key] * visible[..., None].to(batch[key].dtype)
 
-    # Some data pipelines cache CA coordinates separately. Keep that cache
-    # consistent with atom-37 slot 1 so hiding CA cannot leak through it.
-    if "ca_coors_nm" in batch:
-        masked_batch["ca_coors_nm"] = (
-            batch["ca_coors_nm"] * visible[..., 1, None].to(batch["ca_coors_nm"].dtype)
-        )
+def mask_partial_sidechain_coordinates(batch, mask_pct, mask_aa_identity=False):
+    """Hide a per-residue fraction of side-chain coordinates, preserving N/CA/C/O.
+
+    When ``mask_aa_identity`` is true, both the explicit residue-type one-hot and
+    the raw residue-type tensor are suppressed in the context batch. Visible
+    side-chain atom37 slots still carry chemical information by design; therefore
+    this hides the explicit AA token, not all information from which AA identity
+    could be inferred.
+    """
+    if "coord_mask" not in batch:
+        raise KeyError("side-chain masking requires batch['coord_mask']")
+    coord_mask = batch["coord_mask"].bool()
+    eligible = sidechain_atom_mask(coord_mask)
+    hidden = _randomly_hide_eligible_atoms(coord_mask, eligible, mask_pct)
+    masked_batch = _batch_with_hidden_coordinates(batch, hidden)
+
+    if mask_aa_identity:
+        if "residue_type" not in batch:
+            raise KeyError("AA masking requires batch['residue_type']")
+        if "mask_dict" not in batch or "residue_type" not in batch["mask_dict"]:
+            raise KeyError("AA masking requires batch['mask_dict']['residue_type']")
+        valid_residues = batch["mask_dict"]["coords"][..., 0, 0].bool()
+
+        # Zero the raw value as defence in depth for any feature that might read
+        # residue_type without consulting its mask. Zero is not exposed by the
+        # standard one-hot feature because its mask is also cleared below.
+        residue_type = batch["residue_type"].clone()
+        residue_type[valid_residues] = 0
+        masked_batch["residue_type"] = residue_type
+
+        mask_dict = dict(batch["mask_dict"])
+        residue_type_mask = batch["mask_dict"]["residue_type"].clone().bool()
+        residue_type_mask[valid_residues] = False
+        mask_dict["residue_type"] = residue_type_mask
+        masked_batch["mask_dict"] = mask_dict
 
     return masked_batch
+
+
+def sidechain_chemical_context_target_masks(batch, mask_aa_identity=False):
+    """Return overlapping residue masks for side-chain chemical objectives.
+
+    Every valid residue is context. With AA visible, only residues possessing at
+    least one observed side-chain atom are targets, making glycine context-only.
+    With AA hidden, all valid residues are targets because even glycine has a
+    missing explicit identity to predict through its full target latent.
+    """
+    valid_residues = batch["mask_dict"]["coords"][..., 0, 0].bool()
+    context_mask = valid_residues.clone()
+    if mask_aa_identity:
+        target_mask = valid_residues.clone()
+    else:
+        has_sidechain = sidechain_atom_mask(batch["coord_mask"]).any(dim=-1)
+        target_mask = valid_residues & has_sidechain
+    return context_mask, target_mask
 
 
 def random_residue_mask(batch, masked_pct=0.5):

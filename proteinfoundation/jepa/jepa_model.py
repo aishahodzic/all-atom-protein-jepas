@@ -37,7 +37,10 @@ from proteinfoundation.jepa.masking import (
     apply_mask_to_latents,
     block_residue_mask,
     mask_partial_atom_coordinates,
+    mask_partial_sidechain_coordinates,
     random_residue_mask,
+    sidechain_atom_mask,
+    sidechain_chemical_context_target_masks,
     spatial_3d_block_mask,
 )
 from proteinfoundation.jepa.predictor import JEPAPredictor
@@ -301,12 +304,25 @@ class JEPAModel(L.LightningModule):
         # `+block_mask=true` at the CLI switches to block masking.
         # `+masked_pct=0.7` overrides random_residue_mask's default 0.5 (ignored for block masking).
         masking_mode = self.cfg.get("masking_mode", None)
-        partial_coordinate_mode = masking_mode == "chemmask_partial_coordinates"
-        if partial_coordinate_mode:
+        partial_observation_modes = {
+            "chemmask_partial_coordinates",
+            "chemmask_sidechain_partial",
+            "chemmask_no_aa_sidechain_partial",
+        }
+        partial_observation_mode = masking_mode in partial_observation_modes
+        if masking_mode == "chemmask_partial_coordinates":
             # All valid residues contribute a partially observed context latent and
             # are simultaneously targets for the full-structure encoder latent.
             context_mask = mask.bool()
             target_mask = mask.bool()
+        elif masking_mode == "chemmask_sidechain_partial":
+            context_mask, target_mask = sidechain_chemical_context_target_masks(
+                batch, mask_aa_identity=False
+            )
+        elif masking_mode == "chemmask_no_aa_sidechain_partial":
+            context_mask, target_mask = sidechain_chemical_context_target_masks(
+                batch, mask_aa_identity=True
+            )
         elif masking_mode == "spatial_3d_block":
             context_mask, target_mask = spatial_3d_block_mask(batch)
         elif masking_mode is not None:
@@ -317,14 +333,26 @@ class JEPAModel(L.LightningModule):
             masked_pct = self.cfg.get("masked_pct", 0.5)
             context_mask, target_mask = random_residue_mask(batch, masked_pct=masked_pct)
 
-        if partial_coordinate_mode:
-            masked_batch = mask_partial_atom_coordinates(
-                batch, mask_pct=self.cfg.get("atom_mask_pct", 0.5)
-            )
+        if partial_observation_mode:
+            if masking_mode == "chemmask_partial_coordinates":
+                masked_batch = mask_partial_atom_coordinates(
+                    batch, mask_pct=self.cfg.get("atom_mask_pct", 0.5)
+                )
+                eligible_atoms = batch["coord_mask"].bool()
+                aa_identity_hidden = False
+            else:
+                aa_identity_hidden = masking_mode == "chemmask_no_aa_sidechain_partial"
+                masked_batch = mask_partial_sidechain_coordinates(
+                    batch,
+                    mask_pct=self.cfg.get("sidechain_mask_pct", 0.5),
+                    mask_aa_identity=aa_identity_hidden,
+                )
+                eligible_atoms = sidechain_atom_mask(batch["coord_mask"])
             original_atoms = batch["coord_mask"].bool()
             visible_atoms = masked_batch["coord_mask"].bool()
             hidden_atoms = original_atoms & ~visible_atoms
             valid_atom_count = original_atoms.sum().clamp_min(1)
+            eligible_atom_count = eligible_atoms.sum().clamp_min(1)
             valid_residue_count = mask.bool().sum().clamp_min(1)
             self.log(
                 f"{stage}_atom_mask/hidden_fraction",
@@ -335,8 +363,26 @@ class JEPAModel(L.LightningModule):
                 sync_dist=True,
             )
             self.log(
+                f"{stage}_atom_mask/hidden_fraction_of_eligible",
+                hidden_atoms.sum().float() / eligible_atom_count,
+                on_step=(stage == "train"),
+                on_epoch=True,
+                batch_size=mask.shape[0],
+                sync_dist=True,
+            )
+            self.log(
                 f"{stage}_atom_mask/visible_atoms_per_residue",
                 visible_atoms.sum().float() / valid_residue_count,
+                on_step=(stage == "train"),
+                on_epoch=True,
+                batch_size=mask.shape[0],
+                sync_dist=True,
+            )
+            self.log(
+                f"{stage}_atom_mask/aa_identity_hidden_fraction",
+                torch.tensor(
+                    float(aa_identity_hidden), device=mask.device, dtype=torch.float32
+                ),
                 on_step=(stage == "train"),
                 on_epoch=True,
                 batch_size=mask.shape[0],
@@ -405,7 +451,7 @@ class JEPAModel(L.LightningModule):
             action_position=mutation_positions,
             context_access=(
                 "exclude_self"
-                if partial_coordinate_mode and self.partial_coordinate_self_exclude
+                if partial_observation_mode and self.partial_coordinate_self_exclude
                 else "all"
             ),
         )  # [B, L_tgt, latent_z_dim]
@@ -430,10 +476,10 @@ class JEPAModel(L.LightningModule):
         predicted_latent_flat = predicted_latent[real_target_residues]
         target_latent_flat = target_latent[real_target_residues]
 
-        if partial_coordinate_mode:
-            context_latent_flat = masked_latents["context_latents"][
-                ~masked_latents["context_padding"]
-            ]
+        if partial_observation_mode:
+            # Gather the context latent at each target residue. This remains
+            # aligned when glycine is context-only in side-chain-only masking.
+            context_latent_flat = online_mean[target_mask]
             if context_latent_flat.shape != target_latent_flat.shape:
                 raise RuntimeError("partial-coordinate context/target latents are not aligned")
             with torch.no_grad():
@@ -484,7 +530,7 @@ class JEPAModel(L.LightningModule):
         # is direct (later layers can still carry information indirectly).
         if (
             stage == "val"
-            and partial_coordinate_mode
+            and partial_observation_mode
             and self.partial_coordinate_diagnostics
         ):
             predictor_args = (
@@ -527,14 +573,7 @@ class JEPAModel(L.LightningModule):
                     pred_self_only[real_target_residues] - target_latent_flat
                 ).square().mean()
 
-                # Since context_mask == target_mask, packing order is identical.
-                if not torch.equal(
-                    masked_latents["context_indices"], masked_latents["target_indices"]
-                ) or not torch.equal(
-                    masked_latents["context_padding"], masked_latents["target_padding"]
-                ):
-                    raise RuntimeError("partial-coordinate context/target packing diverged")
-                copy_latent = masked_latents["context_latents"][real_target_residues]
+                copy_latent = online_mean[target_mask]
                 copy_loss = (copy_latent - target_latent_flat).square().mean()
 
             diagnostic_values = {
