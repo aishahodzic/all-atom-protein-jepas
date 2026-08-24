@@ -44,6 +44,28 @@ from proteinfoundation.jepa.predictor import JEPAPredictor
 from proteinfoundation.partial_autoencoder.encoder import EncoderTransformer
 
 
+def covariance_effective_rank(values: torch.Tensor) -> torch.Tensor:
+    """Effective rank of the centered embedding covariance, in ``[0, D]``.
+
+    A healthy representation uses several latent directions; rank approaching 1
+    indicates dimensional collapse, while 0 means the batch has no variance.
+    """
+    if values.ndim != 2:
+        raise ValueError("effective rank expects an [N, D] embedding matrix")
+    if values.shape[0] < 2:
+        return values.new_zeros((), dtype=torch.float32)
+
+    centered = values.detach().float() - values.detach().float().mean(dim=0, keepdim=True)
+    singular_values = torch.linalg.svdvals(centered)
+    variance = singular_values.square()
+    total_variance = variance.sum()
+    if total_variance <= 0:
+        return total_variance
+    probabilities = variance / total_variance
+    entropy = -(probabilities * probabilities.clamp_min(1e-12).log()).sum()
+    return entropy.exp()
+
+
 def mask_batch_for_encoder(batch: Dict, context_mask: torch.Tensor) -> Dict:
     """Mask a batch so the online encoder only sees context residues (n-k residues).
 
@@ -408,6 +430,33 @@ class JEPAModel(L.LightningModule):
         predicted_latent_flat = predicted_latent[real_target_residues]
         target_latent_flat = target_latent[real_target_residues]
 
+        if partial_coordinate_mode:
+            context_latent_flat = masked_latents["context_latents"][
+                ~masked_latents["context_padding"]
+            ]
+            if context_latent_flat.shape != target_latent_flat.shape:
+                raise RuntimeError("partial-coordinate context/target latents are not aligned")
+            with torch.no_grad():
+                context_target_cosine = F.cosine_similarity(
+                    context_latent_flat.float(), target_latent_flat.float(), dim=-1
+                )
+            for name, value in {
+                "context_target_cosine_mean": context_target_cosine.mean(),
+                "context_target_cosine_max": context_target_cosine.max(),
+                "context_target_cosine_fraction_gt_0_95": (
+                    context_target_cosine > 0.95
+                ).float().mean(),
+            }.items():
+                self.log(
+                    f"{stage}_partial_context/{name}",
+                    value,
+                    on_step=(stage == "train"),
+                    on_epoch=True,
+                    batch_size=mask.shape[0],
+                    sync_dist=True,
+                    add_dataloader_idx=False,
+                )
+
         if self.use_action_conditioning:
             self.log_mutation_sensitivity(
                 masked_latents,
@@ -511,6 +560,26 @@ class JEPAModel(L.LightningModule):
         # SIGReg on context, target, and predictor output separately, summed.
         context_flat = online_mean[context_mask.bool()]   # n-k residues
         target_flat = target_latent[real_target_residues]  # k residues, no overlap
+
+        # Effective-rank monitoring complements scalar latent std: std can stay
+        # nonzero even if all embeddings occupy only one direction.
+        with torch.no_grad():
+            effective_ranks = {
+                "context": covariance_effective_rank(context_flat),
+                "target": covariance_effective_rank(target_flat),
+                "predictor": covariance_effective_rank(predicted_latent_flat),
+            }
+        for name, value in effective_ranks.items():
+            self.log(
+                f"{stage}_effective_rank/{name}",
+                value,
+                on_step=(stage == "train"),
+                on_epoch=True,
+                batch_size=mask.shape[0],
+                sync_dist=True,
+                add_dataloader_idx=False,
+            )
+
         context_sigreg = self.sigreg(context_flat.unsqueeze(0))
         target_sigreg = self.sigreg(target_flat.unsqueeze(0))
         predictor_sigreg = self.sigreg(predicted_latent_flat.unsqueeze(0))

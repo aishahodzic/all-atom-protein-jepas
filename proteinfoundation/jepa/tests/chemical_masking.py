@@ -6,6 +6,7 @@ Run with: python -m proteinfoundation.jepa.tests.chemical_masking
 import torch
 
 from proteinfoundation.jepa.masking import mask_partial_atom_coordinates
+from proteinfoundation.jepa.jepa_model import covariance_effective_rank
 from proteinfoundation.nn.feature_factory import (
     Atom37NanometersCoorsSeqFeat,
     BackbonePairDistancesNanometerPairFeat,
@@ -92,5 +93,13 @@ orientation = RelativeResidueOrientationPairFeat()(pair_batch)
 assert not orientation[:, :, 1].any()
 assert not orientation[:, 1, :].any()
 print("scenario 4: pair features suppress channels requiring hidden atoms")
+
+# Effective rank distinguishes a one-dimensional embedding cloud from one using
+# all eight latent dimensions.
+one_dimensional = torch.arange(16, dtype=torch.float32)[:, None] * torch.ones(1, 8)
+full_rank = torch.eye(8)
+assert torch.allclose(covariance_effective_rank(one_dimensional), torch.tensor(1.0))
+assert covariance_effective_rank(full_rank) > 6.9
+print("scenario 5: covariance effective rank detects dimensional collapse")
 
 print("all checks passed")
