@@ -743,10 +743,13 @@ class Atom37NanometersCoorsSeqFeat(Feature):
         )  # Zero-out non-atoms
 
         if self.rel:
-            # If relative remove CA coordinates
+            # Relative coordinates are defined only when CA itself is observed.
+            # Without this gate, a hidden CA is zeroed above and the feature
+            # silently becomes relative to the global origin.
+            has_ca = coors_mask[:, :, 1]
             ca_coors = coors[:, :, 1, :]  # [b, n, 3]
             coors = coors - ca_coors[:, :, None, :]  # [b, n, 37, 3]
-            coors = coors * coors_mask[..., None]
+            coors = coors * coors_mask[..., None] * has_ca[..., None, None]
 
         coors_flat = einops.rearrange(
             coors, "b n a t -> b n (a t)"
@@ -1500,13 +1503,13 @@ class RelativeResidueOrientationPairFeat(Feature):
         aatype = batch["residue_type"]  # [b, n]
         coords = batch["coords"]  # [b, n, 37, 3]
         atom_mask = batch["coord_mask"]  # [b, n, 37]
-        mask = atom_mask[:, :, 1]  # [b, n]
+        has_ca = atom_mask[:, :, 1]  # [b, n]
+        has_n = atom_mask[:, :, 0]  # [b, n]
         has_cb = atom_mask[:, :, 3]  # [b, n] boolean, indicates if corresponding
-        pair_mask = mask[:, :, None] * mask[:, None, :]  # [b, n, n] boolean
-        beta_carbon_pair_mask = (
-            has_cb[:, :, None] * has_cb[:, :, None]
-        )  # [b, n, n] boolean
-        pair_mask = pair_mask * beta_carbon_pair_mask  # [b, n, n]
+        # Every orientation uses N, CA and CB from both residues. Suppress the
+        # entire pair feature unless all six inputs are actually observed.
+        has_frame = has_n & has_ca & has_cb
+        pair_mask = has_frame[:, :, None] & has_frame[:, None, :]
 
         N = coords[:, :, 0, :]  # [b, n, 3]
         CA = coords[:, :, 1, :]  # [b, n, 3]
@@ -1555,8 +1558,9 @@ class BackbonePairDistancesNanometerPairFeat(Feature):
         ), "`coords_nm` not in batch, cannot comptue BackbonePairDistancesNanometerPairFeat"
         coords = batch["coords_nm"]
         atom_mask = batch["coord_mask"]  # [b, n, 37]
-        mask = atom_mask[:, :, 1]  # [b, n]
-        pair_mask = mask[:, None, :] * mask[:, :, None]  # [b, n, n]
+        has_ca = atom_mask[:, :, 1]  # [b, n]
+        has_n = atom_mask[:, :, 0]  # [b, n]
+        has_c = atom_mask[:, :, 2]  # [b, n]
         has_cb = atom_mask[:, :, 3]  # [b, n] boolean, indicates if corresponding
 
         N = coords[:, :, 0, :]  # [b, n, 3]
@@ -1575,14 +1579,12 @@ class BackbonePairDistancesNanometerPairFeat(Feature):
         )  # Each shape [b, n, n]
         # CA_X[..., i, j] has distance (nm) between CA[..., i] and X[..., j]
 
-        # Accomodate residues without CB
-        CA_CB = CA_CB * has_cb[:, None, :]  # [b, n, n]
-
-        # Fix for mask
-        CA_N, CA_CA, CA_C, CA_CB = map(
-            lambda v: v * pair_mask,
-            (CA_N, CA_CA, CA_C, CA_CB),
-        )  # Each shape [b, n, n]
+        # Channel-specific observation masks. All channels require source CA_i;
+        # the destination requirement is N_j, CA_j, C_j or CB_j respectively.
+        ca_n_mask = has_ca[:, :, None] & has_n[:, None, :]
+        ca_ca_mask = has_ca[:, :, None] & has_ca[:, None, :]
+        ca_c_mask = has_ca[:, :, None] & has_c[:, None, :]
+        ca_cb_mask = has_ca[:, :, None] & has_cb[:, None, :]
 
         bin_limits = torch.linspace(0.1, 2, 20, device=coords.device)
         CA_N_feat, CA_CA_feat, CA_C_feat, CA_CB_feat = map(
@@ -1590,10 +1592,15 @@ class BackbonePairDistancesNanometerPairFeat(Feature):
             (CA_N, CA_CA, CA_C, CA_CB),
         )  # Each [b, n, n, 21]
 
+        # Mask after binning: a zero distance still creates a nonzero one-hot bin.
+        CA_N_feat = CA_N_feat * ca_n_mask[..., None]
+        CA_CA_feat = CA_CA_feat * ca_ca_mask[..., None]
+        CA_C_feat = CA_C_feat * ca_c_mask[..., None]
+        CA_CB_feat = CA_CB_feat * ca_cb_mask[..., None]
+
         feat = torch.cat(
             [CA_N_feat, CA_CA_feat, CA_C_feat, CA_CB_feat], dim=-1
         )  # [b, n, n, 4 * 21]
-        feat = feat * pair_mask[..., None]
         return feat
 
 
@@ -1987,4 +1994,3 @@ class FeatureFactoryUidxMotif(torch.nn.Module):
         feat, feat_mask = self.feat_creator(batch)  # [b, n_motif, dim_f], [b, n_motif]
         feat_proc = self.ln_out(self.linear_out(feat))  # [b, n_motif, dim_f]
         return feat_proc * feat_mask[..., None], feat_mask
-

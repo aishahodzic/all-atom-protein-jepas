@@ -3,6 +3,52 @@ import warnings
 import torch
 
 
+def mask_partial_atom_coordinates(batch, mask_pct=0.5):
+    """Hide a fixed fraction of each residue's observed atom coordinates.
+
+    Amino-acid identity and residue validity are preserved. Every observed atom
+    (backbone and side chain, including C-alpha) is equally eligible, and the
+    draw is independent for each residue. Hidden coordinate values are zeroed in
+    addition to clearing ``coord_mask`` so an accidentally ungated coordinate
+    feature cannot leak them.
+
+    The returned batch is a shallow copy with cloned coordinate tensors. The
+    input batch and ``mask_dict`` are not modified; keeping ``mask_dict['coords']``
+    intact is what lets all real residues remain encoder tokens and JEPA targets.
+    """
+    if not 0.0 <= mask_pct <= 1.0:
+        raise ValueError(f"mask_pct must be in [0, 1], got {mask_pct}")
+    if "coord_mask" not in batch:
+        raise KeyError("partial-coordinate masking requires batch['coord_mask']")
+
+    coord_mask = batch["coord_mask"].bool()  # [B, L, 37]
+    if coord_mask.ndim != 3:
+        raise ValueError("batch['coord_mask'] must have shape [B, L, A]")
+
+    n_observed = coord_mask.sum(dim=-1, keepdim=True)
+    n_hide = (n_observed * mask_pct).round().long()
+    scores = torch.rand(coord_mask.shape, device=coord_mask.device)
+    scores = scores.masked_fill(~coord_mask, 2.0)
+    ranks = scores.argsort(dim=-1).argsort(dim=-1)
+    hidden = coord_mask & (ranks < n_hide)
+    visible = coord_mask & ~hidden
+
+    masked_batch = dict(batch)
+    masked_batch["coord_mask"] = visible
+    for key in ("coords", "coords_nm"):
+        if key in batch:
+            masked_batch[key] = batch[key] * visible[..., None].to(batch[key].dtype)
+
+    # Some data pipelines cache CA coordinates separately. Keep that cache
+    # consistent with atom-37 slot 1 so hiding CA cannot leak through it.
+    if "ca_coors_nm" in batch:
+        masked_batch["ca_coors_nm"] = (
+            batch["ca_coors_nm"] * visible[..., 1, None].to(batch["ca_coors_nm"].dtype)
+        )
+
+    return masked_batch
+
+
 def random_residue_mask(batch, masked_pct=0.5):
     """Split each protein's valid residues into context and target sets for JEPA.
 
@@ -217,6 +263,18 @@ def spatial_3d_block_mask(batch):
     target_mask = torch.zeros_like(valid_res)
     for protein_idx in range(valid_res.shape[0]):
         residue_idx = torch.where(valid_res[protein_idx])[0]
+        if residue_idx.numel() < 2:
+            # A rare malformed crop can retain only one valid residue despite the
+            # dataset length filter. Keep it as context-only so it contributes no
+            # ill-posed spatial target while the other proteins in the batch train.
+            context_mask[protein_idx, residue_idx] = True
+            warnings.warn(
+                "spatial_3d_block_mask kept a protein with fewer than two valid "
+                "residues as context-only",
+                RuntimeWarning,
+                stacklevel=2,
+            )
+            continue
         coords = ca_coords_nm[protein_idx, residue_idx]
         if not torch.isfinite(coords).all():
             raise ValueError("valid residues contain non-finite C-alpha coordinates")

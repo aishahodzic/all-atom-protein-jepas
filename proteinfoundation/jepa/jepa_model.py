@@ -36,6 +36,7 @@ from sklearn.decomposition import PCA
 from proteinfoundation.jepa.masking import (
     apply_mask_to_latents,
     block_residue_mask,
+    mask_partial_atom_coordinates,
     random_residue_mask,
     spatial_3d_block_mask,
 )
@@ -179,6 +180,12 @@ class JEPAModel(L.LightningModule):
         self.baseline_run_layernorm = self.cfg.get("baseline_run_layernorm", False)
         self.baseline_run_ema = self.cfg.get("baseline_run_ema", False)
         self.baseline_run_predictor = self.cfg.get("baseline_run_predictor", False)
+        self.partial_coordinate_self_exclude = self.cfg.get(
+            "partial_coordinate_self_exclude", False
+        )
+        self.partial_coordinate_diagnostics = self.cfg.get(
+            "partial_coordinate_diagnostics", True
+        )
         self.ema_decay = 0.996
         self._last_ema_update_step = -1
 
@@ -272,7 +279,13 @@ class JEPAModel(L.LightningModule):
         # `+block_mask=true` at the CLI switches to block masking.
         # `+masked_pct=0.7` overrides random_residue_mask's default 0.5 (ignored for block masking).
         masking_mode = self.cfg.get("masking_mode", None)
-        if masking_mode == "spatial_3d_block":
+        partial_coordinate_mode = masking_mode == "chemmask_partial_coordinates"
+        if partial_coordinate_mode:
+            # All valid residues contribute a partially observed context latent and
+            # are simultaneously targets for the full-structure encoder latent.
+            context_mask = mask.bool()
+            target_mask = mask.bool()
+        elif masking_mode == "spatial_3d_block":
             context_mask, target_mask = spatial_3d_block_mask(batch)
         elif masking_mode is not None:
             raise ValueError(f"Unknown masking_mode: {masking_mode!r}")
@@ -282,8 +295,42 @@ class JEPAModel(L.LightningModule):
             masked_pct = self.cfg.get("masked_pct", 0.5)
             context_mask, target_mask = random_residue_mask(batch, masked_pct=masked_pct)
 
-        # Online encoder sees only the n-k context residues
-        masked_batch = mask_batch_for_encoder(batch, context_mask)
+        if partial_coordinate_mode:
+            masked_batch = mask_partial_atom_coordinates(
+                batch, mask_pct=self.cfg.get("atom_mask_pct", 0.5)
+            )
+            original_atoms = batch["coord_mask"].bool()
+            visible_atoms = masked_batch["coord_mask"].bool()
+            hidden_atoms = original_atoms & ~visible_atoms
+            valid_atom_count = original_atoms.sum().clamp_min(1)
+            valid_residue_count = mask.bool().sum().clamp_min(1)
+            self.log(
+                f"{stage}_atom_mask/hidden_fraction",
+                hidden_atoms.sum().float() / valid_atom_count,
+                on_step=(stage == "train"),
+                on_epoch=True,
+                batch_size=mask.shape[0],
+                sync_dist=True,
+            )
+            self.log(
+                f"{stage}_atom_mask/visible_atoms_per_residue",
+                visible_atoms.sum().float() / valid_residue_count,
+                on_step=(stage == "train"),
+                on_epoch=True,
+                batch_size=mask.shape[0],
+                sync_dist=True,
+            )
+            self.log(
+                f"{stage}_atom_mask/hidden_ca_fraction",
+                hidden_atoms[..., 1].sum().float() / valid_residue_count,
+                on_step=(stage == "train"),
+                on_epoch=True,
+                batch_size=mask.shape[0],
+                sync_dist=True,
+            )
+        else:
+            # Standard JEPA: the online encoder sees only n-k context residues.
+            masked_batch = mask_batch_for_encoder(batch, context_mask)
         online_mean = self._encode_mean(self.online_encoder, masked_batch)  # [B, L, latent_z_dim], only context positions carry signal
 
         # Representation collape monitoring
@@ -331,8 +378,14 @@ class JEPAModel(L.LightningModule):
             masked_latents["context_indices"],                       # [B, L_ctx]
             masked_latents["target_indices"],                        # [B, L_tgt]
             key_padding_mask=masked_latents["context_padding"], # [B, L_ctx]
+            target_padding_mask=masked_latents["target_padding"], # [B, L_tgt]
             action_z=action_z,
             action_position=mutation_positions,
+            context_access=(
+                "exclude_self"
+                if partial_coordinate_mode and self.partial_coordinate_self_exclude
+                else "all"
+            ),
         )  # [B, L_tgt, latent_z_dim]
 
         # Target pass: preserve the original online-encoder path by default;
@@ -374,6 +427,86 @@ class JEPAModel(L.LightningModule):
             target_latent_flat = F.layer_norm(target_latent_flat, (target_latent_flat.shape[-1],))
         jepa_loss = (predicted_latent_flat - target_latent_flat).square().mean()
         pred_vs_baseline_gap = baseline_loss - jepa_loss  # >0 means predictor beats trivial mean-prediction
+
+        # Counterfactual validation probes for overlapping partial-coordinate
+        # context/targets. These do not change training. They quantify whether the
+        # predictor uses its own partial residue, its neighbours, or merely copies
+        # the context encoder latent. For the joint mask-token predictor, exclusion
+        # is direct (later layers can still carry information indirectly).
+        if (
+            stage == "val"
+            and partial_coordinate_mode
+            and self.partial_coordinate_diagnostics
+        ):
+            predictor_args = (
+                masked_latents["context_latents"],
+                masked_latents["context_indices"],
+                masked_latents["target_indices"],
+            )
+            predictor_kwargs = {
+                "key_padding_mask": masked_latents["context_padding"],
+                "target_padding_mask": masked_latents["target_padding"],
+                "action_z": action_z,
+                "action_position": mutation_positions,
+            }
+            with torch.no_grad():
+                if self.partial_coordinate_self_exclude:
+                    pred_full = self.predictor(
+                        *predictor_args, **predictor_kwargs, context_access="all"
+                    )
+                    pred_no_self = predicted_latent
+                else:
+                    pred_full = predicted_latent
+                    pred_no_self = self.predictor(
+                        *predictor_args,
+                        **predictor_kwargs,
+                        context_access="exclude_self",
+                    )
+                pred_self_only = self.predictor(
+                    *predictor_args,
+                    **predictor_kwargs,
+                    context_access="self_only",
+                )
+
+                full_loss = (
+                    pred_full[real_target_residues] - target_latent_flat
+                ).square().mean()
+                no_self_loss = (
+                    pred_no_self[real_target_residues] - target_latent_flat
+                ).square().mean()
+                self_only_loss = (
+                    pred_self_only[real_target_residues] - target_latent_flat
+                ).square().mean()
+
+                # Since context_mask == target_mask, packing order is identical.
+                if not torch.equal(
+                    masked_latents["context_indices"], masked_latents["target_indices"]
+                ) or not torch.equal(
+                    masked_latents["context_padding"], masked_latents["target_padding"]
+                ):
+                    raise RuntimeError("partial-coordinate context/target packing diverged")
+                copy_latent = masked_latents["context_latents"][real_target_residues]
+                copy_loss = (copy_latent - target_latent_flat).square().mean()
+
+            diagnostic_values = {
+                "loss_full": full_loss,
+                "loss_direct_no_self": no_self_loss,
+                "loss_direct_self_only": self_only_loss,
+                "loss_context_copy": copy_loss,
+                "self_information_gain": no_self_loss - full_loss,
+                "neighbour_information_gain": self_only_loss - full_loss,
+                "predictor_gain_over_copy": copy_loss - full_loss,
+            }
+            for name, value in diagnostic_values.items():
+                self.log(
+                    f"val_partial_context/{name}",
+                    value,
+                    on_step=False,
+                    on_epoch=True,
+                    batch_size=mask.shape[0],
+                    sync_dist=True,
+                    add_dataloader_idx=False,
+                )
 
         # SIGReg on context, target, and predictor output separately, summed.
         context_flat = online_mean[context_mask.bool()]   # n-k residues
@@ -681,6 +814,7 @@ class JEPAModel(L.LightningModule):
                 masked_latents["context_indices"],
                 masked_latents["target_indices"],
                 key_padding_mask=masked_latents["context_padding"],
+                target_padding_mask=masked_latents["target_padding"],
             )  # [B, L_tgt, latent_z_dim], action_z=None -> no-mutation baseline
             diff = (
                 predicted_latent_flat - predicted_no_action[real_target_residues]

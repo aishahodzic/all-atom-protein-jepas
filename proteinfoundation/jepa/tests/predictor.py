@@ -49,4 +49,54 @@ out.sum().backward()
 assert all(p.grad is not None for p in model.parameters() if p.requires_grad)
 print("scenario 4 (backward): gradients flow to all parameters")
 
+
+# Scenario 5: direct self-context policies do what their names claim. A single
+# layer is used for the joint predictor so this tests its direct attention edge;
+# deeper joint layers can intentionally propagate information indirectly.
+for predictor_type in ("cross_attention", "mask_token_transformer"):
+    policy_model = JEPAPredictor(
+        latent_z_dim=z,
+        hidden_dim=32,
+        num_layers=1,
+        num_heads=4,
+        ff_dim=64,
+        predictor_type=predictor_type,
+    ).eval()
+    overlap_indices = torch.arange(4).unsqueeze(0)
+    overlap_context = torch.randn(1, 4, z)
+    changed_self = overlap_context.clone()
+    changed_self[:, 1] += 100.0
+    changed_neighbours = overlap_context.clone()
+    changed_neighbours[:, [0, 2, 3]] += 100.0
+
+    with torch.no_grad():
+        excluded_ref = policy_model(
+            overlap_context,
+            overlap_indices,
+            overlap_indices,
+            context_access="exclude_self",
+        )
+        excluded_changed = policy_model(
+            changed_self,
+            overlap_indices,
+            overlap_indices,
+            context_access="exclude_self",
+        )
+        self_only_ref = policy_model(
+            overlap_context,
+            overlap_indices,
+            overlap_indices,
+            context_access="self_only",
+        )
+        self_only_changed = policy_model(
+            changed_neighbours,
+            overlap_indices,
+            overlap_indices,
+            context_access="self_only",
+        )
+
+    assert torch.allclose(excluded_ref[:, 1], excluded_changed[:, 1], atol=1e-5)
+    assert torch.allclose(self_only_ref[:, 1], self_only_changed[:, 1], atol=1e-5)
+    print(f"scenario 5 ({predictor_type}): direct context policies verified")
+
 print("all checks passed")

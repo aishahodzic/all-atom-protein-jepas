@@ -162,7 +162,8 @@ class JEPAPredictor(nn.Module):
 
 #forwad: kv latent + kv pos. embedding -> [self-attn (q vs q), if enabled] -> cross-attention (q vs kv) -> feedforward -> output latent
     def forward(self, context_latents, context_indices, target_indices, key_padding_mask=None,
-                target_padding_mask=None, action_z=None, action_position=None, self_exclude=False):
+                target_padding_mask=None, action_z=None, action_position=None,
+                self_exclude=False, context_access=None):
         # context_latents: [B, L_ctx, latent_z_dim]  (encoder mean of visible residues)
         # context_indices: [B, L_ctx]  (long)  residue indices of context residues
         # target_indices:  [B, L_tgt]  (long)  residue indices of target residues
@@ -171,12 +172,22 @@ class JEPAPredictor(nn.Module):
         #   (only used when use_self_attn=True; unused otherwise, same as before)
         # action_z: [B, 1, hidden_dim] or None
         # action_position: [B] long or None
-        # self_exclude: if True, cross-attention query i cannot attend to context key j
-        #   where context_indices[j] == target_indices[i] (same residue) -- for schemes
-        #   where context/target overlap, else the predictor trivially copies context_i.
-        #   Default False: byte-identical to before.
+        # self_exclude: backwards-compatible alias for context_access="exclude_self".
+        # context_access: "all", "exclude_self", or "self_only". The latter two
+        #   control direct target-query -> context-token attention and are useful
+        #   for partial-coordinate counterfactual diagnostics.
         assert int(target_indices.max()) < self.max_len, "target index exceeds max_len positional table"
         assert int(context_indices.max()) < self.max_len, "context index exceeds max_len positional table"
+        if context_access is None:
+            context_access = "exclude_self" if self_exclude else "all"
+        elif self_exclude:
+            raise ValueError("pass either self_exclude or context_access, not both")
+        if context_access not in {"all", "exclude_self", "self_only"}:
+            raise ValueError(f"Unknown context_access mode: {context_access!r}")
+
+        same_residue = target_indices[:, :, None] == context_indices[:, None, :]
+        if key_padding_mask is not None:
+            same_residue = same_residue & ~key_padding_mask[:, None, :]
 
         # queries are just positional embeddings of the target residues
         q = self.pos_emb(target_indices)                    # [B, L_tgt, hidden_dim]
@@ -213,17 +224,19 @@ class JEPAPredictor(nn.Module):
             # context token at the same residue i. This blocks direct copying while
             # retaining the standard joint Transformer predictor.
             joint_attn_mask = None
-            if self_exclude:
-                same_residue = (
-                    target_indices[:, :, None] == context_indices[:, None, :]
-                )  # [B, L_tgt, L_ctx]
+            if context_access != "all":
+                blocked_context = (
+                    same_residue if context_access == "exclude_self" else ~same_residue
+                )
+                if context_access == "self_only" and key_padding_mask is not None:
+                    blocked_context = blocked_context & ~key_padding_mask[:, None, :]
                 total_len = all_tokens.shape[1]
                 joint_attn_mask = torch.zeros(
                     all_tokens.shape[0], total_len, total_len,
                     dtype=torch.bool,
                     device=all_tokens.device,
                 )
-                joint_attn_mask[:, kv.shape[1] :, : kv.shape[1]] = same_residue
+                joint_attn_mask[:, kv.shape[1] :, : kv.shape[1]] = blocked_context
                 num_heads = self.transformer_layers[0].attn.num_heads
                 joint_attn_mask = joint_attn_mask.repeat_interleave(num_heads, dim=0)
             for layer in self.transformer_layers:
@@ -235,22 +248,25 @@ class JEPAPredictor(nn.Module):
             return self.out_proj(self.predictor_norm(all_tokens[:, kv.shape[1] :]))
 
         cross_attn_mask = None
-        if self_exclude:
-            same_residue = target_indices[:, :, None] == context_indices[:, None, :]  # [B, L_tgt, L_ctx]
+        if context_access != "all":
+            blocked_context = (
+                same_residue if context_access == "exclude_self" else ~same_residue
+            )
+            if context_access == "self_only" and key_padding_mask is not None:
+                blocked_context = blocked_context & ~key_padding_mask[:, None, :]
             num_heads = self.layers[0].attn.num_heads
-            cross_attn_mask = same_residue.repeat_interleave(num_heads, dim=0)  # [B*num_heads, L_tgt, L_ctx]
+            cross_attn_mask = blocked_context.repeat_interleave(num_heads, dim=0)
 
             if not self._self_exclude_logged:
                 logger.info(
-                    f"JEPAPredictor: self_exclude=True -- cross-attention diagonal blocked "
-                    f"({int(same_residue.sum())} (query, context-key) pairs masked out where "
-                    f"target/context residue indices match)."
+                    f"JEPAPredictor: context_access={context_access!r}; direct "
+                    f"target-query/context-token attention is restricted."
                 )
                 self._self_exclude_logged = True
 
         # Run all target-only self-attention before reading context. Cross-attention
-        # is then a separate stack; with self_exclude=True, no query can receive its
-        # own context token either directly or through another target query.
+        # is then a separate stack; exclude_self prevents direct access to the
+        # same-position context token in this cross-attention architecture.
         if self.self_attn_layers is not None:
             for self_attn_layer in self.self_attn_layers:
                 q = self_attn_layer(q, key_padding_mask=target_padding_mask)
