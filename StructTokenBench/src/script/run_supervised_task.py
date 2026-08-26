@@ -1,5 +1,8 @@
 import csv
+from datetime import datetime, timezone
+import math
 import os
+from pathlib import Path
 import sys
 from glob import glob
 import hydra
@@ -12,7 +15,26 @@ from rich.console import Console
 from rich.table import Table
 from rich.text import Text
 
-torch.set_float32_matmul_precision("high")  # A30 has Tensor Cores; default "highest" leaves them unused
+_SRC_DIR = Path(__file__).resolve().parents[1]
+if str(_SRC_DIR) not in sys.path:
+    sys.path.insert(0, str(_SRC_DIR))
+
+from evaluation_manifest import (  # noqa: E402
+    MANIFEST_SCHEMA_VERSION,
+    artifact_identity,
+    canonical_json_sha256,
+    file_identity,
+    git_identity,
+    runtime_identity,
+    safe_path_component,
+    scientific_runtime_versions,
+    write_immutable_json,
+)
+from laproteina_eval_policy import (  # noqa: E402
+    UPSTREAM_L600_PROTOCOL,
+    resolve_laproteina_evaluation_policy,
+)
+
 # Env-var-gated, not a hardcoded call: this line reruns from scratch inside every
 # spawn-started worker process (spawn re-executes top-level module code on import,
 # unlike fork), including dataset/base.py's mp.get_context("spawn").Pool() used by
@@ -36,7 +58,395 @@ HIGHLIGHT_METRICS = ("auroc", "spearmanr")
 HIGHLIGHT_SPLITS = ("fold_test", "superfamily_test")
 
 
-def print_and_record_results(trainer, cfg):
+def _json_safe(value, non_finite_fields=None, prefix=""):
+    """Convert OmegaConf/metric values to strict JSON (no NaN/Infinity)."""
+
+    if torch.is_tensor(value):
+        value = value.detach().cpu()
+        return _json_safe(value.item() if value.numel() == 1 else value.tolist(), non_finite_fields, prefix)
+    if isinstance(value, dict):
+        return {
+            str(key): _json_safe(
+                item,
+                non_finite_fields,
+                f"{prefix}.{key}" if prefix else str(key),
+            )
+            for key, item in value.items()
+        }
+    if isinstance(value, (list, tuple)):
+        return [
+            _json_safe(item, non_finite_fields, f"{prefix}[{index}]")
+            for index, item in enumerate(value)
+        ]
+    if isinstance(value, Path):
+        return str(value)
+    if isinstance(value, float) and not math.isfinite(value):
+        if non_finite_fields is not None:
+            non_finite_fields.append(prefix)
+        return None
+    if isinstance(value, (str, int, float, bool)) or value is None:
+        return value
+    return str(value)
+
+
+def validate_locked_protocol_config(cfg):
+    """Fail early if a direct Hydra invocation contradicts the named lock."""
+
+    protocol = getattr(cfg, "tokenizer_eval_protocol", None)
+    if protocol in (None, ""):
+        return None
+    if cfg.tokenizer != "WrappedLaProteinaTokenizer":
+        raise ValueError(f"{protocol} is only valid for WrappedLaProteinaTokenizer")
+
+    policy = resolve_laproteina_evaluation_policy(
+        protocol,
+        encoder_source=getattr(cfg, "tokenizer_encoder_source", "online"),
+        evaluation_max_length=getattr(cfg, "tokenizer_eval_max_length", None),
+        cache_tag=getattr(cfg, "tokenizer_cache_tag", None),
+    )
+    if int(cfg.data.filter_length) != policy.stb_filter_length:
+        raise ValueError(
+            f"{protocol} locks data.filter_length={policy.stb_filter_length}, "
+            f"got {cfg.data.filter_length}"
+        )
+    if not bool(getattr(cfg, "precompute_tokens", False)):
+        raise ValueError(f"{protocol} requires precompute_tokens=true for cohort auditing")
+    if bool(getattr(cfg, "validate_only", False)) or bool(
+        getattr(cfg, "test_only", False)
+    ):
+        raise ValueError(f"{protocol} requires a fresh train-and-evaluate probe run")
+
+    expected_micro_batch = (
+        64 if cfg.data.data_name == "TapeRemoteHomologyDataset" else 8
+    )
+    locked_values = {
+        "optimization.seed": (int(cfg.optimization.seed), 1234),
+        "optimization.micro_batch_size": (
+            int(cfg.optimization.micro_batch_size),
+            expected_micro_batch,
+        ),
+        "optimization.optimizer.lr": (
+            float(cfg.optimization.optimizer.lr),
+            0.001,
+        ),
+        "model.dropout": (float(cfg.model.dropout), 0.1),
+        "model.num_layer": (int(cfg.model.num_layer), 1),
+        "model.hidden_size": (int(cfg.model.hidden_size), 512),
+        "model.use_sequence": (bool(cfg.model.use_sequence), False),
+        "model.sequence_only": (bool(cfg.model.sequence_only), False),
+        "trainer.precision": (str(cfg.trainer.precision), "32-true"),
+        "trainer.deterministic": (bool(cfg.trainer.deterministic), True),
+        "trainer.reload_dataloaders_every_n_epochs": (
+            int(cfg.trainer.reload_dataloaders_every_n_epochs),
+            1,
+        ),
+        "trainer.accumulate_grad_batches": (
+            int(cfg.trainer.accumulate_grad_batches),
+            1,
+        ),
+        "trainer.gradient_clip_val": (float(cfg.trainer.gradient_clip_val), 1.0),
+        "trainer.val_check_interval": (float(cfg.trainer.val_check_interval), 1.0),
+        "data.truncation_length": (int(cfg.data.truncation_length), 5000),
+        "data.use_sequence": (bool(cfg.data.use_sequence), False),
+        "data.use_continuous": (bool(cfg.data.use_continuous), False),
+    }
+    for name, (actual, expected) in locked_values.items():
+        if actual != expected:
+            raise ValueError(f"{protocol} locks {name}={expected!r}, got {actual!r}")
+
+    smoke = os.environ.get("STB_SMOKE", "0") == "1"
+    expected_validation_cadence = 1 if smoke else 2
+    if int(cfg.trainer.check_val_every_n_epoch) != expected_validation_cadence:
+        raise ValueError(
+            f"{protocol} locks validation to every "
+            f"{expected_validation_cadence} epoch(s) for "
+            f"{'smoke' if smoke else 'full'} runs"
+        )
+    expected_max_steps = 2 if smoke else 10000
+    if int(cfg.max_steps) != expected_max_steps:
+        raise ValueError(
+            f"{protocol} locks max_steps={expected_max_steps} "
+            f"for {'smoke' if smoke else 'full'} runs, got {cfg.max_steps}"
+        )
+    if int(cfg.lightning.callbacks.early_stopping.patience) != 10:
+        raise ValueError(f"{protocol} locks early-stopping patience=10")
+    expected_checkpoint_cadence = 1
+    if int(cfg.lightning.callbacks.checkpoint.every_n_epochs) != expected_checkpoint_cadence:
+        raise ValueError(f"{protocol} locks checkpoint saving at every validation event")
+    expected_limits = (1, 2, 2) if smoke else (None, None, None)
+    actual_limits = (
+        cfg.trainer.max_epochs,
+        cfg.trainer.limit_train_batches,
+        cfg.trainer.limit_val_batches,
+    )
+    if actual_limits != expected_limits:
+        raise ValueError(
+            f"{protocol} locks (max_epochs, limit_train_batches, "
+            f"limit_val_batches)={expected_limits!r} for this run mode, "
+            f"got {actual_limits!r}"
+        )
+    expected_monitor = (
+        "validation_spearmanr" if bool(cfg.model.regression) else "validation_f1_score"
+    )
+    checkpoint_callback = cfg.lightning.callbacks.checkpoint
+    early_stopping = cfg.lightning.callbacks.early_stopping
+    if (
+        str(checkpoint_callback.monitor) != expected_monitor
+        or str(early_stopping.monitor) != expected_monitor
+        or str(checkpoint_callback.mode) != "max"
+        or str(early_stopping.mode) != "max"
+    ):
+        raise ValueError(
+            f"{protocol} locks checkpoint/early-stop monitoring to "
+            f"{expected_monitor!r} in max mode"
+        )
+    aggregation = getattr(cfg.model, "classification_metric_aggregation", None)
+    if aggregation is not None and aggregation != "legacy_batch_mean":
+        raise ValueError(f"{protocol} requires upstream legacy_batch_mean metrics")
+    weighting = getattr(cfg.model, "binary_class_weighting", None)
+    if weighting is not None and weighting != "legacy_batch":
+        raise ValueError(f"{protocol} requires upstream legacy_batch class weighting")
+    return policy
+
+
+def _source_file_identities(repository_dir):
+    candidates = {
+        "feature_factory": repository_dir / "proteinfoundation" / "nn" / "feature_factory.py",
+        "tokenizer": _SRC_DIR / "tokenizer.py",
+        "dataset_base": _SRC_DIR / "dataset" / "base.py",
+        "data_module": _SRC_DIR / "data_module.py",
+        "model_module": _SRC_DIR / "model_module.py",
+        "metric_aggregation": _SRC_DIR / "metric_aggregation.py",
+        "run_supervised_task": Path(__file__).resolve(),
+    }
+    return {
+        name: file_identity(path)
+        for name, path in candidates.items()
+        if path.exists()
+    }
+
+
+def _scientific_probe_config(cfg):
+    """Path-independent settings that can change the downstream result."""
+
+    model = _json_safe(omegaconf.OmegaConf.to_container(cfg.model, resolve=True))
+    for operational_key in ("pretrained_ckpt_path", "ckpt_path"):
+        model.pop(operational_key, None)
+    data = _json_safe(omegaconf.OmegaConf.to_container(cfg.data, resolve=True))
+    for operational_key in ("data_path", "pdb_data_dir", "num_workers", "prefetch_factor"):
+        data.pop(operational_key, None)
+    return {
+        "model": model,
+        "data": data,
+        "optimization": _json_safe(
+            omegaconf.OmegaConf.to_container(cfg.optimization, resolve=True)
+        ),
+        "trainer": {
+            "precision": str(cfg.trainer.precision),
+            "gradient_clip_val": _json_safe(cfg.trainer.gradient_clip_val),
+            "accumulate_grad_batches": int(cfg.trainer.accumulate_grad_batches),
+            "deterministic": bool(cfg.trainer.deterministic),
+            "reload_dataloaders_every_n_epochs": int(
+                cfg.trainer.reload_dataloaders_every_n_epochs
+            ),
+            "val_check_interval": _json_safe(cfg.trainer.val_check_interval),
+            "limit_train_batches": _json_safe(cfg.trainer.limit_train_batches),
+            "limit_val_batches": _json_safe(cfg.trainer.limit_val_batches),
+        },
+        "stopping": {
+            "max_steps": int(cfg.max_steps),
+            "early_stopping_monitor": str(
+                cfg.lightning.callbacks.early_stopping.monitor
+            ),
+            "early_stopping_mode": str(cfg.lightning.callbacks.early_stopping.mode),
+            "early_stopping_patience": int(
+                cfg.lightning.callbacks.early_stopping.patience
+            ),
+            "checkpoint_every_n_epochs": int(
+                cfg.lightning.callbacks.checkpoint.every_n_epochs
+            ),
+        },
+    }
+
+
+def write_locked_result_manifest(trainer, cfg, datamodule, metrics):
+    protocol = getattr(cfg, "tokenizer_eval_protocol", None)
+    if protocol in (None, ""):
+        return None
+
+    tokenizer = datamodule.get_tokenizer()
+    run_id = os.environ.get("EVALUATION_RUN_ID")
+    if not run_id:
+        run_id = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ") + f"-p{os.getpid()}"
+        os.environ["EVALUATION_RUN_ID"] = run_id
+    branch = os.environ.get("EXPERIMENT_LABEL", "unknown-branch")
+    checkpoint_label = os.environ.get("CHECKPOINT_LABEL", "unknown-checkpoint")
+    task_label = os.environ.get("TASK_LABEL", cfg.experiment_name)
+
+    non_finite_fields = []
+    safe_metrics = _json_safe(metrics, non_finite_fields, "metrics")
+    resolved_config = _json_safe(
+        omegaconf.OmegaConf.to_container(cfg, resolve=True),
+        non_finite_fields,
+        "config",
+    )
+    repository_dir = Path(__file__).resolve().parents[3]
+    best_probe_path = getattr(trainer.checkpoint_callback, "best_model_path", "")
+    best_probe = (
+        artifact_identity(best_probe_path)
+        if best_probe_path and os.path.exists(best_probe_path)
+        else None
+    )
+    checkpoint = file_identity(tokenizer.pretrained_ckpt_path)
+    if checkpoint["sha256"] != tokenizer.checkpoint_sha256:
+        raise RuntimeError("Checkpoint bytes changed during the evaluation run")
+    encoder_config = (
+        file_identity(tokenizer.encoder_cfg_path)
+        if tokenizer.encoder_cfg_path is not None
+        else None
+    )
+    if (
+        encoder_config is not None
+        and encoder_config["sha256"] != tokenizer.encoder_cfg_sha256
+    ):
+        raise RuntimeError("Encoder config bytes changed during the evaluation run")
+
+    protocol_record = {
+        "name": protocol,
+        "encoder_source": tokenizer.encoder_source,
+        "stb_selected_residue_filter_length": int(cfg.data.filter_length),
+        "whole_chain_max_length_filter": None,
+        "checkpoint_training_filters_applied": False,
+        "cache_tag": tokenizer.evaluation_cache_tag,
+        "single_class_present_sample_weight": 0.5,
+        "classification_metric_aggregation": getattr(
+            cfg.model, "classification_metric_aggregation", None
+        ),
+        "binary_class_weighting": getattr(
+            cfg.model, "binary_class_weighting", None
+        ),
+        "unknown_residue_adapter": "zero-aa-identity-v1",
+        # Preserve STB's own optimal-alignment adapter. In the canonical
+        # BindInt cohort, 2fmd_A has two unresolved X positions; those two
+        # labels are dropped by upstream alignment and are counted per split.
+        "local_alignment_policy": "upstream-optimal-alignment-report-drops-v1",
+    }
+    cohorts = datamodule.evaluation_cohort_reports()
+    expected_splits = {"train", *datamodule.all_split_names}
+    if set(cohorts) != expected_splits:
+        raise RuntimeError(
+            f"Cannot publish an incomplete cohort manifest: expected "
+            f"{sorted(expected_splits)}, got {sorted(cohorts)}"
+        )
+    for split, report in cohorts.items():
+        conservation = report.get("row_conservation", {})
+        if conservation.get("holds") is not True:
+            raise RuntimeError(f"Row conservation is not proven for split {split!r}")
+        for field in (
+            "resolve_or_parse_failure_rows",
+            "checkpoint_filter_exclusion_rows",
+            "encoder_failure_rows",
+        ):
+            if int(report.get(field, -1)) != 0:
+                raise RuntimeError(
+                    f"Locked cohort split {split!r} has non-zero or missing {field}"
+                )
+        cache_artifact = report.get("token_cache_artifact", {})
+        if not cache_artifact.get("sha256") or cache_artifact.get("size_bytes") is None:
+            raise RuntimeError(
+                f"Locked cohort split {split!r} lacks token-cache byte identity"
+            )
+    scientific_probe_config = _scientific_probe_config(cfg)
+    scientific_versions = scientific_runtime_versions()
+    manifest = {
+        "schema_version": MANIFEST_SCHEMA_VERSION,
+        "protocol": protocol_record,
+        "run": {
+            "id": run_id,
+            "started_at_utc": os.environ.get("EVALUATION_STARTED_AT_UTC"),
+            "finished_at_utc": datetime.now(timezone.utc).isoformat(),
+            "checkpoint_label": checkpoint_label,
+            "experiment": branch,
+            "task": task_label,
+            "smoke": os.environ.get("STB_SMOKE", "0") == "1",
+            **runtime_identity(),
+        },
+        "encoder": {
+            **checkpoint,
+            "checkpoint_type": tokenizer.checkpoint_type,
+            "state_prefix": tokenizer.encoder_state_prefix,
+            "latent_z_dim": tokenizer.latent_z_dim,
+            "encoder_config": (
+                encoder_config
+            ),
+            "checkpoint_training_selector_recorded_but_not_applied": (
+                tokenizer.checkpoint_training_selector
+            ),
+        },
+        "probe": {
+            "seed": int(cfg.optimization.seed),
+            "micro_batch_size": int(cfg.optimization.micro_batch_size),
+            "max_steps": int(cfg.max_steps),
+            "precision": str(cfg.trainer.precision),
+            "early_stopping_patience": int(
+                cfg.lightning.callbacks.early_stopping.patience
+            ),
+            "checkpoint_every_n_validations": int(
+                cfg.lightning.callbacks.checkpoint.every_n_epochs
+            ),
+            "resolved_config": resolved_config,
+            "resolved_config_sha256": canonical_json_sha256(resolved_config),
+            "scientific_config": scientific_probe_config,
+            "scientific_config_sha256": canonical_json_sha256(
+                scientific_probe_config
+            ),
+            "best_checkpoint": best_probe,
+        },
+        "cohorts": cohorts,
+        "metrics": safe_metrics,
+        "non_finite_fields_serialized_as_null": sorted(set(non_finite_fields)),
+        "source_files": _source_file_identities(repository_dir),
+        "git": git_identity(repository_dir),
+        "scientific_runtime_versions": scientific_versions,
+    }
+    scientific_identity = {
+        "protocol": protocol_record,
+        "checkpoint_sha256": checkpoint["sha256"],
+        "checkpoint_type": tokenizer.checkpoint_type,
+        "encoder_state_prefix": tokenizer.encoder_state_prefix,
+        "latent_z_dim": tokenizer.latent_z_dim,
+        "encoder_config_sha256": tokenizer.encoder_cfg_sha256,
+        "probe_config_sha256": manifest["probe"]["scientific_config_sha256"],
+        "scientific_runtime_versions": scientific_versions,
+        "cohort_sha256_by_split": {
+            split: report.get("cohort_sha256") for split, report in cohorts.items()
+        },
+        "token_cache_sha256_by_split": {
+            split: report["token_cache_artifact"]["sha256"]
+            for split, report in cohorts.items()
+        },
+        "metrics": safe_metrics,
+    }
+    manifest["scientific_identity_sha256"] = canonical_json_sha256(
+        scientific_identity
+    )
+
+    log_root = Path(os.environ.get("STB_LOG_ROOT", cfg.trainer.default_root_dir))
+    manifest_path = (
+        log_root
+        / "manifests"
+        / safe_path_component(run_id)
+        / (
+            f"{safe_path_component(checkpoint_label)}__"
+            f"{safe_path_component(branch)}__{safe_path_component(task_label)}.json"
+        )
+    )
+    write_immutable_json(manifest_path, manifest)
+    print(f"Immutable result manifest written to {manifest_path}")
+    return str(manifest_path)
+
+
+def print_and_record_results(trainer, cfg, datamodule):
     """Replaces Lightning's built-in results table (which -- because our
     metrics already have unique per-split names via add_dataloader_idx=False
     -- prints the exact same full merged metrics dict identically under each
@@ -78,6 +488,11 @@ def print_and_record_results(trainer, cfg):
     console = Console(width=120, record=True)
     console.print(table)
 
+    # The immutable publication record is authoritative and is created before
+    # either mutable convenience artifact below. A collision therefore cannot
+    # append a duplicate/ambiguous summary row first.
+    write_locked_result_manifest(trainer, cfg, datamodule, metrics)
+
     # Full per-run results (every metric, not just the fold/superfamily
     # highlights the summary CSV keeps below) -- one file per (checkpoint,
     # branch, task), so results persist beyond scrolled-away terminal output.
@@ -85,10 +500,18 @@ def print_and_record_results(trainer, cfg):
     if summary_file:
         results_dir = os.path.join(os.path.dirname(summary_file), "results")
         os.makedirs(results_dir, exist_ok=True)
-        safe = lambda s: "".join(c if c.isalnum() or c in "-_." else "_" for c in str(s))
+        safe = safe_path_component
+        protocol = getattr(cfg, "tokenizer_eval_protocol", None)
+        run_suffix = (
+            f"_{safe(os.environ.get('EVALUATION_RUN_ID', 'run'))}"
+            if protocol not in (None, "")
+            else ""
+        )
         result_file = os.path.join(
-            results_dir, f"{safe(checkpoint_label)}_{safe(branch)}_{safe(task_label)}.txt")
-        with open(result_file, "w") as f:
+            results_dir,
+            f"{safe(checkpoint_label)}_{safe(branch)}_{safe(task_label)}{run_suffix}.txt",
+        )
+        with open(result_file, "x" if protocol not in (None, "") else "w") as f:
             f.write(console.export_text(styles=False))
         print(f"Full results written to {result_file}")
 
@@ -151,6 +574,7 @@ def main(cfg):
     Launch supervised fine-tuning using a hydra config, for protein classification
     """
     omegaconf.OmegaConf.resolve(cfg)
+    validate_locked_protocol_config(cfg)
 
     # set up python loggings
     logger = setup_loggings(cfg)
@@ -198,6 +622,10 @@ def main(cfg):
             "checkpoint_type": checkpoint_type,
             "encoder_cfg_path": encoder_cfg_path,
             "force_remove_non_standard_residues": getattr(cfg, "tokenizer_force_remove_non_standard_residues", None),
+            "encoder_source": getattr(cfg, "tokenizer_encoder_source", "online"),
+            "evaluation_max_length": getattr(cfg, "tokenizer_eval_max_length", None),
+            "evaluation_cache_tag": getattr(cfg, "tokenizer_cache_tag", None),
+            "evaluation_protocol": getattr(cfg, "tokenizer_eval_protocol", None),
         }
     else:
         pretrained_model_cfg = {}
@@ -254,7 +682,7 @@ def main(cfg):
             ckpt_path="best",
             verbose=False,
         )
-        print_and_record_results(trainer, cfg)
+        print_and_record_results(trainer, cfg, datamodule)
     else:
         logger.info("*********** start validation ***********\n\n")
         trainer.validate(
@@ -262,7 +690,7 @@ def main(cfg):
             ckpt_path=cfg.model.ckpt_path,
             verbose=False,
         )
-        print_and_record_results(trainer, cfg)
+        print_and_record_results(trainer, cfg, datamodule)
 
 if __name__ == "__main__":
     main()

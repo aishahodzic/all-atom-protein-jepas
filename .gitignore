@@ -25,6 +25,11 @@ wandb/
 /tmp_ae
 /store
 /inference
+/training_worktrees/
+/STB-with-filtered-data/
+/logs/stb/publication_upstream/
+/StructTokenBench/struct_token_bench_logs/upstream-l600-v1-full/
+/StructTokenBench/struct_token_bench_logs/upstream-l600-v1-smoke/
 /ProteinMPNN/ca_model_weights/*.pt
 /ProteinMPNN/vanilla_model_weights/*.pt
 

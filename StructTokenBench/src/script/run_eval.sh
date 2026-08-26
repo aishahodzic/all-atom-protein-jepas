@@ -3,9 +3,15 @@
 #
 # Usage:
 #   bash src/script/run_eval.sh
-#   DRY_RUN=1 bash src/script/run_eval.sh          # print the resolved commands instead of running them
+#   DRY_RUN=1 D_MODEL_OVERRIDE=8 bash src/script/run_eval.sh  # print commands without loading checkpoints
 #   NUM_WORKERS=4 bash src/script/run_eval.sh       # override DataLoader workers (default 8)
 #   PRECISION=bf16-mixed bash src/script/run_eval.sh  # opt into mixed precision (default: 32-true)
+#   ENCODER_SOURCE=target bash src/script/run_eval.sh  # JEPA EMA/target encoder (default: online)
+#   TOKENIZER_EVAL_MAX_LENGTH=600 bash src/script/run_eval.sh  # evaluation-only length override
+#   TOKENIZER_CACHE_TAG=featurefix-v1 bash src/script/run_eval.sh  # force a fresh preprocessing cache
+#   bash src/script/run_eval.sh --protocol=upstream-l600-v1 ...  # locked publication protocol
+#   STB_SKIP_BOOTSTRAP=1 STB_SKIP_DATA_SETUP=1 PYTHON_BIN=python bash ...  # portable/Jarvis mode
+#   STB_SMOKE=1 bash ... --protocol=upstream-l600-v1  # full cohort cache, tiny probe
 #
 #   Skip the interactive prompts by passing checkpoint/experiment/tasks up front,
 #   as flags or equivalently as env vars (CHECKPOINT_LABEL / EXPERIMENT / TASKS):
@@ -25,17 +31,25 @@ set -euo pipefail
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$REPO_DIR"
 
-# src/tokenizer.py imports the `openfold` package, which lives in the la-proteina
-# repo root (one level up) rather than being pip-installed.
-export PYTHONPATH="$(dirname "$REPO_DIR")${PYTHONPATH:+:$PYTHONPATH}"
+# Multiprocessing-spawned workers need both StructTokenBench's src directory and
+# the la-proteina root (for the local openfold/proteinfoundation packages).
+export PYTHONPATH="$REPO_DIR/src:$(dirname "$REPO_DIR")${PYTHONPATH:+:$PYTHONPATH}"
 
 export DIR="$REPO_DIR"
 DRY_RUN="${DRY_RUN:-0}"
 NUM_WORKERS="${NUM_WORKERS:-8}"          # DataLoader workers per task run (nproc-limited; see README perf notes)
 PRECISION="${PRECISION:-}"               # opt-in, e.g. PRECISION=16-mixed or bf16-mixed; default keeps trainer.yaml's 32-true
+ENCODER_SOURCE="${ENCODER_SOURCE:-online}" # JEPA branch: online or target (target_encoder/ema_encoder)
+TOKENIZER_EVAL_MAX_LENGTH="${TOKENIZER_EVAL_MAX_LENGTH:-}" # blank: checkpoint policy; e.g. 600 for full STB cohort
+TOKENIZER_CACHE_TAG="${TOKENIZER_CACHE_TAG:-}" # blank: reuse compatible cache; set after preprocessing revisions
+TOKENIZER_EVAL_PROTOCOL="${TOKENIZER_EVAL_PROTOCOL:-}" # blank: historical integration; upstream-l600-v1: locked publication path
+STB_SKIP_BOOTSTRAP="${STB_SKIP_BOOTSTRAP:-0}"
+STB_SKIP_DATA_SETUP="${STB_SKIP_DATA_SETUP:-0}"
+STB_SMOKE="${STB_SMOKE:-${SMOKE:-0}}"
 
 # ---------------------------------------------------------------------------
-# CLI args (optional): --checkpoint=, --experiment=, --tasks=. Equivalent to
+# CLI args (optional): --checkpoint=, --experiment=, --tasks=,
+# --encoder-source=, --eval-max-length=, --cache-tag=, --protocol=. Equivalent to
 # setting CHECKPOINT_LABEL / EXPERIMENT / TASKS env vars -- either skips the
 # matching interactive prompt below. Flags take precedence over env vars.
 # ---------------------------------------------------------------------------
@@ -47,30 +61,99 @@ for arg in "$@"; do
         --checkpoint=*) CHECKPOINT_LABEL="${arg#*=}" ;;
         --experiment=*) EXPERIMENT="${arg#*=}" ;;
         --tasks=*) TASKS="${arg#*=}" ;;
+        --encoder-source=*) ENCODER_SOURCE="${arg#*=}" ;;
+        --eval-max-length=*) TOKENIZER_EVAL_MAX_LENGTH="${arg#*=}" ;;
+        --cache-tag=*) TOKENIZER_CACHE_TAG="${arg#*=}" ;;
+        --protocol=*) TOKENIZER_EVAL_PROTOCOL="${arg#*=}" ;;
         -h|--help)
             sed -n '2,17p' "${BASH_SOURCE[0]}"
             exit 0
             ;;
         *)
-            echo "[Error] unknown argument: $arg (expected --checkpoint=, --experiment=, --tasks=)" >&2
+            echo "[Error] unknown argument: $arg (expected --checkpoint=, --experiment=, --tasks=, --encoder-source=, --eval-max-length=, --cache-tag=, --protocol=)" >&2
             exit 1
             ;;
     esac
 done
+if [ "$ENCODER_SOURCE" != "online" ] && [ "$ENCODER_SOURCE" != "target" ]; then
+    echo "[Error] ENCODER_SOURCE must be 'online' or 'target', got '$ENCODER_SOURCE'" >&2
+    exit 1
+fi
+if [ -n "$TOKENIZER_EVAL_MAX_LENGTH" ] && ! [[ "$TOKENIZER_EVAL_MAX_LENGTH" =~ ^[1-9][0-9]*$ ]]; then
+    echo "[Error] TOKENIZER_EVAL_MAX_LENGTH must be a positive integer, got '$TOKENIZER_EVAL_MAX_LENGTH'" >&2
+    exit 1
+fi
+if [ -n "$TOKENIZER_CACHE_TAG" ] && ! [[ "$TOKENIZER_CACHE_TAG" =~ ^[A-Za-z0-9_.-]+$ ]]; then
+    echo "[Error] TOKENIZER_CACHE_TAG may contain only letters, numbers, '.', '_' and '-'" >&2
+    exit 1
+fi
+if [ -n "$TOKENIZER_EVAL_PROTOCOL" ] && [ "$TOKENIZER_EVAL_PROTOCOL" != "upstream-l600-v1" ]; then
+    echo "[Error] unsupported protocol '$TOKENIZER_EVAL_PROTOCOL' (expected upstream-l600-v1)" >&2
+    exit 1
+fi
+if [ "$STB_SMOKE" != "0" ] && [ "$STB_SMOKE" != "1" ]; then
+    echo "[Error] STB_SMOKE must be 0 or 1" >&2
+    exit 1
+fi
+
+if [ "$TOKENIZER_EVAL_PROTOCOL" = "upstream-l600-v1" ]; then
+    if [ "$ENCODER_SOURCE" != "online" ]; then
+        echo "[Error] upstream-l600-v1 locks the online/student encoder" >&2
+        exit 1
+    fi
+    if [ -n "$TOKENIZER_EVAL_MAX_LENGTH" ] && [ "$TOKENIZER_EVAL_MAX_LENGTH" != "600" ]; then
+        echo "[Error] upstream-l600-v1 uses STB selected-residue L600; conflicting whole-chain max '$TOKENIZER_EVAL_MAX_LENGTH'" >&2
+        exit 1
+    fi
+    if [ -n "$TOKENIZER_CACHE_TAG" ] && [ "$TOKENIZER_CACHE_TAG" != "upstream-l600-v1" ]; then
+        echo "[Error] upstream-l600-v1 locks TOKENIZER_CACHE_TAG=upstream-l600-v1" >&2
+        exit 1
+    fi
+    # An old explicit 600 is accepted as migration input but deliberately not
+    # forwarded: STB applies 600 after domain/residue selection, whereas this
+    # tokenizer option filters whole chains and would wrongly remove Homo rows.
+    TOKENIZER_EVAL_MAX_LENGTH=""
+    TOKENIZER_CACHE_TAG="upstream-l600-v1"
+fi
+
+if [ "$DRY_RUN" = "1" ]; then
+    # A dry run must be side-effect free: never create environments, install
+    # packages, or download the PDB corpus just to print commands.
+    STB_SKIP_BOOTSTRAP=1
+    STB_SKIP_DATA_SETUP=1
+fi
+
+export TOKENIZER_EVAL_PROTOCOL STB_SMOKE
+export EVALUATION_RUN_ID="${EVALUATION_RUN_ID:-$(date -u +%Y%m%dT%H%M%SZ)-p$$}"
+export EVALUATION_STARTED_AT_UTC="${EVALUATION_STARTED_AT_UTC:-$(date -u +%Y-%m-%dT%H:%M:%SZ)}"
 
 # ---------------------------------------------------------------------------
 # 1. Env activation
 # ---------------------------------------------------------------------------
-source /slurm-storage/miniconda3/etc/profile.d/conda.sh
-if ! conda env list | grep -q '^pstbench '; then
-    echo "  conda env 'pstbench' not found; creating it (python=3.11) -- one-time, ~1min"
-    conda create -y -n pstbench python=3.11
+if [ "$STB_SKIP_BOOTSTRAP" = "1" ]; then
+    PY="${PYTHON_BIN:-python}"
+    PIP="${PIP_BIN:-pip}"
+    if ! command -v "$PY" >/dev/null 2>&1 && [ ! -x "$PY" ]; then
+        echo "[Error] PYTHON_BIN '$PY' is not executable" >&2
+        exit 1
+    fi
+    echo "== Using caller-provided Python environment: $PY =="
+else
+    CONDA_SH="${CONDA_SH:-/slurm-storage/miniconda3/etc/profile.d/conda.sh}"
+    if [ ! -f "$CONDA_SH" ]; then
+        echo "[Error] conda activation script not found at $CONDA_SH; set STB_SKIP_BOOTSTRAP=1 and PYTHON_BIN on Jarvis" >&2
+        exit 1
+    fi
+    source "$CONDA_SH"
+    if ! conda env list | grep -q '^pstbench '; then
+        echo "  conda env 'pstbench' not found; creating it (python=3.11) -- one-time, ~1min"
+        conda create -y -n pstbench python=3.11
+    fi
+    conda activate pstbench
+    hash -r
+    PY=python
+    PIP=pip
 fi
-conda activate pstbench
-hash -r
-
-PY=python
-PIP=pip
 
 pkg_present () {
     # $1 = python import name to probe
@@ -87,16 +170,16 @@ pkg_present () {
 # same nn_ae:nn_130m architecture and dataselector -- only the online_encoder weights and
 # the masking/action-conditioning behavior differ between them, and neither is read from
 # this config; see tokenizer.py's WrappedLaProteinaTokenizer for what's actually consumed).
-CKPT_ROOT="$REPO_DIR/100k-checkpoints"
-JEPA_ENCODER_CFG="$CKPT_ROOT/shared/exp_config_jepa_nn130m.json"
+CKPT_ROOT="${CKPT_ROOT:-$REPO_DIR/100k-checkpoints}"
+JEPA_ENCODER_CFG="${JEPA_ENCODER_CFG:-$CKPT_ROOT/shared/exp_config_jepa_nn130m.json}"
 # External reference checkpoint (NVIDIA's published La-Proteina AE, not one of "my 8") --
 # lives at the la-proteina repo root, not under 100k-checkpoints/. Same latent_z_dim=8,
 # loaded via the plain "ae" path (no encoder-cfg-path), verified via a one-protein load
 # test (encode_structure OK, feats_seq auto-includes x1_bb_angles/x1_sidechain_angles
 # since WrappedLaProteinaTokenizer reads each checkpoint's own saved config).
-AE1_CKPT="$(dirname "$REPO_DIR")/checkpoints_laproteina/AE1_ucond_512.ckpt"
+AE1_CKPT="${AE1_CKPT:-$(dirname "$REPO_DIR")/checkpoints_laproteina/AE1_ucond_512.ckpt}"
 
-EXPERIMENT_NAMES=(ca-cond-baseline fully-latent jepa-rand-mask-50 jepa-new-predictor jepa-rand-mask-70 jepa-mutation le-jepa-rand-mask-50 le-jepa-rand-mask-70 le-jepa-mutation jepa-rand-mask-70-dim64 le-jepa-rand-mask-70-dim64 jepa-rand-mask-50-selfattn jepa-rand-mask-70-selfattn le-jepa-rand-mask-50-200k ae1-external random-init jepa-rand50-control-30k jepa-rand50-ema-30k jepa-rand50-layernorm-30k jepa-rand50-predictor-30k)
+EXPERIMENT_NAMES=(ca-cond-baseline fully-latent jepa-rand-mask-50 jepa-new-predictor le-jepa-new-predictor le-jepa-new-predictor-30k le-jepa-new-predictor-40k le-jepa-new-predictor-60k le-jepa-new-predictor-80k le-jepa-spatial3d-block-30k le-jepa-spatial3d-block-60k le-jepa-spatial3d-block-100k le-jepa-chemmask-exp1-30k le-jepa-chemmask-exp1-100k le-jepa-chemmask-exp3-30k le-jepa-chemmask-exp3-100k jepa-rand-mask-70 jepa-mutation le-jepa-rand-mask-50 le-jepa-rand-mask-70 le-jepa-mutation jepa-rand-mask-70-dim64 le-jepa-rand-mask-70-dim64 jepa-rand-mask-50-selfattn jepa-rand-mask-70-selfattn le-jepa-rand-mask-50-200k ae1-external random-init random-init-64 jepa-rand50-control-30k jepa-rand50-ema-30k jepa-rand50-layernorm-30k jepa-rand50-predictor-30k)
 
 experiment_model_args () {
     # sets TOKENIZERNAME and EXTRA_MODEL_ARGS for experiment name $1
@@ -107,7 +190,7 @@ experiment_model_args () {
             ;;
         fully-latent)
             TOKENIZERNAME="laproteina_fully_latent"
-            # HF only has a "last-EMA" checkpoint (~103k steps); treated as the 100k snapshot.
+            # Exact step-100k EMA snapshot from the resumed fully-latent training run.
             EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CKPT_ROOT/ae/fully_latent/100k-EMA.ckpt tokenizer_checkpoint_type=ae"
             ;;
         jepa-rand-mask-50)
@@ -117,7 +200,35 @@ experiment_model_args () {
             ;;
         jepa-new-predictor)
             TOKENIZERNAME="laproteina_jepa_new_predictor"
-            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CKPT_ROOT/jepa/new_predictor/100k/chk_epoch=00000019_step=000000100000.ckpt tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CKPT_ROOT/jepa/new_predictor/100k.ckpt tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        le-jepa-new-predictor)
+            TOKENIZERNAME="laproteina_le_jepa_new_predictor"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CKPT_ROOT/le-jepa/new_predictor/100k.ckpt tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        le-jepa-new-predictor-30k)
+            TOKENIZERNAME="laproteina_le_jepa_new_predictor_30k"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CKPT_ROOT/le-jepa/new_predictor/30k.ckpt tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        le-jepa-new-predictor-40k|le-jepa-new-predictor-60k|le-jepa-new-predictor-80k)
+            checkpoint_step="${1##*-}"
+            TOKENIZERNAME="laproteina_le_jepa_new_predictor_${checkpoint_step}"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CKPT_ROOT/le-jepa/new_predictor/${checkpoint_step}.ckpt tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        le-jepa-spatial3d-block-30k|le-jepa-spatial3d-block-60k|le-jepa-spatial3d-block-100k)
+            checkpoint_step="${1##*-}"
+            TOKENIZERNAME="laproteina_le_jepa_spatial3d_block_${checkpoint_step}"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CKPT_ROOT/le-jepa/spatial3d_block_dim64_new_predictor/${checkpoint_step}.ckpt tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        le-jepa-chemmask-exp1-30k|le-jepa-chemmask-exp1-100k)
+            checkpoint_step="${1##*-}"
+            TOKENIZERNAME="laproteina_le_jepa_chemmask_exp1_${checkpoint_step}"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CKPT_ROOT/le-jepa/chem_masking/exp1_aa_partial50/${checkpoint_step}.ckpt tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        le-jepa-chemmask-exp3-30k|le-jepa-chemmask-exp3-100k)
+            checkpoint_step="${1##*-}"
+            TOKENIZERNAME="laproteina_le_jepa_chemmask_exp3_${checkpoint_step}"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CKPT_ROOT/le-jepa/chem_masking/exp3_noaa_sc50/${checkpoint_step}.ckpt tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
             ;;
         jepa-rand-mask-70)
             TOKENIZERNAME="laproteina_jepa_rand_mask_70"
@@ -172,7 +283,10 @@ experiment_model_args () {
             # +force_remove_non_standard_residues=true: see tokenizer.py for why. "+" is required --
             # none of the task configs (biolip2.yaml, interpro.yaml, etc.) declare this key, so a
             # plain override is rejected by Hydra ("Key ... is not in struct").
-            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$AE1_CKPT tokenizer_checkpoint_type=ae +tokenizer_force_remove_non_standard_residues=true"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$AE1_CKPT tokenizer_checkpoint_type=ae"
+            if [ -z "$TOKENIZER_EVAL_PROTOCOL" ]; then
+                EXTRA_MODEL_ARGS="$EXTRA_MODEL_ARGS +tokenizer_force_remove_non_standard_residues=true"
+            fi
             ;;
         jepa-rand50-control-30k)
             TOKENIZERNAME="laproteina_jepa_rand50_control_30k"
@@ -203,6 +317,11 @@ experiment_model_args () {
             # case downstream.
             EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CKPT_ROOT/random-init/100k.ckpt tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
             ;;
+        random-init-64)
+            TOKENIZERNAME="laproteina_random_init_64"
+            # Untrained seed-42 floor matched to the 64-dim spatial-block run.
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CKPT_ROOT/random-init-64/step0.ckpt tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
         *)
             echo "[Error] unknown experiment: $1" >&2
             exit 1
@@ -218,7 +337,7 @@ TASK_PREFIXES=(bindint bindbio bindshake catint catbio con rep ept flexrmsf flex
 # No-op today (AtlasDataset.retrieve_pdb_path uses data_path, not
 # pdb_data_dir) -- kept for README fidelity. Real fix for the flexrmsf/
 # flexbfactor/flexneq failures is in tokenizer.py's _get_native_datamodule.
-PHYSCHEM_EXTRA="data.pdb_data_dir=$DIR/struct_token_bench_release_data/data/physicochemical/ lightning.callbacks.checkpoint.monitor='validation_spearmanr'"
+PHYSCHEM_EXTRA="data.pdb_data_dir=${STB_RELEASE_DATA_ROOT:-$DIR/struct_token_bench_release_data}/data/physicochemical/ lightning.callbacks.checkpoint.monitor='validation_spearmanr' lightning.callbacks.early_stopping.monitor='validation_spearmanr' lightning.callbacks.checkpoint.mode='max' lightning.callbacks.early_stopping.mode='max'"
 TASK_EXTRA_ARGS=("" "" "" "" "" "" "" "" "$PHYSCHEM_EXTRA" "$PHYSCHEM_EXTRA" "$PHYSCHEM_EXTRA" "optimization.micro_batch_size=64")
 
 if [ -z "$CHECKPOINT_LABEL" ]; then
@@ -228,9 +347,13 @@ if [ -z "$CHECKPOINT_LABEL" ]; then
 fi
 export CHECKPOINT_LABEL
 
-SUMMARY_FILE="$DIR/struct_token_bench_logs/summary_results.csv"
-mkdir -p "$(dirname "$SUMMARY_FILE")"
-export SUMMARY_FILE
+STB_LOG_ROOT="${STB_LOG_ROOT:-$DIR/struct_token_bench_logs}"
+SUMMARY_FILE="${SUMMARY_FILE:-$STB_LOG_ROOT/summary_results.csv}"
+if [ "$DRY_RUN" != "1" ]; then
+    mkdir -p "$(dirname "$SUMMARY_FILE")"
+    mkdir -p "$STB_LOG_ROOT"
+fi
+export SUMMARY_FILE STB_LOG_ROOT
 
 if [ -n "$EXPERIMENT" ]; then
     exp_choice="$EXPERIMENT"
@@ -275,6 +398,10 @@ else
     # accept task names and/or 1-based menu numbers, comma or space separated
     for n in $(echo "$TASK_INPUT" | tr ',' ' '); do
         if [[ "$n" =~ ^[0-9]+$ ]]; then
+            if [ "$n" -lt 1 ] || [ "$n" -gt "${#TASK_NAMES[@]}" ]; then
+                echo "[Error] task number '$n' is outside 1-${#TASK_NAMES[@]}" >&2
+                exit 1
+            fi
             SELECTED_TASK_IDX+=($((n - 1)))
         else
             found=0
@@ -293,6 +420,27 @@ else
     done
 fi
 
+if [ "${#SELECTED_TASK_IDX[@]}" -eq 0 ]; then
+    echo "[Error] no evaluation tasks selected" >&2
+    exit 1
+fi
+
+# Fail before package installs or data downloads if a selected checkpoint was
+# not staged on this machine. This catches registry/path mistakes immediately.
+for preflight_experiment in "${SELECTED_EXPERIMENTS[@]}"; do
+    experiment_model_args "$preflight_experiment"
+    preflight_ckpt="${EXTRA_MODEL_ARGS#*tokenizer_pretrained_ckpt_path=}"
+    preflight_ckpt="${preflight_ckpt%% *}"
+    if [ "$DRY_RUN" != "1" ] && [ ! -f "$preflight_ckpt" ]; then
+        echo "[Error] checkpoint for '$preflight_experiment' not found: $preflight_ckpt" >&2
+        exit 1
+    fi
+    if [ "$DRY_RUN" != "1" ] && [[ "$EXTRA_MODEL_ARGS" == *"tokenizer_checkpoint_type=jepa"* ]] && [ ! -f "$JEPA_ENCODER_CFG" ]; then
+        echo "[Error] JEPA encoder config not found: $JEPA_ENCODER_CFG" >&2
+        exit 1
+    fi
+done
+
 # ---------------------------------------------------------------------------
 # 3. Base StructTokenBench deps (README), skipping packages that get a
 #    version-pinned reinstall in step 3 anyway (torch itself, torch-scatter,
@@ -300,6 +448,29 @@ fi
 #    or risk the same CUDA/torch ABI-mismatch class of failure step 3 exists
 #    to avoid.
 # ---------------------------------------------------------------------------
+if [ "$STB_SKIP_BOOTSTRAP" != "1" ]; then
+# Pin the CUDA/PyTorch ABI before installing Lightning, DeepSpeed, or any PyG
+# consumer. On a fresh environment those packages would otherwise pull a
+# different default Torch first and force a multi-GB reinstall.
+echo "== Checking pinned Torch/PyG runtime =="
+TORCH_VER=$("$PY" -c "import torch; print(torch.__version__)" 2>/dev/null || echo "")
+if [ "$TORCH_VER" != "2.7.0+cu118" ]; then
+    echo "  torch is '$TORCH_VER', pinning to 2.7.0+cu118 (+matching torchvision)"
+    $PIP install "torch==2.7.0" "torchvision==0.22.0" --index-url https://download.pytorch.org/whl/cu118
+elif ! pkg_present torchvision; then
+    $PIP install "torchvision==0.22.0" --index-url https://download.pytorch.org/whl/cu118
+fi
+PYG_WHEEL_INDEX="https://data.pyg.org/whl/torch-2.7.0+cu118.html"
+for pyg_import in torch_scatter torch_sparse torch_cluster; do
+    if ! pkg_present "$pyg_import"; then
+        echo "  installing $pyg_import against torch 2.7.0+cu118"
+        $PIP install "$pyg_import" -f "$PYG_WHEEL_INDEX"
+    fi
+done
+if ! pkg_present torch_geometric; then
+    $PIP install torch_geometric
+fi
+
 echo "== Checking base StructTokenBench dependencies =="
 declare -A BASE_DEPS=(
     [lmdb]="lmdb"
@@ -318,7 +489,6 @@ declare -A BASE_DEPS=(
     [tmtools]="tmtools"
     [tape]="tape_proteins"
     [accelerate]="accelerate"
-    [torch_geometric]="torch_geometric"
     [line_profiler]="line_profiler"
     [mini3di]="mini3di"
     [tree]="dm-tree"
@@ -341,18 +511,9 @@ done
 $PIP install --upgrade packaging >/dev/null
 
 # ---------------------------------------------------------------------------
-# 4. LaProteina-specific stack: pinned torch build + matching PyG extensions
-#    + graphein/openfold/proteinfoundation runtime deps.
+# 4. LaProteina-specific runtime dependencies.
 # ---------------------------------------------------------------------------
 echo "== Checking LaProteina-specific dependencies =="
-TORCH_VER=$("$PY" -c "import torch; print(torch.__version__)" 2>/dev/null || echo "")
-if [ "$TORCH_VER" != "2.7.0+cu118" ]; then
-    echo "  torch is '$TORCH_VER', pinning to 2.7.0+cu118 (+matching torchvision)"
-    $PIP install "torch==2.7.0" "torchvision==0.22.0" --index-url https://download.pytorch.org/whl/cu118
-    $PIP install torch_geometric torch_scatter torch_sparse torch_cluster \
-        -f https://data.pyg.org/whl/torch-2.7.0+cu118.html
-fi
-
 if ! pkg_present graphein; then
     $PIP install graphein==1.7.7 --no-deps
 fi
@@ -375,6 +536,9 @@ for import_name in "${!LAPROTEINA_DEPS[@]}"; do
         $PIP install "${LAPROTEINA_DEPS[$import_name]}"
     fi
 done
+else
+    echo "== Skipping dependency installation (STB_SKIP_BOOTSTRAP=1) =="
+fi
 
 # ---------------------------------------------------------------------------
 # 5. Data: PDB mmCIF files + downstream labels (skip if already present)
@@ -386,15 +550,19 @@ done
 # loops back and mounts on itself. On hopper the same data lives locally at
 # /mnt/raid/aishod/data/struct_token_bench_pdb_data (confirmed present). This is the
 # same distinction the JEPA training job scripts already make for DATA_PATH.
-if [ "$(hostname -s)" = "hopper" ]; then
-    PDB_DATA_ROOT="/mnt/raid/aishod/data/struct_token_bench_pdb_data"
-else
-    PDB_DATA_ROOT="$DIR/pdb_data"
+if [ -z "${PDB_DATA_ROOT:-}" ]; then
+    if [ "$(hostname -s)" = "hopper" ]; then
+        PDB_DATA_ROOT="/mnt/raid/aishod/data/struct_token_bench_pdb_data"
+    else
+        PDB_DATA_ROOT="$DIR/pdb_data"
+    fi
 fi
-export PDB_DATA_ROOT
+STB_RELEASE_DATA_ROOT="${STB_RELEASE_DATA_ROOT:-$DIR/struct_token_bench_release_data}"
+export PDB_DATA_ROOT STB_RELEASE_DATA_ROOT
 
 # Guarded by a flock so concurrent eval jobs sharing $DIR over NFS don't all
 # probe/touch this section at once.
+if [ "$STB_SKIP_DATA_SETUP" != "1" ]; then
 (
     flock -x 200
 
@@ -412,20 +580,33 @@ export PDB_DATA_ROOT
         )
     fi
 
-    LABELS_DIR="$DIR/struct_token_bench_release_data/data"
+    LABELS_DIR="$STB_RELEASE_DATA_ROOT/data"
     if [ -d "$LABELS_DIR" ] && [ -n "$(ls -A "$LABELS_DIR" 2>/dev/null)" ]; then
         echo "== Downstream label data already present, skipping download =="
     else
         echo "== Downloading downstream label data =="
         (
-            cd "$DIR"
+            cd "$(dirname "$STB_RELEASE_DATA_ROOT")"
             gdown https://drive.google.com/uc?id=1wJ4dSNdMyuF0985ET4UuwViHgV-clF4K
             unzip -q struct_token_bench_release_data_download.zip
-            mv struct_token_bench_release_data_download struct_token_bench_release_data
+            mv struct_token_bench_release_data_download "$STB_RELEASE_DATA_ROOT"
             rm -f struct_token_bench_release_data_download.zip
         )
     fi
 ) 200>"$DIR/.data_setup.lock"
+else
+    echo "== Skipping automatic data setup (STB_SKIP_DATA_SETUP=1) =="
+    if [ "$DRY_RUN" != "1" ]; then
+        if [ ! -d "$PDB_DATA_ROOT/mmcif_files" ]; then
+            echo "[Error] missing PDB directory: $PDB_DATA_ROOT/mmcif_files" >&2
+            exit 1
+        fi
+        if [ ! -d "$STB_RELEASE_DATA_ROOT/data" ]; then
+            echo "[Error] missing STB release data: $STB_RELEASE_DATA_ROOT/data" >&2
+            exit 1
+        fi
+    fi
+fi
 
 # ---------------------------------------------------------------------------
 # 6. Run
@@ -435,7 +616,29 @@ lr=0.001
 
 for experiment in "${SELECTED_EXPERIMENTS[@]}"; do
     experiment_model_args "$experiment"
-    export EXPERIMENT_LABEL="$experiment"
+    eval_variant=""
+    if [[ "$EXTRA_MODEL_ARGS" == *"tokenizer_checkpoint_type=jepa"* ]]; then
+        EXTRA_MODEL_ARGS="$EXTRA_MODEL_ARGS tokenizer_encoder_source=$ENCODER_SOURCE"
+        if [ "$ENCODER_SOURCE" = "target" ]; then
+            eval_variant="${eval_variant}-target"
+        fi
+    elif [ "$ENCODER_SOURCE" != "online" ]; then
+        echo "[Error] ENCODER_SOURCE=target is only valid for JEPA checkpoints ($experiment is not JEPA)" >&2
+        exit 1
+    fi
+    if [ -n "$TOKENIZER_EVAL_PROTOCOL" ]; then
+        EXTRA_MODEL_ARGS="$EXTRA_MODEL_ARGS ++tokenizer_eval_protocol=$TOKENIZER_EVAL_PROTOCOL tokenizer_cache_tag=$TOKENIZER_CACHE_TAG"
+        eval_variant="${eval_variant}-${TOKENIZER_EVAL_PROTOCOL}"
+    elif [ -n "$TOKENIZER_EVAL_MAX_LENGTH" ]; then
+        EXTRA_MODEL_ARGS="$EXTRA_MODEL_ARGS tokenizer_eval_max_length=$TOKENIZER_EVAL_MAX_LENGTH"
+        eval_variant="${eval_variant}-L${TOKENIZER_EVAL_MAX_LENGTH}"
+    fi
+    if [ -z "$TOKENIZER_EVAL_PROTOCOL" ] && [ -n "$TOKENIZER_CACHE_TAG" ]; then
+        EXTRA_MODEL_ARGS="$EXTRA_MODEL_ARGS tokenizer_cache_tag=$TOKENIZER_CACHE_TAG"
+        eval_variant="${eval_variant}-cache-${TOKENIZER_CACHE_TAG}"
+    fi
+    TOKENIZERNAME="${TOKENIZERNAME}${eval_variant//-/_}"
+    export EXPERIMENT_LABEL="${experiment}${eval_variant}"
 
     # d_model must match this experiment's own latent_z_dim (the downstream probe's
     # input width). Inferred from the checkpoint's own weights (same reasoning as
@@ -444,8 +647,15 @@ for experiment in "${SELECTED_EXPERIMENTS[@]}"; do
     # only jepa/le-jepa ones (where dimension actually varies across checkpoints,
     # e.g. the dim64 experiments) pay for this peek.
     if [[ "$EXTRA_MODEL_ARGS" == *"tokenizer_checkpoint_type=jepa"* ]]; then
-        ckpt_path=$(echo "$EXTRA_MODEL_ARGS" | grep -oP 'tokenizer_pretrained_ckpt_path=\K[^ ]+')
-        d_model=$("$PY" -c "
+        ckpt_path="${EXTRA_MODEL_ARGS#*tokenizer_pretrained_ckpt_path=}"
+        ckpt_path="${ckpt_path%% *}"
+        if [ -n "${D_MODEL_OVERRIDE:-}" ]; then
+            d_model="$D_MODEL_OVERRIDE"
+        elif [ "$DRY_RUN" = "1" ]; then
+            echo "[Error] DRY_RUN for a JEPA checkpoint requires D_MODEL_OVERRIDE (usually 8 or 64); checkpoint bytes are deliberately not loaded" >&2
+            exit 1
+        else
+            d_model=$("$PY" -c "
 import torch
 ckpt = torch.load('$ckpt_path', map_location='cpu', weights_only=False)
 w = None
@@ -455,7 +665,8 @@ for k, v in ckpt['state_dict'].items():
         break
 print(w.shape[0] // 2)
 ")
-        echo "== $experiment: inferred d_model=$d_model from $ckpt_path =="
+        fi
+        echo "== $experiment: resolved d_model=$d_model for $ckpt_path =="
     else
         d_model=8
     fi
@@ -466,14 +677,28 @@ print(w.shape[0] // 2)
         extra_task_args="${TASK_EXTRA_ARGS[$idx]}"
         export TASK_LABEL="${TASK_NAMES[$idx]}"
 
-        SHARED_ARGS="tokenizer=$tokenizer model.d_model=$d_model trainer.devices=[0] optimization.optimizer.lr=$lr data.target_field=$target_field data.num_workers=$NUM_WORKERS data.prefetch_factor=2 experiment_name=${experiment_prefix}_${TOKENIZERNAME}_lr${lr} run_name=tryout_test default_data_dir=$DIR/struct_token_bench_release_data/ data.pdb_data_dir=$PDB_DATA_ROOT/mmcif_files/ trainer.default_root_dir=$DIR/struct_token_bench_logs/ ${extra_task_args} ${EXTRA_MODEL_ARGS}"
+        protocol_data_args=""
+        resolved_run_name="tryout_test"
+        if [ -n "$TOKENIZER_EVAL_PROTOCOL" ]; then
+            protocol_data_args="data.filter_length=600"
+            safe_experiment="${experiment//[^A-Za-z0-9_.-]/_}"
+            safe_task="${TASK_NAMES[$idx]//[^A-Za-z0-9_.-]/_}"
+            resolved_run_name="${EVALUATION_RUN_ID}_${safe_experiment}_${safe_task}"
+        fi
+        SHARED_ARGS="tokenizer=$tokenizer model.d_model=$d_model trainer.devices=[0] optimization.optimizer.lr=$lr data.target_field=$target_field data.num_workers=$NUM_WORKERS data.prefetch_factor=2 $protocol_data_args experiment_name=${experiment_prefix}_${TOKENIZERNAME}_lr${lr} run_name=$resolved_run_name default_data_dir=$STB_RELEASE_DATA_ROOT/ data.pdb_data_dir=$PDB_DATA_ROOT/mmcif_files/ trainer.default_root_dir=$STB_LOG_ROOT/ ${extra_task_args} ${EXTRA_MODEL_ARGS}"
         if [ -n "$PRECISION" ]; then
             SHARED_ARGS="$SHARED_ARGS trainer.precision=$PRECISION"
+        fi
+        if [ "$STB_SMOKE" = "1" ]; then
+            # Token preprocessing still traverses the complete cohort and
+            # emits exact counts; only the downstream probe is shortened.
+            SHARED_ARGS="$SHARED_ARGS max_steps=2 trainer.max_epochs=1 trainer.limit_train_batches=2 trainer.limit_val_batches=2 trainer.check_val_every_n_epoch=1 lightning.callbacks.checkpoint.every_n_epochs=1"
         fi
 
         echo
         echo "== Running: experiment=$experiment task=${TASK_NAMES[$idx]} (config=$config_name) =="
-        CMD="CUDA_VISIBLE_DEVICES=0 $PY ./src/script/run_supervised_task.py --config-name=$config_name $SHARED_ARGS"
+        CUDA_DEVICE_SPEC="${CUDA_VISIBLE_DEVICES:-0}"
+        CMD="CUDA_VISIBLE_DEVICES=$CUDA_DEVICE_SPEC $PY ./src/script/run_supervised_task.py --config-name=$config_name $SHARED_ARGS"
         if [ "$DRY_RUN" = "1" ]; then
             echo "$CMD"
         else
@@ -488,5 +713,9 @@ done
 if [ "$DRY_RUN" != "1" ] && [ -f "$SUMMARY_FILE" ]; then
     echo
     echo "== Summary (checkpoint: $CHECKPOINT_LABEL) =="
-    column -t -s, "$SUMMARY_FILE"
+    if command -v column >/dev/null 2>&1; then
+        column -t -s, "$SUMMARY_FILE"
+    else
+        cat "$SUMMARY_FILE"
+    fi
 fi

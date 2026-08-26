@@ -27,6 +27,13 @@ from biotite.sequence import Alphabet, Sequence, GeneralSequence
 from biotite.sequence.align import align_optimal, SubstitutionMatrix
 
 from util import accuracy, get_optimizer, calculate_regression_metric, calculate_binary_clf_metric, calculate_multiclass_clf_metric
+from metric_aggregation import (
+    BINARY_CLASS_WEIGHTING_MODES,
+    CLASSIFICATION_METRIC_AGGREGATIONS,
+    binary_classification_loss,
+    calculate_epoch_classification_metrics,
+    gather_variable_length_tensor,
+)
 from modeling_util import model_init_fn
 from vqvae.quantizer_module import get_codebook_utility
 
@@ -126,6 +133,35 @@ class SequenceClassificationModel(ProceedingBaseModel):
         self.multi_label = model_cfg.multi_label
         self.regression = model_cfg.regression
         self.num_labels = model_cfg.num_labels
+        self.classification_metric_aggregation = getattr(
+            model_cfg, "classification_metric_aggregation", "legacy_batch_mean"
+        )
+        if self.classification_metric_aggregation not in CLASSIFICATION_METRIC_AGGREGATIONS:
+            raise ValueError(
+                "classification_metric_aggregation must be one of "
+                f"{sorted(CLASSIFICATION_METRIC_AGGREGATIONS)}, got "
+                f"{self.classification_metric_aggregation!r}"
+            )
+
+        self.binary_class_weighting = getattr(
+            model_cfg, "binary_class_weighting", "legacy_batch"
+        )
+        if self.binary_class_weighting not in BINARY_CLASS_WEIGHTING_MODES:
+            raise ValueError(
+                "binary_class_weighting must be one of "
+                f"{sorted(BINARY_CLASS_WEIGHTING_MODES)}, got "
+                f"{self.binary_class_weighting!r}"
+            )
+        self.binary_positive_weight = float(
+            getattr(model_cfg, "binary_positive_weight", 1.0)
+        )
+        self.binary_negative_weight = float(
+            getattr(model_cfg, "binary_negative_weight", 1.0)
+        )
+        if self.binary_class_weighting == "fixed" and (
+            self.binary_positive_weight <= 0 or self.binary_negative_weight <= 0
+        ):
+            raise ValueError("Fixed binary class weights must both be positive")
 
         self.pretrained_ckpt_path = pretrained_ckpt_path
         assert pretrained_ckpt_path == ""
@@ -246,23 +282,23 @@ class SequenceClassificationModel(ProceedingBaseModel):
                 logits = logits.squeeze(-1)[~ignore_index] # [M, ]
                 targets = targets[~ignore_index].float() # [M, ]
 
-                # data imbalance issue
-                ## per-batch class weight
-                pos_weight = targets.shape[-1] / targets.sum() * 0.5
-                neg_weight = targets.shape[-1] / (targets.shape[-1] - targets.sum()) * 0.5
-                ## overal class weight
-                class_weight = torch.ones_like(targets) * neg_weight
-                class_weight[targets.long() == 1] = pos_weight
-                
-                loss_fct = nn.BCEWithLogitsLoss(weight=class_weight)
-                classification_loss = loss_fct(logits, targets)
+                # Default to a stable unweighted loss.  Fixed training-set
+                # weights can be supplied explicitly; ``legacy_batch`` keeps
+                # the upstream per-minibatch behavior for reproducibility.
+                classification_loss, pos_weight, neg_weight = binary_classification_loss(
+                    logits,
+                    targets,
+                    weighting_mode=self.binary_class_weighting,
+                    positive_weight=self.binary_positive_weight,
+                    negative_weight=self.binary_negative_weight,
+                )
                 metrics = calculate_binary_clf_metric(logits, targets)
                 
                 loss_fct_tmp = nn.BCEWithLogitsLoss()
                 metrics["unweighted_loss"] = loss_fct_tmp(logits, targets)
                 loss_and_metrics = (classification_loss, metrics)
-                metrics["pos_weight"] = pos_weight
-                metrics["neg_weight"] = neg_weight
+                metrics["pos_weight"] = torch.tensor(pos_weight, device=logits.device)
+                metrics["neg_weight"] = torch.tensor(neg_weight, device=logits.device)
                 
                 ret = (loss_and_metrics, logits, targets)
         return ret 
@@ -469,6 +505,21 @@ class PlModel(pl.LightningModule):
             )
         torch.cuda.empty_cache()
 
+    def _uses_global_classification_metrics(self):
+        """Whether epoch-end pooled classification metrics are authoritative."""
+
+        return (
+            getattr(self.model_cfg, "class_name", None) == "SequenceClassificationModel"
+            and not getattr(self.model_cfg, "regression", False)
+            and not getattr(self.model_cfg, "multi_label", False)
+            and getattr(
+                self.model_cfg,
+                "classification_metric_aggregation",
+                "legacy_batch_mean",
+            )
+            == "global"
+        )
+
     def _valid_or_test_step(self, batch, batch_idx, split="validation"):
         outputs = self.model(batch["input_list"], batch["targets"])
         loss, metrics = outputs[0]
@@ -477,8 +528,15 @@ class PlModel(pl.LightningModule):
             f"{split}_{k}": v for k, v in metrics.items()
         }
         
+        # In global mode these names are logged exactly once at epoch end,
+        # after pooling all predictions.  Logging them here as well would let
+        # Lightning's implicit batch averaging race/overwrite the corrected
+        # values used by ModelCheckpoint and EarlyStopping.
+        batch_log_metrics = (
+            {} if self._uses_global_classification_metrics() else log_metrics
+        )
         self.log_dict(
-            {f"{split}_loss": loss, **log_metrics},
+            {f"{split}_loss": loss, **batch_log_metrics},
             prog_bar=True,
             batch_size=self.optimizer_cfg.micro_batch_size,
             logger=True,
@@ -528,6 +586,9 @@ class PlModel(pl.LightningModule):
         
         if logits[0] is not None and targets[0] is not None:
             logits, targets = torch.concatenate(logits), torch.concatenate(targets)
+            if self._uses_global_classification_metrics():
+                logits = gather_variable_length_tensor(logits)
+                targets = gather_variable_length_tensor(targets)
         elif logits[0] is not None:
             
             if self.model_cfg.task_goal == "codebook_utilization":
@@ -589,6 +650,20 @@ class PlModel(pl.LightningModule):
             if "spearmanr" in k or "pearsonr" in k or "r2" in k:
                 tmp = calculate_regression_metric(logits, targets)
                 agg_result[k] = tmp[k.split("_")[-1]]
+
+        if self._uses_global_classification_metrics():
+            classification_task = (
+                "binary"
+                if getattr(self.model_cfg, "is_global_or_local", None) == "local"
+                else "multiclass"
+            )
+            global_metrics = calculate_epoch_classification_metrics(
+                logits, targets, task=classification_task
+            )
+            for metric_name, metric_value in global_metrics.items():
+                metric_key = f"{split}_{metric_name}"
+                if metric_key in agg_result:
+                    agg_result[metric_key] = metric_value
 
         self.log_dict(
             agg_result,

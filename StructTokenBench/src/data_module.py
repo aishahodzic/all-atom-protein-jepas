@@ -93,10 +93,21 @@ class ProteinDataModule(pl.LightningDataModule):
             "in_memory": False,
         })
         dataset = eval(self.data_args.data_name)(**kwargs)
+        dataset.evaluation_requested_split = split
         # need to shard the dataset here:
         assert torch.distributed.is_initialized()
         process_global_rank = torch.distributed.get_rank()
         world_size = torch.distributed.get_world_size()
+        tokenizer = self.get_tokenizer()
+        if (
+            isinstance(tokenizer, WrappedLaProteinaTokenizer)
+            and tokenizer.evaluation_protocol is not None
+            and world_size != 1
+        ):
+            raise RuntimeError(
+                f"{tokenizer.evaluation_protocol} currently requires world_size=1 "
+                "so token-cache cohort counts and immutable manifests are exact"
+            )
         dataset.shard(shard_idx=process_global_rank, num_shards=world_size)
 
         if self.precompute_tokens:
@@ -185,6 +196,23 @@ class ProteinDataModule(pl.LightningDataModule):
             self.py_logger.info(f"Finished loading {split} data: {len(dataset)} samples")
             loaders.append(loader)
         return loaders
+
+    def evaluation_cohort_reports(self):
+        """Return reports for every split materialized during fit/validation."""
+
+        reports = {}
+        split_attributes = [("train", "train_hf_dataset")]
+        split_attributes.extend(
+            (split, f"{split}_hf_dataset") for split in self.all_split_names
+        )
+        for requested_split, attribute in split_attributes:
+            dataset = getattr(self, attribute, None)
+            if dataset is None:
+                continue
+            report = getattr(dataset, "cohort_report", None)
+            if report is not None:
+                reports[requested_split] = report
+        return reports
 
 
 class PretrainingDataModule(pl.LightningDataModule):

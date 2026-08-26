@@ -676,12 +676,14 @@ class ResidueTypeSeqFeat(Feature):
             "residue_type" in batch
         ), "`residue_type` not in batch, cannot compute ResidueTypeSeqFeat"
         rtype = batch["residue_type"]  # [b, n]
-        rpadmask = batch["mask_dict"]["residue_type"]  # [b, n] binary
-        rtype = rtype * rpadmask  # [b, n], the -1 padding becomes 0
-        rtype_onehot = F.one_hot(rtype, num_classes=20)  # [b, n, 20]
-        rtype_onehot = (
-            rtype_onehot * rpadmask[..., None]
-        )
+        rpadmask = batch["mask_dict"]["residue_type"].bool()  # [b, n]
+        # PDB/STB can contain UNK (OpenFold index 20). Keep the residue and its
+        # coordinate features, but use an all-zero vector when AA identity is
+        # unavailable. Standard residues remain unchanged.
+        valid_standard_type = rpadmask & (rtype >= 0) & (rtype < 20)
+        safe_rtype = rtype.clamp(min=0, max=19)
+        rtype_onehot = F.one_hot(safe_rtype, num_classes=20)  # [b, n, 20]
+        rtype_onehot = rtype_onehot * valid_standard_type[..., None]
         return rtype_onehot * 1.0
 
 
@@ -1987,4 +1989,3 @@ class FeatureFactoryUidxMotif(torch.nn.Module):
         feat, feat_mask = self.feat_creator(batch)  # [b, n_motif, dim_f], [b, n_motif]
         feat_proc = self.ln_out(self.linear_out(feat))  # [b, n_motif, dim_f]
         return feat_proc * feat_mask[..., None], feat_mask
-

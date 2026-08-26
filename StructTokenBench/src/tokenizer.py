@@ -79,6 +79,13 @@ except ModuleNotFoundError:
 
 
 from vqvae_model import VQVAEModel
+from evaluation_manifest import sha256_file
+from laproteina_checkpoint import extract_jepa_encoder_state_dict
+from laproteina_eval_policy import (
+    evaluation_cache_tag_suffix,
+    resolve_evaluation_max_length,
+    resolve_laproteina_evaluation_policy,
+)
 
 # ----- La Proteina Loading ------- #
 
@@ -596,13 +603,55 @@ class WrappedLaProteinaTokenizer():
 
     def __init__(self, device: torch.device | str = "cpu", pretrained_ckpt_path = None,
                  checkpoint_type: str = "ae", encoder_cfg_path: str = None,
-                 force_remove_non_standard_residues: bool = None):
+                 force_remove_non_standard_residues: bool = None,
+                 encoder_source: Literal["online", "target"] = "online",
+                 evaluation_max_length: int = None,
+                 evaluation_cache_tag: str = None,
+                 evaluation_protocol: str = None):
         self.device = device
         self.pad_token_id = 0 # for pipeline compatibility
         self.pretrained_ckpt_path = pretrained_ckpt_path
         self.checkpoint_type = checkpoint_type
+        self.encoder_cfg_path = encoder_cfg_path
+        self.evaluation_policy = resolve_laproteina_evaluation_policy(
+            evaluation_protocol,
+            encoder_source=encoder_source,
+            evaluation_max_length=evaluation_max_length,
+            cache_tag=evaluation_cache_tag,
+        )
+        self.evaluation_protocol = self.evaluation_policy.name
+        self.encoder_source = self.evaluation_policy.encoder_source
+        self.encoder_state_prefix = None
+        self.evaluation_max_length_override = (
+            self.evaluation_policy.evaluation_max_length
+        )
+        self.apply_checkpoint_training_filters = (
+            self.evaluation_policy.apply_checkpoint_training_filters
+        )
+        self.strict_evaluation_cohort = self.evaluation_policy.strict_cohort
+        self._checkpoint_sha256 = None
+        self.encoder_cfg_sha256 = None
+        if self.evaluation_protocol is not None:
+            # Establish byte identity before deserialization. It is rechecked
+            # after loading and when the result manifest is minted, so staged
+            # files cannot be replaced while an in-memory encoder is attributed
+            # to different bytes. Keep this publication overhead opt-in.
+            self._checkpoint_sha256 = sha256_file(pretrained_ckpt_path)
+            self.encoder_cfg_sha256 = (
+                sha256_file(encoder_cfg_path)
+                if encoder_cfg_path is not None
+                else None
+            )
+        # Validate once at construction; BaseDataset uses the resulting suffix
+        # to force fresh embeddings after an explicit preprocessing revision.
+        self.evaluation_cache_tag = self.evaluation_policy.cache_tag
+        self.evaluation_cache_tag_suffix = evaluation_cache_tag_suffix(
+            self.evaluation_cache_tag
+        )
 
         if checkpoint_type == "ae":
+            if self.encoder_source != "online":
+                raise ValueError("encoder_source='target' is only valid for JEPA checkpoints")
             model = AutoEncoder.load_from_checkpoint(pretrained_ckpt_path, map_location=self.device, weights_only=False)
             self.encoder = model.encoder
             raw_ckpt = torch.load(pretrained_ckpt_path, map_location="cpu", weights_only=False)
@@ -610,36 +659,71 @@ class WrappedLaProteinaTokenizer():
         elif checkpoint_type == "jepa":
             cfg = json.load(open(encoder_cfg_path))
             ckpt = torch.load(pretrained_ckpt_path, map_location=self.device, weights_only=False)
-            online_encoder_weights = {
-                k[len("online_encoder."):]: v
-                for k, v in ckpt["state_dict"].items()
-                if k.startswith("online_encoder.")
-            }
+            encoder_weights, self.encoder_state_prefix = extract_jepa_encoder_state_dict(
+                ckpt["state_dict"], self.encoder_source
+            )
             # latent_z_dim inferred from the checkpoint's own weights, not assumed
             # from encoder_cfg_path's default (8) -- lets dim-64 (or any future
             # dim) checkpoints load correctly. latent_decoder_mean_n_log_scale.1
             # is the encoder's final [mean, log_scale] projection, so its output
             # width is 2 * latent_z_dim (mirrors Evaluation/linear_probing/checkpoints.py's
             # _infer_latent_z_dim -- same fix, same reasoning).
-            latent_z_dim = online_encoder_weights["latent_decoder_mean_n_log_scale.1.weight"].shape[0] // 2
-            print(f"[tokenizer] {pretrained_ckpt_path}: latent_z_dim={latent_z_dim}")
+            latent_z_dim = encoder_weights["latent_decoder_mean_n_log_scale.1.weight"].shape[0] // 2
+            print(
+                f"[tokenizer] {pretrained_ckpt_path}: encoder_source={self.encoder_source} "
+                f"({self.encoder_state_prefix}), latent_z_dim={latent_z_dim}"
+            )
             cfg["nn_ae"]["latent_z_dim"] = latent_z_dim
             cfg["nn_ae"]["encoder"]["latent_z_dim"] = latent_z_dim
             cfg["nn_ae"]["decoder"]["latent_z_dim"] = latent_z_dim
             self.encoder = EncoderTransformer(**cfg["nn_ae"])
-            self.encoder.load_state_dict(online_encoder_weights)
+            self.encoder.load_state_dict(encoder_weights)
             train_cfg = cfg
         else:
             raise ValueError(f"Unknown checkpoint_type: {checkpoint_type!r}, expected 'ae' or 'jepa'")
 
+        if self.evaluation_protocol is not None:
+            if sha256_file(pretrained_ckpt_path) != self._checkpoint_sha256:
+                raise RuntimeError("Checkpoint bytes changed while the encoder was loading")
+            if (
+                encoder_cfg_path is not None
+                and sha256_file(encoder_cfg_path) != self.encoder_cfg_sha256
+            ):
+                raise RuntimeError("Encoder config bytes changed while the encoder was loading")
+
         for p in self.encoder.parameters():
             p.requires_grad = False
         self.encoder = self.encoder.to(self.device)
+        self.latent_z_dim = int(
+            self.encoder.latent_decoder_mean_n_log_scale[1].weight.shape[0] // 2
+        )
 
-        # read from this checkpoint's own saved training config, not hardcoded
+        # Read the checkpoint's selector for the historical/default integration.
+        # The locked publication protocol records these values but deliberately
+        # does not apply them to StructTokenBench's own cohort.
         dataselector = train_cfg.get("dataset", {}).get("datamodule", {}).get("dataselector", {})
+        self.checkpoint_training_selector = {
+            "min_length": dataselector.get("min_length"),
+            "max_length": dataselector.get("max_length"),
+            "exclude_ids": sorted(str(x).lower() for x in dataselector.get("exclude_ids", [])),
+            "remove_non_standard_residues": dataselector.get(
+                "remove_non_standard_residues", False
+            ),
+            "best_resolution": dataselector.get("best_resolution") or None,
+            "worst_resolution": dataselector.get("worst_resolution"),
+            "experiment_types": sorted(dataselector.get("experiment_types") or []),
+        }
         self.min_length = dataselector.get("min_length")
-        self.max_length = dataselector.get("max_length")
+        self.checkpoint_max_length = dataselector.get("max_length")
+        self.max_length = resolve_evaluation_max_length(
+            self.checkpoint_max_length, self.evaluation_max_length_override
+        )
+        if self.evaluation_max_length_override is not None:
+            print(
+                "[tokenizer] evaluation-only max_length override: "
+                f"checkpoint={self.checkpoint_max_length}, effective={self.max_length}; "
+                "all other checkpoint dataselector criteria remain enabled"
+            )
         self.exclude_ids = set(x.lower() for x in dataselector.get("exclude_ids", []))
         self.remove_non_standard_residues = dataselector.get("remove_non_standard_residues", False)
         if force_remove_non_standard_residues is not None:
@@ -649,6 +733,26 @@ class WrappedLaProteinaTokenizer():
         self.best_resolution = dataselector.get("best_resolution") or None  # 0.0 is a PDBDataSelector no-op too
         self.worst_resolution = dataselector.get("worst_resolution")
         self.experiment_types = set(dataselector.get("experiment_types") or [])
+
+        if not self.apply_checkpoint_training_filters:
+            if force_remove_non_standard_residues not in (None, False):
+                raise ValueError(
+                    f"{self.evaluation_protocol} forbids the LaProteina-only "
+                    "force_remove_non_standard_residues filter"
+                )
+            self.min_length = None
+            self.max_length = None
+            self.exclude_ids = set()
+            self.remove_non_standard_residues = False
+            self.best_resolution = None
+            self.worst_resolution = None
+            self.experiment_types = set()
+            print(
+                f"[tokenizer] locked evaluation protocol={self.evaluation_protocol}: "
+                "online/student encoder, checkpoint-training cohort filters disabled; "
+                "StructTokenBench selected-residue filter_length=600 controls the cohort"
+            )
+
         feats_seq = train_cfg.get("nn_ae", {}).get("encoder", {}).get("feats_seq", [])
         self.needs_chain_break_feature = "chain_break_per_res" in feats_seq
 
@@ -658,15 +762,21 @@ class WrappedLaProteinaTokenizer():
         # checkpoint's own training setup -- not a full PDBManager() catalog
         # construction, just its own parsing functions.
         import pathlib
-        import types
         pdb_train_dir = pathlib.Path(os.environ.get("DATA_PATH", "/home/data")) / "pdb_train"
-        lookup_ns = types.SimpleNamespace(
-            root_dir=pdb_train_dir,
-            resolution_filename="resolu.idx",
-            pdb_entry_type_filename="pdb_entry_type.txt",
-        )
-        self.resolution_lookup = PDBManager._parse_resolution(lookup_ns)
-        self.experiment_type_lookup = PDBManager._parse_experiment_type(lookup_ns)
+        if self.apply_checkpoint_training_filters:
+            import types
+            lookup_ns = types.SimpleNamespace(
+                root_dir=pdb_train_dir,
+                resolution_filename="resolu.idx",
+                pdb_entry_type_filename="pdb_entry_type.txt",
+            )
+            self.resolution_lookup = PDBManager._parse_resolution(lookup_ns)
+            self.experiment_type_lookup = PDBManager._parse_experiment_type(lookup_ns)
+        else:
+            # These training-only indexes are not part of STB's cohort and are
+            # intentionally unnecessary in the portable publication mode.
+            self.resolution_lookup = {}
+            self.experiment_type_lookup = {}
 
         # PDBManager.parse() sources length AND the non-standard-residue check
         # from pdb_seqres.txt's sequence records, not from parsing the actual
@@ -678,19 +788,26 @@ class WrappedLaProteinaTokenizer():
         # the full experimental sequence, which LaProteina's own training
         # filtered on -- parsed graphs can have fewer resolved residues due
         # to missing density, a different number entirely.
-        from graphein.protein.utils import read_fasta
-        fasta = read_fasta(str(pdb_train_dir / "pdb_seqres.txt"))
         self.seqres_lookup = {}  # "{pdb}_{chain}" (lowercase pdb) -> (length, sequence)
-        for header, seq in fasta.items():
-            params = header.split()
-            pdb_chain_id = params[0]
-            length = int(params[2].split(":")[1])
-            # PDB IDs are case-insensitive by convention, but chain letters
-            # are NOT (large complexes use lowercase to extend past 26
-            # chains) -- only normalize the pdb part, matching the lookup in
-            # matches_training_distribution_metadata (which does the same).
-            pdb_part, _, chain_part = pdb_chain_id.partition("_")
-            self.seqres_lookup[f"{pdb_part.lower()}_{chain_part}"] = (length, seq)
+        if self.apply_checkpoint_training_filters:
+            from graphein.protein.utils import read_fasta
+            fasta = read_fasta(str(pdb_train_dir / "pdb_seqres.txt"))
+            for header, seq in fasta.items():
+                params = header.split()
+                pdb_chain_id = params[0]
+                length = int(params[2].split(":")[1])
+                # PDB IDs are case-insensitive by convention, but chain letters
+                # are NOT (large complexes use lowercase to extend past 26
+                # chains) -- only normalize the pdb part, matching the lookup in
+                # matches_training_distribution_metadata (which does the same).
+                pdb_part, _, chain_part = pdb_chain_id.partition("_")
+                self.seqres_lookup[f"{pdb_part.lower()}_{chain_part}"] = (length, seq)
+
+    @property
+    def checkpoint_sha256(self):
+        """Content identity used by publication caches and result manifests."""
+
+        return self._checkpoint_sha256
 
     #continious latent
     def get_num_tokens(self):
@@ -974,7 +1091,3 @@ class WrappedLaProteinaTokenizer():
         if graph is None:
             graph = self._parse_graph(pdb_path, chain_id)
         return self._encode_graph(graph)
-
-
-
-        

@@ -18,6 +18,14 @@ model:
     is_global_or_local: local # global for whole protein property prediction; local for residue wise property prediction
     multi_label: false
     regression: false
+    # Upstream-compatible primary protocol. Use `global` only for the explicitly
+    # labelled corrected analysis, where predictions are pooled over the split.
+    classification_metric_aggregation: legacy_batch_mean
+    # Upstream STB computes class weights independently in every minibatch.
+    # `none` or `fixed` remain available for a labelled corrected analysis.
+    binary_class_weighting: legacy_batch
+    binary_positive_weight: 1.0
+    binary_negative_weight: 1.0
     use_sequence: false
     sequence_only: false
     add_noise: null
@@ -28,7 +36,10 @@ tokenizer_pretrained_ckpt_path: null
 tokenizer_ckpt_name: null
 tokenizer_checkpoint_type: "ae" # "ae" or "jepa"; only used by WrappedLaProteinaTokenizer
 tokenizer_encoder_cfg_path: null # required when tokenizer_checkpoint_type == "jepa"
-max_steps: 2500
+tokenizer_encoder_source: "online" # "online" or EMA/teacher "target" for JEPA
+tokenizer_eval_max_length: null # null: checkpoint policy; e.g. 600: evaluation-only long proteins
+tokenizer_cache_tag: null # optional fresh-cache namespace after preprocessing changes
+max_steps: 10000
 experiment_name: test # used for tensorboard
 run_name: test_run
 validate_only: false

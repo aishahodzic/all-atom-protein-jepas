@@ -1,5 +1,7 @@
 accelerator: "gpu"
 num_nodes: 1
+# Full publication probes validate every second epoch to reduce evaluation
+# overhead. The one-epoch smoke overrides this to 1.
 check_val_every_n_epoch: 2
 default_root_dir: null # required
 enable_checkpointing: true
@@ -14,9 +16,7 @@ max_epochs: null
 max_steps: ${..max_steps} #get value via interpolation
 num_sanity_val_steps: 0 #since we use zero-2d, better default
 precision: 32-true
-reload_dataloaders_every_n_epochs: 0 # our dataset backend materializes fully via torch.load (base.py's
-  # BaseDataset), not mmap arrow -- the "fine for mmap arrow files" reasoning for reloading every epoch
-  # doesn't apply, and the data doesn't change between epochs, so build the dataloaders once and reuse.
+reload_dataloaders_every_n_epochs: 1 # upstream StructTokenBench protocol
 val_check_interval: 1.0 #leave null, will be set to occur 1 step before checkpointing
 accumulate_grad_batches: 1
 deterministic: true

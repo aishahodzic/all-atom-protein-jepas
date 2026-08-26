@@ -4,5 +4,7 @@ defaults:
     - scheduler: cosine
     - override: base
 
-micro_batch_size: 32
+# Keep the upstream StructTokenBench probe protocol. This affects both probe
+# optimization and STB's legacy per-batch metrics/class weighting.
+micro_batch_size: 8
 seed: 1234
