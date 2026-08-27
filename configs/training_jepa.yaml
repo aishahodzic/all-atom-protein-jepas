@@ -20,6 +20,17 @@ wandb_resume: false  # Set true only when continuing an existing W&B run by ID.
 baseline_run_layernorm: false  # Teacher LayerNorm + raw-prediction Smooth-L1 loss
 baseline_run_ema: false        # Linear teacher EMA schedule 0.996 -> 1.0; requires opt.max_steps
 baseline_run_predictor: false  # Joint self-attention predictor over context + target mask tokens
+
+# Opt-in representation interventions. Defaults preserve every historical JEPA
+# run. SIGReg is applied only to trainable online-context and predictor latents;
+# the stop-gradient EMA target is monitored but is not added as a constant term.
+jepa_sigreg: false
+jepa_sigreg_weight: 0.0
+jepa_sigreg_num_proj: 256
+# The dataloader rotation remains the context frame; the EMA target receives an
+# additional independent uniform rotation. The predictor is not given either
+# frame, so matching requires rotation-stable features.
+jepa_independent_target_rotation: false
 # For overlapping partial-coordinate context/targets, block a target query from
 # directly reading its own context token. Set false to condition on its own
 # partial-geometry latent.

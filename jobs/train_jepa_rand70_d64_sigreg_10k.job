@@ -1,0 +1,51 @@
+#!/bin/bash
+# Matched D64 collapse intervention: standard JEPA + calibrated SIGReg only.
+# Submit with SIGREG_WEIGHT set to calibration's recommended_10pct value.
+#SBATCH --job-name=jepa_d64_sigreg_10k
+#SBATCH --partition=normal
+#SBATCH --qos=medium
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=24
+#SBATCH --mem=64G
+#SBATCH --time=04:00:00
+#SBATCH --output=%x-%j.out
+
+set -euo pipefail
+: "${SIGREG_WEIGHT:?Set SIGREG_WEIGHT to the calibrated fixed coefficient}"
+
+PROJECT_ROOT="${PROJECT_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
+PYTHON="${PYTHON:-/slurm-storage/aishod/envs/la-proteina/bin/python}"
+RUN_NAME=jepa_rand70_d64_sigreg_10k
+RUN_ROOT="${RUN_ROOT:-/mnt/hopper-raid/aishod/runs}"
+RUN_DIR="$RUN_ROOT/$RUN_NAME"
+
+if [[ -f "$PROJECT_ROOT/.env" ]]; then
+    set -a
+    source "$PROJECT_ROOT/.env"
+    set +a
+fi
+export PYTHONPATH="$PROJECT_ROOT${PYTHONPATH:+:$PYTHONPATH}"
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+
+[[ "$(git -C "$PROJECT_ROOT" branch --show-current)" == "jepa-latent" ]] || {
+    echo "ERROR: expected jepa-latent branch" >&2
+    exit 1
+}
+[[ ! -e "$RUN_DIR" ]] || { echo "ERROR: refusing to overwrite $RUN_DIR" >&2; exit 1; }
+mkdir -p "$RUN_DIR" "$PROJECT_ROOT/logs/jepa_interventions"
+cd "$RUN_DIR"
+
+echo "JEPA rand70 D64 + SIGReg only; SIGREG_WEIGHT=$SIGREG_WEIGHT"
+
+echo scratch | srun --ntasks=1 "$PYTHON" "$PROJECT_ROOT/proteinfoundation/jepa/train.py" \
+    run_name_="$RUN_NAME" +single=true +masked_pct=0.7 +opt.max_steps=10000 \
+    opt.lr=0.0001 baseline_run_layernorm=false baseline_run_ema=false baseline_run_predictor=false \
+    jepa_sigreg=true jepa_sigreg_weight="$SIGREG_WEIGHT" jepa_sigreg_num_proj=256 \
+    jepa_independent_target_rotation=false \
+    nn_ae.latent_z_dim=64 nn_ae.encoder.latent_z_dim=64 nn_ae.decoder.latent_z_dim=64 \
+    dataset.datamodule.batch_size=2 dataset.datamodule.num_workers=16 \
+    opt.accumulate_grad_batches=2 opt.val_check_interval=2500 \
+    log.checkpoint_every_n_steps=1000 log.last_ckpt_every_n_steps=500 \
+    hardware.ngpus_per_node_=1 hardware.nnodes_=1 hardware.ncpus_per_task_train_=24

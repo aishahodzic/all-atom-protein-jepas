@@ -36,6 +36,86 @@ from proteinfoundation.jepa.masking import (
 )
 from proteinfoundation.jepa.predictor import JEPAPredictor
 from proteinfoundation.partial_autoencoder.encoder import EncoderTransformer
+from proteinfoundation.utils.coors_utils import sample_uniform_rotation
+
+
+def covariance_effective_rank(values: torch.Tensor) -> torch.Tensor:
+    """Effective rank of a centered ``[N, D]`` embedding covariance.
+
+    Per-dimension standard deviation misses dimensional collapse when every
+    output dimension carries a copy of the same scalar.  Effective rank is 1
+    for that failure and approaches D for an isotropic D-dimensional cloud.
+    """
+    if values.ndim != 2:
+        raise ValueError("effective rank expects an [N, D] embedding matrix")
+    if values.shape[0] < 2:
+        return values.new_zeros((), dtype=torch.float32)
+    centered = values.detach().float() - values.detach().float().mean(
+        dim=0, keepdim=True
+    )
+    singular_values = torch.linalg.svdvals(centered)
+    variance = singular_values.square()
+    total_variance = variance.sum()
+    if total_variance <= 0:
+        return total_variance
+    probabilities = variance / total_variance
+    entropy = -(probabilities * probabilities.clamp_min(1e-12).log()).sum()
+    return entropy.exp()
+
+
+class SIGReg(nn.Module):
+    """Sketched Isotropic Gaussian Regularization from LeJEPA.
+
+    Random one-dimensional projections are tested against a standard normal.
+    This jointly discourages zero-variance and redundant/low-rank embeddings.
+    """
+
+    def __init__(self, knots: int = 17, num_proj: int = 256):
+        super().__init__()
+        self.num_proj = num_proj
+        t = torch.linspace(0, 3, knots, dtype=torch.float32)
+        dt = 3 / (knots - 1)
+        weights = torch.full((knots,), 2 * dt, dtype=torch.float32)
+        weights[[0, -1]] = dt
+        window = torch.exp(-t.square() / 2.0)
+        self.register_buffer("t", t)
+        self.register_buffer("phi", window)
+        self.register_buffer("weights", weights * window)
+
+    def forward(self, embeddings: torch.Tensor) -> torch.Tensor:
+        # embeddings: [T, N, D]; these experiments use T=1.
+        directions = torch.randn(
+            embeddings.size(-1), self.num_proj, device=embeddings.device
+        )
+        directions = directions.div_(directions.norm(p=2, dim=0))
+        projected = (embeddings @ directions).unsqueeze(-1) * self.t
+        error = (
+            (projected.cos().mean(-3) - self.phi).square()
+            + projected.sin().mean(-3).square()
+        )
+        statistic = (error @ self.weights) * embeddings.size(-2)
+        return statistic.mean()
+
+
+def independently_rotate_target_batch(batch: Dict) -> Dict:
+    """Give each target protein an independent uniform global rotation.
+
+    The dataloader has already applied a uniform rotation shared by the context
+    and target views.  Right-multiplying only the target ``coords_nm`` by a new
+    independent Haar-uniform rotation makes the resulting target frame uniform
+    and independent of the context frame.  This mirrors
+    ``GlobalRotationTransform``, which deliberately rotates ``coords_nm`` only;
+    invariant pair features computed from ``coords`` remain unchanged.
+    """
+    coords_nm = batch["coords_nm"]
+    rotations = sample_uniform_rotation(
+        shape=(coords_nm.shape[0],),
+        dtype=coords_nm.dtype,
+        device=coords_nm.device,
+    )
+    rotated = dict(batch)
+    rotated["coords_nm"] = torch.einsum("bnac,bcd->bnad", coords_nm, rotations)
+    return rotated
 
 
 def mask_batch_for_encoder(batch: Dict, context_mask: torch.Tensor) -> Dict:
@@ -253,6 +333,18 @@ class JEPAModel(L.LightningModule):
         self.baseline_run_layernorm = self.cfg.get("baseline_run_layernorm", False)
         self.baseline_run_ema = self.cfg.get("baseline_run_ema", False)
         self.baseline_run_predictor = self.cfg.get("baseline_run_predictor", False)
+        self.jepa_sigreg = bool(self.cfg.get("jepa_sigreg", False))
+        self.jepa_sigreg_weight = float(self.cfg.get("jepa_sigreg_weight", 0.0))
+        self.jepa_independent_target_rotation = bool(
+            self.cfg.get("jepa_independent_target_rotation", False)
+        )
+        if self.jepa_sigreg_weight < 0:
+            raise ValueError("jepa_sigreg_weight must be non-negative")
+        if self.jepa_sigreg:
+            self.sigreg = SIGReg(
+                num_proj=int(self.cfg.get("jepa_sigreg_num_proj", 256))
+            )
+        self._sigreg_equal_weight_samples: List[float] = []
         self._last_ema_update_step = -1
 
         if self.baseline_run_ema:
@@ -454,6 +546,12 @@ class JEPAModel(L.LightningModule):
             )  # [B, hidden_dim]
             action_z = action_z.unsqueeze(1)  # [B, 1, hidden_dim], broadcasts over target queries
 
+        # The context keeps the dataloader's global rotation.  The target gets
+        # an additional independent uniform rotation and the predictor is not
+        # told either frame.  Default false preserves all historical runs.
+        if self.jepa_independent_target_rotation:
+            ema_batch = independently_rotate_target_batch(ema_batch)
+
         # Context/target overlap under partial-coordinate modes (every residue is
         # both) -- self_exclude blocks query i from attending to its own context
         # entry, forcing it to reconstruct from neighbours instead of copying itself.
@@ -524,6 +622,36 @@ class JEPAModel(L.LightningModule):
         # Smooth-L1 latent prediction loss.
         jepa_loss = F.smooth_l1_loss(predicted_for_loss, ema_target_for_loss)
         loss = jepa_loss
+
+        sigreg_loss = None
+        weighted_sigreg_loss = None
+        context_effective_rank = None
+        target_effective_rank = None
+        predictor_effective_rank = None
+        suggested_sigreg_equal_weight = None
+        if self.jepa_sigreg:
+            # Only trainable paths are regularized.  The EMA target is measured
+            # but not included in SIGReg: it is stop-gradient, so including its
+            # statistic would add a large constant without changing gradients.
+            context_flat = online_mean[context_mask.bool()]
+            predictor_flat = predicted_latent[real_target_residues]
+            target_flat = ema_target[real_target_residues]
+            sigreg_loss = self.sigreg(context_flat.unsqueeze(0)) + self.sigreg(
+                predictor_flat.unsqueeze(0)
+            )
+            weighted_sigreg_loss = self.jepa_sigreg_weight * sigreg_loss
+            loss = loss + weighted_sigreg_loss
+
+            with torch.no_grad():
+                context_effective_rank = covariance_effective_rank(context_flat)
+                target_effective_rank = covariance_effective_rank(target_flat)
+                predictor_effective_rank = covariance_effective_rank(predictor_flat)
+                # Weight making the two scalar loss contributions equal on this
+                # batch.  Calibration uses a robust median over many batches and
+                # then takes a conservative fraction of this value.
+                suggested_sigreg_equal_weight = (
+                    jepa_loss.detach() / sigreg_loss.detach().clamp_min(1e-12)
+                )
 
         action_sensitivity_reg = None
         z_sensitivity = None
@@ -612,6 +740,12 @@ class JEPAModel(L.LightningModule):
         return {
             "loss": loss,
             "jepa_loss": jepa_loss,
+            "sigreg_loss": sigreg_loss,
+            "weighted_sigreg_loss": weighted_sigreg_loss,
+            "context_effective_rank": context_effective_rank,
+            "target_effective_rank": target_effective_rank,
+            "predictor_effective_rank": predictor_effective_rank,
+            "suggested_sigreg_equal_weight": suggested_sigreg_equal_weight,
             "latent_std": latent_std,
             "online_latent_std": online_latent_std,
             "target_latent_std": target_latent_std,
@@ -647,6 +781,68 @@ class JEPAModel(L.LightningModule):
             sync_dist=True,
             add_dataloader_idx=False,
         )
+
+        if out["sigreg_loss"] is not None:
+            sigreg_log_values = {
+                "train_jepa_loss": out["jepa_loss"],
+                "train_sigreg_loss_raw": out["sigreg_loss"],
+                "train_sigreg_loss_weighted": out["weighted_sigreg_loss"],
+                "train_effective_rank/context": out["context_effective_rank"],
+                "train_effective_rank/target": out["target_effective_rank"],
+                "train_effective_rank/predictor": out["predictor_effective_rank"],
+                "train_sigreg_equal_loss_weight": out["suggested_sigreg_equal_weight"],
+            }
+            for name, value in sigreg_log_values.items():
+                self.log(
+                    name,
+                    value,
+                    on_step=True,
+                    on_epoch=True,
+                    prog_bar=False,
+                    logger=True,
+                    batch_size=bs,
+                    sync_dist=True,
+                    add_dataloader_idx=False,
+                )
+
+            weighted_ratio = out["weighted_sigreg_loss"] / out[
+                "jepa_loss"
+            ].detach().clamp_min(1e-12)
+            self.log(
+                "train_sigreg_weighted_to_jepa_ratio",
+                weighted_ratio,
+                on_step=True,
+                on_epoch=True,
+                prog_bar=False,
+                logger=True,
+                batch_size=bs,
+                sync_dist=True,
+                add_dataloader_idx=False,
+            )
+
+            # A weight-zero calibration run leaves the training objective and
+            # its gradients unchanged while collecting the coefficient that
+            # would make raw SIGReg and JEPA scalar losses equal.  (Sampling the
+            # diagnostic projections still consumes RNG, so this is not a
+            # bitwise reproduction of a baseline trajectory.)  Print robust
+            # summaries so calibration does not depend on W&B availability.
+            equal_weight = float(out["suggested_sigreg_equal_weight"].detach().cpu())
+            if torch.isfinite(torch.tensor(equal_weight)) and equal_weight > 0:
+                self._sigreg_equal_weight_samples.append(equal_weight)
+            n_calibration = len(self._sigreg_equal_weight_samples)
+            if n_calibration in {50, 100, 200, 500} and self.global_rank == 0:
+                values = torch.tensor(self._sigreg_equal_weight_samples)
+                q25, median, q75 = torch.quantile(
+                    values, torch.tensor([0.25, 0.5, 0.75])
+                ).tolist()
+                print(
+                    "SIGREG_CALIBRATION "
+                    f"n={n_calibration} equal_loss_weight_median={median:.8g} "
+                    f"q25={q25:.8g} q75={q75:.8g} "
+                    f"recommended_10pct={0.1 * median:.8g} "
+                    f"recommended_25pct={0.25 * median:.8g}",
+                    flush=True,
+                )
 
         self.log(
             "online_latent_std",
@@ -742,6 +938,27 @@ class JEPAModel(L.LightningModule):
             sync_dist=True,
             add_dataloader_idx=False,
         )
+        if out["sigreg_loss"] is not None:
+            sigreg_log_values = {
+                "val_jepa_loss": out["jepa_loss"],
+                "val_sigreg_loss_raw": out["sigreg_loss"],
+                "val_sigreg_loss_weighted": out["weighted_sigreg_loss"],
+                "val_effective_rank/context": out["context_effective_rank"],
+                "val_effective_rank/target": out["target_effective_rank"],
+                "val_effective_rank/predictor": out["predictor_effective_rank"],
+            }
+            for name, value in sigreg_log_values.items():
+                self.log(
+                    name,
+                    value,
+                    on_step=False,
+                    on_epoch=True,
+                    prog_bar=False,
+                    logger=True,
+                    batch_size=bs,
+                    sync_dist=True,
+                    add_dataloader_idx=False,
+                )
         if out["action_sensitivity_reg"] is not None:
             self.log(
                 "val_jepa_loss",
