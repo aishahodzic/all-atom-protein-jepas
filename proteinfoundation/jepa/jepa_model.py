@@ -205,6 +205,9 @@ class JEPAModel(L.LightningModule):
         self.baseline_run_layernorm = self.cfg.get("baseline_run_layernorm", False)
         self.baseline_run_ema = self.cfg.get("baseline_run_ema", False)
         self.baseline_run_predictor = self.cfg.get("baseline_run_predictor", False)
+        self.lejepa_relative_positions = self.cfg.get(
+            "lejepa_relative_positions", False
+        )
         self.partial_coordinate_self_exclude = self.cfg.get(
             "partial_coordinate_self_exclude", False
         )
@@ -224,6 +227,16 @@ class JEPAModel(L.LightningModule):
         self.use_action_conditioning = use_action_conditioning
         if self.use_action_conditioning:
             self.mutation_embedding = nn.Embedding(20, 128)  # matches predictor hidden_dim
+        if self.lejepa_relative_positions and self.baseline_run_predictor:
+            raise ValueError(
+                "lejepa_relative_positions=true is defined for the old "
+                "cross-attention predictor; set baseline_run_predictor=false"
+            )
+        if self.lejepa_relative_positions and self.use_action_conditioning:
+            raise ValueError(
+                "lejepa_relative_positions is not yet defined for mutation action "
+                "conditioning, which currently uses predictor.pos_emb"
+            )
 
         # Used for both context and target passes -- no separate target network.
         self.online_encoder = EncoderTransformer(**self.cfg.nn_ae)
@@ -239,10 +252,15 @@ class JEPAModel(L.LightningModule):
         # max_len must be >= the dataset's max crop length (256).
         predictor_cfg = self.cfg.get("predictor", {}) or {}
         max_len = predictor_cfg.get("max_len", 256)
+        relative_position_max_distance = predictor_cfg.get(
+            "relative_position_max_distance", 128
+        )
         self.predictor = JEPAPredictor(
             latent_z_dim=self.latent_dim,
             max_len=max_len,
             predictor_type=("mask_token_transformer" if self.baseline_run_predictor else "cross_attention"),
+            use_relative_positions=self.lejepa_relative_positions,
+            relative_position_max_distance=relative_position_max_distance,
         )
 
         # used for below (log_isotropy, log_mutation_sensitivity). 

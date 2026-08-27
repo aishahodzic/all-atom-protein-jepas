@@ -99,4 +99,72 @@ for predictor_type in ("cross_attention", "mask_token_transformer"):
     assert torch.allclose(self_only_ref[:, 1], self_only_changed[:, 1], atol=1e-5)
     print(f"scenario 5 ({predictor_type}): direct context policies verified")
 
+
+# Scenario 6: the opt-in old-predictor relative-position mode has no absolute
+# embedding lookup, is translation invariant, distinguishes targets through
+# their i-j relations, and ignores padded context tokens.
+relative_model = JEPAPredictor(
+    latent_z_dim=z,
+    hidden_dim=32,
+    num_layers=2,
+    num_heads=4,
+    ff_dim=64,
+    predictor_type="cross_attention",
+    use_relative_positions=True,
+    relative_position_max_distance=64,
+).eval()
+assert relative_model.pos_emb is None
+
+relative_context = torch.randn(1, 5, z)
+relative_context_indices = torch.tensor([[0, 5, 11, 29, 40]])
+relative_target_indices = torch.tensor([[8, 20, 35]])
+with torch.no_grad():
+    relative_ref = relative_model(
+        relative_context, relative_context_indices, relative_target_indices
+    )
+    relative_shifted = relative_model(
+        relative_context,
+        relative_context_indices + 37,
+        relative_target_indices + 37,
+    )
+
+assert torch.allclose(relative_ref, relative_shifted, atol=1e-6), (
+    "relative predictor changed under a shared absolute-index translation"
+)
+target_difference = (relative_ref[:, 0] - relative_ref[:, 1]).abs().max().item()
+assert target_difference > 1e-6, "relative biases did not distinguish target queries"
+
+relative_padded_context = torch.cat(
+    [relative_context, torch.randn(1, 3, z)], dim=1
+)
+relative_padded_indices = torch.cat(
+    [relative_context_indices, torch.zeros(1, 3, dtype=torch.long)], dim=1
+)
+relative_padding = torch.tensor([[False] * 5 + [True] * 3])
+with torch.no_grad():
+    relative_padded = relative_model(
+        relative_padded_context,
+        relative_padded_indices,
+        relative_target_indices,
+        key_padding_mask=relative_padding,
+    )
+assert torch.allclose(relative_ref, relative_padded, atol=1e-5), (
+    "padded context affected relative-position predictions"
+)
+
+relative_model.zero_grad(set_to_none=True)
+relative_train_out = relative_model(
+    relative_context, relative_context_indices, relative_target_indices
+)
+relative_train_out.sum().backward()
+assert all(
+    parameter.grad is not None
+    for parameter in relative_model.parameters()
+    if parameter.requires_grad
+)
+print(
+    "scenario 6 (relative old predictor): translation invariant, "
+    "target-specific, padding-safe, and differentiable"
+)
+
 print("all checks passed")

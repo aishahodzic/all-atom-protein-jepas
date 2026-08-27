@@ -22,7 +22,8 @@ class CrossAttentionBlock(nn.Module):
         # q:  [B, L_tgt, hidden_dim]   (target queries)
         # kv: [B, L_ctx, hidden_dim]   (context keys/values)
         # key_padding_mask: [B, L_ctx] bool, True at padded context positions to ignore
-        # attn_mask: [B*num_heads, L_tgt, L_ctx] bool, True at (query, key) pairs to exclude
+        # attn_mask: [B*num_heads, L_tgt, L_ctx], either bool exclusions or
+        #   floating-point additive attention-logit biases
         attn_out, _ = self.attn(
             self.norm_q(q), kv, kv, key_padding_mask=key_padding_mask, attn_mask=attn_mask
         )                                                # [B, L_tgt, hidden_dim]
@@ -100,20 +101,51 @@ class JEPAPredictor(nn.Module):
         max_len=256,
         use_self_attn=False,
         predictor_type="cross_attention",
+        use_relative_positions=False,
+        relative_position_max_distance=128,
     ):
         super().__init__()
         self.latent_z_dim = latent_z_dim
         self.max_len = max_len
         self.use_self_attn = use_self_attn
         self.predictor_type = predictor_type
+        self.use_relative_positions = use_relative_positions
+        self.relative_position_max_distance = relative_position_max_distance
         if predictor_type not in {"cross_attention", "mask_token_transformer"}:
             raise ValueError(f"Unknown predictor_type: {predictor_type!r}")
+        if use_relative_positions and predictor_type != "cross_attention":
+            raise ValueError(
+                "use_relative_positions currently supports only the old "
+                "cross_attention predictor"
+            )
+        if use_relative_positions and use_self_attn:
+            raise ValueError(
+                "use_relative_positions is not compatible with target self-attention: "
+                "generic target queries require a target-target relative attention bias"
+            )
+        if relative_position_max_distance < 1:
+            raise ValueError("relative_position_max_distance must be >= 1")
 
         # project context latents up to hidden dim
         self.context_proj = nn.Linear(latent_z_dim, hidden_dim)
 
-        # one shared learned positional encoding for both context and target positions
-        self.pos_emb = nn.Embedding(max_len, hidden_dim)
+        if use_relative_positions:
+            # Every target starts from the same content-free query. Target identity
+            # enters only through the target-to-context relative-distance bias
+            # below; there is no absolute position lookup on either side.
+            self.pos_emb = None
+            self.target_query = nn.Parameter(torch.zeros(1, 1, hidden_dim))
+            self.relative_position_bias = nn.Embedding(
+                2 * relative_position_max_distance + 1, num_heads
+            )
+            nn.init.normal_(self.target_query, std=0.02)
+            nn.init.normal_(self.relative_position_bias.weight, std=0.02)
+        else:
+            # Historical behavior: one shared learned absolute positional
+            # embedding table for context and target positions.
+            self.pos_emb = nn.Embedding(max_len, hidden_dim)
+            self.target_query = None
+            self.relative_position_bias = None
 
         self.layers = nn.ModuleList(
             [CrossAttentionBlock(hidden_dim, num_heads, ff_dim) for _ in range(num_layers)]
@@ -160,6 +192,51 @@ class JEPAPredictor(nn.Module):
 
         self._self_exclude_logged = False  # one-time startup sanity log, not per-step
 
+    def _relative_cross_attention_bias(
+        self,
+        context_indices,
+        target_indices,
+        key_padding_mask,
+        blocked_context,
+        dtype,
+    ):
+        """Per-head additive bias for every target i / context j pair.
+
+        Distances are clipped before lookup, so the table is independent of
+        maximum protein length. Context padding and optional direct-access
+        restrictions are folded into the same floating-point attention mask.
+        """
+        relative = target_indices[:, :, None] - context_indices[:, None, :]
+        relative = relative.clamp(
+            -self.relative_position_max_distance,
+            self.relative_position_max_distance,
+        )
+        buckets = relative + self.relative_position_max_distance
+        # Embedding returns [B, L_tgt, L_ctx, H]; MultiheadAttention expects
+        # [B*H, L_tgt, L_ctx].
+        bias = self.relative_position_bias(buckets)
+        bias = bias.permute(0, 3, 1, 2).reshape(
+            -1, target_indices.shape[1], context_indices.shape[1]
+        )
+        bias = bias.to(dtype=dtype)
+
+        blocked = None
+        if key_padding_mask is not None:
+            blocked = key_padding_mask[:, None, :].expand(
+                -1, target_indices.shape[1], -1
+            )
+        if blocked_context is not None:
+            blocked = (
+                blocked_context
+                if blocked is None
+                else torch.logical_or(blocked, blocked_context)
+            )
+        if blocked is not None:
+            num_heads = self.relative_position_bias.embedding_dim
+            blocked = blocked.repeat_interleave(num_heads, dim=0)
+            bias = bias.masked_fill(blocked, float("-inf"))
+        return bias
+
 #forwad: kv latent + kv pos. embedding -> [self-attn (q vs q), if enabled] -> cross-attention (q vs kv) -> feedforward -> output latent
     def forward(self, context_latents, context_indices, target_indices, key_padding_mask=None,
                 target_padding_mask=None, action_z=None, action_position=None,
@@ -176,8 +253,12 @@ class JEPAPredictor(nn.Module):
         # context_access: "all", "exclude_self", or "self_only". The latter two
         #   control direct target-query -> context-token attention and are useful
         #   for partial-coordinate counterfactual diagnostics.
-        assert int(target_indices.max()) < self.max_len, "target index exceeds max_len positional table"
-        assert int(context_indices.max()) < self.max_len, "context index exceeds max_len positional table"
+        if self.use_relative_positions:
+            assert int(target_indices.min()) >= 0, "target indices must be non-negative"
+            assert int(context_indices.min()) >= 0, "context indices must be non-negative"
+        else:
+            assert int(target_indices.max()) < self.max_len, "target index exceeds max_len positional table"
+            assert int(context_indices.max()) < self.max_len, "context index exceeds max_len positional table"
         if context_access is None:
             context_access = "exclude_self" if self_exclude else "all"
         elif self_exclude:
@@ -189,8 +270,16 @@ class JEPAPredictor(nn.Module):
         if key_padding_mask is not None:
             same_residue = same_residue & ~key_padding_mask[:, None, :]
 
-        # queries are just positional embeddings of the target residues
-        q = self.pos_emb(target_indices)                    # [B, L_tgt, hidden_dim]
+        if self.use_relative_positions:
+            # All targets begin identically. Their different i-j relationships
+            # produce target-specific attention patterns in the cross-attention
+            # stack; the query itself contains no absolute position identity.
+            q = self.target_query.expand(
+                target_indices.shape[0], target_indices.shape[1], -1
+            )
+        else:
+            # Historical absolute-position target queries.
+            q = self.pos_emb(target_indices)                # [B, L_tgt, hidden_dim]
         if action_z is not None:
             # mutation of target residue
             at_action_pos_tgt = (target_indices == action_position.unsqueeze(1))  # [B, L_tgt]
@@ -198,7 +287,8 @@ class JEPAPredictor(nn.Module):
 
         # keys/values: projected context latents plus their positional embeddings
         kv = self.context_proj(context_latents)             # [B, L_ctx, hidden_dim]
-        kv = kv + self.pos_emb(context_indices)             # [B, L_ctx, hidden_dim]
+        if not self.use_relative_positions:
+            kv = kv + self.pos_emb(context_indices)         # [B, L_ctx, hidden_dim]
         if action_z is not None:
             # mutation of context residue
             at_action_pos_ctx = (context_indices == action_position.unsqueeze(1))  # [B, L_ctx]
@@ -248,14 +338,17 @@ class JEPAPredictor(nn.Module):
             return self.out_proj(self.predictor_norm(all_tokens[:, kv.shape[1] :]))
 
         cross_attn_mask = None
+        blocked_context = None
         if context_access != "all":
             blocked_context = (
                 same_residue if context_access == "exclude_self" else ~same_residue
             )
             if context_access == "self_only" and key_padding_mask is not None:
                 blocked_context = blocked_context & ~key_padding_mask[:, None, :]
-            num_heads = self.layers[0].attn.num_heads
-            cross_attn_mask = blocked_context.repeat_interleave(num_heads, dim=0)
+
+            if not self.use_relative_positions:
+                num_heads = self.layers[0].attn.num_heads
+                cross_attn_mask = blocked_context.repeat_interleave(num_heads, dim=0)
 
             if not self._self_exclude_logged:
                 logger.info(
@@ -264,6 +357,19 @@ class JEPAPredictor(nn.Module):
                 )
                 self._self_exclude_logged = True
 
+        cross_attn_key_padding = key_padding_mask
+        if self.use_relative_positions:
+            cross_attn_mask = self._relative_cross_attention_bias(
+                context_indices,
+                target_indices,
+                key_padding_mask,
+                blocked_context,
+                dtype=q.dtype,
+            )
+            # Padding is already represented as -inf in the additive mask. Do
+            # not also pass a differently typed key-padding mask to PyTorch MHA.
+            cross_attn_key_padding = None
+
         # Run all target-only self-attention before reading context. Cross-attention
         # is then a separate stack; exclude_self prevents direct access to the
         # same-position context token in this cross-attention architecture.
@@ -271,7 +377,12 @@ class JEPAPredictor(nn.Module):
             for self_attn_layer in self.self_attn_layers:
                 q = self_attn_layer(q, key_padding_mask=target_padding_mask)
         for layer in self.layers:
-            q = layer(q, kv, key_padding_mask=key_padding_mask, attn_mask=cross_attn_mask)  # [B, L_tgt, hidden_dim]
+            q = layer(
+                q,
+                kv,
+                key_padding_mask=cross_attn_key_padding,
+                attn_mask=cross_attn_mask,
+            )  # [B, L_tgt, hidden_dim]
 
         # project back to latent space
         pred = self.out_proj(q)                             # [B, L_tgt, latent_z_dim]

@@ -19,6 +19,10 @@ pretrain_ckpt_path:
 baseline_run_layernorm: false
 baseline_run_ema: false
 baseline_run_predictor: false
+# Opt-in old-predictor control: replace absolute target/context embeddings with
+# one generic target query plus learned target-to-context relative-distance
+# attention biases. False preserves all historical checkpoint architectures.
+lejepa_relative_positions: false
 # batch_size=4/accumulate=1 keeps effective batch at 4 (same as batch_size=2/accumulate=2)
 # but does it in one GPU pass instead of two -- pure throughput win, H100 was sitting at ~30% util
 dataset:
@@ -28,6 +32,7 @@ dataset:
 # Predictor (JEPA). max_len must be >= the dataset max crop length (see dataset.max_length).
 predictor:
   max_len: 256
+  relative_position_max_distance: 128
 
 # Precision
 force_precision_f32: False  # If false will use bf16-mixed precision
