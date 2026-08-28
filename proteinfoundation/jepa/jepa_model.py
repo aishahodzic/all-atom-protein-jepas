@@ -45,6 +45,20 @@ from proteinfoundation.jepa.masking import (
 )
 from proteinfoundation.jepa.predictor import JEPAPredictor
 from proteinfoundation.partial_autoencoder.encoder import EncoderTransformer
+from proteinfoundation.utils.coors_utils import sample_uniform_rotation
+
+
+def independently_rotate_target_batch(batch: Dict) -> Dict:
+    """Return a shallow batch copy with independently rotated target coordinates."""
+    coords_nm = batch["coords_nm"]
+    rotations = sample_uniform_rotation(
+        shape=(coords_nm.shape[0],),
+        dtype=coords_nm.dtype,
+        device=coords_nm.device,
+    )
+    rotated = dict(batch)
+    rotated["coords_nm"] = torch.einsum("bnac,bcd->bnad", coords_nm, rotations)
+    return rotated
 
 
 def covariance_effective_rank(values: torch.Tensor) -> torch.Tensor:
@@ -207,6 +221,9 @@ class JEPAModel(L.LightningModule):
         self.baseline_run_predictor = self.cfg.get("baseline_run_predictor", False)
         self.lejepa_relative_positions = self.cfg.get(
             "lejepa_relative_positions", False
+        )
+        self.jepa_independent_target_rotation = bool(
+            self.cfg.get("jepa_independent_target_rotation", False)
         )
         self.partial_coordinate_self_exclude = self.cfg.get(
             "partial_coordinate_self_exclude", False
@@ -457,6 +474,11 @@ class JEPAModel(L.LightningModule):
                 mutation_positions
             )  # [B, hidden_dim]
             action_z = action_z.unsqueeze(1)  # [B, 1, hidden_dim], broadcasts over target queries
+
+        # The context remains in the dataloader frame; only the full target view
+        # receives an additional independent uniform rotation.
+        if self.jepa_independent_target_rotation:
+            target_batch = independently_rotate_target_batch(target_batch)
 
         # Predict target latents from context latents (+ positions)
         predicted_latent = self.predictor(
