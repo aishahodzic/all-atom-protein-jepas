@@ -218,6 +218,7 @@ def _source_file_identities(repository_dir):
         "model_module": _SRC_DIR / "model_module.py",
         "metric_aggregation": _SRC_DIR / "metric_aggregation.py",
         "run_supervised_task": Path(__file__).resolve(),
+        "shared_embedding_cache": _SRC_DIR / "shared_embedding_cache.py",
     }
     return {
         name: file_identity(path)
@@ -383,6 +384,7 @@ def write_locked_result_manifest(trainer, cfg, datamodule, metrics):
                 tokenizer.checkpoint_training_selector
             ),
         },
+        "shared_embedding_cache": shared_embedding_cache_manifest_record(tokenizer),
         "probe": {
             "seed": int(cfg.optimization.seed),
             "micro_batch_size": int(cfg.optimization.micro_batch_size),
@@ -538,7 +540,13 @@ for name in all_baseline_names:
 sys.path.append(exc_dir_baseline)
 
 import data_module
+from shared_embedding_cache import (
+    install_shared_embedding_cache,
+    shared_embedding_cache_manifest_record,
+)
 from util import setup_loggings
+
+install_shared_embedding_cache()
 
 def setup_trainer(cfg):
     trainer_logger = hydra.utils.instantiate(cfg.lightning.logger)

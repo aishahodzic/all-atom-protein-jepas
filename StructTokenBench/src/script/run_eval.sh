@@ -12,6 +12,7 @@
 #   bash src/script/run_eval.sh --protocol=upstream-l600-v1 ...  # locked publication protocol
 #   STB_SKIP_BOOTSTRAP=1 STB_SKIP_DATA_SETUP=1 PYTHON_BIN=python bash ...  # portable/Jarvis mode
 #   STB_SMOKE=1 bash ... --protocol=upstream-l600-v1  # full cohort cache, tiny probe
+#   STB_SHARED_EMBEDDING_CACHE=0 bash ...  # disable cross-task frozen-embedding reuse
 #
 #   Skip the interactive prompts by passing checkpoint/experiment/tasks up front,
 #   as flags or equivalently as env vars (CHECKPOINT_LABEL / EXPERIMENT / TASKS):
@@ -46,6 +47,7 @@ TOKENIZER_EVAL_PROTOCOL="${TOKENIZER_EVAL_PROTOCOL:-}" # blank: historical integ
 STB_SKIP_BOOTSTRAP="${STB_SKIP_BOOTSTRAP:-0}"
 STB_SKIP_DATA_SETUP="${STB_SKIP_DATA_SETUP:-0}"
 STB_SMOKE="${STB_SMOKE:-${SMOKE:-0}}"
+STB_SHARED_EMBEDDING_CACHE="${STB_SHARED_EMBEDDING_CACHE:-1}"
 
 # ---------------------------------------------------------------------------
 # CLI args (optional): --checkpoint=, --experiment=, --tasks=,
@@ -93,6 +95,10 @@ if [ -n "$TOKENIZER_EVAL_PROTOCOL" ] && [ "$TOKENIZER_EVAL_PROTOCOL" != "upstrea
 fi
 if [ "$STB_SMOKE" != "0" ] && [ "$STB_SMOKE" != "1" ]; then
     echo "[Error] STB_SMOKE must be 0 or 1" >&2
+    exit 1
+fi
+if [ "$STB_SHARED_EMBEDDING_CACHE" != "0" ] && [ "$STB_SHARED_EMBEDDING_CACHE" != "1" ]; then
+    echo "[Error] STB_SHARED_EMBEDDING_CACHE must be 0 or 1" >&2
     exit 1
 fi
 
@@ -179,7 +185,7 @@ JEPA_ENCODER_CFG="${JEPA_ENCODER_CFG:-$CKPT_ROOT/shared/exp_config_jepa_nn130m.j
 # since WrappedLaProteinaTokenizer reads each checkpoint's own saved config).
 AE1_CKPT="${AE1_CKPT:-$(dirname "$REPO_DIR")/checkpoints_laproteina/AE1_ucond_512.ckpt}"
 
-EXPERIMENT_NAMES=(ca-cond-baseline fully-latent jepa-rand-mask-50 jepa-new-predictor le-jepa-new-predictor le-jepa-new-predictor-30k le-jepa-new-predictor-40k le-jepa-new-predictor-60k le-jepa-new-predictor-80k le-jepa-spatial3d-block-30k le-jepa-spatial3d-block-60k le-jepa-spatial3d-block-100k le-jepa-chemmask-exp1-30k le-jepa-chemmask-exp1-100k le-jepa-chemmask-exp3-30k le-jepa-chemmask-exp3-100k jepa-rand-mask-70 jepa-mutation le-jepa-rand-mask-50 le-jepa-rand-mask-70 le-jepa-mutation jepa-rand-mask-70-dim64 le-jepa-rand-mask-70-dim64 jepa-rand-mask-50-selfattn jepa-rand-mask-70-selfattn le-jepa-rand-mask-50-200k ae1-external random-init random-init-64 jepa-rand50-control-30k jepa-rand50-ema-30k jepa-rand50-layernorm-30k jepa-rand50-predictor-30k)
+EXPERIMENT_NAMES=(ca-cond-baseline fully-latent jepa-rand-mask-50 jepa-new-predictor le-jepa-new-predictor le-jepa-new-predictor-30k le-jepa-new-predictor-40k le-jepa-new-predictor-60k le-jepa-new-predictor-80k le-jepa-spatial3d-block-30k le-jepa-spatial3d-block-60k le-jepa-spatial3d-block-100k le-jepa-chemmask-exp1-30k le-jepa-chemmask-exp1-100k le-jepa-chemmask-exp3-30k le-jepa-chemmask-exp3-100k jepa-rand-mask-70 jepa-mutation le-jepa-rand-mask-50 le-jepa-rand-mask-70 le-jepa-mutation le-jepa-rand50-relative-pos-100k le-jepa-rand70-relative-pos-100k le-jepa-rand70-relative-pos-rotation-100k le-jepa-rand70-relative-pos-rotation-sigreg-0p01-100k le-jepa-spatial3d-relative-pos-d8-100k jepa-rand70-d64-independent-rotations-100k jepa-rand-mask-70-dim64 le-jepa-rand-mask-70-dim64 jepa-rand-mask-50-selfattn jepa-rand-mask-70-selfattn le-jepa-rand-mask-50-200k ae1-external random-init random-init-64 jepa-rand50-control-30k jepa-rand50-ema-30k jepa-rand50-layernorm-30k jepa-rand50-predictor-30k)
 
 experiment_model_args () {
     # sets TOKENIZERNAME and EXTRA_MODEL_ARGS for experiment name $1
@@ -250,6 +256,35 @@ experiment_model_args () {
         le-jepa-mutation)
             TOKENIZERNAME="laproteina_le_jepa_mutation"
             EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CKPT_ROOT/le-jepa/mutation/100k.ckpt tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        le-jepa-rand50-relative-pos-100k)
+            TOKENIZERNAME="laproteina_le_jepa_rand50_relative_pos_100k"
+            : "${LEJEPA_RELATIVE_POS_R50_CKPT:?Set LEJEPA_RELATIVE_POS_R50_CKPT to the final 100k checkpoint}"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$LEJEPA_RELATIVE_POS_R50_CKPT tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        le-jepa-rand70-relative-pos-100k)
+            TOKENIZERNAME="laproteina_le_jepa_rand70_relative_pos_100k"
+            : "${LEJEPA_RELATIVE_POS_R70_CKPT:?Set LEJEPA_RELATIVE_POS_R70_CKPT to the final 100k checkpoint}"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$LEJEPA_RELATIVE_POS_R70_CKPT tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        le-jepa-rand70-relative-pos-rotation-100k)
+            TOKENIZERNAME="laproteina_le_jepa_rand70_relative_pos_rotation_100k"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CKPT_ROOT/le-jepa/relative-position-and-rotation/100k.ckpt tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        le-jepa-rand70-relative-pos-rotation-sigreg-0p01-100k)
+            TOKENIZERNAME="laproteina_le_jepa_rand70_relative_pos_rotation_sigreg_0p01_100k"
+            : "${LEJEPA_RELROT_SIGREG_0P01_CKPT:?Set LEJEPA_RELROT_SIGREG_0P01_CKPT to the final 100k checkpoint}"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$LEJEPA_RELROT_SIGREG_0P01_CKPT tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        le-jepa-spatial3d-relative-pos-d8-100k)
+            TOKENIZERNAME="laproteina_le_jepa_spatial3d_relative_pos_d8_100k"
+            : "${LEJEPA_SPATIAL3D_RELATIVE_POS_D8_CKPT:?Set LEJEPA_SPATIAL3D_RELATIVE_POS_D8_CKPT to the final 100k checkpoint}"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$LEJEPA_SPATIAL3D_RELATIVE_POS_D8_CKPT tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        jepa-rand70-d64-independent-rotations-100k)
+            TOKENIZERNAME="laproteina_jepa_rand70_d64_independent_rotations_100k"
+            : "${JEPA_RAND70_D64_INDEPENDENT_ROTATIONS_CKPT:?Set JEPA_RAND70_D64_INDEPENDENT_ROTATIONS_CKPT to the final 100k checkpoint}"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$JEPA_RAND70_D64_INDEPENDENT_ROTATIONS_CKPT tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
             ;;
         jepa-rand-mask-70-dim64)
             TOKENIZERNAME="laproteina_jepa_rand_mask_70_dim64"
@@ -558,7 +593,12 @@ if [ -z "${PDB_DATA_ROOT:-}" ]; then
     fi
 fi
 STB_RELEASE_DATA_ROOT="${STB_RELEASE_DATA_ROOT:-$DIR/struct_token_bench_release_data}"
+STB_SHARED_EMBEDDING_CACHE_ROOT="${STB_SHARED_EMBEDDING_CACHE_ROOT:-$STB_RELEASE_DATA_ROOT/shared_embedding_cache}"
 export PDB_DATA_ROOT STB_RELEASE_DATA_ROOT
+export STB_SHARED_EMBEDDING_CACHE STB_SHARED_EMBEDDING_CACHE_ROOT
+if [ "$STB_SHARED_EMBEDDING_CACHE" = "1" ]; then
+    echo "== Shared frozen-embedding cache: $STB_SHARED_EMBEDDING_CACHE_ROOT =="
+fi
 
 # Guarded by a flock so concurrent eval jobs sharing $DIR over NFS don't all
 # probe/touch this section at once.
