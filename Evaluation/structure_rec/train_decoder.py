@@ -73,6 +73,7 @@ GROUP_OF = {
     "le-jepa-mutation": "latent-only",
     "le-jepa-rand-mask-50": "latent-only",
     "le-jepa-rand-mask-70": "latent-only",
+    "le-jepa-rand70-relative-position-rotation": "latent-only",
 }
 DECODER_STYLE_OF = {
     "ca-cond": "ca-cond",
@@ -83,6 +84,7 @@ DECODER_STYLE_OF = {
     "le-jepa-mutation": "fully-latent",
     "le-jepa-rand-mask-50": "fully-latent",
     "le-jepa-rand-mask-70": "fully-latent",
+    "le-jepa-rand70-relative-position-rotation": "fully-latent",
 }
 
 
@@ -223,6 +225,7 @@ def train_one(
     use_wandb: bool = True,
     resume_from: Optional[str] = None,
     resume_step: int = 0,
+    encoder_source: str = "online",
 ):
     """resume_from/resume_step: continue a calibration decoder's weights
     (e.g. an early-stopped or already-at-budget calibration checkpoint)
@@ -232,7 +235,9 @@ def train_one(
     device = device or ("cuda" if torch.cuda.is_available() else "cpu")
     torch.manual_seed(seed)
 
-    encoder = load_frozen_encoder(encoder_id, device=device)
+    encoder = load_frozen_encoder(
+        encoder_id, device=device, encoder_source=encoder_source
+    )
 
     donor_cfg_ae = load_donor_cfg_ae(decoder_style)
     model = AutoEncoder(cfg_ae=donor_cfg_ae, store_dir=str(OUT_DIR / "tmp_ae" / run_id))
@@ -263,10 +268,12 @@ def train_one(
             project="protein_decoder_reconstruction", name=run_id,
             config=dict(encoder=encoder_id, decoder_style=decoder_style, group=group,
                         max_steps=max_steps, lr=lr, batch_size=batch_size, seed=seed,
-                        calibration=calibration),
+                        calibration=calibration, encoder_source=encoder_source),
         )
 
-    best_rmsd, best_step, last_loss = float("inf"), resume_step, None
+    best_rmsd, best_step, best_decoder_state, last_loss = (
+        float("inf"), resume_step, None, None
+    )
     step = resume_step - 1  # so `step + 1` after the loop is correct even if the loop body never runs
     train_iter = infinite(train_dl)
     for step in range(resume_step, max_steps):
@@ -308,14 +315,29 @@ def train_one(
             if step_1 % 10000 == 0 or step_1 == max_steps:
                 torch.save(model.decoder.state_dict(), CKPT_DIR / f"{run_id}_step{step_1}.pt")
 
-            if metrics["rmsd_all_atom"] < best_rmsd * (1 - patience_threshold):
-                best_rmsd, best_step = metrics["rmsd_all_atom"], step_1
+            # C-alpha coordinates are supplied explicitly to every decoder, so
+            # non-CA RMSD is the meaningful reconstruction stopping metric.
+            stopping_rmsd = metrics["rmsd_no_ca"]
+            if stopping_rmsd < best_rmsd * (1 - patience_threshold):
+                best_rmsd, best_step = stopping_rmsd, step_1
+                best_decoder_state = {
+                    key: value.detach().cpu().clone()
+                    for key, value in model.decoder.state_dict().items()
+                }
             elif calibration and (step_1 - best_step) >= patience_evals * eval_every:
                 logger.info(
                     f"{run_id}: auto-stop at step={step_1} (no >{patience_threshold*100:.0f}% "
                     f"improvement in {patience_evals} evals since step={best_step}, best_rmsd={best_rmsd:.4f})"
                 )
                 break
+
+    trained_through_step = step + 1
+    if best_decoder_state is not None:
+        model.decoder.load_state_dict(best_decoder_state)
+        logger.info(
+            f"{run_id}: restored best validation decoder from step={best_step} "
+            f"before the held-out test evaluation"
+        )
 
     test_ids = test_only_ids(eval_pool)
     final_metrics = evaluate(model, test_ids, eval_pool, device)
@@ -329,9 +351,12 @@ def train_one(
             writer.writeheader()
         writer.writerow(dict(
             run_id=run_id, encoder=encoder_id, group=group, decoder_style=decoder_style,
-            step=step + 1, rmsd_all_atom=final_metrics["rmsd_all_atom"],
+            step=best_step, rmsd_all_atom=final_metrics["rmsd_all_atom"],
             rmsd_no_ca=final_metrics["rmsd_no_ca"], seq_rec_rate=final_metrics["seq_rec_rate"],
-            notes="calibration" if calibration else "",
+            notes=(
+                f"calibration; trained_through_step={trained_through_step}"
+                if calibration else f"trained_through_step={trained_through_step}"
+            ),
         ))
 
     if use_wandb:
@@ -358,6 +383,10 @@ if __name__ == "__main__":
     parser.add_argument("--no-wandb", action="store_true")
     parser.add_argument("--resume-from", default=None, help="Path to a saved decoder state_dict to continue from")
     parser.add_argument("--resume-step", type=int, default=0, help="Step count the --resume-from checkpoint represents")
+    parser.add_argument(
+        "--encoder-source", choices=("online", "target"), default="online",
+        help="JEPA encoder branch to decode. Use target for decoding predictor outputs.",
+    )
     args = parser.parse_args()
 
     decoder_style = args.decoder_style or DECODER_STYLE_OF[args.encoder]
@@ -370,4 +399,5 @@ if __name__ == "__main__":
         patience_evals=args.patience_evals, patience_threshold=args.patience_threshold,
         batch_size=args.batch_size, lr=args.lr, seed=args.seed, use_wandb=not args.no_wandb,
         resume_from=args.resume_from, resume_step=args.resume_step,
+        encoder_source=args.encoder_source,
     )

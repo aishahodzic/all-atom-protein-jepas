@@ -1,3 +1,5 @@
 run_id,encoder,group,decoder_style,step,rmsd_all_atom,rmsd_no_ca,seq_rec_rate,notes
 le-jepa-rand-mask-70_calib,le-jepa-rand-mask-70,latent-only,fully-latent,12000,2.737867344073826,2.9303793958053106,0.09506600255556305,calibration
 fully-latent,fully-latent,latent-only,fully-latent,50000,0.3153647895697064,0.3377565567301014,1.0,
+le-jepa-rand70-relative-position-rotation-online-calib,le-jepa-rand70-relative-position-rotation,latent-only,fully-latent,2000,2.6597617338961506,2.848436187571428,0.10048521683353373,calibration; trained_through_step=12000
+jepa-rand-mask-70-target-calib,jepa-rand-mask-70,latent-only,fully-latent,56000,1.4255843441786729,1.5267321335987782,0.482172254355639,calibration; trained_through_step=66000

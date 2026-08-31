@@ -5,7 +5,8 @@ linear_probing/results/collapse_diagnostics.csv) x {aa, ss} x k in
 8-dim linear-probe results and flagging any encoder/property where the two
 methods disagree about whether the property is decodable.
 
-Usage: python run.py [--no-wandb] [--seed SEED] [--max-queries N] [--device cuda:2]
+Usage: python run.py [--no-wandb] [--seed SEED] [--max-queries N]
+                     [--device cuda:2] [--checkpoints ID [ID ...]]
 """
 
 import argparse
@@ -19,7 +20,7 @@ from loguru import logger
 
 REPO_ROOT = pathlib.Path(__file__).resolve().parents[2]
 LINEAR_PROBING_DIR = REPO_ROOT / "Evaluation" / "linear_probing"
-sys.path.insert(0, str(LINEAR_PROBING_DIR))
+sys.path[:0] = [str(REPO_ROOT), str(LINEAR_PROBING_DIR)]
 
 from checkpoints import ALL_CHECKPOINTS  # noqa: E402
 from knn import (  # noqa: E402
@@ -80,20 +81,34 @@ def run_all(
     batch_size: int = 256,
     device: str = None,
     use_wandb: bool = True,
+    checkpoint_ids=None,
 ):
     device = device or ("cuda" if torch.cuda.is_available() else "cpu")
     logger.info(f"Device: {device}")
 
-    checkpoint_ids = list(ALL_CHECKPOINTS)
+    checkpoint_ids = list(ALL_CHECKPOINTS) if checkpoint_ids is None else list(checkpoint_ids)
+    missing_caches = [
+        checkpoint_id
+        for checkpoint_id in checkpoint_ids
+        if not (LINEAR_PROBING_DIR / "latents" / f"{checkpoint_id}.pt").exists()
+    ]
+    if missing_caches:
+        raise FileNotFoundError(f"Missing residue-latent caches: {missing_caches}")
+
     labels_by_protein = load_labels()
     per_protein_by_checkpoint = {c: load_encoder_latents(c) for c in checkpoint_ids}
+    latent_dims = {
+        checkpoint_id: int(next(iter(per_protein.values())).shape[-1])
+        for checkpoint_id, per_protein in per_protein_by_checkpoint.items()
+    }
     protein_ids = common_protein_ids(per_protein_by_checkpoint)
     logger.info(f"Encoders: {checkpoint_ids}")
+    logger.info(f"Latent dimensions: {latent_dims}")
     logger.info(f"Common protein pool: {len(protein_ids)} proteins.")
 
     rows = []
     purity_table = {}  # (encoder, property) -> {k: purity}
-    chance_by_property, random_control_by_property = {}, {}
+    chance_by_property, random_control_by_property_dim = {}, {}
 
     for prop, spec in LABEL_SPECS.items():
         selection = ResidueSelection(protein_ids, labels_by_protein, spec["label_key"], spec["valid_key"])
@@ -102,18 +117,22 @@ def run_all(
         chance = majority_baseline(selection.y[query_indices])
         chance_by_property[prop] = chance
 
-        random_control = random_latent_knn_purity(
-            n_pool=selection.n, latent_dim=8, y=selection.y, protein_idx=selection.protein_idx,
-            query_indices=query_indices, k_values=K_VALUES, device=device, batch_size=batch_size, seed=seed,
-        )
-        random_control_by_property[prop] = random_control
+        for latent_dim in sorted(set(latent_dims.values())):
+            random_control_by_property_dim[(prop, latent_dim)] = random_latent_knn_purity(
+                n_pool=selection.n, latent_dim=latent_dim, y=selection.y,
+                protein_idx=selection.protein_idx, query_indices=query_indices,
+                k_values=K_VALUES, device=device, batch_size=batch_size, seed=seed,
+            )
 
         logger.info(
             f"[{prop}] n_pool={selection.n} n_queries={len(query_indices)} "
-            f"(subsampled={subsampled}) chance={chance:.4f} random_control={random_control}"
+            f"(subsampled={subsampled}) chance={chance:.4f} "
+            f"random_controls={{{', '.join(f'D{dim}: {random_control_by_property_dim[(prop, dim)]}' for dim in sorted(set(latent_dims.values())))}}}"
         )
 
         for checkpoint_id in checkpoint_ids:
+            latent_dim = latent_dims[checkpoint_id]
+            random_control = random_control_by_property_dim[(prop, latent_dim)]
             X = selection.build_X(per_protein_by_checkpoint[checkpoint_id])
             purity = knn_purity(
                 X, selection.y, selection.protein_idx, query_indices,
@@ -147,12 +166,18 @@ def run_all(
     _write_csv_rows(rows)
     logger.info(f"Wrote {len(rows)} rows -> {CSV_PATH}")
 
-    print_summary_table(checkpoint_ids, purity_table, chance_by_property, random_control_by_property)
+    print_summary_table(
+        checkpoint_ids, purity_table, chance_by_property,
+        random_control_by_property_dim, latent_dims,
+    )
     print_interpretation_note(checkpoint_ids, purity_table, chance_by_property)
     return rows
 
 
-def print_summary_table(checkpoint_ids, purity_table, chance_by_property, random_control_by_property, k: int = 10):
+def print_summary_table(
+    checkpoint_ids, purity_table, chance_by_property,
+    random_control_by_property_dim, latent_dims, k: int = 10,
+):
     props = list(LABEL_SPECS)
     header = ["encoder"] + [f"{p}_purity@{k}" for p in props] + [f"{p}_chance" for p in props]
     widths = [max(len(header[i]), 22 if i == 0 else 10) for i in range(len(header))]
@@ -166,8 +191,12 @@ def print_summary_table(checkpoint_ids, purity_table, chance_by_property, random
             cells.append(f"{chance_by_property[p]:.4f}")
         lines.append("  ".join(c.ljust(w) for c, w in zip(cells, widths)))
     lines.append("-" * 70)
-    rc_cells = ["random-latent control"] + [f"{random_control_by_property[p][k]:.4f}" for p in props] + [""] * len(props)
-    lines.append("  ".join(c.ljust(w) for c, w in zip(rc_cells, widths)))
+    for latent_dim in sorted(set(latent_dims.values())):
+        rc_cells = [f"random-latent D{latent_dim}"] + [
+            f"{random_control_by_property_dim[(p, latent_dim)][k]:.4f}"
+            for p in props
+        ] + [""] * len(props)
+        lines.append("  ".join(c.ljust(w) for c, w in zip(rc_cells, widths)))
     lines.append("=" * 70)
     lines.append(
         "Note: random-latent control usually sits BELOW the chance line above, not at it -- chance here "
@@ -225,8 +254,13 @@ if __name__ == "__main__":
     parser.add_argument("--batch-size", type=int, default=256)
     parser.add_argument("--device", type=str, default=None)
     parser.add_argument("--no-wandb", action="store_true")
+    parser.add_argument(
+        "--checkpoints", nargs="+", default=None,
+        help="Residue-cache IDs to evaluate; defaults to the historical registry.",
+    )
     args = parser.parse_args()
     run_all(
         seed=args.seed, max_queries=args.max_queries, batch_size=args.batch_size,
         device=args.device, use_wandb=not args.no_wandb,
+        checkpoint_ids=args.checkpoints,
     )

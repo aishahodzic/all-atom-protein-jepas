@@ -30,6 +30,9 @@ CHECKPOINTS = {
     "le-jepa-mutation": ("le-jepa/mutation/100k.ckpt", "jepa"),
     "le-jepa-rand-mask-50": ("le-jepa/random_masking_50pct/100k.ckpt", "jepa"),
     "le-jepa-rand-mask-70": ("le-jepa/random_masking_70pct/100k.ckpt", "jepa"),
+    "le-jepa-rand70-relative-position-rotation": (
+        "le-jepa/relative-position-and-rotation/100k.ckpt", "jepa"
+    ),
     # rand-50 ablations at 30k steps (matched-step comparison, not 100k): control has
     # every baseline_run_* flag False, each ablation flips exactly one. All 4 copied
     # from their explicit chk_epoch=..._step=000000030000.ckpt (not last.ckpt), size
@@ -66,7 +69,7 @@ RANDOM_INIT_WEIGHTS_PATH = pathlib.Path(__file__).resolve().parent / "latents" /
 ALL_CHECKPOINTS = {**CHECKPOINTS, **EXTERNAL_CHECKPOINTS, **RANDOM_INIT_CHECKPOINTS}
 
 
-def _infer_latent_z_dim(online_encoder_weights: dict) -> int:
+def _infer_latent_z_dim(encoder_weights: dict) -> int:
     """Reads latent_z_dim straight from the checkpoint's own weights, rather than
     trusting a naming convention (a folder/run name saying "64dim" can drift out
     of sync with the actual saved weights; the weights themselves can't).
@@ -75,16 +78,24 @@ def _infer_latent_z_dim(online_encoder_weights: dict) -> int:
     [mean, log_scale] concatenated, so its output width is 2 * latent_z_dim --
     confirmed against a real 64-dim checkpoint (weight shape (128, 768)).
     """
-    weight = online_encoder_weights["latent_decoder_mean_n_log_scale.1.weight"]
+    weight = encoder_weights["latent_decoder_mean_n_log_scale.1.weight"]
     out_dim = weight.shape[0]
     assert out_dim % 2 == 0, f"latent_decoder_mean_n_log_scale.1.weight has odd output dim {out_dim}, expected 2 * latent_z_dim"
     return out_dim // 2
 
 
-def load_frozen_encoder(checkpoint_id: str, device: str = "cpu") -> EncoderTransformer:
+def load_frozen_encoder(
+    checkpoint_id: str,
+    device: str = "cpu",
+    encoder_source: str = "online",
+) -> EncoderTransformer:
     """Loads a checkpoint (from CHECKPOINTS, EXTERNAL_CHECKPOINTS, or
     RANDOM_INIT_CHECKPOINTS) into a frozen, eval-mode EncoderTransformer."""
     path, checkpoint_type = ALL_CHECKPOINTS[checkpoint_id]
+    if checkpoint_type != "jepa" and encoder_source != "online":
+        raise ValueError(
+            f"encoder_source={encoder_source!r} is only valid for JEPA checkpoints"
+        )
 
     if checkpoint_type == "random":
         cfg = json.load(open(JEPA_ENCODER_CFG))
@@ -109,22 +120,44 @@ def load_frozen_encoder(checkpoint_id: str, device: str = "cpu") -> EncoderTrans
         elif checkpoint_type == "jepa":
             cfg = json.load(open(JEPA_ENCODER_CFG))
             ckpt = torch.load(str(ckpt_path), map_location=device, weights_only=False)
-            online_encoder_weights = {
-                k[len("online_encoder.") :]: v
-                for k, v in ckpt["state_dict"].items()
-                if k.startswith("online_encoder.")
+            source_prefixes = {
+                "online": ("online_encoder.",),
+                "target": ("target_encoder.", "ema_encoder."),
             }
+            if encoder_source not in source_prefixes:
+                raise ValueError(
+                    f"Unknown encoder_source {encoder_source!r}; expected 'online' or 'target'"
+                )
+            encoder_weights = {}
+            encoder_prefix = None
+            for prefix in source_prefixes[encoder_source]:
+                encoder_weights = {
+                    k[len(prefix) :]: v
+                    for k, v in ckpt["state_dict"].items()
+                    if k.startswith(prefix)
+                }
+                if encoder_weights:
+                    encoder_prefix = prefix[:-1]
+                    break
+            if not encoder_weights:
+                raise KeyError(
+                    f"Checkpoint {ckpt_path} has no {encoder_source!r} encoder branch; "
+                    f"tried {source_prefixes[encoder_source]}"
+                )
             # latent_z_dim inferred from the checkpoint's own weights (see
             # _infer_latent_z_dim), not assumed from JEPA_ENCODER_CFG's default (8)
             # -- lets dim-64 checkpoints (or any future dim) load correctly without
             # a separate config file or a naming-convention lookup.
-            latent_z_dim = _infer_latent_z_dim(online_encoder_weights)
-            print(f"[checkpoints] {checkpoint_id}: latent_z_dim={latent_z_dim}")
+            latent_z_dim = _infer_latent_z_dim(encoder_weights)
+            print(
+                f"[checkpoints] {checkpoint_id}: encoder_source={encoder_source} "
+                f"({encoder_prefix}), latent_z_dim={latent_z_dim}"
+            )
             cfg["nn_ae"]["latent_z_dim"] = latent_z_dim
             cfg["nn_ae"]["encoder"]["latent_z_dim"] = latent_z_dim
             cfg["nn_ae"]["decoder"]["latent_z_dim"] = latent_z_dim
             encoder = EncoderTransformer(**cfg["nn_ae"])
-            encoder.load_state_dict(online_encoder_weights)
+            encoder.load_state_dict(encoder_weights)
         else:
             raise ValueError(f"Unknown checkpoint_type: {checkpoint_type!r}")
 
