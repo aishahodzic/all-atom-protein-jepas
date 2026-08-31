@@ -1,0 +1,81 @@
+#!/bin/bash
+#SBATCH --job-name=lejepa_chem_exp1_100k
+#SBATCH --partition=normal
+#SBATCH --qos=medium
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=16
+#SBATCH --time=16:00:00
+#SBATCH --output=/slurm-storage/aishod/projects/la-proteina/logs/chem_masking/%x-%j.out
+
+set -euo pipefail
+
+REPO=/slurm-storage/aishod/projects/la-proteina
+WORKTREE="$REPO/training_worktrees/le-jepa"
+PYTHON=/data-gauss/aishod/envs/laproteina_env/bin/python
+RUN_NAME=le_jepa_chemmask_aa_partial50_new_selfaccess_10k
+RUN_DIR=/mnt/hopper-raid/aishod/runs/$RUN_NAME
+CHECKPOINT="$RUN_DIR/store/$RUN_NAME/checkpoints/last.ckpt"
+
+set -a
+source "$REPO/.env"
+set +a
+
+export PYTHONPATH="$WORKTREE"
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+export PATH="/data-gauss/aishod/envs/laproteina_env/bin:$PATH"
+export RESUME_CHOICE=last
+export WANDB_RUN_ID="$RUN_NAME"
+export WANDB_RESUME=must
+
+if [[ "$(git -C "$WORKTREE" branch --show-current)" != "le-jepa" ]]; then
+    echo "ERROR: expected le-jepa branch in $WORKTREE" >&2
+    exit 1
+fi
+
+if [[ ! -s "$CHECKPOINT" ]]; then
+    echo "ERROR: missing or empty resume checkpoint: $CHECKPOINT" >&2
+    exit 1
+fi
+
+CHECKPOINT_STEP="$($PYTHON -c "import torch; print(torch.load('$CHECKPOINT', map_location='cpu', weights_only=False).get('global_step', -1))")"
+if [[ "$CHECKPOINT_STEP" != "57000" ]]; then
+    echo "ERROR: expected step-57000 checkpoint, found step $CHECKPOINT_STEP" >&2
+    exit 1
+fi
+
+IMPORTED_FROM="$(cd /tmp && "$PYTHON" -c 'import proteinfoundation; print(proteinfoundation.__file__)')"
+if [[ "$IMPORTED_FROM" != "$WORKTREE"/proteinfoundation/* ]]; then
+    echo "ERROR: proteinfoundation imported from $IMPORTED_FROM, expected $WORKTREE" >&2
+    exit 1
+fi
+
+mkdir -p "$RUN_DIR" "$REPO/logs/chem_masking"
+cd "$RUN_DIR"
+
+echo "Worktree: $WORKTREE"
+echo "Branch: $(git -C "$WORKTREE" branch --show-current)"
+echo "Commit: $(git -C "$WORKTREE" rev-parse HEAD)"
+echo "Import: $IMPORTED_FROM"
+echo "Checkpoint: $CHECKPOINT"
+echo "Continuing W&B run $RUN_NAME from step $CHECKPOINT_STEP to step 100000"
+
+printf 'last\n' | srun --ntasks=1 "$PYTHON" "$WORKTREE/proteinfoundation/jepa/train.py" \
+    run_name_="$RUN_NAME" \
+    +single=true \
+    +masking_mode=chemmask_partial_coordinates \
+    +atom_mask_pct=0.5 \
+    +partial_coordinate_self_exclude=false \
+    +partial_coordinate_diagnostics=true \
+    baseline_run_predictor=true \
+    baseline_run_ema=false \
+    baseline_run_layernorm=false \
+    opt.lr=0.0001 \
+    +opt.max_steps=100000 \
+    opt.val_check_interval=1000 \
+    log.checkpoint_every_n_steps=5000 \
+    dataset.datamodule.num_workers=16 \
+    hardware.ngpus_per_node_=1 \
+    hardware.nnodes_=1 \
+    hardware.ncpus_per_task_train_=16

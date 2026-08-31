@@ -1,0 +1,36 @@
+#!/bin/bash
+# Variant 2: identical to jepa_partial_coords_70, but independently hides the
+# AA one-hot feature for exactly 50% of valid residues in every protein. The
+# coordinate mask remains 70% per residue; all valid residues are context and
+# targets, and self-exclusion blocks each target from reading its own context.
+#
+# Usage: sbatch jobs/train_jepa_chemmask_partial_coords_and_identity_70.job
+#SBATCH --job-name=jepa_partial_coords_identity_70
+#SBATCH --partition=normal
+#SBATCH --qos=medium
+#SBATCH --gres=gpu:1
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=16
+#SBATCH --time=24:00:00
+#SBATCH --output=logs/%x-%j.out
+
+source /slurm-storage/miniconda3/etc/profile.d/conda.sh
+conda activate /slurm-storage/aishod/envs/la-proteina
+
+export TMPDIR=/tmp
+
+set -a
+source /mnt/data/slurm-storage/aishod/projects/la-proteina/.env
+set +a
+
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+export PYTHONPATH=/mnt/data/slurm-storage/aishod/projects/la-proteina:$PYTHONPATH
+
+RAID_ROOT=/mnt/hopper-raid/aishod
+mkdir -p "$RAID_ROOT/runs/jepa_partial_coords_identity_70"
+cd "$RAID_ROOT/runs/jepa_partial_coords_identity_70"
+
+echo "scratch" | srun python /mnt/data/slurm-storage/aishod/projects/la-proteina/proteinfoundation/jepa/train.py \
+    run_name_=jepa_partial_coords_identity_70 +single=true opt.lr=1e-4 dataset.datamodule.num_workers=16 \
+    +masking_mode=chemmask_partial_coords_and_identity +atom_mask_pct=0.7 +identity_mask_pct=0.5 \
+    +opt.max_steps=100000 +predictor.use_self_attn=true

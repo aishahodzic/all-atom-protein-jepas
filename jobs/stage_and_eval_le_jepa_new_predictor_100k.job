@@ -1,0 +1,49 @@
+#!/bin/bash
+#SBATCH --job-name=stb_le_jepa_new_predictor_100k
+#SBATCH --partition=h100
+#SBATCH --qos=medium
+#SBATCH --nodelist=hopper
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=16
+#SBATCH --time=1-00:00:00
+#SBATCH --output=/slurm-storage/aishod/projects/la-proteina/logs/%x-%j.out
+
+set -euo pipefail
+
+REPO=/slurm-storage/aishod/projects/la-proteina
+STB="$REPO/StructTokenBench"
+SOURCE=/mnt/raid/aishod/runs/le_jepa_rand50_predictor_100k/store/le_jepa_rand50_predictor_100k/checkpoints/chk_epoch=00000019_step=000000100000.ckpt
+DEST="$STB/100k-checkpoints/le-jepa/new_predictor/100k.ckpt"
+TEMP="$DEST.partial-$SLURM_JOB_ID"
+
+if [[ "$(git -C "$REPO" branch --show-current)" != "main" ]]; then
+    echo "ERROR: StructTokenBench must run from the main branch" >&2
+    exit 1
+fi
+
+if [[ ! -s "$SOURCE" ]]; then
+    echo "ERROR: source checkpoint is missing or empty: $SOURCE" >&2
+    exit 1
+fi
+
+mkdir -p "$(dirname "$DEST")"
+trap 'rm -f "$TEMP"' EXIT
+cp --reflink=auto "$SOURCE" "$TEMP"
+mv -f "$TEMP" "$DEST"
+trap - EXIT
+
+if [[ ! -s "$DEST" ]]; then
+    echo "ERROR: staged checkpoint is missing or empty: $DEST" >&2
+    exit 1
+fi
+
+echo "Staged checkpoint: $SOURCE -> $DEST"
+
+cd "$STB"
+export DATA_PATH=/mnt/raid/aishod/data
+bash src/script/run_eval.sh \
+    --checkpoint=100k \
+    --experiment=le-jepa-new-predictor \
+    --tasks=all

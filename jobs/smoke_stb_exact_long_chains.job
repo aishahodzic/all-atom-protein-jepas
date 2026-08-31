@@ -1,0 +1,37 @@
+#!/bin/bash
+# Exact-length real-protein smoke for standard JEPA random-50 online and target encoders.
+#SBATCH --job-name=stb_exact_L512_L600
+#SBATCH --partition=normal
+#SBATCH --qos=short
+#SBATCH --nodelist=noether
+#SBATCH --gres=gpu:1
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=32G
+#SBATCH --time=0:10:00
+#SBATCH --output=logs/publication_smoke/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+STB_ROOT="$PROJECT_ROOT/StructTokenBench"
+
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+
+source /slurm-storage/miniconda3/etc/profile.d/conda.sh
+conda activate pstbench
+
+cd "$PROJECT_ROOT"
+export PYTHONPATH="$STB_ROOT/src:$PROJECT_ROOT${PYTHONPATH:+:$PYTHONPATH}"
+export MPLCONFIGDIR="/tmp/stb-long-smoke-${SLURM_JOB_ID}"
+# This script imports only WrappedLaProteinaTokenizer. Avoid initializing the
+# unrelated STB VQ-VAE/DeepSpeed extension stack before the encoder forward.
+export STB_LAPROTEINA_ONLY_IMPORT=1
+
+python script_utils/smoke_stb_exact_long_chains.py \
+    --checkpoint "$STB_ROOT/100k-checkpoints/jepa/random_masking_50pct/100k.ckpt" \
+    --encoder-config "$STB_ROOT/100k-checkpoints/shared/exp_config_jepa_nn130m.json" \
+    --pdb-root /mnt/hopper-raid/aishod/data/struct_token_bench_pdb_data/mmcif_files/mmcif_files \
+    --output-json "$PROJECT_ROOT/artifacts/smoke/stb_exact_L512_L600_${SLURM_JOB_ID}.json"

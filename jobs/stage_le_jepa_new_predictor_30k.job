@@ -1,0 +1,39 @@
+#!/bin/bash
+#SBATCH --job-name=stage_le_jepa_new_predictor_30k
+#SBATCH --partition=h100
+#SBATCH --qos=medium
+#SBATCH --nodelist=hopper
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=2
+#SBATCH --time=00:20:00
+#SBATCH --output=/slurm-storage/aishod/projects/la-proteina/logs/%x-%j.out
+
+set -euo pipefail
+
+REPO=/slurm-storage/aishod/projects/la-proteina
+SRC_DIR=/mnt/raid/aishod/runs/le_jepa_rand50_predictor_100k/store/le_jepa_rand50_predictor_100k/checkpoints
+DEST="$REPO/StructTokenBench/100k-checkpoints/le-jepa/new_predictor/30k.ckpt"
+TEMP="$DEST.partial-$SLURM_JOB_ID"
+
+shopt -s nullglob
+matches=("$SRC_DIR"/chk_epoch=*_step=000000030000.ckpt)
+if (( ${#matches[@]} != 1 )); then
+    echo "ERROR: expected exactly one 30k checkpoint in $SRC_DIR, found ${#matches[@]}" >&2
+    printf '  %s\n' "${matches[@]}" >&2
+    exit 1
+fi
+SOURCE="${matches[0]}"
+
+mkdir -p "$(dirname "$DEST")"
+trap 'rm -f "$TEMP"' EXIT
+cp --reflink=auto "$SOURCE" "$TEMP"
+mv -f "$TEMP" "$DEST"
+trap - EXIT
+
+if [[ ! -s "$DEST" ]]; then
+    echo "ERROR: staged checkpoint is missing or empty: $DEST" >&2
+    exit 1
+fi
+
+echo "Staged checkpoint: $SOURCE -> $DEST"

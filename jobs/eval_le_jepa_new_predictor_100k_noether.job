@@ -1,0 +1,37 @@
+#!/bin/bash
+#SBATCH --job-name=stb_le_jepa_new_predictor_100k_noether
+#SBATCH --partition=normal
+#SBATCH --qos=medium
+#SBATCH --nodelist=noether
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=16
+#SBATCH --time=1-00:00:00
+#SBATCH --output=/slurm-storage/aishod/projects/la-proteina/logs/%x-%j.out
+
+set -euo pipefail
+
+REPO=/slurm-storage/aishod/projects/la-proteina
+STB="$REPO/StructTokenBench"
+CKPT="$STB/100k-checkpoints/le-jepa/new_predictor/100k.ckpt"
+
+set -a
+source "$REPO/.env"
+set +a
+
+if [[ "$(git -C "$REPO" branch --show-current)" != "main" ]]; then
+    echo "ERROR: StructTokenBench must run from the main branch" >&2
+    exit 1
+fi
+
+if [[ ! -s "$CKPT" ]]; then
+    echo "ERROR: staged 100k checkpoint is missing or empty: $CKPT" >&2
+    exit 1
+fi
+
+cd "$STB"
+bash src/script/run_eval.sh \
+    --checkpoint=100k \
+    --experiment=le-jepa-new-predictor \
+    --tasks=all

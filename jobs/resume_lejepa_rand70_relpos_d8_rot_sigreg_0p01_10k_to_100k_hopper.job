@@ -1,0 +1,98 @@
+#!/bin/bash
+# Continue the matched LeJEPA lambda=0.01 pilot from its exact 10k checkpoint.
+# D8, rand70, relative predictor positions, independent target rotations,
+# old cross-attention predictor, and no EMA.
+#SBATCH --job-name=lejepa_s01_100k
+#SBATCH --partition=h100
+#SBATCH --nodelist=hopper
+#SBATCH --qos=medium
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=24
+#SBATCH --mem=100G
+#SBATCH --time=16:00:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/le_jepa/sigreg_sweep/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+WORKTREE="$PROJECT_ROOT/training_worktrees/le-jepa"
+PYTHON=/slurm-storage/aishod/envs/la-proteina/bin/python
+RUN_NAME=le_jepa_rand70_relpos_d8_rot_sigreg_0p01_10k_kn
+RUN_DIR=/mnt/hopper-raid/aishod/runs/$RUN_NAME
+CHECKPOINT_DIR="$RUN_DIR/store/$RUN_NAME/checkpoints"
+EXACT_10K="$CHECKPOINT_DIR/chk_epoch=00000001_step=000000010000.ckpt"
+RESUME_LINK="$CHECKPOINT_DIR/last-v1.ckpt"
+
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+export PYTHONPATH="$WORKTREE"
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+export PATH="/slurm-storage/aishod/envs/la-proteina/bin:$PATH"
+export RESUME_CHOICE=last
+export WANDB_RUN_ID="$RUN_NAME"
+export WANDB_RESUME=must
+
+mkdir -p "$PROJECT_ROOT/logs/le_jepa/sigreg_sweep"
+[[ "$(git -C "$WORKTREE" branch --show-current)" == "le-jepa" ]] || {
+    echo "ERROR: expected le-jepa branch" >&2
+    exit 1
+}
+[[ -s "$EXACT_10K" ]] || {
+    echo "ERROR: missing exact 10k checkpoint $EXACT_10K" >&2
+    exit 1
+}
+IMPORTED_FROM="$(cd /tmp && "$PYTHON" -c 'import proteinfoundation; print(proteinfoundation.__file__)')"
+[[ "$IMPORTED_FROM" == "$WORKTREE"/proteinfoundation/* ]] || {
+    echo "ERROR: imported $IMPORTED_FROM, expected $WORKTREE" >&2
+    exit 1
+}
+
+# The rolling last.ckpt is step 9k, whereas the numbered checkpoint is exactly
+# step 10k. Register the exact checkpoint as the newest resumable `last` file
+# without altering either original checkpoint.
+if [[ ! -e "$RESUME_LINK" && ! -L "$RESUME_LINK" ]]; then
+    ln -s "$(basename "$EXACT_10K")" "$RESUME_LINK"
+fi
+[[ "$(readlink -f "$RESUME_LINK")" == "$(readlink -f "$EXACT_10K")" ]] || {
+    echo "ERROR: $RESUME_LINK does not resolve to the exact 10k checkpoint" >&2
+    exit 1
+}
+
+cd "$RUN_DIR"
+echo "Continuing matched LeJEPA lambda=0.01 from exact step 10k to 100k"
+echo "Worktree: $WORKTREE"
+echo "Commit: $(git -C "$WORKTREE" rev-parse HEAD)"
+echo "Checkpoint: $EXACT_10K"
+echo "D8; rand70; relative positions; independent target rotations"
+echo "Old predictor; SIGReg lambda=0.01; EMA=false; seed=42"
+
+printf 'last\n' | srun --ntasks=1 "$PYTHON" "$WORKTREE/proteinfoundation/jepa/train.py" \
+    run_name_="$RUN_NAME" \
+    +single=true \
+    +masked_pct=0.7 \
+    +opt.max_steps=100000 \
+    seed=42 \
+    opt.lr=0.0001 \
+    baseline_run_layernorm=false \
+    baseline_run_ema=false \
+    baseline_run_predictor=false \
+    sigreg_lambda=0.01 \
+    lejepa_relative_positions=true \
+    jepa_independent_target_rotation=true \
+    predictor.relative_position_max_distance=128 \
+    nn_ae.latent_z_dim=8 \
+    nn_ae.encoder.latent_z_dim=8 \
+    nn_ae.decoder.latent_z_dim=8 \
+    dataset.datamodule.batch_size=4 \
+    dataset.datamodule.num_workers=16 \
+    opt.accumulate_grad_batches=1 \
+    opt.val_check_interval=2500 \
+    log.checkpoint_every_n_steps=10000 \
+    log.last_ckpt_every_n_steps=1500 \
+    force_precision_f32=false \
+    hardware.ngpus_per_node_=1 \
+    hardware.nnodes_=1 \
+    hardware.ncpus_per_task_train_=24

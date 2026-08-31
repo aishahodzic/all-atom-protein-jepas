@@ -1,0 +1,59 @@
+#!/bin/bash
+# Continue the original JEPA-r70 D64 baseline from its exact full-state
+# last.ckpt (step 34,500) to step 60,000. Old cross-attention predictor;
+# absolute positions; no independent rotations, SIGReg, EMA, or LayerNorm.
+# Numbered checkpoints every 10k; rolling last.ckpt every 1.5k.
+#SBATCH --job-name=jepa_d64_base_60k
+#SBATCH --partition=h100
+#SBATCH --nodelist=hopper
+#SBATCH --qos=medium
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=24
+#SBATCH --mem=100G
+#SBATCH --time=10:00:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/rand70_dim64/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+WORKTREE="$PROJECT_ROOT/training_worktrees/jepa-latent"
+PYTHON=/slurm-storage/aishod/envs/la-proteina/bin/python
+RUN_NAME=jepa_rand70_dim64
+RUN_DIR=/mnt/raid/aishod/runs/$RUN_NAME
+CHECKPOINT="$RUN_DIR/store/$RUN_NAME/checkpoints/last.ckpt"
+
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+export DATA_PATH="${DATA_PATH/\/mnt\/hopper-raid/\/mnt\/raid}"
+export PYTHONPATH="$WORKTREE"
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+export PATH="/slurm-storage/aishod/envs/la-proteina/bin:$PATH"
+export RESUME_CHOICE=last
+export WANDB_RUN_ID="$RUN_NAME"
+export WANDB_RESUME=must
+
+[[ "$(git -C "$WORKTREE" branch --show-current)" == "jepa-latent" ]] || { echo "ERROR: wrong worktree branch" >&2; exit 1; }
+[[ -s "$CHECKPOINT" ]] || { echo "ERROR: missing resume checkpoint: $CHECKPOINT" >&2; exit 1; }
+IMPORTED_FROM="$(cd /tmp && "$PYTHON" -c 'import proteinfoundation; print(proteinfoundation.__file__)')"
+[[ "$IMPORTED_FROM" == "$WORKTREE"/proteinfoundation/* ]] || { echo "ERROR: imported $IMPORTED_FROM" >&2; exit 1; }
+
+mkdir -p "$RUN_DIR" "$PROJECT_ROOT/logs/rand70_dim64"
+cd "$RUN_DIR"
+
+echo "Checkpoint: $CHECKPOINT"
+echo "Continuing original JEPA-r70 D64 baseline from exact step 34,500 to 60,000"
+echo "Old predictor; absolute positions; rotations/SIGReg/EMA/LayerNorm disabled; effective batch size 4"
+
+printf 'last\n' | srun --ntasks=1 "$PYTHON" "$WORKTREE/proteinfoundation/jepa/train.py" \
+    run_name_="$RUN_NAME" +single=true +masked_pct=0.7 +opt.max_steps=60000 \
+    opt.lr=0.0001 baseline_run_layernorm=false baseline_run_ema=false baseline_run_predictor=false \
+    jepa_sigreg=false jepa_sigreg_weight=0.0 jepa_sigreg_num_proj=256 \
+    jepa_independent_target_rotation=false \
+    nn_ae.latent_z_dim=64 nn_ae.encoder.latent_z_dim=64 nn_ae.decoder.latent_z_dim=64 \
+    dataset.datamodule.batch_size=2 dataset.datamodule.num_workers=16 \
+    opt.accumulate_grad_batches=2 opt.val_check_interval=5000 \
+    log.checkpoint_every_n_steps=10000 log.last_ckpt_every_n_steps=1500 \
+    hardware.ngpus_per_node_=1 hardware.nnodes_=1 hardware.ncpus_per_task_train_=24

@@ -1,0 +1,79 @@
+#!/bin/bash
+# Measure a fixed SIGReg coefficient without changing baseline optimization.
+# The job prints robust equal-loss coefficient summaries at 50/100/200/500
+# training batches; jepa_sigreg_weight=0 makes SIGReg diagnostic-only.
+#SBATCH --job-name=jepa_d64_sigreg_cal
+#SBATCH --partition=normal
+#SBATCH --qos=medium
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=24
+#SBATCH --mem=64G
+#SBATCH --time=01:00:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/jepa_interventions/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+WORKTREE="$PROJECT_ROOT/training_worktrees/jepa-latent"
+PYTHON=/slurm-storage/aishod/envs/la-proteina/bin/python
+RUN_NAME=jepa_rand70_d64_sigreg_calibration
+RUN_DIR=/mnt/hopper-raid/aishod/runs/$RUN_NAME
+
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+
+export PYTHONPATH="$WORKTREE"
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+export PATH="/slurm-storage/aishod/envs/la-proteina/bin:$PATH"
+
+if [[ "$(git -C "$WORKTREE" branch --show-current)" != "jepa-latent" ]]; then
+    echo "ERROR: expected jepa-latent branch in $WORKTREE" >&2
+    exit 1
+fi
+
+IMPORTED_FROM="$(cd /tmp && "$PYTHON" -c 'import proteinfoundation; print(proteinfoundation.__file__)')"
+if [[ "$IMPORTED_FROM" != "$WORKTREE"/proteinfoundation/* ]]; then
+    echo "ERROR: proteinfoundation imported from $IMPORTED_FROM, expected $WORKTREE" >&2
+    exit 1
+fi
+
+if [[ -e "$RUN_DIR" ]]; then
+    echo "ERROR: refusing to overwrite calibration run at $RUN_DIR" >&2
+    exit 1
+fi
+
+mkdir -p "$RUN_DIR" "$PROJECT_ROOT/logs/jepa_interventions"
+cd "$RUN_DIR"
+
+echo "Calibration: JEPA rand70 D64, old predictor, fixed EMA=0.996"
+echo "SIGReg is computed but weight=0: the baseline objective and gradients are unchanged"
+echo "Read the final SIGREG_CALIBRATION line and freeze one coefficient for both 10k runs"
+
+echo scratch | srun --ntasks=1 "$PYTHON" "$WORKTREE/proteinfoundation/jepa/train.py" \
+    run_name_="$RUN_NAME" \
+    +single=true \
+    +masked_pct=0.7 \
+    +opt.max_steps=250 \
+    opt.lr=0.0001 \
+    baseline_run_layernorm=false \
+    baseline_run_ema=false \
+    baseline_run_predictor=false \
+    jepa_sigreg=true \
+    jepa_sigreg_weight=0.0 \
+    jepa_sigreg_num_proj=256 \
+    jepa_independent_target_rotation=false \
+    nn_ae.latent_z_dim=64 \
+    nn_ae.encoder.latent_z_dim=64 \
+    nn_ae.decoder.latent_z_dim=64 \
+    dataset.datamodule.batch_size=2 \
+    dataset.datamodule.num_workers=16 \
+    opt.accumulate_grad_batches=2 \
+    opt.val_check_interval=1000 \
+    log.log_wandb=false \
+    log.checkpoint=false \
+    hardware.ngpus_per_node_=1 \
+    hardware.nnodes_=1 \
+    hardware.ncpus_per_task_train_=24

@@ -1,0 +1,27 @@
+#!/bin/bash
+#SBATCH --job-name=jepa_d8_30k_viz
+#SBATCH --partition=normal
+#SBATCH --nodelist=klein
+#SBATCH --qos=medium
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=64G
+#SBATCH --time=01:00:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/latent_viz/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+PYTHON=/slurm-storage/aishod/envs/la-proteina/bin/python
+
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+export PYTHONPATH="$PROJECT_ROOT"
+export MPLCONFIGDIR=/tmp/matplotlib-jepa-d8-30k-$SLURM_JOB_ID
+
+mkdir -p "$PROJECT_ROOT/logs/latent_viz" "$MPLCONFIGDIR"
+cd "$PROJECT_ROOT"
+srun "$PYTHON" Evaluation/latent_viz/analyze_jepa_d8_abs_rel_30k.py

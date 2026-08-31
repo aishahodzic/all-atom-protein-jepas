@@ -1,0 +1,24 @@
+#!/bin/bash
+#SBATCH --job-name=jepa_d64_2x2_viz
+#SBATCH --partition=normal
+#SBATCH --qos=short
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=24
+#SBATCH --mem=64G
+#SBATCH --time=02:00:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/jepa_interventions/%x-%j.out
+
+set -euo pipefail
+
+ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+PYTHON=/slurm-storage/aishod/envs/la-proteina/bin/python
+set -a
+source "$ROOT/.env"
+set +a
+export PYTHONPATH="$ROOT"
+export MPLCONFIGDIR=/tmp/matplotlib-jepa-d64-2x2-${SLURM_JOB_ID}
+mkdir -p "$MPLCONFIGDIR"
+cd "$ROOT"
+srun --ntasks=1 "$PYTHON" Evaluation/latent_viz/analyze_jepa_d64_2x2_10k.py

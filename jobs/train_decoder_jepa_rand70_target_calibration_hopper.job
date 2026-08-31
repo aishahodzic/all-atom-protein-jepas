@@ -1,0 +1,37 @@
+#!/bin/bash
+# Calibrate a decoder for the EMA/target latent space predicted by the
+# absolute-position JEPA random-mask-70 model at 100k steps.
+# Auto-stops when non-C-alpha validation RMSD fails to improve by >1% across
+# five consecutive 2k-step evaluations.
+#SBATCH --job-name=dec_jr70_tgt
+#SBATCH --partition=h100
+#SBATCH --nodelist=hopper
+#SBATCH --qos=medium
+#SBATCH --gres=gpu:1
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=100G
+#SBATCH --time=24:00:00
+#SBATCH --output=logs/decoder/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+
+mkdir -p "$PROJECT_ROOT/logs/decoder"
+cd "$PROJECT_ROOT/Evaluation/structure_rec"
+export PYTHONPATH="$PROJECT_ROOT"
+
+srun /data-gauss/$USER/envs/laproteina_env/bin/python3 train_decoder.py \
+  --encoder jepa-rand-mask-70 \
+  --encoder-source target \
+  --run-id jepa-rand-mask-70-target-calib \
+  --max-steps 150000 \
+  --eval-every 2000 \
+  --calibration \
+  --patience-evals 5 \
+  --patience-threshold 0.01 \
+  --batch-size 8

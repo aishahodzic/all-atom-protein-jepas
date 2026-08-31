@@ -1,0 +1,86 @@
+#!/bin/bash
+# LeJEPA with structurally coherent spatial-3D targets and the validated
+# relative-position cross-attention predictor. The spatial masker selects
+# approximately 75% of residues as targets (within its 60--85% band).
+# Numbered checkpoints are retained every 10k; last.ckpt rolls every 1.5k.
+#SBATCH --job-name=lejepa_sp3d_relpos_d8_100k
+#SBATCH --partition=normal
+#SBATCH --qos=medium
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=24
+#SBATCH --mem=64G
+#SBATCH --time=24:00:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/spatial3d_block/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+WORKTREE="$PROJECT_ROOT/training_worktrees/le-jepa"
+PYTHON=/slurm-storage/aishod/envs/la-proteina/bin/python
+RUN_NAME=le_jepa_spatial3d_relative_positions_d8_100k
+RUN_DIR=/mnt/hopper-raid/aishod/runs/$RUN_NAME
+
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+
+export PYTHONPATH="$WORKTREE"
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+export PATH="/slurm-storage/aishod/envs/la-proteina/bin:$PATH"
+
+[[ "$(git -C "$WORKTREE" branch --show-current)" == "le-jepa" ]] || {
+    echo "ERROR: expected le-jepa branch in $WORKTREE" >&2
+    exit 1
+}
+git -C "$WORKTREE" merge-base --is-ancestor 2d41e8d HEAD || {
+    echo "ERROR: worktree does not contain the spatial-3D masking commit" >&2
+    exit 1
+}
+git -C "$WORKTREE" merge-base --is-ancestor 763466c HEAD || {
+    echo "ERROR: worktree does not contain the relative-position predictor commit" >&2
+    exit 1
+}
+
+IMPORTED_FROM="$(cd /tmp && "$PYTHON" -c 'import proteinfoundation; print(proteinfoundation.__file__)')"
+[[ "$IMPORTED_FROM" == "$WORKTREE"/proteinfoundation/* ]] || {
+    echo "ERROR: imported $IMPORTED_FROM, expected $WORKTREE" >&2
+    exit 1
+}
+[[ ! -e "$RUN_DIR" ]] || {
+    echo "ERROR: refusing to overwrite existing run directory $RUN_DIR" >&2
+    exit 1
+}
+
+mkdir -p "$RUN_DIR" "$PROJECT_ROOT/logs/spatial3d_block"
+cd "$RUN_DIR"
+
+echo "Worktree: $WORKTREE"
+echo "Commit: $(git -C "$WORKTREE" rev-parse HEAD)"
+echo "Import: $IMPORTED_FROM"
+echo "LeJEPA spatial-3D + relative positions; D8; old predictor; EMA/LN disabled"
+
+echo scratch | srun --ntasks=1 "$PYTHON" "$WORKTREE/proteinfoundation/jepa/train.py" \
+    run_name_="$RUN_NAME" \
+    +single=true \
+    +masking_mode=spatial_3d_block \
+    +opt.max_steps=100000 \
+    opt.lr=0.0001 \
+    baseline_run_layernorm=false \
+    baseline_run_ema=false \
+    baseline_run_predictor=false \
+    lejepa_relative_positions=true \
+    predictor.relative_position_max_distance=128 \
+    nn_ae.latent_z_dim=8 \
+    nn_ae.encoder.latent_z_dim=8 \
+    nn_ae.decoder.latent_z_dim=8 \
+    dataset.datamodule.batch_size=4 \
+    dataset.datamodule.num_workers=16 \
+    opt.accumulate_grad_batches=1 \
+    opt.val_check_interval=2500 \
+    log.checkpoint_every_n_steps=10000 \
+    log.last_ckpt_every_n_steps=1500 \
+    hardware.ngpus_per_node_=1 \
+    hardware.nnodes_=1 \
+    hardware.ncpus_per_task_train_=24

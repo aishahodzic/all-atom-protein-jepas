@@ -1,0 +1,61 @@
+#!/bin/bash
+#SBATCH --job-name=stb_random_init
+#SBATCH --partition=normal
+#SBATCH --qos=medium
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=16
+#SBATCH --time=05:00:00
+#SBATCH --array=0-1
+#SBATCH --output=/slurm-storage/aishod/projects/la-proteina/logs/stb/random_init/%x-%A_%a.out
+
+set -euo pipefail
+
+REPO=/slurm-storage/aishod/projects/la-proteina
+STB="$REPO/StructTokenBench"
+
+set -a
+source "$REPO/.env"
+set +a
+
+export DS_IGNORE_CUDA_DETECTION=1
+
+if [[ "$(git -C "$REPO" branch --show-current)" != "main" ]]; then
+    echo "ERROR: StructTokenBench must run from the main branch" >&2
+    exit 1
+fi
+
+if [[ "$SLURM_ARRAY_TASK_ID" -eq 0 ]]; then
+    DIM=8
+    EXPERIMENT=random-init
+    CKPT="$STB/100k-checkpoints/random-init/100k.ckpt"
+    # Homo already completed in job 253650 with this exact persisted encoder.
+    TASKS=BindInt,BindBio,BindShake,CatInt,CatBio,Con,Rep,Ept,FlexRMSF,FlexBFactor,FlexNEQ
+else
+    DIM=64
+    EXPERIMENT=random-init-64
+    CKPT="$STB/100k-checkpoints/random-init-64/step0.ckpt"
+    TASKS=all
+fi
+
+if [[ ! -s "$CKPT" ]]; then
+    echo "ERROR: random-init checkpoint is missing or empty: $CKPT" >&2
+    exit 1
+fi
+
+if [[ ! -d "$STB/pdb_data/mmcif_files" ]]; then
+    echo "ERROR: STB mmCIF data link is unavailable: $STB/pdb_data" >&2
+    exit 1
+fi
+
+RUN_ROOT="$STB/struct_token_bench_logs/random_init/${DIM}dim"
+mkdir -p "$RUN_ROOT"
+export STB_LOG_ROOT="$RUN_ROOT/logs"
+export SUMMARY_FILE="$RUN_ROOT/summary_results.csv"
+
+cd "$STB"
+bash src/script/run_eval.sh \
+    --checkpoint=step0 \
+    --experiment="$EXPERIMENT" \
+    --tasks="$TASKS"

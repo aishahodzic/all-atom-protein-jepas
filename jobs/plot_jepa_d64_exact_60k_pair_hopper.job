@@ -1,0 +1,27 @@
+#!/bin/bash
+# Extract exact 60k frozen-encoder latents and render a matched t-SNE pair.
+#SBATCH --job-name=jepa_d64_60k_tsne
+#SBATCH --partition=h100
+#SBATCH --nodelist=hopper
+#SBATCH --qos=short
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=24
+#SBATCH --mem=100G
+#SBATCH --time=02:00:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/jepa_interventions/%x-%j.out
+
+set -euo pipefail
+
+ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+PYTHON=/slurm-storage/aishod/envs/la-proteina/bin/python
+set -a
+source "$ROOT/.env"
+set +a
+export DATA_PATH="${DATA_PATH/\/mnt\/hopper-raid/\/mnt\/raid}"
+export PYTHONPATH="$ROOT"
+export MPLCONFIGDIR="/tmp/matplotlib-jepa-d64-60k-${SLURM_JOB_ID}"
+mkdir -p "$MPLCONFIGDIR" "$ROOT/logs/jepa_interventions"
+cd "$ROOT"
+srun --ntasks=1 "$PYTHON" Evaluation/latent_viz/plot_jepa_d64_exact_60k_pair.py

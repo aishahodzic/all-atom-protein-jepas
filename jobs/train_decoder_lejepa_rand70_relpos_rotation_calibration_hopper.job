@@ -1,0 +1,35 @@
+#!/bin/bash
+# Matched decoder calibration for the only encoder branch stored by the
+# no-EMA LeJEPA relative-position-and-rotation checkpoint.
+#SBATCH --job-name=dec_ljr70_relrot
+#SBATCH --partition=h100
+#SBATCH --nodelist=hopper
+#SBATCH --qos=medium
+#SBATCH --gres=gpu:1
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=100G
+#SBATCH --time=24:00:00
+#SBATCH --output=logs/decoder/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+
+mkdir -p "$PROJECT_ROOT/logs/decoder"
+cd "$PROJECT_ROOT/Evaluation/structure_rec"
+export PYTHONPATH="$PROJECT_ROOT"
+
+srun /data-gauss/$USER/envs/laproteina_env/bin/python3 train_decoder.py \
+  --encoder le-jepa-rand70-relative-position-rotation \
+  --encoder-source online \
+  --run-id le-jepa-rand70-relative-position-rotation-online-calib \
+  --max-steps 150000 \
+  --eval-every 2000 \
+  --calibration \
+  --patience-evals 5 \
+  --patience-threshold 0.01 \
+  --batch-size 8

@@ -1,0 +1,79 @@
+#!/bin/bash
+# Finish the interrupted lambda=0.002 SIGReg pilot from its 7.5k rolling
+# checkpoint to the immutable 10k checkpoint.
+#SBATCH --job-name=lejepa_sig002_resume
+#SBATCH --partition=normal
+#SBATCH --qos=medium
+#SBATCH --nodelist=klein
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=24
+#SBATCH --mem=64G
+#SBATCH --time=01:30:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/le_jepa/sigreg_sweep/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+WORKTREE="$PROJECT_ROOT/training_worktrees/le-jepa"
+PYTHON=/slurm-storage/aishod/envs/la-proteina/bin/python
+RUN_NAME=le_jepa_rand70_relpos_d8_rot_sigreg_0p002_10k_kn
+RUN_DIR=/mnt/hopper-raid/aishod/runs/$RUN_NAME
+CHECKPOINT="$RUN_DIR/store/$RUN_NAME/checkpoints/last.ckpt"
+
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+export PYTHONPATH="$WORKTREE"
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+export PATH="/slurm-storage/aishod/envs/la-proteina/bin:$PATH"
+export RESUME_CHOICE=last
+export WANDB_RUN_ID="$RUN_NAME"
+export WANDB_RESUME=must
+
+[[ "$(git -C "$WORKTREE" branch --show-current)" == "le-jepa" ]] || {
+    echo "ERROR: expected le-jepa branch" >&2
+    exit 1
+}
+[[ -s "$CHECKPOINT" ]] || {
+    echo "ERROR: missing rolling 7.5k checkpoint: $CHECKPOINT" >&2
+    exit 1
+}
+grep -q 'lamb=float(cfg_exp.get("sigreg_lambda"' "$WORKTREE/proteinfoundation/jepa/train.py" || {
+    echo "ERROR: configurable SIGReg lambda is unavailable" >&2
+    exit 1
+}
+grep -q 'jepa_independent_target_rotation' "$WORKTREE/proteinfoundation/jepa/jepa_model.py" || {
+    echo "ERROR: independent target rotation is unavailable" >&2
+    exit 1
+}
+
+cd "$RUN_DIR"
+echo "Resuming lambda=0.002 from $CHECKPOINT to step 10000 on klein"
+
+printf 'last\n' | srun --ntasks=1 "$PYTHON" "$WORKTREE/proteinfoundation/jepa/train.py" \
+    run_name_="$RUN_NAME" \
+    +single=true \
+    +masked_pct=0.7 \
+    +opt.max_steps=10000 \
+    opt.lr=0.0001 \
+    sigreg_lambda=0.002 \
+    baseline_run_layernorm=false \
+    baseline_run_ema=false \
+    baseline_run_predictor=false \
+    lejepa_relative_positions=true \
+    jepa_independent_target_rotation=true \
+    predictor.relative_position_max_distance=128 \
+    nn_ae.latent_z_dim=8 \
+    nn_ae.encoder.latent_z_dim=8 \
+    nn_ae.decoder.latent_z_dim=8 \
+    dataset.datamodule.batch_size=4 \
+    dataset.datamodule.num_workers=16 \
+    opt.accumulate_grad_batches=1 \
+    opt.val_check_interval=2500 \
+    log.checkpoint_every_n_steps=10000 \
+    log.last_ckpt_every_n_steps=1500 \
+    hardware.ngpus_per_node_=1 \
+    hardware.nnodes_=1 \
+    hardware.ncpus_per_task_train_=24

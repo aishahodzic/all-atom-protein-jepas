@@ -1,0 +1,75 @@
+#!/bin/bash
+# Full 12-task locked StructTokenBench publication evaluations for the two
+# 100k LeJEPA chemical-masking checkpoints.
+# Usage: sbatch jobs/eval_chem_masking_100k_upstream_l600_array.job
+#SBATCH --job-name=stb_chem_100k
+#SBATCH --partition=normal
+#SBATCH --qos=medium
+#SBATCH --array=0-1
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=64G
+#SBATCH --time=1-00:00:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/stb/publication_upstream/%x-%A_%a.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+STB_ROOT="$PROJECT_ROOT/StructTokenBench"
+PYTHON_BIN=/slurm-storage/aishod/.conda/envs/pstbench/bin/python
+ENCODER_CONFIG="$STB_ROOT/100k-checkpoints/shared/exp_config_jepa_nn130m.json"
+
+EXPERIMENTS=(
+    le-jepa-chemmask-exp1-100k
+    le-jepa-chemmask-exp3-100k
+)
+CHECKPOINTS=(
+    "$STB_ROOT/100k-checkpoints/le-jepa/chem_masking/exp1_aa_partial50/100k.ckpt"
+    "$STB_ROOT/100k-checkpoints/le-jepa/chem_masking/exp3_noaa_sc50/100k.ckpt"
+)
+CHECKPOINT_SHA256=(
+    2e3804486639d4df2979fe68fc95cabdb5824a8dd96b4f2ec7f8b798bbe0482f
+    98eb22bde94eebb39449a21d4485b009326c82a55a028133081fbde4c8175cf1
+)
+
+EXPERIMENT="${EXPERIMENTS[$SLURM_ARRAY_TASK_ID]}"
+CHECKPOINT="${CHECKPOINTS[$SLURM_ARRAY_TASK_ID]}"
+EXPECTED_SHA256="${CHECKPOINT_SHA256[$SLURM_ARRAY_TASK_ID]}"
+
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+
+if [[ "$(git -C "$PROJECT_ROOT" branch --show-current)" != "main" ]]; then
+    echo "ERROR: locked evaluation must run from main" >&2
+    exit 1
+fi
+
+echo "$EXPECTED_SHA256  $CHECKPOINT" | sha256sum -c -
+echo "98e0350d418e7d840fa245ddfd7150064e87a9ac74c72c9150a946f0f66ccd9d  $ENCODER_CONFIG" | sha256sum -c -
+
+cd "$STB_ROOT"
+
+export STB_SKIP_BOOTSTRAP=1
+export STB_SKIP_DATA_SETUP=1
+export STB_SMOKE=0
+export DS_IGNORE_CUDA_DETECTION=1
+export PYTHON_BIN
+export NUM_WORKERS=8
+export PDB_DATA_ROOT=/mnt/hopper-raid/aishod/data/struct_token_bench_pdb_data
+export STB_RELEASE_DATA_ROOT=/mnt/hopper-raid/aishod/data/struct_token_bench_release_data
+export EVALUATION_RUN_ID="slurm-${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}-${EXPERIMENT}"
+export STB_LOG_ROOT="$STB_ROOT/struct_token_bench_logs/upstream-l600-v1-full/runs/$EVALUATION_RUN_ID"
+export SUMMARY_FILE="$STB_LOG_ROOT/summary_results.csv"
+export MPLCONFIGDIR="/tmp/stb-chem-100k-mpl-${SLURM_ARRAY_JOB_ID}-${SLURM_ARRAY_TASK_ID}"
+export TRITON_CACHE_DIR="/tmp/stb-chem-100k-triton-${SLURM_ARRAY_JOB_ID}-${SLURM_ARRAY_TASK_ID}"
+
+mkdir -p "$STB_LOG_ROOT" "$MPLCONFIGDIR" "$TRITON_CACHE_DIR"
+
+bash src/script/run_eval.sh \
+    --protocol=upstream-l600-v1 \
+    --checkpoint=100k \
+    --experiment="$EXPERIMENT" \
+    --tasks=all

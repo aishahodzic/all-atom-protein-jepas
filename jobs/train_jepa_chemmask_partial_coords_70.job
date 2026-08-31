@@ -1,0 +1,61 @@
+#!/bin/bash
+# Variant 1 ("per-atom coordinate masking") -- every residue keeps
+# AA identity; 70% of each residue's own valid atom slots are hidden independently
+# (coord_mask=False), never all of them. Context=target=all valid residues
+# (overlapping, not disjoint); predictor self-exclusion blocks query i from
+# attending to its own context entry so it must reconstruct i from neighbours.
+# Target/EMA encoder always sees the full unmasked protein.
+#
+# predictor.use_self_attn=true: target queries self-attend (coordinate with each
+# other, no exclusion) before the separate self-excluded cross-attention stack.
+# Enabled here deliberately -- per-atom masking leaves thin
+# per-residue context, so targets pooling collectively matters more than in the
+# disjoint rand-mask/chemmask_aa_only runs, which don't set this flag.
+#
+# Fresh run from scratch, matched hyperparams/steps to the rand70/chemmask_aa_only
+# comparison runs: latent_z_dim=8 (nn_130m.yaml default, no override), ema_decay=0.996
+# (JEPAModel default), LR 1e-4, max_steps=100000 (matches jepa_random_masking_70_v3,
+# jepa_chemmask_aa_only, jepa_rand70_selfattn -- all stopped at step 100000 for a
+# fair single-shot comparison).
+#
+# Runs on any node in the `normal` partition (gauss, klein, noether) -- /mnt/hopper-raid
+# is now the same mount everywhere (hopper symlinked, gauss newly mounted it), so no
+# per-host DATA_PATH/RAID_ROOT branching is needed any more.
+# NOTE: noether's NFS path to hopper-raid has hit ENOSPC on checkpoint writes
+# before (see jobs/train_jepa_chemmask_aa_only_resume_100k.job); hopper-raid is at
+# 96% full, 232G free as of this submission.
+#
+# Usage: sbatch jobs/train_jepa_chemmask_partial_coords_70.job
+#SBATCH --job-name=jepa_partial_coords_70
+#SBATCH --partition=normal
+#SBATCH --qos=medium
+#SBATCH --gres=gpu:1
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=16
+#SBATCH --time=24:00:00
+#SBATCH --output=logs/%x-%j.out
+
+source /slurm-storage/miniconda3/etc/profile.d/conda.sh
+conda activate /slurm-storage/aishod/envs/la-proteina
+
+export TMPDIR=/tmp
+
+set -a
+source /mnt/data/slurm-storage/aishod/projects/la-proteina/.env
+set +a
+
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+export PYTHONPATH=/mnt/data/slurm-storage/aishod/projects/la-proteina:$PYTHONPATH
+
+# DATA_PATH is already /mnt/hopper-raid/aishod/data from .env, and that path now
+# resolves identically on every node -- no per-host override needed.
+RAID_ROOT=/mnt/hopper-raid/aishod
+
+mkdir -p "$RAID_ROOT/runs/jepa_partial_coords_70"
+cd "$RAID_ROOT/runs/jepa_partial_coords_70"
+
+# "scratch" -- fresh run, no prior checkpoint for this run_name_.
+echo "scratch" | srun python /mnt/data/slurm-storage/aishod/projects/la-proteina/proteinfoundation/jepa/train.py \
+    run_name_=jepa_partial_coords_70 +single=true opt.lr=1e-4 dataset.datamodule.num_workers=16 \
+    +masking_mode=chemmask_partial_coordinates +atom_mask_pct=0.7 +opt.max_steps=100000 \
+    +predictor.use_self_attn=true

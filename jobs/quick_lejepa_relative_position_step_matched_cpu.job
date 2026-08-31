@@ -1,0 +1,20 @@
+#!/bin/bash
+#SBATCH --job-name=relpos_match
+#SBATCH --partition=normal
+#SBATCH --qos=short
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=24
+#SBATCH --mem=64G
+#SBATCH --time=01:00:00
+#SBATCH --output=logs/le_jepa/%x-%j.out
+
+set -euo pipefail
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+cd "$PROJECT_ROOT"
+export PYTHONPATH="$PROJECT_ROOT:$PROJECT_ROOT/Evaluation/diagnostics"
+export OMP_NUM_THREADS="$SLURM_CPUS_PER_TASK"
+srun /slurm-storage/aishod/envs/la-proteina/bin/python \
+    Evaluation/diagnostics/quick_lejepa_relative_position_step_matched.py

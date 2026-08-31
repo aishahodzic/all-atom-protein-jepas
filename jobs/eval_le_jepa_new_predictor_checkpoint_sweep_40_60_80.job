@@ -1,0 +1,50 @@
+#!/bin/bash
+#SBATCH --job-name=stb_lejepa_pred_sweep
+#SBATCH --partition=normal
+#SBATCH --qos=medium
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=16
+#SBATCH --time=05:00:00
+#SBATCH --array=0-2
+#SBATCH --output=/slurm-storage/aishod/projects/la-proteina/logs/stb/checkpoint_sweep/%x-%A_%a.out
+
+set -euo pipefail
+
+REPO=/slurm-storage/aishod/projects/la-proteina
+STB="$REPO/StructTokenBench"
+STEPS=(40k 60k 80k)
+STEP="${STEPS[$SLURM_ARRAY_TASK_ID]}"
+EXPERIMENT="le-jepa-new-predictor-$STEP"
+CKPT="$STB/100k-checkpoints/le-jepa/new_predictor/$STEP.ckpt"
+SWEEP_ROOT="$STB/struct_token_bench_logs/checkpoint_sweeps/le_jepa_new_predictor/$STEP"
+
+set -a
+source "$REPO/.env"
+set +a
+
+# STB imports DeepSpeed transitively but does not build or use its custom CUDA
+# ops. Some normal nodes expose the allocated GPU without a local CUDA toolkit,
+# so skip DeepSpeed's unnecessary CUDA-toolkit compatibility probe.
+export DS_IGNORE_CUDA_DETECTION=1
+
+if [[ "$(git -C "$REPO" branch --show-current)" != "main" ]]; then
+    echo "ERROR: StructTokenBench must run from the main branch" >&2
+    exit 1
+fi
+
+if [[ ! -s "$CKPT" ]]; then
+    echo "ERROR: checkpoint is missing or empty: $CKPT" >&2
+    exit 1
+fi
+
+mkdir -p "$SWEEP_ROOT"
+export STB_LOG_ROOT="$SWEEP_ROOT/logs"
+export SUMMARY_FILE="$SWEEP_ROOT/summary_results.csv"
+
+cd "$STB"
+bash src/script/run_eval.sh \
+    --checkpoint="$STEP" \
+    --experiment="$EXPERIMENT" \
+    --tasks=all

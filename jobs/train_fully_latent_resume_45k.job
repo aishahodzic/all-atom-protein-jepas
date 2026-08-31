@@ -1,0 +1,42 @@
+#!/bin/bash
+#SBATCH --job-name=fully_latent_resume_45k
+#SBATCH --partition=normal
+#SBATCH --qos=medium
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=16
+#SBATCH --time=16:00:00
+#SBATCH --output=/slurm-storage/aishod/projects/la-proteina/logs/%x-%j.out
+
+set -euo pipefail
+
+WORKTREE=/slurm-storage/aishod/projects/la-proteina/training_worktrees/fully-latent
+PYTHON=/data-gauss/aishod/envs/laproteina_env/bin/python
+CHECKPOINT_DIR="$WORKTREE/store/full_pdb_fully_latent_ae/checkpoints"
+
+cd "$WORKTREE"
+
+if [[ "$(git branch --show-current)" != "fully-latent" ]]; then
+    echo "ERROR: expected fully-latent branch in $WORKTREE" >&2
+    exit 1
+fi
+
+if [[ ! -s "$CHECKPOINT_DIR/last.ckpt" || ! -s "$CHECKPOINT_DIR/last-EMA.ckpt" ]]; then
+    echo "ERROR: matching last.ckpt and last-EMA.ckpt are required" >&2
+    exit 1
+fi
+
+export DATA_PATH=/data-gauss/aishod/data
+export RESUME_CHOICE=last
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+export PATH="/data-gauss/aishod/envs/laproteina_env/bin:$PATH"
+
+echo "Branch: $(git branch --show-current)"
+echo "Commit: $(git rev-parse HEAD)"
+echo "Resuming fully-latent from $CHECKPOINT_DIR/last.ckpt"
+
+printf 'last\n' | srun --ntasks=1 "$PYTHON" proteinfoundation/partial_autoencoder/train.py \
+    hardware.ngpus_per_node_=1 \
+    hardware.nnodes_=1 \
+    hardware.ncpus_per_task_train_=16

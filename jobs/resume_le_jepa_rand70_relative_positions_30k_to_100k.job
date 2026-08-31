@@ -1,0 +1,95 @@
+#!/bin/bash
+# Continue the Jarvis LeJEPA rand70 relative-position run from its exact 30k
+# checkpoint. Model, optimizer, AMP scaler, RNG, epoch, and global-step state
+# are restored by Lightning. Numbered checkpoints remain every 10k and
+# last.ckpt rolls every 1.5k steps.
+#SBATCH --job-name=lejepa_r70_relpos_100k
+#SBATCH --partition=normal
+#SBATCH --qos=medium
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=24
+#SBATCH --mem=64G
+#SBATCH --time=24:00:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/le_jepa/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+WORKTREE="$PROJECT_ROOT/training_worktrees/le-jepa"
+PYTHON=/slurm-storage/aishod/envs/la-proteina/bin/python
+RUN_NAME=le_jepa_rand70_relative_positions_100k
+RUN_DIR=/mnt/hopper-raid/aishod/runs/$RUN_NAME
+CHECKPOINT="$RUN_DIR/store/$RUN_NAME/checkpoints/last.ckpt"
+EXPECTED_SHA256=a1991d494894d7ac5af84186f776927f5da2babab3087151875864748ab430bd
+
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+
+export PYTHONPATH="$WORKTREE"
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+export PATH="/slurm-storage/aishod/envs/la-proteina/bin:$PATH"
+export RESUME_CHOICE=last
+export WANDB_RUN_ID="$RUN_NAME"
+export WANDB_RESUME=must
+
+[[ "$(git -C "$WORKTREE" branch --show-current)" == "le-jepa" ]] || {
+    echo "ERROR: expected le-jepa branch in $WORKTREE" >&2
+    exit 1
+}
+git -C "$WORKTREE" merge-base --is-ancestor 763466c HEAD || {
+    echo "ERROR: worktree does not contain the relative-position predictor commit" >&2
+    exit 1
+}
+[[ -s "$CHECKPOINT" ]] || {
+    echo "ERROR: missing or empty downloaded checkpoint: $CHECKPOINT" >&2
+    exit 1
+}
+ACTUAL_SHA256="$(sha256sum "$CHECKPOINT" | cut -d' ' -f1)"
+[[ "$ACTUAL_SHA256" == "$EXPECTED_SHA256" ]] || {
+    echo "ERROR: checkpoint SHA-256 mismatch: $ACTUAL_SHA256" >&2
+    exit 1
+}
+
+IMPORTED_FROM="$(cd /tmp && "$PYTHON" -c 'import proteinfoundation; print(proteinfoundation.__file__)')"
+[[ "$IMPORTED_FROM" == "$WORKTREE"/proteinfoundation/* ]] || {
+    echo "ERROR: imported $IMPORTED_FROM, expected $WORKTREE" >&2
+    exit 1
+}
+
+mkdir -p "$RUN_DIR" "$PROJECT_ROOT/logs/le_jepa"
+cd "$RUN_DIR"
+
+echo "Worktree: $WORKTREE"
+echo "Commit: $(git -C "$WORKTREE" rev-parse HEAD)"
+echo "Import: $IMPORTED_FROM"
+echo "Checkpoint: $CHECKPOINT"
+echo "Checkpoint SHA-256: $ACTUAL_SHA256"
+echo "Resuming Jarvis LeJEPA rand70 relative positions from step 30000 to 100000"
+echo "D8; old predictor; EMA/LN disabled; effective batch size 4"
+
+printf 'last\n' | srun --ntasks=1 "$PYTHON" "$WORKTREE/proteinfoundation/jepa/train.py" \
+    run_name_="$RUN_NAME" \
+    +single=true \
+    +masked_pct=0.7 \
+    +opt.max_steps=100000 \
+    opt.lr=0.0001 \
+    baseline_run_layernorm=false \
+    baseline_run_ema=false \
+    baseline_run_predictor=false \
+    lejepa_relative_positions=true \
+    predictor.relative_position_max_distance=128 \
+    nn_ae.latent_z_dim=8 \
+    nn_ae.encoder.latent_z_dim=8 \
+    nn_ae.decoder.latent_z_dim=8 \
+    dataset.datamodule.batch_size=4 \
+    dataset.datamodule.num_workers=16 \
+    opt.accumulate_grad_batches=1 \
+    opt.val_check_interval=2500 \
+    log.checkpoint_every_n_steps=10000 \
+    log.last_ckpt_every_n_steps=1500 \
+    hardware.ngpus_per_node_=1 \
+    hardware.nnodes_=1 \
+    hardware.ncpus_per_task_train_=24

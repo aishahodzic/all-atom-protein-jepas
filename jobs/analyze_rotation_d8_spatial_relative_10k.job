@@ -1,0 +1,26 @@
+#!/bin/bash
+#SBATCH --job-name=latent_new10k
+#SBATCH --partition=normal
+#SBATCH --qos=short
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=8
+#SBATCH --mem=48G
+#SBATCH --time=02:00:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/latent_viz/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+PYTHON=/slurm-storage/aishod/envs/la-proteina/bin/python
+
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+export PYTHONPATH="$PROJECT_ROOT"
+export MPLCONFIGDIR="/tmp/latent-new10k-mpl-${SLURM_JOB_ID}"
+export TRITON_CACHE_DIR="/tmp/latent-new10k-triton-${SLURM_JOB_ID}"
+mkdir -p "$PROJECT_ROOT/logs/latent_viz" "$MPLCONFIGDIR" "$TRITON_CACHE_DIR"
+
+cd "$PROJECT_ROOT"
+srun "$PYTHON" Evaluation/latent_viz/analyze_rotation_d8_spatial_relative_10k.py

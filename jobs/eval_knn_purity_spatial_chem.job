@@ -1,0 +1,33 @@
+#!/bin/bash
+# k-NN purity on existing common held-out residue caches only. No encoder
+# extraction is performed.
+# Usage: sbatch jobs/eval_knn_purity_spatial_chem.job
+#SBATCH --job-name=knn_spatial_chem
+#SBATCH --partition=normal
+#SBATCH --qos=short
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=8
+#SBATCH --mem=64G
+#SBATCH --time=02:00:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/latent_viz/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+PYTHON_BIN=/slurm-storage/aishod/.conda/envs/pstbench/bin/python
+
+mkdir -p "$PROJECT_ROOT/logs/latent_viz"
+cd "$PROJECT_ROOT/Evaluation/knn_purity"
+
+"$PYTHON_BIN" run.py \
+    --no-wandb \
+    --device cuda \
+    --seed 42 \
+    --max-queries 20000 \
+    --batch-size 256 \
+    --checkpoints \
+        le-jepa-spatial3d-d64 \
+        le-jepa-chem-exp1 \
+        le-jepa-chem-exp3

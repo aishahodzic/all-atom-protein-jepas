@@ -1,0 +1,65 @@
+#!/bin/bash
+#SBATCH --job-name=stb_lejepa_block_100k
+#SBATCH --partition=normal
+#SBATCH --qos=medium
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=16
+#SBATCH --time=05:00:00
+#SBATCH --output=/slurm-storage/aishod/projects/la-proteina/logs/stb/spatial3d_block/%x-%j.out
+
+set -euo pipefail
+
+REPO=/slurm-storage/aishod/projects/la-proteina
+STB="$REPO/StructTokenBench"
+RUN_CHECKPOINT_DIR=/mnt/hopper-raid/aishod/runs/le_jepa_spatial3d_block_dim64_new_predictor_100k/store/le_jepa_spatial3d_block_dim64_new_predictor_100k/checkpoints
+STAGED_DIR="$STB/100k-checkpoints/le-jepa/spatial3d_block_dim64_new_predictor"
+CKPT="$STAGED_DIR/100k.ckpt"
+SWEEP_ROOT="$STB/struct_token_bench_logs/checkpoint_sweeps/le_jepa_spatial3d_block/100k"
+
+set -a
+source "$REPO/.env"
+set +a
+
+export DS_IGNORE_CUDA_DETECTION=1
+
+if [[ "$(git -C "$REPO" branch --show-current)" != "main" ]]; then
+    echo "ERROR: StructTokenBench must run from the main branch" >&2
+    exit 1
+fi
+
+shopt -s nullglob
+sources=("$RUN_CHECKPOINT_DIR"/*step=000000100000.ckpt)
+shopt -u nullglob
+if [[ "${#sources[@]}" -ne 1 || ! -s "${sources[0]:-}" ]]; then
+    echo "ERROR: expected exactly one non-empty step-100000 checkpoint in $RUN_CHECKPOINT_DIR" >&2
+    exit 1
+fi
+
+mkdir -p "$STAGED_DIR" "$SWEEP_ROOT"
+if [[ -L "$CKPT" ]]; then
+    [[ "$(readlink -f "$CKPT")" == "$(readlink -f "${sources[0]}")" ]] || {
+        echo "ERROR: existing 100k link points to a different checkpoint: $CKPT" >&2
+        exit 1
+    }
+elif [[ -e "$CKPT" ]]; then
+    echo "ERROR: refusing to replace existing checkpoint: $CKPT" >&2
+    exit 1
+else
+    ln -s "${sources[0]}" "$CKPT"
+fi
+
+if [[ ! -d "$STB/pdb_data/mmcif_files" ]]; then
+    echo "ERROR: STB mmCIF data link is unavailable: $STB/pdb_data" >&2
+    exit 1
+fi
+
+export STB_LOG_ROOT="$SWEEP_ROOT/logs"
+export SUMMARY_FILE="$SWEEP_ROOT/summary_results.csv"
+
+cd "$STB"
+bash src/script/run_eval.sh \
+    --checkpoint=100k \
+    --experiment=le-jepa-spatial3d-block-100k \
+    --tasks=all

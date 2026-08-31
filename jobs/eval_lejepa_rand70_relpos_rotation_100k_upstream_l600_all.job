@@ -1,0 +1,50 @@
+#!/bin/bash
+# Full locked upstream-L600 STB evaluation for LeJEPA rand70 with relative
+# predictor positions and independently rotated target views at 100k.
+#SBATCH --job-name=stb_ljr70_relrot
+#SBATCH --partition=normal
+#SBATCH --qos=medium
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=64G
+#SBATCH --time=1-00:00:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/stb/publication_upstream/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+STB_ROOT="$PROJECT_ROOT/StructTokenBench"
+CHECKPOINT="$STB_ROOT/100k-checkpoints/le-jepa/relative-position-and-rotation/100k.ckpt"
+ENCODER_CONFIG="$STB_ROOT/100k-checkpoints/shared/exp_config_jepa_nn130m.json"
+PYTHON_BIN=/slurm-storage/aishod/.conda/envs/pstbench/bin/python
+
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+
+echo "f8c58a2528e051adbf7f214404aa2220a29f544711e4d63c042883fbd2b859d3  $CHECKPOINT" | sha256sum -c -
+echo "98e0350d418e7d840fa245ddfd7150064e87a9ac74c72c9150a946f0f66ccd9d  $ENCODER_CONFIG" | sha256sum -c -
+
+cd "$STB_ROOT"
+export STB_SKIP_BOOTSTRAP=1
+export STB_SKIP_DATA_SETUP=1
+export STB_SMOKE=0
+export DS_IGNORE_CUDA_DETECTION=1
+export PYTHON_BIN
+export NUM_WORKERS=8
+export PDB_DATA_ROOT=/mnt/hopper-raid/aishod/data/struct_token_bench_pdb_data
+export STB_RELEASE_DATA_ROOT=/mnt/hopper-raid/aishod/data/struct_token_bench_release_data
+export EVALUATION_RUN_ID="slurm-${SLURM_JOB_ID}-le-jepa-rand70-relpos-rotation-100k"
+export STB_LOG_ROOT="$STB_ROOT/struct_token_bench_logs/upstream-l600-v1-full/runs/$EVALUATION_RUN_ID"
+export SUMMARY_FILE="$STB_LOG_ROOT/summary_results.csv"
+export MPLCONFIGDIR="/tmp/stb-ljr70-relrot-mpl-${SLURM_JOB_ID}"
+export TRITON_CACHE_DIR="/tmp/stb-ljr70-relrot-triton-${SLURM_JOB_ID}"
+mkdir -p "$STB_LOG_ROOT" "$MPLCONFIGDIR" "$TRITON_CACHE_DIR"
+
+bash src/script/run_eval.sh \
+  --protocol=upstream-l600-v1 \
+  --checkpoint=100k \
+  --experiment=le-jepa-rand70-relative-pos-rotation-100k \
+  --tasks=all

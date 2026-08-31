@@ -1,0 +1,55 @@
+#!/bin/bash
+# Chemical masking scheme 1 ("AA only, no coords") -- context residues keep AA
+# identity, lose all geometry (coord_mask=False on all 37 atom slots); target
+# residues excluded from context as before. Target/EMA encoder always sees the
+# full unmasked protein. Fresh run from scratch, matched hyperparams to
+# jepa_rand50/70: latent_z_dim=8 (nn_130m.yaml default, no override), ema_decay=0.996
+# (JEPAModel default), LR 1e-4, masked_pct=0.7 (matches jepa_rand70) -- context/
+# target split still uses the existing random_residue_mask unchanged.
+#
+# On hopper specifically (local /mnt/raid) -- proven reliable for checkpoint
+# writes; noether's NFS path has failed with ENOSPC every time it's been tried.
+# Hopper is fully occupied right now (4/4 GPUs), so this queues until one frees.
+#
+# Usage: sbatch jobs/train_jepa_chemmask_aa_only.job
+#SBATCH --job-name=jepa_chemmask_aa_only
+#SBATCH --partition=h100
+#SBATCH --nodelist=hopper
+#SBATCH --qos=medium
+#SBATCH --gres=gpu:1
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=32
+#SBATCH --time=24:00:00
+#SBATCH --output=logs/%x-%j.out
+
+source /slurm-storage/miniconda3/etc/profile.d/conda.sh
+conda activate /slurm-storage/aishod/envs/la-proteina
+
+export TMPDIR=/tmp
+
+set -a
+source /mnt/data/slurm-storage/aishod/projects/la-proteina/.env
+set +a
+
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+export PYTHONPATH=/mnt/data/slurm-storage/aishod/projects/la-proteina:$PYTHONPATH
+
+if [ "$(hostname -s)" = "hopper" ]; then
+    export DATA_PATH="${DATA_PATH/\/mnt\/hopper-raid/\/mnt\/raid}"
+    RAID_ROOT=/mnt/raid/aishod
+elif [ "$(hostname -s)" = "gauss" ]; then
+    # /mnt/hopper-raid isn't mounted on gauss at all -- use the local copy.
+    export DATA_PATH=/data-gauss/aishod/data
+    RAID_ROOT=/data-gauss/aishod
+else
+    echo "unexpected node $(hostname -s): only hopper and gauss are set up for this job" >&2
+    exit 1
+fi
+
+mkdir -p "$RAID_ROOT/runs/jepa_chemmask_aa_only"
+cd "$RAID_ROOT/runs/jepa_chemmask_aa_only"
+
+# "scratch" -- fresh run, no prior checkpoint for this run_name_.
+echo "scratch" | srun python /mnt/data/slurm-storage/aishod/projects/la-proteina/proteinfoundation/jepa/train.py \
+    run_name_=jepa_chemmask_aa_only +single=true opt.lr=1e-4 dataset.datamodule.num_workers=32 \
+    +masking_mode=chemmask_aa_only +masked_pct=0.7

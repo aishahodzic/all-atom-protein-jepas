@@ -1,0 +1,25 @@
+#!/bin/bash
+# Extracts the ten missing main/final-100k residue-latent caches one encoder at
+# a time, then renders the full 20-representation publication t-SNE comparison.
+# Resume-safe: completed per-encoder caches and t-SNE coordinate caches skip.
+# The required DATA_PATH, shared environment, and checkpoints are accessible
+# from Klein as well as Noether, so leave node placement to Slurm.
+#SBATCH --job-name=latent_viz_100k
+#SBATCH --partition=normal
+#SBATCH --qos=medium
+#SBATCH --gres=gpu:1
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=16
+#SBATCH --time=8:00:00
+#SBATCH --output=logs/latent_viz_100k-%j.out
+
+set -a
+source /mnt/data/slurm-storage/aishod/projects/la-proteina/.env
+set +a
+
+cd /mnt/data/slurm-storage/aishod/projects/la-proteina
+export PYTHONPATH=/mnt/data/slurm-storage/aishod/projects/la-proteina
+export MPLCONFIGDIR=/tmp/matplotlib-latent-viz-$SLURM_JOB_ID
+
+srun /data-gauss/$USER/envs/laproteina_env/bin/python3 \
+    Evaluation/latent_viz/extract_and_plot_publication_100k.py

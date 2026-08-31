@@ -1,0 +1,60 @@
+#!/bin/bash
+# Resumes jepa_chemmask_aa_only from its last.ckpt (step=70000) onward to step
+# 100000. Same run_name_ as the original -- required so ckpt_resume.py's
+# fetch_last_ckpt finds this run's own checkpoint dir and "last" resumes full
+# trainer state (optimizer, step count, RNG), not just weights.
+#
+# +opt.max_steps=100000 needs train.py's Trainer(...) to support it -- added
+# on this branch (jepa-latent) as part of this resume, mirroring the same
+# addition already made on le-jepa for the rand50 200k resume.
+#
+# Usage: sbatch jobs/train_jepa_chemmask_aa_only_resume_100k.job
+#SBATCH --job-name=jepa_chemmask_aa_only_resume100k
+#SBATCH --partition=normal
+#SBATCH --nodelist=noether
+#SBATCH --qos=medium
+#SBATCH --gres=gpu:1
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=32
+#SBATCH --time=24:00:00
+#SBATCH --output=logs/%x-%j.out
+
+source /slurm-storage/miniconda3/etc/profile.d/conda.sh
+conda activate /slurm-storage/aishod/envs/la-proteina
+
+export TMPDIR=/tmp
+
+set -a
+source /mnt/data/slurm-storage/aishod/projects/la-proteina/.env
+set +a
+
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+export PYTHONPATH=/mnt/data/slurm-storage/aishod/projects/la-proteina:$PYTHONPATH
+
+if [ "$(hostname -s)" = "hopper" ]; then
+    export DATA_PATH="${DATA_PATH/\/mnt\/hopper-raid/\/mnt\/raid}"
+    RAID_ROOT=/mnt/raid/aishod
+elif [ "$(hostname -s)" = "gauss" ]; then
+    # /mnt/hopper-raid isn't mounted on gauss at all -- use the local copy.
+    export DATA_PATH=/data-gauss/aishod/data
+    RAID_ROOT=/data-gauss/aishod
+elif [ "$(hostname -s)" = "noether" ]; then
+    # DATA_PATH from .env already points at /mnt/hopper-raid/aishod/data, which is
+    # correct here (noether reaches hopper-raid over NFS, no rewrite needed).
+    # NOTE: this is the path the original job avoided -- its own comment says
+    # noether's NFS checkpoint writes have hit ENOSPC every time it's been tried.
+    # hopper-raid is at 96% full (249G free) as of this submission.
+    RAID_ROOT=/mnt/hopper-raid/aishod
+else
+    echo "unexpected node $(hostname -s): only hopper, gauss, and noether are set up for this job" >&2
+    exit 1
+fi
+
+# same run dir as the original run -- do not change run_name_ below, or this
+# resumes nothing and starts a fresh run instead.
+mkdir -p "$RAID_ROOT/runs/jepa_chemmask_aa_only"
+cd "$RAID_ROOT/runs/jepa_chemmask_aa_only"
+
+echo "last" | srun python /mnt/data/slurm-storage/aishod/projects/la-proteina/proteinfoundation/jepa/train.py \
+    run_name_=jepa_chemmask_aa_only +single=true opt.lr=1e-4 dataset.datamodule.num_workers=32 \
+    +masking_mode=chemmask_aa_only +masked_pct=0.7 +opt.max_steps=100000

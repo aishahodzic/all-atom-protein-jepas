@@ -1,0 +1,83 @@
+#!/bin/bash
+# LeJEPA rand70 with relative predictor positions and independently rotated
+# target views. D8, old cross-attention predictor, no EMA.
+# Numbered checkpoints are retained every 10k; last.ckpt rolls every 1.5k.
+#SBATCH --job-name=lejepa_r70_relrot_d8
+#SBATCH --partition=normal
+#SBATCH --qos=medium
+#SBATCH --nodelist=klein
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=24
+#SBATCH --mem=64G
+#SBATCH --time=12:00:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/le_jepa/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+WORKTREE="$PROJECT_ROOT/training_worktrees/le-jepa"
+PYTHON=/slurm-storage/aishod/envs/la-proteina/bin/python
+RUN_NAME=le_jepa_rand70_relative_positions_d8_independent_rotations_100k
+RUN_DIR=/mnt/hopper-raid/aishod/runs/$RUN_NAME
+
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+export PYTHONPATH="$WORKTREE"
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+export PATH="/slurm-storage/aishod/envs/la-proteina/bin:$PATH"
+
+[[ "$(git -C "$WORKTREE" branch --show-current)" == "le-jepa" ]] || {
+    echo "ERROR: expected le-jepa branch" >&2
+    exit 1
+}
+rg -q 'jepa_independent_target_rotation' "$WORKTREE/proteinfoundation/jepa/jepa_model.py" || {
+    echo "ERROR: independent target rotation is unavailable" >&2
+    exit 1
+}
+IMPORTED_FROM="$(cd /tmp && "$PYTHON" -c 'import proteinfoundation; print(proteinfoundation.__file__)')"
+[[ "$IMPORTED_FROM" == "$WORKTREE"/proteinfoundation/* ]] || {
+    echo "ERROR: imported $IMPORTED_FROM, expected $WORKTREE" >&2
+    exit 1
+}
+[[ ! -e "$RUN_DIR" ]] || {
+    echo "ERROR: refusing to overwrite existing $RUN_DIR" >&2
+    exit 1
+}
+
+mkdir -p "$RUN_DIR" "$PROJECT_ROOT/logs/le_jepa"
+cd "$RUN_DIR"
+
+echo "Worktree: $WORKTREE"
+echo "Commit: $(git -C "$WORKTREE" rev-parse HEAD) plus verified local rotation change"
+echo "Import: $IMPORTED_FROM"
+echo "LeJEPA rand70; D8; relative positions; independent target rotations"
+echo "Old predictor; canonical LeJEPA SIGReg lambda=0.02; EMA=false"
+echo "Numbered checkpoints=10k; rolling last=1.5k"
+
+echo scratch | srun --ntasks=1 "$PYTHON" "$WORKTREE/proteinfoundation/jepa/train.py" \
+    run_name_="$RUN_NAME" \
+    +single=true \
+    +masked_pct=0.7 \
+    +opt.max_steps=100000 \
+    opt.lr=0.0001 \
+    baseline_run_layernorm=false \
+    baseline_run_ema=false \
+    baseline_run_predictor=false \
+    lejepa_relative_positions=true \
+    jepa_independent_target_rotation=true \
+    predictor.relative_position_max_distance=128 \
+    nn_ae.latent_z_dim=8 \
+    nn_ae.encoder.latent_z_dim=8 \
+    nn_ae.decoder.latent_z_dim=8 \
+    dataset.datamodule.batch_size=4 \
+    dataset.datamodule.num_workers=16 \
+    opt.accumulate_grad_batches=1 \
+    opt.val_check_interval=2500 \
+    log.checkpoint_every_n_steps=10000 \
+    log.last_ckpt_every_n_steps=1500 \
+    hardware.ngpus_per_node_=1 \
+    hardware.nnodes_=1 \
+    hardware.ncpus_per_task_train_=24

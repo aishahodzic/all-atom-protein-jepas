@@ -1,0 +1,49 @@
+#!/bin/bash
+#SBATCH --job-name=stb_lejepa_chem1_30k
+#SBATCH --partition=normal
+#SBATCH --qos=medium
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=16
+#SBATCH --time=06:00:00
+#SBATCH --output=/slurm-storage/aishod/projects/la-proteina/logs/stb/chem_masking/%x-%j.out
+
+set -euo pipefail
+
+REPO=/slurm-storage/aishod/projects/la-proteina
+STB="$REPO/StructTokenBench"
+STAGED_DIR="$STB/100k-checkpoints/le-jepa/chem_masking/exp1_aa_partial50"
+CKPT="$STAGED_DIR/30k.ckpt"
+RESULT_ROOT="$STB/struct_token_bench_logs/checkpoint_sweeps/le_jepa_chemmask_exp1/30k"
+
+set -a
+source "$REPO/.env"
+set +a
+
+export DS_IGNORE_CUDA_DETECTION=1
+
+if [[ "$(git -C "$REPO" branch --show-current)" != "main" ]]; then
+    echo "ERROR: StructTokenBench must run from the main branch" >&2
+    exit 1
+fi
+
+if [[ ! -s "$CKPT" ]]; then
+    echo "ERROR: missing or empty Experiment 1 step-30000 checkpoint: $CKPT" >&2
+    exit 1
+fi
+
+if [[ ! -d "$STB/pdb_data/mmcif_files" ]]; then
+    echo "ERROR: STB mmCIF data link is unavailable: $STB/pdb_data" >&2
+    exit 1
+fi
+
+mkdir -p "$RESULT_ROOT"
+export STB_LOG_ROOT="$RESULT_ROOT/logs"
+export SUMMARY_FILE="$RESULT_ROOT/summary_results.csv"
+
+cd "$STB"
+bash src/script/run_eval.sh \
+    --checkpoint=30k \
+    --experiment=le-jepa-chemmask-exp1-30k \
+    --tasks=all

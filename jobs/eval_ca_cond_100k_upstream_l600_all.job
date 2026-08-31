@@ -1,0 +1,58 @@
+#!/bin/bash
+# Full 12-task locked StructTokenBench evaluation for the ca-conditioned AE.
+#SBATCH --job-name=stb_ca_cond_100k_l600_all
+#SBATCH --partition=normal
+#SBATCH --qos=medium
+#SBATCH --nodelist=noether
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=64G
+#SBATCH --time=1-00:00:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/stb/publication_upstream/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+STB_ROOT="$PROJECT_ROOT/StructTokenBench"
+PYTHON_BIN=/slurm-storage/aishod/.conda/envs/pstbench/bin/python
+CHECKPOINT="$STB_ROOT/100k-checkpoints/ae/ca-cond/100k-EMA.ckpt"
+
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+
+if [[ "$(git -C "$PROJECT_ROOT" branch --show-current)" != "main" ]]; then
+    echo "ERROR: locked evaluation must run from main" >&2
+    exit 1
+fi
+
+if [[ ! -s "$CHECKPOINT" ]]; then
+    echo "ERROR: ca-cond 100k EMA checkpoint is missing or empty: $CHECKPOINT" >&2
+    exit 1
+fi
+
+cd "$STB_ROOT"
+
+export STB_SKIP_BOOTSTRAP=1
+export STB_SKIP_DATA_SETUP=1
+export STB_SMOKE=0
+export DS_IGNORE_CUDA_DETECTION=1
+export PYTHON_BIN
+export NUM_WORKERS=8
+export PDB_DATA_ROOT=/mnt/hopper-raid/aishod/data/struct_token_bench_pdb_data
+export STB_RELEASE_DATA_ROOT=/mnt/hopper-raid/aishod/data/struct_token_bench_release_data
+export EVALUATION_RUN_ID="slurm-${SLURM_JOB_ID}-ca-cond-baseline-100k"
+export STB_LOG_ROOT="$STB_ROOT/struct_token_bench_logs/upstream-l600-v1-full/runs/$EVALUATION_RUN_ID"
+export SUMMARY_FILE="$STB_LOG_ROOT/summary_results.csv"
+export MPLCONFIGDIR="/tmp/stb-ca-cond-l600-mpl-${SLURM_JOB_ID}"
+export TRITON_CACHE_DIR="/tmp/stb-ca-cond-l600-triton-${SLURM_JOB_ID}"
+
+mkdir -p "$STB_LOG_ROOT" "$MPLCONFIGDIR" "$TRITON_CACHE_DIR"
+
+bash src/script/run_eval.sh \
+    --protocol=upstream-l600-v1 \
+    --checkpoint=100k \
+    --experiment=ca-cond-baseline \
+    --tasks=all

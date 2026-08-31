@@ -1,0 +1,47 @@
+#!/bin/bash
+# Full-cohort preprocessing/integrity smoke for the locked publication protocol.
+# Probe optimization is limited to two train/validation batches by STB_SMOKE=1.
+# Usage: sbatch jobs/smoke_stb_upstream_l600_noether.job
+#SBATCH --job-name=stb_up_l600_smoke
+#SBATCH --partition=normal
+#SBATCH --qos=short
+#SBATCH --nodelist=noether
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=64G
+#SBATCH --time=02:30:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/publication_smoke/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+STB_ROOT="$PROJECT_ROOT/StructTokenBench"
+PYTHON_BIN=/slurm-storage/aishod/.conda/envs/pstbench/bin/python
+
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+
+cd "$STB_ROOT"
+
+export STB_SKIP_BOOTSTRAP=1
+export STB_SKIP_DATA_SETUP=1
+export STB_SMOKE=1
+export PYTHON_BIN
+export NUM_WORKERS=8
+export PDB_DATA_ROOT=/mnt/hopper-raid/aishod/data/struct_token_bench_pdb_data
+export STB_RELEASE_DATA_ROOT=/mnt/hopper-raid/aishod/data/struct_token_bench_release_data
+export STB_LOG_ROOT="$STB_ROOT/struct_token_bench_logs/upstream-l600-v1-smoke"
+export SUMMARY_FILE="$STB_LOG_ROOT/summary_results.csv"
+export MPLCONFIGDIR="/tmp/stb-up-l600-mpl-${SLURM_JOB_ID}"
+export TRITON_CACHE_DIR="/tmp/stb-up-l600-triton-${SLURM_JOB_ID}"
+
+mkdir -p "$STB_LOG_ROOT" "$MPLCONFIGDIR" "$TRITON_CACHE_DIR"
+
+bash src/script/run_eval.sh \
+    --protocol=upstream-l600-v1 \
+    --checkpoint=100k \
+    --experiment=jepa-rand-mask-50 \
+    --tasks=BindInt

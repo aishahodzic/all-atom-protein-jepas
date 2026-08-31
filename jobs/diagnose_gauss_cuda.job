@@ -1,0 +1,51 @@
+#!/bin/bash
+#SBATCH --job-name=diag_gauss_cuda
+#SBATCH --partition=normal
+#SBATCH --qos=short
+#SBATCH --nodelist=gauss
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=2G
+#SBATCH --time=00:03:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/diagnostics/%x-%j.out
+
+set +e
+
+echo "HOST=$(hostname)"
+echo "CUDA_HOME=${CUDA_HOME:-unset}"
+echo "PATH=$PATH"
+echo "LD_LIBRARY_PATH=${LD_LIBRARY_PATH:-unset}"
+command -v nvcc
+ls -ld /usr/local/cuda /usr/local/cuda-* 2>&1
+timeout 10s nvidia-smi -L
+echo "NVIDIA_SMI_EXIT=$?"
+
+/slurm-storage/aishod/.conda/envs/pstbench/bin/python - <<'PY'
+import os
+import torch
+from torch.utils.cpp_extension import CUDA_HOME
+print("torch", torch.__version__)
+print("torch_cuda", torch.version.cuda)
+print("torch_cuda_available", torch.cuda.is_available())
+print("torch_extension_CUDA_HOME", CUDA_HOME)
+print("visible_devices", os.environ.get("CUDA_VISIBLE_DEVICES"))
+PY
+
+DS_IGNORE_CUDA_DETECTION=1 \
+PYTHONPATH=/mnt/data/slurm-storage/aishod/projects/la-proteina/StructTokenBench/src \
+TRITON_CACHE_DIR=/tmp/diag-gauss-triton-${SLURM_JOB_ID} \
+/slurm-storage/aishod/.conda/envs/pstbench/bin/python - <<'PY'
+import torch
+
+assert torch.cuda.is_available()
+x = torch.ones(1024, device="cuda")
+assert x.sum().item() == 1024
+import deepspeed
+from vqvae_model import VQVAEModel
+
+print("cuda_tensor_ok", x.device)
+print("deepspeed_import_ok", deepspeed.__version__)
+print("vqvae_import_ok", VQVAEModel.__name__)
+PY
