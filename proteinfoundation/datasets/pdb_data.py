@@ -26,6 +26,20 @@ from graphein.protein.tensor.io import protein_to_pyg
 from graphein.protein.utils import download_pdb_multiprocessing
 
 
+def residue_names_to_openfold_indices(residue_names: List[str]) -> List[int]:
+    """Map three-letter residue names without dropping non-standard residues.
+
+    OpenFold reserves index 20 for ``UNK``.  Evaluation cohorts can contain
+    residues such as selenocysteine (``SEC``), even though La-Proteina's
+    training selector normally removes non-standard sequences.  Preserve the
+    residue and its available coordinates while representing its unsupported
+    amino-acid identity as ``UNK``.
+    """
+
+    unknown_index = resname_to_idx["UNK"]
+    return [resname_to_idx.get(residue, unknown_index) for residue in residue_names]
+
+
 class PDBDataSelector:
     def __init__(
         self,
@@ -697,7 +711,7 @@ class PDBLightningDataModule(BaseLightningDataModule):
         coord_mask = graph.coords != fill_value_coords
         graph.coord_mask = coord_mask[..., 0]
         graph.residue_type = torch.tensor(
-            [resname_to_idx[residue] for residue in graph.residues]
+            residue_names_to_openfold_indices(graph.residues)
         ).long()
         graph.database = "pdb"
         graph.bfactor_avg = torch.mean(graph.bfactor, dim=-1)

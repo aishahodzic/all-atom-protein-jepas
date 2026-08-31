@@ -198,6 +198,19 @@ class LaProteinaCohortTest(unittest.TestCase):
         self.assertEqual(encoded[0, 1].sum().item(), 0.0)
         self.assertEqual(encoded[0, 2].sum().item(), 1.0)
 
+    def test_nonstandard_residue_name_is_preserved_as_openfold_unknown(self):
+        from openfold.np.residue_constants import resname_to_idx
+        from proteinfoundation.datasets.pdb_data import (
+            residue_names_to_openfold_indices,
+        )
+
+        indices = residue_names_to_openfold_indices(["ALA", "SEC", "TYR"])
+
+        self.assertEqual(
+            indices,
+            [resname_to_idx["ALA"], resname_to_idx["UNK"], resname_to_idx["TYR"]],
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
