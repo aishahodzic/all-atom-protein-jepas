@@ -104,7 +104,13 @@ class EncoderTransformer(torch.nn.Module):
 
         self.ln_z = torch.nn.Identity()
 
-    def forward(self, batch: Dict[str, torch.Tensor]) -> Dict[str, torch.Tensor]:
+    def forward(
+        self,
+        batch: Dict[str, torch.Tensor],
+        *,
+        query_mask: torch.Tensor | None = None,
+        key_mask: torch.Tensor | None = None,
+    ) -> Dict[str, torch.Tensor]:
         """
         Runs the network.
 
@@ -115,7 +121,26 @@ class EncoderTransformer(torch.nn.Module):
             Dictionary
             ...
         """
-        mask = batch["mask_dict"]["coords"][..., 0, 0]  # [b, n] boolean
+        historical_mask = batch["mask_dict"]["coords"][..., 0, 0]  # [b, n]
+        if query_mask is None:
+            query_mask = historical_mask
+        if key_mask is None:
+            key_mask = query_mask
+        if (
+            query_mask.shape != historical_mask.shape
+            or key_mask.shape != historical_mask.shape
+        ):
+            raise ValueError(
+                "query_mask and key_mask must match the encoder residue layout "
+                f"{tuple(historical_mask.shape)}"
+            )
+        if query_mask.dtype != torch.bool or key_mask.dtype != torch.bool:
+            raise TypeError("query_mask and key_mask must be boolean")
+        if self.update_pair_repr and not torch.equal(query_mask, key_mask):
+            raise ValueError(
+                "asymmetric query/key masks are unsupported when update_pair_repr=true"
+            )
+        mask = query_mask
 
         # Conditioning variables
         c = self.cond_factory(batch)  # [b, n, dim_cond]
@@ -130,7 +155,7 @@ class EncoderTransformer(torch.nn.Module):
         # Run trunk
         for i in range(self.nlayers):
             seqs = self.transformer_layers[i](
-                seqs, pair_rep, c, mask
+                seqs, pair_rep, c, mask, key_mask=key_mask
             )  # [b, n, token_dim]
 
             if self.update_pair_repr:

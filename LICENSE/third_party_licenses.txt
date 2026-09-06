@@ -7,6 +7,8 @@ We directly use code from the following open source projects (we include copies 
 - protein-docking (https://github.com/MattMcPartlon/protein-docking), MIT license (https://github.com/MattMcPartlon/protein-docking/blob/main/LICENSE.md)
 - alphafold3-pytorch (https://github.com/lucidrains/alphafold3-pytorch), MIT license (https://github.com/lucidrains/alphafold3-pytorch/blob/main/LICENSE)
 - ProteinMPNN (https://github.com/dauparas/ProteinMPNN), MIT license (https://github.com/dauparas/ProteinMPNN/blob/main/LICENSE)
+- stable-pretraining (https://github.com/galilai-group/stable-pretraining), MIT license, exact revision 3001802f6c8afcfaae99a5a3760edd952508d1e0. The canonical-LeJEPA learning-rate scheduler is vendored with its license in proteinfoundation/vendor/stable_pretraining/.
+- LeVJEPA (https://github.com/MLO-lab/LeVJEPA), MIT root license, exact revision 941526c428aa513a5bdfa38697724fda794d8496. The canonical evaluation-only WeightEMA callback is adapted with attribution in proteinfoundation/jepa/canonical_lejepa_ema.py; its license is retained in proteinfoundation/jepa/LEVJEPA_MIT_LICENSE.
 
 
 **LICENSES**

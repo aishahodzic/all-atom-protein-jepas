@@ -1,0 +1,101 @@
+# Projector-free canonical protein LeJEPA V1.  Scientific defaults are locked
+# here rather than inherited from historical JEPA training.
+defaults:
+  - nn_ae: nn_130m
+  - dataset: pdb/pdb_train_canonical_lejepa
+  - _self_
+
+run_name_: canonical_lejepa_v1_100k
+seed: 42
+independent_view_rotations: false
+alignment_level: protein
+masked_kv_mode: visible_only
+# Execution-only optimization used when alignment_level=residue. Protein-mode
+# canonical training does not enter the checkpointed residue-view path.
+residue_view_checkpointing: true
+
+views:
+  num_local_views: 4
+  global_mask_pct: 0.20
+  local_mask_pct: 0.80
+  cropping: false
+  rotation: false
+  physical_token_drop: false
+  # Canonical production uses audited physical packing. The dense
+  # mask-in-place formulation remains available as the reference/fallback via
+  # an explicit views.packed_views=false override.
+  packed_views: true
+
+readout:
+  type: mean_visible_residues
+
+sigreg:
+  # Reference behavior is protein_mean. The residue-alignment ablation opts
+  # into protein_centered_residue explicitly at launch time.
+  input: protein_mean
+  weight: 0.02
+  knots: 17
+  num_proj: 1024
+  normalize_by_n: false
+
+optimizer:
+  type: AdamW
+  lr: 4.0e-4
+  weight_decay: 0.04
+  betas: [0.9, 0.95]
+  amsgrad: false
+  exclude_bias_norm: true
+
+schedule:
+  type: LinearWarmupCosineAnnealing
+  total_steps: 100000
+  peak_step: 12000
+  start_lr: 1.0e-4
+  end_lr: 4.0e-4
+  interval: step
+
+ema:
+  enabled: true
+  decay: 0.9999
+  update_every: 32
+  start_step: 0
+  include: ["encoder"]
+  exclude: []
+  save_key: state_dict_ema
+  device: cuda
+  dtype: float32
+
+trainer:
+  accelerator: gpu
+  devices: 2
+  num_nodes: 1
+  strategy: ddp
+  # ClusterSampler already shards by rank/world size.  Lightning must not
+  # wrap it in another distributed sampler.
+  use_distributed_sampler: false
+  precision: bf16-mixed
+  max_steps: 100000
+  max_epochs: -1
+  accumulate_grad_batches: 1
+  limit_val_batches: 0
+  num_sanity_val_steps: 0
+  gradient_clip_val: null
+  log_every_n_steps: 1
+  enable_checkpointing: true
+
+checkpoint:
+  dirpath: null
+  filename: "step-{step:08d}"
+  every_n_train_steps: 10000
+  save_top_k: -1
+  save_last: true
+  save_weights_only: false
+  auto_insert_metric_name: false
+
+wandb:
+  enabled: true
+  project: canonical-protein-lejepa
+  entity: aisha-hodzic-org
+
+resume:
+  ckpt_path: null

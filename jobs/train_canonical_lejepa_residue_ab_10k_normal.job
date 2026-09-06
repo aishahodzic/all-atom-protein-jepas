@@ -1,0 +1,67 @@
+#!/bin/bash
+#SBATCH --job-name=canon_res_ab_10k
+#SBATCH --partition=normal
+#SBATCH --qos=medium
+#SBATCH --nodes=1
+#SBATCH --ntasks=2
+#SBATCH --ntasks-per-node=2
+#SBATCH --gres=gpu:2
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=64G
+#SBATCH --time=1-00:00:00
+#SBATCH --array=0-1
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/canonical_lejepa/%x-%A_%a.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+PYTHON_BIN=/slurm-storage/aishod/envs/la-proteina/bin/python
+MODES=(iterative visible_only)
+RUN_NAMES=(
+    canonical_lejepa_residue_iterative_10k
+    canonical_lejepa_residue_visible_only_10k
+)
+
+MODE=${MODES[$SLURM_ARRAY_TASK_ID]}
+RUN_NAME=${RUN_NAMES[$SLURM_ARRAY_TASK_ID]}
+
+cd "$PROJECT_ROOT"
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+export PYTHONPATH="$PROJECT_ROOT${PYTHONPATH:+:$PYTHONPATH}"
+export PATH="/slurm-storage/aishod/envs/la-proteina/bin:$PATH"
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+export MASTER_ADDR=127.0.0.1
+export MASTER_PORT=$((20000 + SLURM_JOB_ID % 20000))
+export TORCH_NCCL_ASYNC_ERROR_HANDLING=1
+export HYDRA_FULL_ERROR=1
+export MPLCONFIGDIR="/tmp/${RUN_NAME}-${SLURM_ARRAY_JOB_ID}-${SLURM_ARRAY_TASK_ID}"
+mkdir -p "$MPLCONFIGDIR" "$PROJECT_ROOT/logs/canonical_lejepa"
+
+echo "Launching matched residue-level canonical LeJEPA run: mode=$MODE run=$RUN_NAME"
+echo "DDP rendezvous: ${MASTER_ADDR}:${MASTER_PORT}"
+
+srun --ntasks=2 --kill-on-bad-exit=1 --wait=30 --label "$PYTHON_BIN" \
+    -m proteinfoundation.jepa.train_canonical_lejepa \
+    run_name_="$RUN_NAME" \
+    seed=42 \
+    alignment_level=residue \
+    masked_kv_mode="$MODE" \
+    residue_view_checkpointing=true \
+    independent_view_rotations=false \
+    views.packed_views=false \
+    dataset.datamodule.batch_size=8 \
+    trainer.devices=2 \
+    trainer.num_nodes=1 \
+    trainer.strategy=ddp \
+    trainer.use_distributed_sampler=false \
+    trainer.precision=bf16-mixed \
+    trainer.accumulate_grad_batches=1 \
+    trainer.max_steps=10000 \
+    schedule.total_steps=100000 \
+    schedule.peak_step=12000 \
+    ema.enabled=true \
+    checkpoint.every_n_train_steps=10000 \
+    checkpoint.save_last=true \
+    checkpoint.save_weights_only=false

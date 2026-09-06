@@ -185,7 +185,7 @@ JEPA_ENCODER_CFG="${JEPA_ENCODER_CFG:-$CKPT_ROOT/shared/exp_config_jepa_nn130m.j
 # since WrappedLaProteinaTokenizer reads each checkpoint's own saved config).
 AE1_CKPT="${AE1_CKPT:-$(dirname "$REPO_DIR")/checkpoints_laproteina/AE1_ucond_512.ckpt}"
 
-EXPERIMENT_NAMES=(ca-cond-baseline fully-latent jepa-rand-mask-50 jepa-new-predictor le-jepa-new-predictor le-jepa-new-predictor-30k le-jepa-new-predictor-40k le-jepa-new-predictor-60k le-jepa-new-predictor-80k le-jepa-spatial3d-block-30k le-jepa-spatial3d-block-60k le-jepa-spatial3d-block-100k le-jepa-chemmask-exp1-30k le-jepa-chemmask-exp1-100k le-jepa-chemmask-exp3-30k le-jepa-chemmask-exp3-100k jepa-rand-mask-70 jepa-mutation le-jepa-rand-mask-50 le-jepa-rand-mask-70 le-jepa-mutation le-jepa-rand50-relative-pos-100k le-jepa-rand70-relative-pos-100k le-jepa-rand70-relative-pos-rotation-100k le-jepa-rand70-relative-pos-rotation-sigreg-0p01-100k le-jepa-spatial3d-relative-pos-d8-100k jepa-rand70-d64-independent-rotations-100k jepa-rand-mask-70-dim64 le-jepa-rand-mask-70-dim64 jepa-rand-mask-50-selfattn jepa-rand-mask-70-selfattn le-jepa-rand-mask-50-200k ae1-external random-init random-init-64 jepa-rand50-control-30k jepa-rand50-ema-30k jepa-rand50-layernorm-30k jepa-rand50-predictor-30k)
+EXPERIMENT_NAMES=(ca-cond-baseline fully-latent jepa-rand-mask-50 jepa-new-predictor le-jepa-new-predictor le-jepa-new-predictor-30k le-jepa-new-predictor-40k le-jepa-new-predictor-60k le-jepa-new-predictor-80k le-jepa-spatial3d-block-30k le-jepa-spatial3d-block-60k le-jepa-spatial3d-block-100k le-jepa-chemmask-exp1-30k le-jepa-chemmask-exp1-100k le-jepa-chemmask-exp3-30k le-jepa-chemmask-exp3-100k jepa-rand-mask-70 jepa-mutation le-jepa-rand-mask-50 le-jepa-rand-mask-70 le-jepa-mutation le-jepa-rand50-relative-pos-100k le-jepa-rand70-relative-pos-100k le-jepa-rand70-relative-pos-rotation-100k le-jepa-rand70-relative-pos-rotation-sigreg-0p01-100k le-jepa-spatial3d-relative-pos-d8-100k jepa-rand70-d64-independent-rotations-100k jepa-rand-mask-70-dim64 le-jepa-rand-mask-70-dim64 jepa-rand-mask-50-selfattn jepa-rand-mask-70-selfattn le-jepa-rand-mask-50-200k ae1-external random-init random-init-64 jepa-rand50-control-30k jepa-rand50-ema-30k jepa-rand50-layernorm-30k jepa-rand50-predictor-30k canonical-lejepa-v1-ema-step10k canonical-lejepa-residue-iterative-ema-step10k canonical-lejepa-residue-visible-only-ema-step10k canonical-lejepa-residue-iterative-protein-centered-sigreg-ema-step2k canonical-lejepa-residue-visible-only-protein-centered-sigreg-ema-step2k canonical-lejepa-v1-ema-step30k canonical-lejepa-v1-ema-step40k canonical-lejepa-v1-ema-step50k canonical-lejepa-v1-ema-step60k canonical-lejepa-v1-ema-step70k canonical-lejepa-v1-ema-step100k canonical-lejepa-v1-rotations-ema-step10k canonical-lejepa-v1-rotations-seed43-ema-step10k canonical-lejepa-v1-rotations-raw-step10k canonical-lejepa-v1-rotations-raw-step30k canonical-lejepa-v1-rotations-raw-step50k canonical-lejepa-v1-rotations-ema-step30k canonical-lejepa-v1-rotations-ema-step50k canonical-lejepa-v1-rotations-ema-step70k canonical-lejepa-v1-rotations-ema-step100k)
 
 experiment_model_args () {
     # sets TOKENIZERNAME and EXTRA_MODEL_ARGS for experiment name $1
@@ -280,6 +280,106 @@ experiment_model_args () {
             TOKENIZERNAME="laproteina_le_jepa_spatial3d_relative_pos_d8_100k"
             : "${LEJEPA_SPATIAL3D_RELATIVE_POS_D8_CKPT:?Set LEJEPA_SPATIAL3D_RELATIVE_POS_D8_CKPT to the final 100k checkpoint}"
             EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$LEJEPA_SPATIAL3D_RELATIVE_POS_D8_CKPT tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        canonical-lejepa-v1-ema-step10k)
+            TOKENIZERNAME="laproteina_canonical_lejepa_v1_ema_step10k"
+            : "${CANONICAL_LEJEPA_V1_EMA_STEP10K_CKPT:?Set CANONICAL_LEJEPA_V1_EMA_STEP10K_CKPT to the staged EMA step-10k checkpoint}"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CANONICAL_LEJEPA_V1_EMA_STEP10K_CKPT tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        canonical-lejepa-residue-iterative-ema-step10k)
+            TOKENIZERNAME="laproteina_canonical_lejepa_residue_iterative_ema_step10k"
+            : "${CANONICAL_LEJEPA_RESIDUE_ITERATIVE_EMA_STEP10K_CKPT:?Set CANONICAL_LEJEPA_RESIDUE_ITERATIVE_EMA_STEP10K_CKPT to the staged iterative-residue EMA step-10k checkpoint}"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CANONICAL_LEJEPA_RESIDUE_ITERATIVE_EMA_STEP10K_CKPT tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        canonical-lejepa-residue-visible-only-ema-step10k)
+            TOKENIZERNAME="laproteina_canonical_lejepa_residue_visible_only_ema_step10k"
+            : "${CANONICAL_LEJEPA_RESIDUE_VISIBLE_ONLY_EMA_STEP10K_CKPT:?Set CANONICAL_LEJEPA_RESIDUE_VISIBLE_ONLY_EMA_STEP10K_CKPT to the staged visible-only-residue EMA step-10k checkpoint}"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CANONICAL_LEJEPA_RESIDUE_VISIBLE_ONLY_EMA_STEP10K_CKPT tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        canonical-lejepa-residue-iterative-protein-centered-sigreg-ema-step2k)
+            TOKENIZERNAME="laproteina_canonical_lejepa_residue_iterative_protein_centered_sigreg_ema_step2k"
+            : "${CANONICAL_LEJEPA_RESIDUE_ITERATIVE_PROTEIN_CENTERED_SIGREG_EMA_STEP2K_CKPT:?Set CANONICAL_LEJEPA_RESIDUE_ITERATIVE_PROTEIN_CENTERED_SIGREG_EMA_STEP2K_CKPT to the staged iterative protein-centred-residue-SIGReg EMA step-2k checkpoint}"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CANONICAL_LEJEPA_RESIDUE_ITERATIVE_PROTEIN_CENTERED_SIGREG_EMA_STEP2K_CKPT tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        canonical-lejepa-residue-visible-only-protein-centered-sigreg-ema-step2k)
+            TOKENIZERNAME="laproteina_canonical_lejepa_residue_visible_only_protein_centered_sigreg_ema_step2k"
+            : "${CANONICAL_LEJEPA_RESIDUE_VISIBLE_ONLY_PROTEIN_CENTERED_SIGREG_EMA_STEP2K_CKPT:?Set CANONICAL_LEJEPA_RESIDUE_VISIBLE_ONLY_PROTEIN_CENTERED_SIGREG_EMA_STEP2K_CKPT to the staged visible-only protein-centred-residue-SIGReg EMA step-2k checkpoint}"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CANONICAL_LEJEPA_RESIDUE_VISIBLE_ONLY_PROTEIN_CENTERED_SIGREG_EMA_STEP2K_CKPT tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        canonical-lejepa-v1-ema-step30k)
+            TOKENIZERNAME="laproteina_canonical_lejepa_v1_ema_step30k"
+            : "${CANONICAL_LEJEPA_V1_EMA_STEP30K_CKPT:?Set CANONICAL_LEJEPA_V1_EMA_STEP30K_CKPT to the staged EMA step-30k checkpoint}"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CANONICAL_LEJEPA_V1_EMA_STEP30K_CKPT tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        canonical-lejepa-v1-ema-step40k)
+            TOKENIZERNAME="laproteina_canonical_lejepa_v1_ema_step40k"
+            : "${CANONICAL_LEJEPA_V1_EMA_STEP40K_CKPT:?Set CANONICAL_LEJEPA_V1_EMA_STEP40K_CKPT to the staged EMA step-40k checkpoint}"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CANONICAL_LEJEPA_V1_EMA_STEP40K_CKPT tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        canonical-lejepa-v1-ema-step50k)
+            TOKENIZERNAME="laproteina_canonical_lejepa_v1_ema_step50k"
+            : "${CANONICAL_LEJEPA_V1_EMA_STEP50K_CKPT:?Set CANONICAL_LEJEPA_V1_EMA_STEP50K_CKPT to the staged EMA step-50k checkpoint}"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CANONICAL_LEJEPA_V1_EMA_STEP50K_CKPT tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        canonical-lejepa-v1-ema-step60k)
+            TOKENIZERNAME="laproteina_canonical_lejepa_v1_ema_step60k"
+            : "${CANONICAL_LEJEPA_V1_EMA_STEP60K_CKPT:?Set CANONICAL_LEJEPA_V1_EMA_STEP60K_CKPT to the staged EMA step-60k checkpoint}"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CANONICAL_LEJEPA_V1_EMA_STEP60K_CKPT tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        canonical-lejepa-v1-ema-step70k)
+            TOKENIZERNAME="laproteina_canonical_lejepa_v1_ema_step70k"
+            : "${CANONICAL_LEJEPA_V1_EMA_STEP70K_CKPT:?Set CANONICAL_LEJEPA_V1_EMA_STEP70K_CKPT to the staged EMA step-70k checkpoint}"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CANONICAL_LEJEPA_V1_EMA_STEP70K_CKPT tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        canonical-lejepa-v1-ema-step100k)
+            TOKENIZERNAME="laproteina_canonical_lejepa_v1_ema_step100k"
+            : "${CANONICAL_LEJEPA_V1_EMA_STEP100K_CKPT:?Set CANONICAL_LEJEPA_V1_EMA_STEP100K_CKPT to the staged EMA step-100k checkpoint}"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CANONICAL_LEJEPA_V1_EMA_STEP100K_CKPT tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        canonical-lejepa-v1-rotations-ema-step10k)
+            TOKENIZERNAME="laproteina_canonical_lejepa_v1_rotations_ema_step10k"
+            : "${CANONICAL_LEJEPA_V1_ROTATIONS_EMA_STEP10K_CKPT:?Set CANONICAL_LEJEPA_V1_ROTATIONS_EMA_STEP10K_CKPT to the staged EMA step-10k checkpoint}"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CANONICAL_LEJEPA_V1_ROTATIONS_EMA_STEP10K_CKPT tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        canonical-lejepa-v1-rotations-seed43-ema-step10k)
+            TOKENIZERNAME="laproteina_canonical_lejepa_v1_rotations_seed43_ema_step10k"
+            : "${CANONICAL_LEJEPA_V1_ROTATIONS_SEED43_EMA_STEP10K_CKPT:?Set CANONICAL_LEJEPA_V1_ROTATIONS_SEED43_EMA_STEP10K_CKPT to the staged seed-43 EMA step-10k checkpoint}"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CANONICAL_LEJEPA_V1_ROTATIONS_SEED43_EMA_STEP10K_CKPT tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        canonical-lejepa-v1-rotations-raw-step10k)
+            TOKENIZERNAME="laproteina_canonical_lejepa_v1_rotations_raw_step10k"
+            : "${CANONICAL_LEJEPA_V1_ROTATIONS_RAW_STEP10K_CKPT:?Set CANONICAL_LEJEPA_V1_ROTATIONS_RAW_STEP10K_CKPT to the staged raw step-10k checkpoint}"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CANONICAL_LEJEPA_V1_ROTATIONS_RAW_STEP10K_CKPT tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        canonical-lejepa-v1-rotations-raw-step30k)
+            TOKENIZERNAME="laproteina_canonical_lejepa_v1_rotations_raw_step30k"
+            : "${CANONICAL_LEJEPA_V1_ROTATIONS_RAW_STEP30K_CKPT:?Set CANONICAL_LEJEPA_V1_ROTATIONS_RAW_STEP30K_CKPT to the staged raw step-30k checkpoint}"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CANONICAL_LEJEPA_V1_ROTATIONS_RAW_STEP30K_CKPT tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        canonical-lejepa-v1-rotations-raw-step50k)
+            TOKENIZERNAME="laproteina_canonical_lejepa_v1_rotations_raw_step50k"
+            : "${CANONICAL_LEJEPA_V1_ROTATIONS_RAW_STEP50K_CKPT:?Set CANONICAL_LEJEPA_V1_ROTATIONS_RAW_STEP50K_CKPT to the staged raw step-50k checkpoint}"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CANONICAL_LEJEPA_V1_ROTATIONS_RAW_STEP50K_CKPT tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        canonical-lejepa-v1-rotations-ema-step30k)
+            TOKENIZERNAME="laproteina_canonical_lejepa_v1_rotations_ema_step30k"
+            : "${CANONICAL_LEJEPA_V1_ROTATIONS_EMA_STEP30K_CKPT:?Set CANONICAL_LEJEPA_V1_ROTATIONS_EMA_STEP30K_CKPT to the staged EMA step-30k checkpoint}"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CANONICAL_LEJEPA_V1_ROTATIONS_EMA_STEP30K_CKPT tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        canonical-lejepa-v1-rotations-ema-step50k)
+            TOKENIZERNAME="laproteina_canonical_lejepa_v1_rotations_ema_step50k"
+            : "${CANONICAL_LEJEPA_V1_ROTATIONS_EMA_STEP50K_CKPT:?Set CANONICAL_LEJEPA_V1_ROTATIONS_EMA_STEP50K_CKPT to the staged EMA step-50k checkpoint}"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CANONICAL_LEJEPA_V1_ROTATIONS_EMA_STEP50K_CKPT tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        canonical-lejepa-v1-rotations-ema-step70k)
+            TOKENIZERNAME="laproteina_canonical_lejepa_v1_rotations_ema_step70k"
+            : "${CANONICAL_LEJEPA_V1_ROTATIONS_EMA_STEP70K_CKPT:?Set CANONICAL_LEJEPA_V1_ROTATIONS_EMA_STEP70K_CKPT to the staged EMA step-70k checkpoint}"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CANONICAL_LEJEPA_V1_ROTATIONS_EMA_STEP70K_CKPT tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        canonical-lejepa-v1-rotations-ema-step100k)
+            TOKENIZERNAME="laproteina_canonical_lejepa_v1_rotations_ema_step100k"
+            : "${CANONICAL_LEJEPA_V1_ROTATIONS_EMA_STEP100K_CKPT:?Set CANONICAL_LEJEPA_V1_ROTATIONS_EMA_STEP100K_CKPT to the staged EMA step-100k checkpoint}"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CANONICAL_LEJEPA_V1_ROTATIONS_EMA_STEP100K_CKPT tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
             ;;
         jepa-rand70-d64-independent-rotations-100k)
             TOKENIZERNAME="laproteina_jepa_rand70_d64_independent_rotations_100k"

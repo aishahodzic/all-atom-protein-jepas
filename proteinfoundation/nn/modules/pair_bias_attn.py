@@ -142,18 +142,23 @@ class MultiHeadBiasedAttentionADALN_MM(torch.nn.Module):
         )
         self.scale_output = AdaptiveOutputScale(dim=dim_token, dim_cond=dim_cond)
 
-    def forward(self, x, pair_rep, cond, mask):
+    def forward(self, x, pair_rep, cond, mask, key_mask=None):
         """
         Args:
             x: Input sequence representation, shape [b, n, dim_token]
             cond: Conditioning variables, shape [b, n, dim_cond]
             pair_rep: Pair represnetation, shape [b, n, n, dim_pair]
-            mask: Binary mask, shape [b, n]
+            mask: Binary query/output mask, shape [b, n]
+            key_mask: Optional binary key/value mask, shape [b, n]. If omitted,
+                the query mask is reused, preserving the historical symmetric
+                attention behavior.
 
         Returns:
             Updated sequence representation, shape [b, n, dim_token].
         """
-        pair_mask = mask[:, :, None] * mask[:, None, :]  # [b, n, n]
+        if key_mask is None:
+            key_mask = mask
+        pair_mask = mask[:, :, None] * key_mask[:, None, :]  # [b, n, n]
         x = self.adaln(x, cond, mask)
         x = self.mha(node_feats=x, pair_feats=pair_rep, mask=pair_mask)
         x = self.scale_output(x, cond, mask)

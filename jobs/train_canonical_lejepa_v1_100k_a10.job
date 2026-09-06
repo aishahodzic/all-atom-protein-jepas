@@ -1,0 +1,41 @@
+#!/bin/bash
+#SBATCH --job-name=canonical_lejepa_v1_100k
+#SBATCH --partition=normal
+#SBATCH --qos=long
+#SBATCH --nodes=1
+#SBATCH --ntasks=2
+#SBATCH --ntasks-per-node=2
+#SBATCH --gres=gpu:2
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=64G
+# The two-GPU production smoke sustained ~1.80 optimizer steps/s, implying
+# ~15.4 hours for 100k steps; 24 hours leaves margin for I/O/checkpoints.
+#SBATCH --time=24:00:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/canonical_lejepa/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+PYTHON_BIN=/slurm-storage/aishod/envs/la-proteina/bin/python
+
+cd "$PROJECT_ROOT"
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+export PYTHONPATH="$PROJECT_ROOT${PYTHONPATH:+:$PYTHONPATH}"
+export PATH="/slurm-storage/aishod/envs/la-proteina/bin:$PATH"
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+export MPLCONFIGDIR="/tmp/canonical-lejepa-v1-${SLURM_JOB_ID}"
+mkdir -p "$MPLCONFIGDIR" "$PROJECT_ROOT/logs/canonical_lejepa"
+
+TRAIN_ARGS=()
+if [[ -n "${CANONICAL_RESUME_CKPT:-}" ]]; then
+    [[ -f "$CANONICAL_RESUME_CKPT" ]] || {
+        echo "Resume checkpoint does not exist: $CANONICAL_RESUME_CKPT" >&2
+        exit 1
+    }
+    TRAIN_ARGS+=("resume.ckpt_path=$CANONICAL_RESUME_CKPT")
+fi
+
+srun --ntasks=2 "$PYTHON_BIN" -m proteinfoundation.jepa.train_canonical_lejepa \
+    "${TRAIN_ARGS[@]}"

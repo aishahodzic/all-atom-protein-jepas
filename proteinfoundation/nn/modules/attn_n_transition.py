@@ -58,8 +58,8 @@ class MultiheadAttnAndTransition(torch.nn.Module):
             dim=dim_token, dim_cond=dim_cond, expansion_factor=expansion_factor
         )
 
-    def _apply_mha(self, x, pair_rep, cond, mask):
-        x_attn = self.mhba(x, pair_rep, cond, mask)
+    def _apply_mha(self, x, pair_rep, cond, mask, key_mask=None):
+        x_attn = self.mhba(x, pair_rep, cond, mask, key_mask=key_mask)
         if self.residual_mha:
             x_attn = x_attn + x
         return x_attn * mask[..., None]
@@ -70,12 +70,14 @@ class MultiheadAttnAndTransition(torch.nn.Module):
             x_tr = x_tr + x
         return x_tr * mask[..., None]
 
-    def forward(self, x, pair_rep, cond, mask):
+    def forward(self, x, pair_rep, cond, mask, key_mask=None):
         """
         Args:
             x: Input sequence representation, shape [b, n, dim_token]
             cond: conditioning variables, shape [b, n, dim_cond]
-            mask: binary mask, shape [b, n]
+            mask: binary query/output mask, shape [b, n]
+            key_mask: optional binary key/value mask, shape [b, n]. If omitted,
+                ``mask`` is used for both sides of attention.
             pair_rep: Pair representation (if provided, if no bias will be ignored), shape [b, n, n, dim_pair] or None
 
         Returns:
@@ -83,10 +85,10 @@ class MultiheadAttnAndTransition(torch.nn.Module):
         """
         x = x * mask[..., None]
         if self.parallel:
-            x = self._apply_mha(x, pair_rep, cond, mask) + self._apply_transition(
-                x, cond, mask
-            )
+            x = self._apply_mha(
+                x, pair_rep, cond, mask, key_mask=key_mask
+            ) + self._apply_transition(x, cond, mask)
         else:
-            x = self._apply_mha(x, pair_rep, cond, mask)
+            x = self._apply_mha(x, pair_rep, cond, mask, key_mask=key_mask)
             x = self._apply_transition(x, cond, mask)
         return x * mask[..., None]
