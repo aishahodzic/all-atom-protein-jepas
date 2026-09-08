@@ -730,6 +730,12 @@ def main() -> None:
         checkpoint_id: stage_and_validate(checkpoint_id, spec)
         for checkpoint_id, spec in RUNS.items()
     }
+    if ANALYSIS_PROFILE == EXTERNAL_PROFILE:
+        # The historical loader normally reads a shared config shipped with
+        # StructTokenBench. Jarvis has the canonical run's complete saved
+        # config instead, which is the stricter source for this checkpoint.
+        only_spec = next(iter(RUNS.values()))
+        checkpoint_registry.JEPA_ENCODER_CFG = pathlib.Path(only_spec["config"])
     checkpoint_ids = list(RUNS)
     extract(checkpoint_ids=checkpoint_ids, device="cuda")
 
