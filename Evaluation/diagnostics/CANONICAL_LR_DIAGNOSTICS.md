@@ -23,6 +23,17 @@ encoder and validates that the checkpoint is the protein-level, per-view
 SIGReg, fixed-96/48 crop, packed-view, independent-local, global-batch-96
 recipe. It intentionally permits LR schedule differences.
 
+The exact min-length-50 evaluation cohort requires four files in
+`$DATA_PATH/pdb_train`: the selector CSV, its `seq_*.fasta`, and the matching
+`cluster_seqid_0.5_*_test.{fasta,tsv}`. The launcher verifies their frozen
+SHA256 hashes before loading a checkpoint, so a regenerated or mismatched split
+fails instead of silently changing the 5,224-protein cohort.
+
+It also requires the frozen label cache at
+`Evaluation/linear_probing/latents/labels.pt`. Its hash is checked as well;
+this avoids recomputing SS/RSA labels with potentially different dependency
+versions and makes the first Jarvis audit substantially faster.
+
 Results are written under `Evaluation/diagnostics/results/` as one CSV and one
 JSON per run. Compare them with the committed historical raw-10k CSV/JSON for
 `canonical_lejepa_crop_fixed96_protein_perview_sigreg_b96_independent_locals_30k`.
