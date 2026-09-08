@@ -562,7 +562,7 @@ class CanonicalResidueAttentionModeTest(unittest.TestCase):
                 )
             with self.subTest(packed_residue_mode=mode):
                 with self.assertRaisesRegex(
-                    ValueError, "residue alignment requires views.packed_views=false"
+                    ValueError, "permits views.packed_views=true only"
                 ):
                     CanonicalLeJEPAModel(
                         tiny_canonical_config(

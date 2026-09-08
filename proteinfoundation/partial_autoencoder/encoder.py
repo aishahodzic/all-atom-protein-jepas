@@ -110,6 +110,7 @@ class EncoderTransformer(torch.nn.Module):
         *,
         query_mask: torch.Tensor | None = None,
         key_mask: torch.Tensor | None = None,
+        compact_kv: bool = False,
     ) -> Dict[str, torch.Tensor]:
         """
         Runs the network.
@@ -140,6 +141,10 @@ class EncoderTransformer(torch.nn.Module):
             raise ValueError(
                 "asymmetric query/key masks are unsupported when update_pair_repr=true"
             )
+        if compact_kv and torch.equal(query_mask, key_mask):
+            raise ValueError(
+                "compact_kv is reserved for asymmetric visible-only K/V attention"
+            )
         mask = query_mask
 
         # Conditioning variables
@@ -155,7 +160,12 @@ class EncoderTransformer(torch.nn.Module):
         # Run trunk
         for i in range(self.nlayers):
             seqs = self.transformer_layers[i](
-                seqs, pair_rep, c, mask, key_mask=key_mask
+                seqs,
+                pair_rep,
+                c,
+                mask,
+                key_mask=key_mask,
+                compact_kv=compact_kv,
             )  # [b, n, token_dim]
 
             if self.update_pair_repr:

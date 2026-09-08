@@ -58,8 +58,17 @@ class MultiheadAttnAndTransition(torch.nn.Module):
             dim=dim_token, dim_cond=dim_cond, expansion_factor=expansion_factor
         )
 
-    def _apply_mha(self, x, pair_rep, cond, mask, key_mask=None):
-        x_attn = self.mhba(x, pair_rep, cond, mask, key_mask=key_mask)
+    def _apply_mha(
+        self, x, pair_rep, cond, mask, key_mask=None, compact_kv: bool = False
+    ):
+        x_attn = self.mhba(
+            x,
+            pair_rep,
+            cond,
+            mask,
+            key_mask=key_mask,
+            compact_kv=compact_kv,
+        )
         if self.residual_mha:
             x_attn = x_attn + x
         return x_attn * mask[..., None]
@@ -70,7 +79,9 @@ class MultiheadAttnAndTransition(torch.nn.Module):
             x_tr = x_tr + x
         return x_tr * mask[..., None]
 
-    def forward(self, x, pair_rep, cond, mask, key_mask=None):
+    def forward(
+        self, x, pair_rep, cond, mask, key_mask=None, compact_kv: bool = False
+    ):
         """
         Args:
             x: Input sequence representation, shape [b, n, dim_token]
@@ -78,6 +89,7 @@ class MultiheadAttnAndTransition(torch.nn.Module):
             mask: binary query/output mask, shape [b, n]
             key_mask: optional binary key/value mask, shape [b, n]. If omitted,
                 ``mask`` is used for both sides of attention.
+            compact_kv: physically gather the active key/value rows.
             pair_rep: Pair representation (if provided, if no bias will be ignored), shape [b, n, n, dim_pair] or None
 
         Returns:
@@ -86,9 +98,21 @@ class MultiheadAttnAndTransition(torch.nn.Module):
         x = x * mask[..., None]
         if self.parallel:
             x = self._apply_mha(
-                x, pair_rep, cond, mask, key_mask=key_mask
+                x,
+                pair_rep,
+                cond,
+                mask,
+                key_mask=key_mask,
+                compact_kv=compact_kv,
             ) + self._apply_transition(x, cond, mask)
         else:
-            x = self._apply_mha(x, pair_rep, cond, mask, key_mask=key_mask)
+            x = self._apply_mha(
+                x,
+                pair_rep,
+                cond,
+                mask,
+                key_mask=key_mask,
+                compact_kv=compact_kv,
+            )
             x = self._apply_transition(x, cond, mask)
         return x * mask[..., None]

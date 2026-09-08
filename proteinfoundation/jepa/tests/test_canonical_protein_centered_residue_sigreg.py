@@ -9,6 +9,7 @@ import torch
 from torch import nn
 
 import proteinfoundation.jepa.canonical_lejepa_model as canonical_model_module
+from proteinfoundation.jepa.canonical_sigreg import CanonicalSIGReg
 from proteinfoundation.jepa.canonical_lejepa_model import (
     CANONICAL_NUM_VIEWS,
     CanonicalLeJEPAModel,
@@ -156,6 +157,156 @@ class ProteinCenteredResidueSIGRegTest(unittest.TestCase):
         expected[:, :, 2] = -1.0 / 3.0
         torch.testing.assert_close(values.grad, expected, rtol=1e-12, atol=1e-12)
 
+    def test_independent_k4_keeps_four_separate_samples_per_view(self):
+        values = torch.arange(2 * 5 * 9 * 2, dtype=torch.float64).reshape(
+            2, 5, 9, 2
+        )
+        masks = torch.zeros(2, 5, 9, dtype=torch.bool)
+        sampled_indices = torch.empty(2, 5, 4, dtype=torch.long)
+        for protein in range(2):
+            for view in range(5):
+                rows = torch.tensor(
+                    sorted({
+                        (protein + view) % 9,
+                        (protein + view + 2) % 9,
+                        (protein + view + 4) % 9,
+                        (protein + view + 6) % 9,
+                        (protein + view + 8) % 9,
+                    })
+                )
+                masks[protein, view, rows] = True
+                sampled_indices[protein, view] = rows[:4]
+
+        actual, actual_indices = protein_centered_residue_sigreg_input(
+            values,
+            masks,
+            sampled_indices=sampled_indices,
+            samples_per_protein=4,
+            independent_views=True,
+        )
+
+        centered = values - (
+            (values * masks[..., None]).sum(dim=2, keepdim=True)
+            / masks.sum(dim=2)[..., None, None]
+        )
+        expected = torch.empty_like(actual)
+        for view in range(5):
+            for draw in range(4):
+                for protein in range(2):
+                    expected[view * 4 + draw, protein] = centered[
+                        protein, view, sampled_indices[protein, view, draw]
+                    ]
+
+        self.assertEqual(tuple(actual.shape), (20, 2, 2))
+        self.assertTrue(torch.equal(actual_indices, sampled_indices))
+        torch.testing.assert_close(actual, expected, rtol=0.0, atol=0.0)
+        # There are 20 distributions, not one vector made by averaging K rows.
+        self.assertFalse(torch.equal(actual[0], actual[1]))
+
+    def test_independent_k4_needs_no_five_view_intersection(self):
+        values = torch.randn(2, 5, 12, 8, generator=torch.Generator().manual_seed(5))
+        masks = torch.zeros(2, 5, 12, dtype=torch.bool)
+        view_rows = ([0, 1, 2, 3], [2, 3, 4, 5], [4, 5, 6, 7],
+                     [6, 7, 8, 9], [8, 9, 10, 11])
+        for protein in range(2):
+            for view, rows in enumerate(view_rows):
+                masks[protein, view, rows] = True
+        self.assertFalse(masks.all(dim=1).any())
+
+        torch.manual_seed(41)
+        first, first_indices = protein_centered_residue_sigreg_input(
+            values, masks, samples_per_protein=4, independent_views=True
+        )
+        torch.manual_seed(41)
+        second, second_indices = protein_centered_residue_sigreg_input(
+            values, masks, samples_per_protein=4, independent_views=True
+        )
+
+        self.assertTrue(torch.equal(first, second))
+        self.assertTrue(torch.equal(first_indices, second_indices))
+        self.assertTrue(masks.gather(2, first_indices).all())
+        self.assertTrue(
+            (first_indices.sort(dim=2).values[:, :, 1:]
+             != first_indices.sort(dim=2).values[:, :, :-1]).all()
+        )
+
+    def test_independent_k4_validation_fails_closed(self):
+        values = torch.zeros(1, 5, 6, 8)
+        masks = torch.ones(1, 5, 6, dtype=torch.bool)
+        with self.assertRaisesRegex(ValueError, "requires independent_views"):
+            protein_centered_residue_sigreg_input(
+                values, masks, samples_per_protein=4
+            )
+        masks[:, 3, 3:] = False
+        with self.assertRaisesRegex(ValueError, "fewer than 4"):
+            protein_centered_residue_sigreg_input(
+                values, masks, samples_per_protein=4, independent_views=True
+            )
+        masks[:] = True
+        duplicates = torch.zeros(1, 5, 4, dtype=torch.long)
+        with self.assertRaisesRegex(ValueError, "must be distinct"):
+            protein_centered_residue_sigreg_input(
+                values,
+                masks,
+                sampled_indices=duplicates,
+                samples_per_protein=4,
+                independent_views=True,
+            )
+
+    def test_independent_k4_sigreg_is_scalar_average_of_four_draws(self):
+        values = torch.randn(
+            3, 5, 8, 8, generator=torch.Generator().manual_seed(67)
+        )
+        masks = torch.ones(3, 5, 8, dtype=torch.bool)
+        indices = torch.tensor(
+            [
+                [[[0, 2, 4, 6]] * 5],
+                [[[1, 3, 5, 7]] * 5],
+                [[[0, 1, 6, 7]] * 5],
+            ]
+        ).reshape(3, 5, 4)
+        sigreg_input, _ = protein_centered_residue_sigreg_input(
+            values,
+            masks,
+            sampled_indices=indices,
+            samples_per_protein=4,
+            independent_views=True,
+        )
+        sigreg = CanonicalSIGReg(knots=5, num_proj=11)
+
+        torch.manual_seed(79)
+        combined = sigreg(sigreg_input)
+        by_view_draw = sigreg_input.reshape(5, 4, 3, 8)
+        separate = []
+        for draw in range(4):
+            torch.manual_seed(79)
+            separate.append(sigreg(by_view_draw[:, draw]))
+        expected = torch.stack(separate).mean()
+        torch.testing.assert_close(combined, expected, rtol=1e-6, atol=1e-6)
+
+    def test_model_feeds_twenty_distributions_for_independent_k4(self):
+        batch = synthetic_encoder_batch(batch_size=2, length=12)
+        model = CanonicalLeJEPAModel(
+            tiny_canonical_config(
+                alignment_level="residue",
+                sigreg_input="protein_centered_residue",
+                cropping=True,
+                global_crop_length=8,
+                local_crop_length=4,
+                local_mask_pct=0.50,
+                locals_within_global=True,
+                shared_crop_anchor=False,
+                residue_samples_per_protein=4,
+                independent_residue_samples=True,
+            )
+        )
+        recorder = _RecordingSIGReg()
+        model.sigreg = recorder
+        torch.manual_seed(83)
+        output = model.compute_loss(batch)
+        self.assertEqual(tuple(recorder.seen.shape), (20, 2, 8))
+        self.assertTrue(torch.isfinite(output["loss"]))
+
     def test_helper_validation_and_config_fail_fast(self):
         values = torch.zeros(2, 5, 4, 8)
         real_mask = torch.tensor(
@@ -201,6 +352,36 @@ class ProteinCenteredResidueSIGRegTest(unittest.TestCase):
             )
         )
         self.assertEqual(accepted.sigreg_input, "protein_centered_residue")
+        independent_k4 = CanonicalLeJEPAModel(
+            tiny_canonical_config(
+                alignment_level="residue",
+                sigreg_input="protein_centered_residue",
+                cropping=True,
+                shared_crop_anchor=False,
+                locals_within_global=True,
+                residue_samples_per_protein=4,
+                independent_residue_samples=True,
+            )
+        )
+        self.assertEqual(independent_k4.residue_samples_per_protein, 4)
+        self.assertTrue(independent_k4.independent_residue_samples)
+        with self.assertRaisesRegex(ValueError, "independent_residue_samples=true"):
+            CanonicalLeJEPAModel(
+                tiny_canonical_config(
+                    alignment_level="residue",
+                    sigreg_input="protein_centered_residue",
+                    cropping=True,
+                    shared_crop_anchor=False,
+                    locals_within_global=True,
+                )
+            )
+        with self.assertRaisesRegex(ValueError, "sampling options require"):
+            CanonicalLeJEPAModel(
+                tiny_canonical_config(
+                    sigreg_input="protein_mean",
+                    independent_residue_samples=True,
+                )
+            )
 
     def test_default_protein_mean_path_is_exact_and_never_calls_new_helper(self):
         batch = synthetic_encoder_batch(batch_size=2, length=5)

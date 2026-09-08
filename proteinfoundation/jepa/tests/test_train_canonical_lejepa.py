@@ -23,7 +23,10 @@ from proteinfoundation.jepa.tests.canonical_test_utils import (
     synthetic_encoder_batch,
     tiny_canonical_config,
 )
-from proteinfoundation.jepa.train_canonical_lejepa import canonical_trainer_kwargs
+from proteinfoundation.jepa.train_canonical_lejepa import (
+    build_callbacks,
+    canonical_trainer_kwargs,
+)
 from proteinfoundation.vendor.stable_pretraining import (
     LinearWarmupCosineAnnealing,
 )
@@ -63,12 +66,16 @@ class CanonicalTrainingConfigTest(unittest.TestCase):
         self.assertFalse(cfg.views.rotation)
         self.assertFalse(cfg.views.physical_token_drop)
         self.assertTrue(cfg.views.packed_views)
+        self.assertFalse(cfg.residue_compact_visible_kv)
         self.assertEqual(cfg.readout.type, "mean_visible_residues")
         self.assertEqual(cfg.sigreg.input, "protein_mean")
         self.assertEqual(cfg.sigreg.weight, 0.02)
         self.assertEqual(cfg.sigreg.knots, 17)
         self.assertEqual(cfg.sigreg.num_proj, 1024)
         self.assertFalse(cfg.sigreg.normalize_by_n)
+        self.assertFalse(cfg.sigreg.joint_views)
+        self.assertEqual(cfg.sigreg.residue_samples_per_protein, 1)
+        self.assertFalse(cfg.sigreg.independent_residue_samples)
         self.assertFalse(_contains_key(cfg, "projector"))
 
         self.assertEqual(cfg.dataset.datamodule.batch_size, 8)
@@ -104,6 +111,48 @@ class CanonicalTrainingConfigTest(unittest.TestCase):
         self.assertEqual(cfg.ema.update_every, 32)
         self.assertEqual(list(cfg.ema.include), ["encoder"])
         self.assertEqual(cfg.checkpoint.every_n_train_steps, 10_000)
+        self.assertIsNone(cfg.checkpoint.additional_every_n_train_steps)
+        self.assertEqual(cfg.checkpoint.last_every_n_train_steps, 1_500)
+
+    def test_numbered_and_rolling_checkpoint_cadences_are_separate(self):
+        cfg = self._resolved_config()
+        cfg.wandb.enabled = False
+        with tempfile.TemporaryDirectory() as directory:
+            callbacks = build_callbacks(cfg, Path(directory))
+        checkpoints = [
+            callback
+            for callback in callbacks
+            if isinstance(callback, ModelCheckpoint)
+        ]
+        self.assertEqual(len(checkpoints), 2)
+        numbered, rolling = checkpoints
+        self.assertEqual(numbered._every_n_train_steps, 10_000)
+        self.assertEqual(numbered.save_top_k, -1)
+        self.assertFalse(numbered.save_last)
+        self.assertEqual(rolling._every_n_train_steps, 1_500)
+        self.assertEqual(rolling.save_top_k, 0)
+        self.assertTrue(rolling.save_last)
+
+    def test_additional_numbered_checkpoint_cadence_preserves_exposure_match(self):
+        cfg = self._resolved_config()
+        cfg.wandb.enabled = False
+        cfg.checkpoint.additional_every_n_train_steps = 16_667
+        with tempfile.TemporaryDirectory() as directory:
+            callbacks = build_callbacks(cfg, Path(directory))
+        checkpoints = [
+            callback
+            for callback in callbacks
+            if isinstance(callback, ModelCheckpoint)
+        ]
+        self.assertEqual(len(checkpoints), 3)
+        self.assertEqual(
+            [callback._every_n_train_steps for callback in checkpoints],
+            [10_000, 16_667, 1_500],
+        )
+        exposure_match = checkpoints[1]
+        self.assertEqual(exposure_match.filename, "step-{step:08d}")
+        self.assertEqual(exposure_match.save_top_k, -1)
+        self.assertFalse(exposure_match.save_last)
 
     def test_trainer_has_no_validation_or_gradient_clipping(self):
         cfg = self._resolved_config()
@@ -119,14 +168,70 @@ class CanonicalTrainingConfigTest(unittest.TestCase):
         self.assertEqual(kwargs["num_sanity_val_steps"], 0)
         self.assertIsNone(kwargs["gradient_clip_val"])
 
+    def test_trainer_accepts_single_gpu_with_the_same_global_batch_size(self):
+        cfg = self._resolved_config()
+        cfg.dataset.datamodule.batch_size = 16
+        cfg.trainer.devices = 1
+        cfg.trainer.strategy = "auto"
+
+        kwargs = canonical_trainer_kwargs(cfg, [], Path("run"), None)
+
+        self.assertEqual(kwargs["devices"], 1)
+        self.assertEqual(kwargs["strategy"], "auto")
+        self.assertEqual(cfg.dataset.datamodule.batch_size, 16)
+
+    def test_trainer_accepts_single_a100_global_batch_96_ablation(self):
+        cfg = self._resolved_config()
+        cfg.dataset.datamodule.batch_size = 96
+        cfg.trainer.devices = 1
+        cfg.trainer.strategy = "auto"
+
+        kwargs = canonical_trainer_kwargs(cfg, [], Path("run"), None)
+
+        self.assertEqual(kwargs["devices"], 1)
+        self.assertEqual(kwargs["strategy"], "auto")
+        self.assertEqual(cfg.dataset.datamodule.batch_size, 96)
+
+    def test_trainer_accepts_two_gpu_global_batch_32_ablation(self):
+        cfg = self._resolved_config()
+        cfg.dataset.datamodule.batch_size = 16
+
+        kwargs = canonical_trainer_kwargs(cfg, [], Path("run"), None)
+
+        self.assertEqual(kwargs["devices"], 2)
+        self.assertEqual(cfg.dataset.datamodule.batch_size, 16)
+
+    def test_trainer_accepts_two_gpu_global_batch_64_ablation(self):
+        cfg = self._resolved_config()
+        cfg.dataset.datamodule.batch_size = 32
+
+        kwargs = canonical_trainer_kwargs(cfg, [], Path("run"), None)
+
+        self.assertEqual(kwargs["devices"], 2)
+        self.assertEqual(cfg.dataset.datamodule.batch_size, 32)
+
+    def test_trainer_accepts_audited_two_gpu_memory_probe_batches(self):
+        cfg = self._resolved_config()
+        for local_batch_size in (48, 64, 96):
+            with self.subTest(local_batch_size=local_batch_size):
+                probe_cfg = OmegaConf.create(
+                    OmegaConf.to_container(cfg, resolve=False)
+                )
+                probe_cfg.dataset.datamodule.batch_size = local_batch_size
+                kwargs = canonical_trainer_kwargs(
+                    probe_cfg, [], Path("run"), None
+                )
+                self.assertEqual(kwargs["devices"], 2)
+
     def test_trainer_rejects_noncanonical_distributed_topology(self):
         cfg = self._resolved_config()
 
         cases = (
-            ("dataset.datamodule.batch_size", 16, "local batch size 8"),
-            ("trainer.devices", 1, "two GPUs on one node"),
-            ("trainer.num_nodes", 2, "two GPUs on one node"),
-            ("trainer.strategy", "auto", "strategy=ddp"),
+            ("dataset.datamodule.batch_size", 12, "requires devices=2"),
+            ("trainer.devices", 1, "requires devices=2"),
+            ("trainer.devices", 3, "requires devices=2"),
+            ("trainer.num_nodes", 2, "requires one node"),
+            ("trainer.strategy", "auto", "requires devices=2"),
             (
                 "trainer.use_distributed_sampler",
                 True,

@@ -63,7 +63,49 @@ def build_callbacks(cfg: DictConfig, checkpoint_dir: Path) -> list[Any]:
 
     checkpoint_cfg = OmegaConf.to_container(cfg.checkpoint, resolve=True)
     checkpoint_cfg["dirpath"] = str(checkpoint_dir)
+    additional_every_n_train_steps = checkpoint_cfg.pop(
+        "additional_every_n_train_steps", None
+    )
+    last_every_n_train_steps = checkpoint_cfg.pop(
+        "last_every_n_train_steps", None
+    )
+    save_last = bool(checkpoint_cfg.get("save_last", False))
+    if last_every_n_train_steps is not None:
+        checkpoint_cfg["save_last"] = False
     callbacks.append(ModelCheckpoint(**checkpoint_cfg))
+    if additional_every_n_train_steps is not None:
+        additional_interval = int(additional_every_n_train_steps)
+        if additional_interval < 1:
+            raise ValueError(
+                "checkpoint.additional_every_n_train_steps must be positive"
+            )
+        callbacks.append(
+            ModelCheckpoint(
+                dirpath=str(checkpoint_dir),
+                filename=str(checkpoint_cfg["filename"]),
+                every_n_train_steps=additional_interval,
+                every_n_epochs=0,
+                save_top_k=-1,
+                save_last=False,
+                save_weights_only=bool(checkpoint_cfg["save_weights_only"]),
+                auto_insert_metric_name=bool(
+                    checkpoint_cfg["auto_insert_metric_name"]
+                ),
+            )
+        )
+    if last_every_n_train_steps is not None and save_last:
+        callbacks.append(
+            ModelCheckpoint(
+                dirpath=str(checkpoint_dir),
+                filename="recovery-{step:08d}",
+                every_n_train_steps=int(last_every_n_train_steps),
+                every_n_epochs=0,
+                save_top_k=0,
+                save_last=True,
+                save_weights_only=bool(checkpoint_cfg["save_weights_only"]),
+                auto_insert_metric_name=False,
+            )
+        )
     if cfg.wandb.enabled:
         callbacks.append(LearningRateMonitor(logging_interval="step"))
     return callbacks
@@ -90,19 +132,35 @@ def canonical_trainer_kwargs(
     global_batch_size = (
         local_batch_size * devices * num_nodes * accumulate_grad_batches
     )
-    if local_batch_size != 8:
-        raise ValueError("canonical V1 requires local batch size 8")
-    if devices != 2 or num_nodes != 1:
-        raise ValueError("canonical V1 requires two GPUs on one node")
-    if str(trainer_cfg.strategy) != "ddp":
-        raise ValueError("canonical V1 requires strategy=ddp")
+    if num_nodes != 1:
+        raise ValueError("canonical V1 requires one node")
+    topology = (devices, local_batch_size, str(trainer_cfg.strategy))
+    allowed_topologies = {
+        (2, 8, "ddp"),
+        (2, 16, "ddp"),
+        (2, 32, "ddp"),
+        (2, 48, "ddp"),
+        (2, 64, "ddp"),
+        (2, 96, "ddp"),
+        (1, 16, "auto"),
+        (1, 96, "auto"),
+    }
+    if topology not in allowed_topologies:
+        raise ValueError(
+            "canonical V1 requires devices=2 with an audited local batch size "
+            "and strategy=ddp, or devices=1 with local batch size 16 and "
+            "strategy=auto"
+        )
     if bool(trainer_cfg.use_distributed_sampler):
         raise ValueError(
             "canonical V1 requires use_distributed_sampler=false because "
             "ClusterSampler already shards by rank/world size"
         )
-    if global_batch_size != 16:
-        raise ValueError("canonical V1 requires global batch size 16")
+    if global_batch_size not in (16, 32, 64, 96, 128, 192):
+        raise ValueError(
+            "canonical V1 requires an audited global batch size in "
+            "{16, 32, 64, 96, 128, 192}"
+        )
     if int(trainer_cfg.limit_val_batches) != 0:
         raise ValueError("canonical V1 disables validation")
     if int(trainer_cfg.num_sanity_val_steps) != 0:

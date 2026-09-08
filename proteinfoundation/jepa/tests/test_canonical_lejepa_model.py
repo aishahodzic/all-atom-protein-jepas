@@ -308,7 +308,7 @@ class CanonicalModelTest(unittest.TestCase):
 
     def test_residue_alignment_rejects_packed_views(self):
         with self.assertRaisesRegex(
-            ValueError, "residue alignment requires views.packed_views=false"
+            ValueError, "permits views.packed_views=true only"
         ):
             CanonicalLeJEPAModel(
                 tiny_canonical_config(alignment_level="residue", packed_views=True)
