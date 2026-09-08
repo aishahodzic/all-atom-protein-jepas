@@ -1,10 +1,11 @@
 #!/bin/bash
-# Matched protein-vs-residue canonical LeJEPA runs for two A30 GPUs each.
+# Matched protein, residue, and protein+rotation canonical LeJEPA runs for two
+# A30 GPUs each.
 
 set -euo pipefail
 
-if [[ $# -ne 1 || ( "$1" != "protein" && "$1" != "residue" ) ]]; then
-    echo "usage: CUDA_VISIBLE_DEVICES=0,1 $0 {protein|residue}" >&2
+if [[ $# -ne 1 || ( "$1" != "protein" && "$1" != "residue" && "$1" != "rotation" ) ]]; then
+    echo "usage: CUDA_VISIBLE_DEVICES=0,1 $0 {protein|residue|rotation}" >&2
     exit 2
 fi
 
@@ -29,7 +30,8 @@ if [[ "$OBJECTIVE" == "protein" ]]; then
     COMPACT_VISIBLE_KV=false
     RESIDUE_SAMPLES=1
     INDEPENDENT_RESIDUE_SAMPLES=false
-else
+    INDEPENDENT_VIEW_ROTATIONS=false
+elif [[ "$OBJECTIVE" == "residue" ]]; then
     RUN_NAME=canonical_lejepa_crop_fixed96_residue_perview_b96_indlocal_k4_start1e4_peak4e4_end1e5_warmup1200_30k
     ALIGNMENT_LEVEL=residue
     SIGREG_INPUT=protein_centered_residue
@@ -37,6 +39,16 @@ else
     COMPACT_VISIBLE_KV=true
     RESIDUE_SAMPLES=4
     INDEPENDENT_RESIDUE_SAMPLES=true
+    INDEPENDENT_VIEW_ROTATIONS=false
+else
+    RUN_NAME=canonical_lejepa_crop_fixed96_protein_perview_b96_indlocal_rotations_start1e4_peak4e4_end1e5_warmup1200_30k
+    ALIGNMENT_LEVEL=protein
+    SIGREG_INPUT=protein_mean
+    RESIDUE_CHECKPOINTING=false
+    COMPACT_VISIBLE_KV=false
+    RESIDUE_SAMPLES=1
+    INDEPENDENT_RESIDUE_SAMPLES=false
+    INDEPENDENT_VIEW_ROTATIONS=true
 fi
 
 CHECKPOINT_DIR="$PROJECT_ROOT/store/$RUN_NAME/checkpoints"
@@ -69,7 +81,7 @@ exec "$PYTHON_BIN" -m proteinfoundation.jepa.train_canonical_lejepa \
     masked_kv_mode=visible_only \
     residue_view_checkpointing="$RESIDUE_CHECKPOINTING" \
     residue_compact_visible_kv="$COMPACT_VISIBLE_KV" \
-    independent_view_rotations=false \
+    independent_view_rotations="$INDEPENDENT_VIEW_ROTATIONS" \
     views.cropping=true views.packed_views=true \
     views.global_crop_length=96 views.global_crop_fraction_min=null \
     views.global_crop_fraction_max=null views.global_crop_min_length=96 \
