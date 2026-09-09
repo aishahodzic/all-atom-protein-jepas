@@ -1,0 +1,172 @@
+{
+  "encoder_source": "raw",
+  "global_step": 16667,
+  "sampled_residues": 15000,
+  "pool_proteins": 5224,
+  "residue_pool": 748402,
+  "physical_sample_sha256": "6281211e2d1f3364f54c33fbde061601e4d35560a56f75bd6864b993b775d9b8",
+  "ordered_physical_rows_identical": true,
+  "tsne_parameters": {
+    "n_components": 2,
+    "metric": "cosine",
+    "perplexity": 30.0,
+    "early_exaggeration": 12.0,
+    "learning_rate": "auto",
+    "init": "random",
+    "random_state": 42,
+    "max_iter": 1000,
+    "method": "barnes_hut",
+    "angle": 0.5,
+    "n_jobs": -1
+  },
+  "individual_coordinates": [
+    {
+      "cache": "/home/msc-thesis/Evaluation/latent_viz/results/tsne_coordinates/lr_high_raw16667_n15000_perp30_seed42_cosine.npz",
+      "input_latent_sha256": "55fe02b866fe7e4a2e7859f01960ee979f7846d603fd604fdb5d8fa22da0843f",
+      "model_checkpoint_names": [
+        "canonical_lejepa_crop_fixed96_protein_perview_sigreg_b96_independent_locals_lr1e3_cosine_30k_rows96_warmup1200-raw-step16667"
+      ],
+      "extra": {}
+    },
+    {
+      "cache": "/home/msc-thesis/Evaluation/latent_viz/results/tsne_coordinates/lr_low_raw16667_n15000_perp30_seed42_cosine.npz",
+      "input_latent_sha256": "c903365787682ab7a10d03ffb2601ae7671594cf2464a3c3a32482be5df0ef09",
+      "model_checkpoint_names": [
+        "canonical_lejepa_crop_fixed96_protein_perview_sigreg_b96_independent_locals_lr1e4_cosine_30k_rows96_warmup1200-raw-step16667"
+      ],
+      "extra": {}
+    }
+  ],
+  "joint_coordinates": {
+    "cache": "/home/msc-thesis/Evaluation/latent_viz/results/tsne_coordinates/lr_high_low_raw16667_joint_procrustes_n30000_perp30_seed42_cosine.npz",
+    "input_latent_sha256": "427b794d84e6f2aab8737b4cd87da435d8d023b09aecc8bcbc0a9759d5d4719e",
+    "model_checkpoint_names": [
+      "canonical_lejepa_crop_fixed96_protein_perview_sigreg_b96_independent_locals_lr1e3_cosine_30k_rows96_warmup1200-raw-step16667",
+      "canonical_lejepa_crop_fixed96_protein_perview_sigreg_b96_independent_locals_lr1e4_cosine_30k_rows96_warmup1200-raw-step16667"
+    ],
+    "extra": {
+      "preprocessing": "Centre both matrices; align Low to High with R=U@Vt from SVD(Low_centered.T@High_centered); no scale fitting.",
+      "low_to_high_rotation": [
+        [
+          0.4278971763427936,
+          0.35684292209531465,
+          -0.681768783938646,
+          0.33171099559603195,
+          0.02467831886616845,
+          -0.22973902136472407,
+          -0.0648319162967015,
+          -0.2390273234286567
+        ],
+        [
+          0.07030839257799185,
+          0.21628681343133432,
+          0.07815398224099121,
+          0.23084442452874368,
+          0.18131498675398586,
+          -0.3322592188297133,
+          0.35022658193838235,
+          0.7892715498340946
+        ],
+        [
+          0.46934049463614474,
+          0.4708759672099437,
+          0.6769686302081922,
+          -0.028330236566507343,
+          0.022268474893788897,
+          -0.14273083318736554,
+          -0.041926800912539954,
+          -0.27618899807507585
+        ],
+        [
+          -0.24593248648501717,
+          0.08513893593757821,
+          0.16777544549638798,
+          0.6753094694410879,
+          -0.6512545885685749,
+          0.11515408880409699,
+          0.08687198627207879,
+          -0.05601204113061126
+        ],
+        [
+          -0.029816743258673718,
+          -0.04535461980022212,
+          0.13308392214612572,
+          0.5237825588459907,
+          0.5698333180088763,
+          0.34778017403915545,
+          -0.501783680699111,
+          0.08687058774704068
+        ],
+        [
+          -0.03806633562495339,
+          0.5027738030159966,
+          -0.13182998480993655,
+          -0.14388406524455177,
+          0.07537169654191107,
+          0.7444640827322108,
+          0.38146800010707904,
+          0.047562482515329366
+        ],
+        [
+          0.4399652848356595,
+          -0.026983736742336503,
+          -0.06130993585126621,
+          -0.20320804326291889,
+          -0.4574802104406916,
+          0.26552352918793254,
+          -0.5053686669605537,
+          0.4748280025096513
+        ],
+        [
+          0.5790422373626728,
+          -0.5842462390060755,
+          0.061634166225859315,
+          0.20853988399025455,
+          0.04699346926066328,
+          0.2398138323136368,
+          0.45949034639729963,
+          -0.07230717213281102
+        ]
+      ],
+      "row_order": "15000 High rows followed by the same 15000 Low physical rows",
+      "exploratory": true
+    }
+  },
+  "cache_paths": {
+    "high": "/home/msc-thesis-diagnostics/Evaluation/linear_probing/latents/canonical_lejepa_crop_fixed96_protein_perview_sigreg_b96_independent_locals_lr1e3_cosine_30k_rows96_warmup1200-raw-step16667.pt",
+    "low": "/home/msc-thesis-diagnostics/Evaluation/linear_probing/latents/canonical_lejepa_crop_fixed96_protein_perview_sigreg_b96_independent_locals_lr1e4_cosine_30k_rows96_warmup1200-raw-step16667.pt"
+  },
+  "figures": [
+    "/home/msc-thesis/Evaluation/latent_viz/figures/lr_high_low_raw16667_tsne_biology.png",
+    "/home/msc-thesis/Evaluation/latent_viz/figures/lr_high_low_raw16667_tsne_shortcuts.png",
+    "/home/msc-thesis/Evaluation/latent_viz/figures/lr_high_low_raw16667_tsne_joint_procrustes.png"
+  ],
+  "invalid_rsa_count": 0,
+  "shared_color_limits": {
+    "rsa": [
+      0,
+      1
+    ],
+    "raw_index": [
+      0,
+      250
+    ],
+    "normalized_position": [
+      0,
+      1
+    ],
+    "chain_length": [
+      17,
+      255
+    ]
+  },
+  "notes": [
+    "Independent maps have arbitrary location, orientation and scale.",
+    "Each model projection is fit once and reused for every coloring.",
+    "Joint map is exploratory, not a performance metric.",
+    "No encoder extraction or GPU computation was performed."
+  ],
+  "elapsed_seconds": 4.843561887741089,
+  "analysis_source_sha256": "3ffcb39accd16c970b60f1154c872721972d09d0978947f5751c4554d523c31c",
+  "sklearn_version": "1.7.2"
+}
