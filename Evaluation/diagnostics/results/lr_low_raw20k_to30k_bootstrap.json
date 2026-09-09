@@ -1,0 +1,155 @@
+{
+  "replicates": 5000,
+  "seed": 42,
+  "delta_definition": "step 30000 - step 20000",
+  "represented_query_proteins": 4738,
+  "query_residues": 15000,
+  "frozen_pool_proteins": 5224,
+  "physical_sample_sha256": "6281211e2d1f3364f54c33fbde061601e4d35560a56f75bd6864b993b775d9b8",
+  "draws_sha256": "7fd7c12b8c17a8d124d81d4b0722ad2992ecebe4e6fa2ae8f751991f78b6f0bf",
+  "method": "Paired cluster bootstrap of represented query proteins, with replacement; concatenate all residue rows in each drawn protein block. Same draw for both models. Recompute tied ranks and ranked residualization in every replicate. Neighbour graphs and per-query predictions remain fixed.",
+  "weighting": "Residue-weighted mean over the concatenated selected protein blocks; protein multiplicity is shared across models.",
+  "confidence_interval_scope": "95% percentile intervals conditional on the fixed 15000-residue neighbour pool; unadjusted for multiple comparisons.",
+  "nearest_neighbour_scope": "Nearest-neighbour exact-index accuracy and same-protein fraction use all-protein neighbours excluding self, matching the frozen diagnostics. Exact-index purity uses cross-protein neighbours.",
+  "metrics": [
+    {
+      "metric": "aa_purity_at_10_cross_protein",
+      "step_20000": 0.08134666666666802,
+      "step_30000": 0.07998000000000136,
+      "observed_delta": -0.0013666666666666688,
+      "bootstrap_mean_delta": -0.0013691765726745852,
+      "ci_2_5": -0.00270546023317378,
+      "ci_97_5": 2.63877040234331e-05,
+      "fraction_above_zero": 0.027,
+      "ci_excludes_zero": false
+    },
+    {
+      "metric": "ss_purity_at_10_cross_protein",
+      "step_20000": 0.515613333333331,
+      "step_30000": 0.5153933333333317,
+      "observed_delta": -0.00021999999999933184,
+      "bootstrap_mean_delta": -0.00018578236455571513,
+      "ci_2_5": -0.0029106729064786755,
+      "ci_97_5": 0.0025308065655436003,
+      "fraction_above_zero": 0.4466,
+      "ci_excludes_zero": false
+    },
+    {
+      "metric": "exact_index_at_10_cross_protein",
+      "step_20000": 0.015439999999999569,
+      "step_30000": 0.014779999999999594,
+      "observed_delta": -0.0006599999999999748,
+      "bootstrap_mean_delta": -0.000661273221700915,
+      "ci_2_5": -0.001075514327952694,
+      "ci_97_5": -0.0002672175805061665,
+      "fraction_above_zero": 0.0,
+      "ci_excludes_zero": true
+    },
+    {
+      "metric": "nearest_neighbour_exact_index_all_neighbours",
+      "step_20000": 0.06186666666666667,
+      "step_30000": 0.062,
+      "observed_delta": 0.00013333333333333253,
+      "bootstrap_mean_delta": 0.00011796984895683846,
+      "ci_2_5": -0.00180711739508254,
+      "ci_97_5": 0.002010814993243133,
+      "fraction_above_zero": 0.5356,
+      "ci_excludes_zero": false
+    },
+    {
+      "metric": "normalized_position_quintile_purity_at_10_cross_protein",
+      "step_20000": 0.25176666666665704,
+      "step_30000": 0.24992666666665753,
+      "observed_delta": -0.0018399999999995087,
+      "bootstrap_mean_delta": -0.0018164749459400724,
+      "ci_2_5": -0.004225971549866245,
+      "ci_97_5": 0.0005421305803334883,
+      "fraction_above_zero": 0.0678,
+      "ci_excludes_zero": false
+    },
+    {
+      "metric": "same_protein_fraction_at_10",
+      "step_20000": 0.04110000000000282,
+      "step_30000": 0.04312666666666968,
+      "observed_delta": 0.002026666666666857,
+      "bootstrap_mean_delta": 0.0020177891678244838,
+      "ci_2_5": 0.001021158882584443,
+      "ci_97_5": 0.0030201850568455,
+      "fraction_above_zero": 1.0,
+      "ci_excludes_zero": true
+    },
+    {
+      "metric": "rsa_knn10_spearman",
+      "step_20000": 0.1754437606221836,
+      "step_30000": 0.1711068828426175,
+      "observed_delta": -0.004336877779566095,
+      "bootstrap_mean_delta": -0.0043590265093460395,
+      "ci_2_5": -0.01915003170155538,
+      "ci_97_5": 0.010124178954235686,
+      "fraction_above_zero": 0.2822,
+      "ci_excludes_zero": false
+    },
+    {
+      "metric": "log_chain_length_knn10_spearman",
+      "step_20000": 0.3396251783517949,
+      "step_30000": 0.3416537780331322,
+      "observed_delta": 0.002028599681337284,
+      "bootstrap_mean_delta": 0.0020407938611017216,
+      "ci_2_5": -0.009946904609134805,
+      "ci_97_5": 0.013694651697454667,
+      "fraction_above_zero": 0.6314,
+      "ci_excludes_zero": false
+    },
+    {
+      "metric": "raw_index_knn10_spearman",
+      "step_20000": 0.2215038998151649,
+      "step_30000": 0.21266016094918433,
+      "observed_delta": -0.008843738865980583,
+      "bootstrap_mean_delta": -0.008707990644631187,
+      "ci_2_5": -0.022789570573640915,
+      "ci_97_5": 0.004941381619693285,
+      "fraction_above_zero": 0.105,
+      "ci_excludes_zero": false
+    },
+    {
+      "metric": "normalized_position_knn10_spearman",
+      "step_20000": 0.19193936346346444,
+      "step_30000": 0.17608465517323635,
+      "observed_delta": -0.015854708290228087,
+      "bootstrap_mean_delta": -0.015837654235615277,
+      "ci_2_5": -0.030395391386347732,
+      "ci_97_5": -0.0011484115619675606,
+      "fraction_above_zero": 0.018,
+      "ci_excludes_zero": true
+    },
+    {
+      "metric": "raw_index_within_16aa_length_bin_knn10_spearman",
+      "step_20000": 0.4633503110825485,
+      "step_30000": 0.4626760818988211,
+      "observed_delta": -0.0006742291837273928,
+      "bootstrap_mean_delta": -0.0006441571326979247,
+      "ci_2_5": -0.008203011443558228,
+      "ci_97_5": 0.006798154609807129,
+      "fraction_above_zero": 0.4312,
+      "ci_excludes_zero": false
+    },
+    {
+      "metric": "raw_index_partial_length_spearman",
+      "step_20000": 0.15875542850863764,
+      "step_30000": 0.14568129172573538,
+      "observed_delta": -0.013074136782902257,
+      "bootstrap_mean_delta": -0.012970564712969706,
+      "ci_2_5": -0.027115393091036288,
+      "ci_97_5": 0.0008525048558245898,
+      "fraction_above_zero": 0.0336,
+      "ci_excludes_zero": false
+    }
+  ],
+  "elapsed_seconds": 151.57021474838257,
+  "run_name": "canonical_lejepa_crop_fixed96_protein_perview_sigreg_b96_independent_locals_lr1e4_cosine_30k_rows96_warmup1200",
+  "comparison": "same LR run at 20k versus 30k",
+  "column_mapping": {
+    "step_20000": "step 20000",
+    "step_30000": "step 30000"
+  }
+}
