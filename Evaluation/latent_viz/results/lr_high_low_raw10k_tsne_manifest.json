@@ -1,0 +1,196 @@
+{
+  "encoder_source": "raw",
+  "global_step": 10000,
+  "sampled_residues": 15000,
+  "pool_proteins": 5224,
+  "residue_pool": 748402,
+  "physical_sample_sha256": "6281211e2d1f3364f54c33fbde061601e4d35560a56f75bd6864b993b775d9b8",
+  "ordered_physical_rows_identical": true,
+  "tsne_parameters": {
+    "n_components": 2,
+    "metric": "cosine",
+    "perplexity": 30.0,
+    "early_exaggeration": 12.0,
+    "learning_rate": "auto",
+    "init": "random",
+    "random_state": 42,
+    "max_iter": 1000,
+    "method": "barnes_hut",
+    "angle": 0.5,
+    "n_jobs": -1
+  },
+  "individual_coordinates": [
+    {
+      "cache": "/home/msc-thesis/Evaluation/latent_viz/results/tsne_coordinates/lr_high_raw10k_n15000_perp30_seed42_cosine.npz",
+      "input_latent_sha256": "13c64bfaf7649cae09e11f5c45a572e93d0e0fe8485055838990c9e35e4f956d",
+      "model_checkpoint_names": [
+        "canonical_lejepa_crop_fixed96_protein_perview_sigreg_b96_independent_locals_lr1e3_cosine_30k_rows96_warmup1200-raw-step10000"
+      ],
+      "extra": {}
+    },
+    {
+      "cache": "/home/msc-thesis/Evaluation/latent_viz/results/tsne_coordinates/lr_low_raw10k_n15000_perp30_seed42_cosine.npz",
+      "input_latent_sha256": "e21fa7fb0385eb178d363d1c0ac5274853dea99ad9c4f34e019fb86505f7b113",
+      "model_checkpoint_names": [
+        "canonical_lejepa_crop_fixed96_protein_perview_sigreg_b96_independent_locals_lr1e4_cosine_30k_rows96_warmup1200-raw-step10000"
+      ],
+      "extra": {}
+    }
+  ],
+  "joint_coordinates": {
+    "cache": "/home/msc-thesis/Evaluation/latent_viz/results/tsne_coordinates/lr_high_low_raw10k_joint_procrustes_n30000_perp30_seed42_cosine.npz",
+    "input_latent_sha256": "c0b68213fbe7048b08dfe0e3ed05490a5a9d5abf21f69df8a686e327413266bb",
+    "model_checkpoint_names": [
+      "canonical_lejepa_crop_fixed96_protein_perview_sigreg_b96_independent_locals_lr1e3_cosine_30k_rows96_warmup1200-raw-step10000",
+      "canonical_lejepa_crop_fixed96_protein_perview_sigreg_b96_independent_locals_lr1e4_cosine_30k_rows96_warmup1200-raw-step10000"
+    ],
+    "extra": {
+      "preprocessing": "Centre both matrices; align Low to High with R=U@Vt from SVD(Low_centered.T@High_centered); no scale fitting.",
+      "low_to_high_rotation": [
+        [
+          0.4840843192854967,
+          0.45265966819209474,
+          -0.6742626993436268,
+          0.21565653015859423,
+          0.015734674689414637,
+          -0.21649553297167654,
+          -0.08907408580394105,
+          0.06761347012127909
+        ],
+        [
+          -0.06317520125546203,
+          -0.2731106994887639,
+          -0.08002080425594449,
+          0.5373337834869849,
+          0.1374656874103765,
+          -0.29025898669804334,
+          0.6090159286117229,
+          -0.39018075286193116
+        ],
+        [
+          0.5349795853859899,
+          0.3513946817982062,
+          0.6835018442735897,
+          0.07006457837264499,
+          0.11038721759395205,
+          -0.18543362096433716,
+          -0.04164875709394233,
+          -0.26444133564306477
+        ],
+        [
+          -0.2386815753397179,
+          0.3106131027169564,
+          0.20917361617705002,
+          0.5861464524440456,
+          -0.5959660716396554,
+          0.09932567828719187,
+          0.0033329062407064457,
+          0.30688284966701784
+        ],
+        [
+          -0.0549429277206218,
+          -0.07942141523691598,
+          0.04439116178648926,
+          0.5310289211854948,
+          0.6374540715629444,
+          0.351667890833786,
+          -0.40237159522709526,
+          0.12161547464780192
+        ],
+        [
+          -0.028708405814911284,
+          0.4084022843764214,
+          -0.09938580390144997,
+          -0.0988933654417319,
+          0.031294354910866976,
+          0.7387883476922761,
+          0.36786609535102416,
+          -0.361404126100101
+        ],
+        [
+          0.34100424899702103,
+          -0.4597819278394595,
+          -0.10344302351911801,
+          0.1563086589563989,
+          -0.4537172209164841,
+          0.2626436826373175,
+          -0.38902256039242733,
+          -0.45935199133010624
+        ],
+        [
+          0.5462347653498867,
+          -0.3406632360434296,
+          0.07409141619260941,
+          0.009162288997352075,
+          -0.017560235927593214,
+          0.2935437864007986,
+          0.4133433941110319,
+          0.5680436403683244
+        ]
+      ],
+      "row_order": "15000 High rows followed by the same 15000 Low physical rows",
+      "exploratory": true
+    }
+  },
+  "cache_paths": {
+    "high": "/home/msc-thesis-diagnostics/Evaluation/linear_probing/latents/canonical_lejepa_crop_fixed96_protein_perview_sigreg_b96_independent_locals_lr1e3_cosine_30k_rows96_warmup1200-raw-step10000.pt",
+    "low": "/home/msc-thesis-diagnostics/Evaluation/linear_probing/latents/canonical_lejepa_crop_fixed96_protein_perview_sigreg_b96_independent_locals_lr1e4_cosine_30k_rows96_warmup1200-raw-step10000.pt"
+  },
+  "figures": [
+    "/home/msc-thesis/Evaluation/latent_viz/figures/lr_high_low_raw10k_tsne_biology.png",
+    "/home/msc-thesis/Evaluation/latent_viz/figures/lr_high_low_raw10k_tsne_shortcuts.png",
+    "/home/msc-thesis/Evaluation/latent_viz/figures/lr_high_low_raw10k_tsne_joint_procrustes.png"
+  ],
+  "invalid_rsa_count": 0,
+  "shared_color_limits": {
+    "rsa": [
+      0,
+      1
+    ],
+    "raw_index": [
+      0,
+      250
+    ],
+    "normalized_position": [
+      0,
+      1
+    ],
+    "chain_length": [
+      17,
+      255
+    ]
+  },
+  "notes": [
+    "Independent maps have arbitrary location, orientation and scale.",
+    "Each model projection is fit once and reused for every coloring.",
+    "Joint map is exploratory, not a performance metric.",
+    "No encoder extraction or GPU computation was performed."
+  ],
+  "elapsed_seconds": 502.1080722808838,
+  "analysis_source_sha256": "80afc48a0252e17feefb976fd74335238848e54a6b0d7abf142e61feeef11417",
+  "sklearn_version": "1.7.2",
+  "visual_observations": {
+    "aa": "Both AA panels remain heavily mixed. Low does not show an obvious dramatic cleanup; subtle local color enrichment is consistent with its modest quantitative purity advantage, but the map alone is inconclusive.",
+    "secondary_structure": "Both maps show clear helix-enriched versus sheet/loop-enriched regions; SS organization is much more visible than AA identity.",
+    "shortcuts": "Both show locally coherent residue-position and chain-length colors in some islands, without an obvious single global monotonic gradient. These panels do not establish that shortcut information is absent or quantify the High/Low difference.",
+    "joint": "Many regions contain both models, while other patches are model-enriched after alignment. This is exploratory and cannot establish relative performance."
+  },
+  "checkpoint_provenance": {
+    "high": {
+      "cache_path": "/home/msc-thesis-diagnostics/Evaluation/linear_probing/latents/canonical_lejepa_crop_fixed96_protein_perview_sigreg_b96_independent_locals_lr1e3_cosine_30k_rows96_warmup1200-raw-step10000.pt",
+      "cache_sha256": "8e5fc90c485a70c9bb585066c34f1ec5f6a9847289813cc362ef15a11cd12ab6",
+      "source_checkpoint": "/home/la-proteina-canonical-lejepa/store/canonical_lejepa_crop_fixed96_protein_perview_sigreg_b96_independent_locals_lr1e3_cosine_30k_rows96_warmup1200/checkpoints/step-00010000.ckpt",
+      "source_checkpoint_sha256": "846f4a58eb93babf371df7eb8da181c2420984b7af8eaa0425eeae46cc2d6914",
+      "source_global_step": 10000,
+      "encoder_source": "raw"
+    },
+    "low": {
+      "cache_path": "/home/msc-thesis-diagnostics/Evaluation/linear_probing/latents/canonical_lejepa_crop_fixed96_protein_perview_sigreg_b96_independent_locals_lr1e4_cosine_30k_rows96_warmup1200-raw-step10000.pt",
+      "cache_sha256": "4b35d89b6171b36da950367516e3c654b84c08f996392fea554581606ee548a6",
+      "source_checkpoint": "/home/la-proteina-canonical-lejepa/store/canonical_lejepa_crop_fixed96_protein_perview_sigreg_b96_independent_locals_lr1e4_cosine_30k_rows96_warmup1200/checkpoints/step-00010000.ckpt",
+      "source_checkpoint_sha256": "d789a6c9bad51cd440d12414337c7b7c7a88d416632e83302dedeafe376ef535",
+      "source_global_step": 10000,
+      "encoder_source": "raw"
+    }
+  }
+}

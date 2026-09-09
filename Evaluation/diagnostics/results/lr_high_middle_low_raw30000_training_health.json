@@ -1,0 +1,152 @@
+{
+  "high": {
+    "run_name": "canonical_lejepa_crop_fixed96_protein_perview_sigreg_b96_independent_locals_lr1e3_cosine_30k_rows96_warmup1200",
+    "wandb_url": "https://wandb.ai/aisha-hodzic-org/canonical-protein-lejepa/runs/canonical_lejepa_crop_fixed96_protein_perview_sigreg_b96_independent_locals_lr1e3_cosine_30k_rows96_warmup1200",
+    "state": "finished",
+    "summary_step": 29999,
+    "stats": {
+      "train/effective_rank": {
+        "sampled_nonfinite": 0,
+        "recent_n": 67,
+        "recent_median": 7.243255615234375,
+        "recent_min": 6.795279026031494,
+        "recent_max": 7.5237884521484375
+      },
+      "train/embedding_std": {
+        "sampled_nonfinite": 0,
+        "recent_n": 67,
+        "recent_median": 0.9056971073150635,
+        "recent_min": 0.8453006744384766,
+        "recent_max": 0.9981802701950073
+      },
+      "train/gradient_norm": {
+        "sampled_nonfinite": 0,
+        "recent_n": 67,
+        "recent_median": 0.10261644423007965,
+        "recent_min": 0.07452346384525299,
+        "recent_max": 0.17125031352043152
+      },
+      "train/inv_loss": {
+        "sampled_nonfinite": 0,
+        "recent_n": 67,
+        "recent_median": 0.06794813275337219,
+        "recent_min": 0.05951353907585144,
+        "recent_max": 0.08229105919599533
+      },
+      "train/loss": {
+        "sampled_nonfinite": 0,
+        "recent_n": 67,
+        "recent_median": 0.10405891388654709,
+        "recent_min": 0.09003429114818573,
+        "recent_max": 0.14137309789657593
+      },
+      "train/sigreg_loss": {
+        "sampled_nonfinite": 0,
+        "recent_n": 67,
+        "recent_median": 1.7578125,
+        "recent_min": 1.296875,
+        "recent_max": 2.953125
+      }
+    }
+  },
+  "middle": {
+    "run_name": "canonical_lejepa_crop_fixed96_protein_perview_b96_indlocal_start1e4_peak4e4_end1e5_warmup1200_30k",
+    "wandb_url": "https://wandb.ai/aisha-hodzic-org/canonical-protein-lejepa/runs/canonical_lejepa_crop_fixed96_protein_perview_b96_indlocal_start1e4_peak4e4_end1e5_warmup1200_30k",
+    "state": "finished",
+    "summary_step": 29999,
+    "stats": {
+      "train/effective_rank": {
+        "sampled_nonfinite": 0,
+        "recent_n": 64,
+        "recent_median": 7.235701084136963,
+        "recent_min": 6.908445358276367,
+        "recent_max": 7.437065124511719
+      },
+      "train/embedding_std": {
+        "sampled_nonfinite": 0,
+        "recent_n": 64,
+        "recent_median": 0.9231381416320801,
+        "recent_min": 0.8775956630706787,
+        "recent_max": 1.0010614395141602
+      },
+      "train/gradient_norm": {
+        "sampled_nonfinite": 0,
+        "recent_n": 64,
+        "recent_median": 0.1442895457148552,
+        "recent_min": 0.11260620504617691,
+        "recent_max": 0.2241528034210205
+      },
+      "train/inv_loss": {
+        "sampled_nonfinite": 0,
+        "recent_n": 64,
+        "recent_median": 0.0530349425971508,
+        "recent_min": 0.04312190040946007,
+        "recent_max": 0.06503654271364212
+      },
+      "train/loss": {
+        "sampled_nonfinite": 0,
+        "recent_n": 64,
+        "recent_median": 0.08485828340053558,
+        "recent_min": 0.06821449846029282,
+        "recent_max": 0.10848741233348846
+      },
+      "train/sigreg_loss": {
+        "sampled_nonfinite": 0,
+        "recent_n": 64,
+        "recent_median": 1.5234375,
+        "recent_min": 1.03125,
+        "recent_max": 2.484375
+      }
+    }
+  },
+  "low": {
+    "run_name": "canonical_lejepa_crop_fixed96_protein_perview_sigreg_b96_independent_locals_lr1e4_cosine_30k_rows96_warmup1200",
+    "wandb_url": "https://wandb.ai/aisha-hodzic-org/canonical-protein-lejepa/runs/canonical_lejepa_crop_fixed96_protein_perview_sigreg_b96_independent_locals_lr1e4_cosine_30k_rows96_warmup1200",
+    "state": "finished",
+    "summary_step": 29999,
+    "stats": {
+      "train/effective_rank": {
+        "sampled_nonfinite": 0,
+        "recent_n": 63,
+        "recent_median": 7.2332844734191895,
+        "recent_min": 6.842033386230469,
+        "recent_max": 7.510524749755859
+      },
+      "train/embedding_std": {
+        "sampled_nonfinite": 0,
+        "recent_n": 63,
+        "recent_median": 0.9285118579864502,
+        "recent_min": 0.8812154531478882,
+        "recent_max": 0.9882931709289551
+      },
+      "train/gradient_norm": {
+        "sampled_nonfinite": 0,
+        "recent_n": 63,
+        "recent_median": 0.2709164619445801,
+        "recent_min": 0.2144003063440323,
+        "recent_max": 0.36816686391830444
+      },
+      "train/inv_loss": {
+        "sampled_nonfinite": 0,
+        "recent_n": 63,
+        "recent_median": 0.052165720611810684,
+        "recent_min": 0.042091310024261475,
+        "recent_max": 0.06538531184196472
+      },
+      "train/loss": {
+        "sampled_nonfinite": 0,
+        "recent_n": 63,
+        "recent_median": 0.0836571455001831,
+        "recent_min": 0.07016748189926147,
+        "recent_max": 0.10560643672943115
+      },
+      "train/sigreg_loss": {
+        "sampled_nonfinite": 0,
+        "recent_n": 63,
+        "recent_median": 1.5546875,
+        "recent_min": 1.03125,
+        "recent_max": 2.203125
+      }
+    }
+  }
+}

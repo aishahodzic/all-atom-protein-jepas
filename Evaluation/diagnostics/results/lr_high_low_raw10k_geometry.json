@@ -1,0 +1,165 @@
+{
+  "encoder_source": "raw",
+  "global_step": 10000,
+  "shape": [
+    15000,
+    8
+  ],
+  "physical_sample_sha256": "6281211e2d1f3364f54c33fbde061601e4d35560a56f75bd6864b993b775d9b8",
+  "row_alignment_verified": true,
+  "neighbour_identity": "protein_id:residue_index",
+  "direct_cosine": {
+    "mean": 0.36308670168116575,
+    "median": 0.414545064376817,
+    "std": 0.29861114063175015,
+    "p05": -0.20427187065288557,
+    "p25": 0.19529087331544442,
+    "p75": 0.5814213958890699,
+    "p95": 0.7574627509388536
+  },
+  "linear_cka": 0.6625943574157813,
+  "orthogonal_procrustes": {
+    "similarity": 0.7787666934598108,
+    "aligned_cosine": 0.7787666934598104,
+    "normalized_residual": 0.6651816391636034,
+    "singular_values": [
+      0.13858898605611752,
+      0.12060189933733689,
+      0.11343105514485204,
+      0.11187621914668636,
+      0.10065612318115483,
+      0.09421340876975658,
+      0.0877310508334368,
+      0.011667950990469666
+    ],
+    "rotation": [
+      [
+        0.4840843192854967,
+        -0.06317520125546122,
+        0.5349795853859893,
+        -0.2386815753397175,
+        -0.05494292772062191,
+        -0.02870840581491096,
+        0.341004248997021,
+        0.5462347653498864
+      ],
+      [
+        0.4526596681920942,
+        -0.2731106994887632,
+        0.3513946817982052,
+        0.3106131027169564,
+        -0.07942141523691605,
+        0.4084022843764214,
+        -0.45978192783945937,
+        -0.3406632360434282
+      ],
+      [
+        -0.6742626993436275,
+        -0.08002080425594403,
+        0.6835018442735895,
+        0.20917361617704977,
+        0.04439116178648917,
+        -0.09938580390145063,
+        -0.10344302351911676,
+        0.07409141619260975
+      ],
+      [
+        0.21565653015859493,
+        0.5373337834869845,
+        0.07006457837264524,
+        0.5861464524440452,
+        0.5310289211854943,
+        -0.09889336544173172,
+        0.1563086589563988,
+        0.009162288997351697
+      ],
+      [
+        0.015734674689414415,
+        0.13746568741037696,
+        0.11038721759395195,
+        -0.595966071639655,
+        0.6374540715629445,
+        0.031294354910866753,
+        -0.4537172209164837,
+        -0.017560235927592968
+      ],
+      [
+        -0.2164955329716765,
+        -0.29025898669804356,
+        -0.18543362096433694,
+        0.09932567828719138,
+        0.3516678908337867,
+        0.7387883476922766,
+        0.262643682637318,
+        0.29354378640079903
+      ],
+      [
+        -0.08907408580394133,
+        0.6090159286117228,
+        -0.041648757093942175,
+        0.003332906240706397,
+        -0.4023715952270952,
+        0.3678660953510237,
+        -0.38902256039242733,
+        0.41334339411103177
+      ],
+      [
+        0.06761347012127866,
+        -0.3901807528619296,
+        -0.2644413356430632,
+        0.30688284966701745,
+        0.1216154746478015,
+        -0.36140412610009964,
+        -0.45935199133010585,
+        0.5680436403683249
+      ]
+    ]
+  },
+  "cross_protein_knn_overlap_at10": {
+    "mean": 0.08790666666666666,
+    "median": 0.0,
+    "std": 0.12125077850838274,
+    "p05": 0.0,
+    "p25": 0.0,
+    "p75": 0.1,
+    "p95": 0.3
+  },
+  "cross_protein_knn_jaccard_at10": {
+    "mean": 0.050786461314170285,
+    "median": 0.0,
+    "std": 0.0764316029289647,
+    "p05": 0.0,
+    "p25": 0.0,
+    "p75": 0.05263157894736842,
+    "p95": 0.17647058823529413
+  },
+  "cache_paths": {
+    "high": "/home/msc-thesis-diagnostics/Evaluation/linear_probing/latents/canonical_lejepa_crop_fixed96_protein_perview_sigreg_b96_independent_locals_lr1e3_cosine_30k_rows96_warmup1200-raw-step10000.pt",
+    "low": "/home/msc-thesis-diagnostics/Evaluation/linear_probing/latents/canonical_lejepa_crop_fixed96_protein_perview_sigreg_b96_independent_locals_lr1e4_cosine_30k_rows96_warmup1200-raw-step10000.pt"
+  },
+  "frozen_all_neighbour_self_query_counts": {
+    "high": 1,
+    "low": 1
+  },
+  "tie_handling_note": "All-neighbour metrics preserve the frozen protocol: discard the first kNN result. Exact ties can retain the query itself; counts are reported. Cross-protein graphs strictly exclude all same-protein rows.",
+  "interpretation_note": "Linear CKA is invariant to orthogonal transforms and global scale, not arbitrary dimension-wise rescaling or invertible mixing.",
+  "provenance": {
+    "high": {
+      "cache_path": "/home/msc-thesis-diagnostics/Evaluation/linear_probing/latents/canonical_lejepa_crop_fixed96_protein_perview_sigreg_b96_independent_locals_lr1e3_cosine_30k_rows96_warmup1200-raw-step10000.pt",
+      "cache_sha256": "8e5fc90c485a70c9bb585066c34f1ec5f6a9847289813cc362ef15a11cd12ab6",
+      "source_checkpoint": "/home/la-proteina-canonical-lejepa/store/canonical_lejepa_crop_fixed96_protein_perview_sigreg_b96_independent_locals_lr1e3_cosine_30k_rows96_warmup1200/checkpoints/step-00010000.ckpt",
+      "source_checkpoint_sha256": "846f4a58eb93babf371df7eb8da181c2420984b7af8eaa0425eeae46cc2d6914",
+      "source_global_step": 10000,
+      "encoder_source": "raw"
+    },
+    "low": {
+      "cache_path": "/home/msc-thesis-diagnostics/Evaluation/linear_probing/latents/canonical_lejepa_crop_fixed96_protein_perview_sigreg_b96_independent_locals_lr1e4_cosine_30k_rows96_warmup1200-raw-step10000.pt",
+      "cache_sha256": "4b35d89b6171b36da950367516e3c654b84c08f996392fea554581606ee548a6",
+      "source_checkpoint": "/home/la-proteina-canonical-lejepa/store/canonical_lejepa_crop_fixed96_protein_perview_sigreg_b96_independent_locals_lr1e4_cosine_30k_rows96_warmup1200/checkpoints/step-00010000.ckpt",
+      "source_checkpoint_sha256": "d789a6c9bad51cd440d12414337c7b7c7a88d416632e83302dedeafe376ef535",
+      "source_global_step": 10000,
+      "encoder_source": "raw"
+    }
+  },
+  "analysis_source_sha256": "ea7faa520fb88927d7e3258942511982b03ba27295eb4c39740255ee3462bf0b"
+}

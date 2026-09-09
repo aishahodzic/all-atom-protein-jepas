@@ -1,0 +1,149 @@
+{
+  "replicates": 5000,
+  "seed": 42,
+  "delta_definition": "Low LR - High LR",
+  "represented_query_proteins": 4738,
+  "query_residues": 15000,
+  "frozen_pool_proteins": 5224,
+  "physical_sample_sha256": "6281211e2d1f3364f54c33fbde061601e4d35560a56f75bd6864b993b775d9b8",
+  "draws_sha256": "7fd7c12b8c17a8d124d81d4b0722ad2992ecebe4e6fa2ae8f751991f78b6f0bf",
+  "method": "Paired cluster bootstrap of represented query proteins, with replacement; concatenate all residue rows in each drawn protein block. Same draw for both models. Recompute tied ranks and ranked residualization in every replicate. Neighbour graphs and per-query predictions remain fixed.",
+  "weighting": "Residue-weighted mean over the concatenated selected protein blocks; protein multiplicity is shared across models.",
+  "confidence_interval_scope": "95% percentile intervals conditional on the fixed 15000-residue neighbour pool; unadjusted for multiple comparisons.",
+  "nearest_neighbour_scope": "Nearest-neighbour exact-index accuracy and same-protein fraction use all-protein neighbours excluding self, matching the frozen diagnostics. Exact-index purity uses cross-protein neighbours.",
+  "metrics": [
+    {
+      "metric": "aa_purity_at_10_cross_protein",
+      "high": 0.07664666666666958,
+      "low": 0.08264666666666723,
+      "observed_delta": 0.005999999999997646,
+      "bootstrap_mean_delta": 0.005997939069659478,
+      "ci_2_5": 0.004060395416683953,
+      "ci_97_5": 0.00789132097347162,
+      "fraction_above_zero": 1.0,
+      "ci_excludes_zero": true
+    },
+    {
+      "metric": "ss_purity_at_10_cross_protein",
+      "high": 0.5232866666666639,
+      "low": 0.5209133333333317,
+      "observed_delta": -0.002373333333332228,
+      "bootstrap_mean_delta": -0.002383968540060688,
+      "ci_2_5": -0.00659910408914412,
+      "ci_97_5": 0.0018736458487052785,
+      "fraction_above_zero": 0.1288,
+      "ci_excludes_zero": false
+    },
+    {
+      "metric": "exact_index_at_10_cross_protein",
+      "high": 0.015013333333332934,
+      "low": 0.015486666666666244,
+      "observed_delta": 0.00047333333333331,
+      "bootstrap_mean_delta": 0.00047002368534121306,
+      "ci_2_5": -0.00012990116885908145,
+      "ci_97_5": 0.0010671859161303647,
+      "fraction_above_zero": 0.9378,
+      "ci_excludes_zero": false
+    },
+    {
+      "metric": "nearest_neighbour_exact_index_all_neighbours",
+      "high": 0.05893333333333333,
+      "low": 0.06306666666666666,
+      "observed_delta": 0.004133333333333329,
+      "bootstrap_mean_delta": 0.0041312299140872965,
+      "ci_2_5": 0.0014084247459153403,
+      "ci_97_5": 0.00692250883523821,
+      "fraction_above_zero": 0.9986,
+      "ci_excludes_zero": true
+    },
+    {
+      "metric": "normalized_position_quintile_purity_at_10_cross_protein",
+      "high": 0.2692733333333237,
+      "low": 0.25524666666665746,
+      "observed_delta": -0.014026666666666243,
+      "bootstrap_mean_delta": -0.013985083665734066,
+      "ci_2_5": -0.017706521237273704,
+      "ci_97_5": -0.010297135119711023,
+      "fraction_above_zero": 0.0,
+      "ci_excludes_zero": true
+    },
+    {
+      "metric": "same_protein_fraction_at_10",
+      "high": 0.044593333333336545,
+      "low": 0.04074000000000275,
+      "observed_delta": -0.0038533333333337916,
+      "bootstrap_mean_delta": -0.003863921766944053,
+      "ci_2_5": -0.005548793393510893,
+      "ci_97_5": -0.00217642347650442,
+      "fraction_above_zero": 0.0,
+      "ci_excludes_zero": true
+    },
+    {
+      "metric": "rsa_knn10_spearman",
+      "high": 0.15030230215582233,
+      "low": 0.17866504634930735,
+      "observed_delta": 0.02836274419348503,
+      "bootstrap_mean_delta": 0.02817313904657624,
+      "ci_2_5": 0.007613745945847655,
+      "ci_97_5": 0.04883555840248911,
+      "fraction_above_zero": 0.9974,
+      "ci_excludes_zero": true
+    },
+    {
+      "metric": "log_chain_length_knn10_spearman",
+      "high": 0.37475752849764415,
+      "low": 0.34310743800802845,
+      "observed_delta": -0.0316500904896157,
+      "bootstrap_mean_delta": -0.03170050578346686,
+      "ci_2_5": -0.04983984791838501,
+      "ci_97_5": -0.013827473534085373,
+      "fraction_above_zero": 0.0002,
+      "ci_excludes_zero": true
+    },
+    {
+      "metric": "raw_index_knn10_spearman",
+      "high": 0.2597362691083443,
+      "low": 0.2122765277621387,
+      "observed_delta": -0.04745974134620559,
+      "bootstrap_mean_delta": -0.04733055956664458,
+      "ci_2_5": -0.06629212733609742,
+      "ci_97_5": -0.028069413676022198,
+      "fraction_above_zero": 0.0,
+      "ci_excludes_zero": true
+    },
+    {
+      "metric": "normalized_position_knn10_spearman",
+      "high": 0.23825947974995293,
+      "low": 0.18688403915406102,
+      "observed_delta": -0.051375440595891914,
+      "bootstrap_mean_delta": -0.05121185258222937,
+      "ci_2_5": -0.07144212074644107,
+      "ci_97_5": -0.030901939584487382,
+      "fraction_above_zero": 0.0,
+      "ci_excludes_zero": true
+    },
+    {
+      "metric": "raw_index_within_16aa_length_bin_knn10_spearman",
+      "high": 0.5070621269447246,
+      "low": 0.4732259255772802,
+      "observed_delta": -0.03383620136744442,
+      "bootstrap_mean_delta": -0.03399218111911915,
+      "ci_2_5": -0.0452122540378762,
+      "ci_97_5": -0.02285244276677973,
+      "fraction_above_zero": 0.0,
+      "ci_excludes_zero": true
+    },
+    {
+      "metric": "raw_index_partial_length_spearman",
+      "high": 0.1956411746753276,
+      "low": 0.15017431485245528,
+      "observed_delta": -0.045466859822872324,
+      "bootstrap_mean_delta": -0.04536008115846072,
+      "ci_2_5": -0.0650056675687364,
+      "ci_97_5": -0.025479070446696186,
+      "fraction_above_zero": 0.0,
+      "ci_excludes_zero": true
+    }
+  ],
+  "elapsed_seconds": 142.23572397232056
+}

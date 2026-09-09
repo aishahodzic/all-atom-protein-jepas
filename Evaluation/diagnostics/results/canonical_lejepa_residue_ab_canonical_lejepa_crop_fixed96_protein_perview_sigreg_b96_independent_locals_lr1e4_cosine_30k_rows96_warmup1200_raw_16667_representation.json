@@ -1,0 +1,41 @@
+{
+  "description": "Matched cheap representation diagnostics for canonical residue-LeJEPA iterative versus visible-only K/V at 16667 steps (external-protein-perview-independent-locals)",
+  "encoder_source": "RAW",
+  "no_tsne": true,
+  "neighbours": {
+    "metric": "cosine",
+    "k": 10,
+    "cross_protein": true
+  },
+  "selection": {
+    "proteins": 5224,
+    "aa_ss_valid_residue_pool": 748402,
+    "sampled_residues": 15000,
+    "seed": 42,
+    "same_physical_residues": true,
+    "physical_sample_sha256": "6281211e2d1f3364f54c33fbde061601e4d35560a56f75bd6864b993b775d9b8"
+  },
+  "position": {
+    "raw_index": "one-based local tensor-row ordinal within chain",
+    "normalized_position": "one-based i/L",
+    "length_control": [
+      "partial Spearman after residualizing ranked log(chain length)",
+      "cross-protein kNN restricted to 16-residue length bins"
+    ]
+  },
+  "representation_statistics": "computed on the same 15,000 sampled full-context residue latents",
+  "runs": {
+    "canonical_lejepa_crop_fixed96_protein_perview_sigreg_b96_independent_locals_lr1e4_cosine_30k_rows96_warmup1200-raw-step16667": {
+      "checkpoint": "/home/la-proteina-canonical-lejepa/store/canonical_lejepa_crop_fixed96_protein_perview_sigreg_b96_independent_locals_lr1e4_cosine_30k_rows96_warmup1200/checkpoints/step-00016667.ckpt",
+      "staged": "/home/la-proteina-canonical-lejepa/store/canonical_lejepa_crop_fixed96_protein_perview_sigreg_b96_independent_locals_lr1e4_cosine_30k_rows96_warmup1200/evaluation/canonical_lejepa_crop_fixed96_protein_perview_sigreg_b96_independent_locals_lr1e4_cosine_30k_rows96_warmup1200-step16667-raw-staged.ckpt",
+      "source_checkpoint_sha256": "ed5a28dd235f926ab76c9fefef95fe5dfcb7299c50ce70e15e8757514cb36c73",
+      "source_global_step": 16667,
+      "encoder_source": "raw",
+      "optimizer_peak_lr": 0.0001,
+      "schedule_start_lr": 2.5e-05,
+      "schedule_peak_step": 1200,
+      "schedule_end_lr": 1e-05,
+      "schedule_total_steps": 30000
+    }
+  }
+}
