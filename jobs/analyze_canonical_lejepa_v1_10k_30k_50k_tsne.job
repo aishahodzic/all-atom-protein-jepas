@@ -1,0 +1,46 @@
+#!/bin/bash
+# Matched frozen-EMA 10k/30k/50k position/length t-SNE audit. Submit this
+# afterok on the 50k FlexRMSF job so its validated staged EMA file already exists.
+# This reads immutable checkpoints and does not interact with the live trainer.
+#SBATCH --job-name=canonical_lj_10k_30k_50k_tsne
+#SBATCH --partition=normal
+#SBATCH --qos=medium
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=32G
+#SBATCH --time=01:00:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/canonical_lejepa/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+PYTHON_BIN=/slurm-storage/aishod/envs/la-proteina/bin/python
+RAW_CHECKPOINT="$PROJECT_ROOT/store/canonical_lejepa_v1_100k/checkpoints/step-00050000.ckpt"
+STAGED_CHECKPOINT="$PROJECT_ROOT/store/canonical_lejepa_v1_100k/evaluation/canonical-lejepa-v1-step50000-ema-staged.ckpt"
+
+cd "$PROJECT_ROOT"
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+if [[ "$(hostname -s)" == "hopper" ]]; then
+    export DATA_PATH="${DATA_PATH/\/mnt\/hopper-raid/\/mnt\/raid}"
+fi
+export PYTHONPATH="$PROJECT_ROOT${PYTHONPATH:+:$PYTHONPATH}"
+export PATH="/slurm-storage/aishod/envs/la-proteina/bin:$PATH"
+export MPLCONFIGDIR="/tmp/canonical-lejepa-10k-30k-50k-tsne-${SLURM_JOB_ID}"
+mkdir -p "$MPLCONFIGDIR" "$PROJECT_ROOT/logs/canonical_lejepa"
+
+[[ -s "$RAW_CHECKPOINT" ]] || {
+    echo "ERROR: missing immutable 50k checkpoint: $RAW_CHECKPOINT" >&2
+    exit 1
+}
+[[ -s "$STAGED_CHECKPOINT" ]] || {
+    echo "ERROR: missing staged 50k EMA checkpoint; run after 50k FlexRMSF: $STAGED_CHECKPOINT" >&2
+    exit 1
+}
+
+srun "$PYTHON_BIN" \
+    Evaluation/latent_viz/analyze_canonical_lejepa_v1_10k_30k.py \
+    --include-50k

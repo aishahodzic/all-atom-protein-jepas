@@ -1,0 +1,334 @@
+{
+  "schema_version": 1,
+  "purpose": "Verbatim analysis-source archive accompanying the September 11 experiment results; file hashes capture previously untracked local scripts.",
+  "source_branch": "canonical-lejepa",
+  "source_checkout_head": "a675ba04f0e4ca59f9fe6b81ace35b2ed00dacba",
+  "source_status_note": "The source checkout also had unrelated unstaged training changes, which are not copied. A checkout commit alone does not identify the formerly untracked scripts; use the per-file hashes.",
+  "files": [
+    {
+      "path": "Evaluation/canonical_lejepa/__init__.py",
+      "sha256": "f1e62384af097fd647710d14e2420ae5fc823d97e22eddf8b44643bce2a68c6f",
+      "bytes": 339
+    },
+    {
+      "path": "Evaluation/canonical_lejepa/check_neighbor_group_eligibility.py",
+      "sha256": "23145b39acbe507624e4879207fb5de1574129c457590e4951fdb021fffd6803",
+      "bytes": 10562
+    },
+    {
+      "path": "Evaluation/canonical_lejepa/check_neighbor_group_revised_eligibility.py",
+      "sha256": "4f174321eaeca9f50e2c682e981a8d6d72ba863265b3136aeda51c6005941b56",
+      "bytes": 16222
+    },
+    {
+      "path": "Evaluation/canonical_lejepa/check_neighbor_influence_eligibility.py",
+      "sha256": "7d44fa79e90f9cdc8c291f68215312a22891e7de70f9532cd38929a719e69cac",
+      "bytes": 12809
+    },
+    {
+      "path": "Evaluation/canonical_lejepa/checkpoint.py",
+      "sha256": "a9961b7ff6052d7c9a2c4a05425392332b297f6e06e6e8698b32b71ecfa21b85",
+      "bytes": 5152
+    },
+    {
+      "path": "Evaluation/canonical_lejepa/extract_full_context_layer_states.py",
+      "sha256": "5fb21d9edbaefd6301f520149e53ad0f261fbf60f4c6ad2553da96aea00ce5b5",
+      "bytes": 23708
+    },
+    {
+      "path": "Evaluation/canonical_lejepa/plot_stb_lr_trajectories.py",
+      "sha256": "391e1f96c54d904f012ae24ea03ec44269394d218e8ad8ce3b8c21fe892f46b2",
+      "bytes": 19822
+    },
+    {
+      "path": "Evaluation/canonical_lejepa/run_neighbor_group_influence.py",
+      "sha256": "cb6ba07daae233a41f051409ebb8e482d9aedf3d875e325560b5d3ed255de539",
+      "bytes": 20705
+    },
+    {
+      "path": "Evaluation/canonical_lejepa/run_neighbor_influence.py",
+      "sha256": "5b39fe8edb9d570266832aa73fe925c10019942501e59af87e113db95f2491d6",
+      "bytes": 27357
+    },
+    {
+      "path": "Evaluation/canonical_lejepa/stage_for_structtokenbench.py",
+      "sha256": "6efaec669bcf6af523c9a60f31ce30cf02af3cf5dca58091707661da87c1e631",
+      "bytes": 668
+    },
+    {
+      "path": "Evaluation/canonical_lejepa/test_checkpoint.py",
+      "sha256": "8a85f34d7c502b4c013ae0995a04ef4690b65ffc0b8989ff73bcd40cb498e41b",
+      "bytes": 4494
+    },
+    {
+      "path": "Evaluation/canonical_lejepa/test_full_context_layer_states.py",
+      "sha256": "0fc73bd90fe45314205eecfadb1f13cd15f60e0d76789da47e346f82902ec40b",
+      "bytes": 1592
+    },
+    {
+      "path": "Evaluation/canonical_lejepa/test_neighbor_influence.py",
+      "sha256": "26a5c060ffebd9a04fe56512ac93fa4b12e505ebacf308dc61c90264af495253",
+      "bytes": 1344
+    },
+    {
+      "path": "Evaluation/diagnostics/CANONICAL_LR_DIAGNOSTICS.md",
+      "sha256": "e379ea0abef9b4f7bca956af3ad7134345972a6fce8712abe6463fcfd5578be5",
+      "bytes": 2323
+    },
+    {
+      "path": "Evaluation/diagnostics/analyze_canonical_residue_ab_10k.py",
+      "sha256": "4baa8401c54979a0ae89f8a1e599289cb86d8d2a6a786a1328abbf71fa49695a",
+      "bytes": 34864
+    },
+    {
+      "path": "Evaluation/diagnostics/decompose_canonical_residue_ab_10k.py",
+      "sha256": "504d58f715d6239ca2a44bd65ba6c06367a66bcae774f5cf3b34d92488b066bc",
+      "bytes": 10272
+    },
+    {
+      "path": "Evaluation/diagnostics/diagnose_canonical_loss_balance.py",
+      "sha256": "ced70f3cf3a834bf80739b867ed7b4568a293e95671fb458bedaa156ea2d0a27",
+      "bytes": 7275
+    },
+    {
+      "path": "Evaluation/diagnostics/plot_lr_step0_and_stb.py",
+      "sha256": "9f8a027e16053b012d46d63a029a0b9e7c60ac9bf32e19e598403f9e72f002fe",
+      "bytes": 7643
+    },
+    {
+      "path": "Evaluation/latent_viz/analyze_canonical_crop_fixed96_four_ema_10k.py",
+      "sha256": "58df9ce16a5e4b7a53a4cc71d06a4b154d311a314c819eb7432db04c0f4d46c2",
+      "bytes": 5823
+    },
+    {
+      "path": "Evaluation/latent_viz/analyze_canonical_crop_fixed96_protein_joint_b96_ema_30k.py",
+      "sha256": "961caf637840175e2ad8b3ede9cd28df671dfd36293f31c246d1b1d0a1882374",
+      "bytes": 4363
+    },
+    {
+      "path": "Evaluation/latent_viz/analyze_canonical_crop_fixed96_protein_joint_b96_raw_10k_30k.py",
+      "sha256": "34301c52c3297e7f35a955f5170bdf652a7504cd8b0fe848a39580ceb9f2bae5",
+      "bytes": 4649
+    },
+    {
+      "path": "Evaluation/latent_viz/analyze_canonical_crop_protein_rotation_raw_10k_15980.py",
+      "sha256": "df9091df4cdbcbd923155290a3f33fe7d834b6c4d4feb25f25226f89434ee79f",
+      "bytes": 3983
+    },
+    {
+      "path": "Evaluation/latent_viz/analyze_canonical_lejepa_rotations_10k_30k_50k.py",
+      "sha256": "673f4159345990004d1fbb53e4de2158c9b4baa6ccd99c93d0f3c76fc8ea2c5c",
+      "bytes": 4398
+    },
+    {
+      "path": "Evaluation/latent_viz/analyze_canonical_lejepa_rotations_seed43_10k.py",
+      "sha256": "06f45420ce8d386829e2670e3a3d5ac9b5017e3c6a59e3fbdce87ff94c663566",
+      "bytes": 2682
+    },
+    {
+      "path": "Evaluation/latent_viz/analyze_canonical_lejepa_v1_10k.py",
+      "sha256": "ef9dc5c89cfbcccdb9de6ad16380b5e9eae04e892c5a7c60e2d825012bc1e87c",
+      "bytes": 7415
+    },
+    {
+      "path": "Evaluation/latent_viz/analyze_canonical_lejepa_v1_10k_30k.py",
+      "sha256": "0bd54269bdc5c6747d0c5dbd5ab5fe980398bcd2a3a2c77e1bd01930b9f301ce",
+      "bytes": 26732
+    },
+    {
+      "path": "Evaluation/latent_viz/analyze_canonical_nocrop_raw_rotation_10k_100k.py",
+      "sha256": "821f639da12277c73da5f96185dfba11313f6775d592b4c90ced774867848365",
+      "bytes": 3800
+    },
+    {
+      "path": "Evaluation/latent_viz/analyze_canonical_raw10_protein_rotation_residue_tsne.py",
+      "sha256": "13dd4527aa274e068fecfa36a1c9dd9267849ad535761e09aeaf4e1f8866018a",
+      "bytes": 8660
+    },
+    {
+      "path": "Evaluation/latent_viz/color_canonical_crop_fixed96_four_ema_10k_position.py",
+      "sha256": "e9e86cf8d54bc79631ac87a0a3d6d51ae01f4544563d9817de0e7630c17db36b",
+      "bytes": 6375
+    },
+    {
+      "path": "Evaluation/latent_viz/compose_canonical_crop_fixed96_joint_b96_ema_10k_30k.py",
+      "sha256": "5b9072a19441dcdc905e0b9d5573c9f3a64fdafcef7cccc6df3cc3f53a5474a0",
+      "bytes": 8431
+    },
+    {
+      "path": "Evaluation/latent_viz/compose_canonical_residue_ab_ema20k_atlas.py",
+      "sha256": "f1f8b56d6644c90a45ac1f6a5bb6479aba32be5346868d7821232490ef4a4304",
+      "bytes": 5741
+    },
+    {
+      "path": "Evaluation/linear_probing/run_canonical_head_decomposition_probes.py",
+      "sha256": "214eaadb7febcec85a4e913bb829fbe54db053b7363d5b667703bbef5d9f75dd",
+      "bytes": 12347
+    },
+    {
+      "path": "Evaluation/linear_probing/run_canonical_layerwise_probes.py",
+      "sha256": "d81bc7805bd53500904b90b58420edd6875d263266c15d9bd673aa340ad58b58",
+      "bytes": 20115
+    },
+    {
+      "path": "jobs/analyze_canonical_crop_fixed96_four_ema_10k_tsne.job",
+      "sha256": "01cf49fbe2a7feadb840c32f50a712eab9127ccf6be52066a7c62defd90bdb32",
+      "bytes": 1093
+    },
+    {
+      "path": "jobs/analyze_canonical_crop_fixed96_protein_joint_b32_ema_10k_representation.job",
+      "sha256": "3fd573f4b2632e6ae779ae2eb8f31610337aa21064c60f0d607fc7706d6076fa",
+      "bytes": 1140
+    },
+    {
+      "path": "jobs/analyze_canonical_crop_fixed96_protein_joint_b96_ema_10k_20k_representation.job",
+      "sha256": "8d380610bb106cf92e4df0fa63e80d49ed3c6502729bb76c1dd94121cd83740f",
+      "bytes": 1227
+    },
+    {
+      "path": "jobs/analyze_canonical_crop_fixed96_protein_joint_b96_ema_30k_tsne.job",
+      "sha256": "5c90730950aa32cb85a4ae7bb0037d093d7f8673ce4d111fc46b9bce7a5ce0a6",
+      "bytes": 1048
+    },
+    {
+      "path": "jobs/analyze_canonical_crop_fixed96_protein_joint_b96_raw_10k_30k_tsne.job",
+      "sha256": "11f6859836a6706479e54707c0d063a1192a946f25195dbf6bdd8c5b75cce981",
+      "bytes": 1041
+    },
+    {
+      "path": "jobs/analyze_canonical_crop_fixed96_protein_perview_b96_ema_10k_representation.job",
+      "sha256": "420684665a25e516b078daf738babdc86668cc09276e3db43cd89d7637f144c3",
+      "bytes": 1144
+    },
+    {
+      "path": "jobs/analyze_canonical_crop_fixed96_protein_perview_b96_independent_locals_ema_10k_representation.job",
+      "sha256": "ef90ba14d85922edf3787db4b50f5021b933cb0439b5af3978dd5f13b4570145",
+      "bytes": 1131
+    },
+    {
+      "path": "jobs/analyze_canonical_crop_fixed96_protein_perview_b96_raw_10k_anchored_independent.job",
+      "sha256": "552d9ddbe8b9afb32a7cdb1a1675a77b49e2d8e8306c81d42e9160f117a6570b",
+      "bytes": 1273
+    },
+    {
+      "path": "jobs/analyze_canonical_crop_fixed96_residue_ema_10k_representation.job",
+      "sha256": "fdb6a3e7f83157f0513bf84960b02a52b7cb4b5793272eba3909d0e08b1608c5",
+      "bytes": 1139
+    },
+    {
+      "path": "jobs/analyze_canonical_crop_protein_rotation_raw_10k_15980_tsne.job",
+      "sha256": "a02c01d419f6f96a97bc6811842ceb8910376ac57eab13724805f76a6925069e",
+      "bytes": 1146
+    },
+    {
+      "path": "jobs/analyze_canonical_lejepa_rotations_10k_30k_50k_70k_tsne.job",
+      "sha256": "60278f05558ca010ac07516b8edcad2d3b562f94319db0c3a0eb7aa8aef881e7",
+      "bytes": 1494
+    },
+    {
+      "path": "jobs/analyze_canonical_lejepa_rotations_10k_30k_50k_tsne.job",
+      "sha256": "c82444b2b466c3f13928bda4abebbb5868b244edde17679fa0cc27764b9b5f4d",
+      "bytes": 1538
+    },
+    {
+      "path": "jobs/analyze_canonical_lejepa_rotations_seed43_10k_tsne.job",
+      "sha256": "57d7e6cadaf170dcedef65947da9027d85e263b95341c0e50c74d2c90850b30d",
+      "bytes": 4600
+    },
+    {
+      "path": "jobs/analyze_canonical_lejepa_v1_10k_30k_50k_70k_tsne.job",
+      "sha256": "95cafa6a07f7938cf9d1ce0156f5e1c33d2224307a8382f76fc727e04d865252",
+      "bytes": 1760
+    },
+    {
+      "path": "jobs/analyze_canonical_lejepa_v1_10k_30k_50k_tsne.job",
+      "sha256": "c44cb4c13bc7af88c59c531c094f82359ac7ddf4cb7006faa7ce23483cf2c448",
+      "bytes": 1748
+    },
+    {
+      "path": "jobs/analyze_canonical_lejepa_v1_10k_30k_tsne.job",
+      "sha256": "da31e3fff6cb9cf9ac9af26c6b6e6b413d5611d992a7b27f2a2fed2ca28f5732",
+      "bytes": 1153
+    },
+    {
+      "path": "jobs/analyze_canonical_lejepa_v1_10k_tsne.job",
+      "sha256": "db8d7dcbd263f67b2828b42538dbb68f6e174a502b91e4376f30051e367fb870",
+      "bytes": 1140
+    },
+    {
+      "path": "jobs/analyze_canonical_nocrop_raw_rotation_10k_100k_tsne.job",
+      "sha256": "4efab0a4bac8808d269e3c6f4fa31b1f5c017980e8574a1cba3f02a92aa96349",
+      "bytes": 1140
+    },
+    {
+      "path": "jobs/analyze_canonical_raw10_protein_rotation_residue_tsne.job",
+      "sha256": "01f55ae890983c593df7c48350486b59e4e8eb3cf94ed881df809b283be7162e",
+      "bytes": 1126
+    },
+    {
+      "path": "jobs/analyze_canonical_residue_ab_10k_representation.job",
+      "sha256": "f916c7d91c65c1923b6e7068e25d719bafb25d7666d3fe18b55b1e79d58d501b",
+      "bytes": 1085
+    },
+    {
+      "path": "jobs/analyze_canonical_residue_centered_sigreg_ab_20k_representation.job",
+      "sha256": "d08aa4bd835d220d1452aeb9ad5d9d06417607d9ee7f8a1b9439c31281ecb1a5",
+      "bytes": 1168
+    },
+    {
+      "path": "jobs/analyze_canonical_residue_centered_sigreg_ab_20k_tsne.job",
+      "sha256": "680e1e6e6714bb980a08ae4bb99e590fc2e25c5d77a3e717173c3750a792bf36",
+      "bytes": 1041
+    },
+    {
+      "path": "jobs/analyze_canonical_residue_centered_sigreg_ab_2k_representation.job",
+      "sha256": "be05d55f209238d3106c55a7b54b770e34a6f9b6f08d88626bf1816c8cce3ae1",
+      "bytes": 1154
+    },
+    {
+      "path": "jobs/check_canonical_neighbor_group_signedbin_all.job",
+      "sha256": "9d7fb9b6c6e51c4acc135c7322551a969071b53661df5dec99a8cd515574b5b3",
+      "bytes": 908
+    },
+    {
+      "path": "jobs/diagnose_canonical_crop_fixed96_protein_perview_b96_independent_locals_10k_loss_balance.job",
+      "sha256": "190eea16b17ab01a5d25de1e8561975babefd6fbb44db7c226eb2ca0fa936abd",
+      "bytes": 1708
+    },
+    {
+      "path": "jobs/extract_canonical_lejepa_full_context_states.job",
+      "sha256": "fadfe954c76feeb3c09a76c946ab4ffdfda663b92f17f407da93d26741c0c571",
+      "bytes": 961
+    },
+    {
+      "path": "jobs/run_canonical_head_decomposition_probes.job",
+      "sha256": "6fa4faa561edaa12367a217bd35e02b52a042a905194c7750f2896568bec5bc6",
+      "bytes": 878
+    },
+    {
+      "path": "jobs/run_canonical_layerwise_probes.job",
+      "sha256": "accd9df16d60c781be5665eff1f3a98eab263af31d0b3f8559c71b961ac4867c",
+      "bytes": 871
+    },
+    {
+      "path": "jobs/run_canonical_neighbor_group3_influence.job",
+      "sha256": "1c373f7eaec6e7f660159732fe433e53c9ede88bc9085f04bd8dd2dad691e36e",
+      "bytes": 839
+    },
+    {
+      "path": "jobs/run_canonical_neighbor_influence.job",
+      "sha256": "2a3e21319bf57f85dddbf2c1524650add37cb6f1afccd8e549e2a23da65ffee2",
+      "bytes": 917
+    },
+    {
+      "path": "proteinfoundation/jepa/tests/__init__.py",
+      "sha256": "26e1a404fc7cc0728cec741c4d8f8efaab6ff0f1c38cb8915bbedf2142344820",
+      "bytes": 65
+    },
+    {
+      "path": "proteinfoundation/jepa/tests/canonical_test_utils.py",
+      "sha256": "25cf96ba03addb82b02187f29d238b6caccce5fdfe887a0723b0080a7b27ab87",
+      "bytes": 6582
+    }
+  ]
+}

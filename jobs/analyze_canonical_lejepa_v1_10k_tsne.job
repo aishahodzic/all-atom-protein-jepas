@@ -1,0 +1,32 @@
+#!/bin/bash
+# Frozen evaluation-EMA latent extraction and matched t-SNE at the immutable
+# canonical LeJEPA V1 step-10k checkpoint. Independent of the live 100k job.
+#SBATCH --job-name=canonical_lejepa_10k_tsne
+#SBATCH --partition=h100
+#SBATCH --qos=medium
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=32G
+#SBATCH --time=01:00:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/canonical_lejepa/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+PYTHON_BIN=/slurm-storage/aishod/envs/la-proteina/bin/python
+
+cd "$PROJECT_ROOT"
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+if [[ "$(hostname -s)" == "hopper" ]]; then
+    export DATA_PATH="${DATA_PATH/\/mnt\/hopper-raid/\/mnt\/raid}"
+fi
+export PYTHONPATH="$PROJECT_ROOT${PYTHONPATH:+:$PYTHONPATH}"
+export PATH="/slurm-storage/aishod/envs/la-proteina/bin:$PATH"
+export MPLCONFIGDIR="/tmp/canonical-lejepa-10k-tsne-${SLURM_JOB_ID}"
+mkdir -p "$MPLCONFIGDIR" "$PROJECT_ROOT/logs/canonical_lejepa"
+
+srun "$PYTHON_BIN" Evaluation/latent_viz/analyze_canonical_lejepa_v1_10k.py

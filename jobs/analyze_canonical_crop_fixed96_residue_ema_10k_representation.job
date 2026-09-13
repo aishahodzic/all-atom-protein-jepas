@@ -1,0 +1,29 @@
+#!/bin/bash
+# Cheap frozen-EMA full-context representation audit for the fixed 96/48
+# per-residue crop experiment at optimizer step 10k. No t-SNE/probe training.
+#SBATCH --job-name=canon_crop96_10k_repr
+#SBATCH --partition=normal
+#SBATCH --qos=medium
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=32G
+#SBATCH --time=02:00:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/canonical_lejepa/%x-%j.out
+
+set -euo pipefail
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+PYTHON_BIN=/slurm-storage/aishod/envs/la-proteina/bin/python
+cd "$PROJECT_ROOT"
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+export PYTHONPATH="$PROJECT_ROOT${PYTHONPATH:+:$PYTHONPATH}"
+export PATH="/slurm-storage/aishod/envs/la-proteina/bin:$PATH"
+export MPLCONFIGDIR="/tmp/canonical-crop96-10k-repr-${SLURM_JOB_ID}"
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+export CANONICAL_RESIDUE_ANALYSIS_PROFILE=cropped-fixed96-10k
+mkdir -p "$MPLCONFIGDIR" "$PROJECT_ROOT/logs/canonical_lejepa"
+
+srun "$PYTHON_BIN" Evaluation/diagnostics/analyze_canonical_residue_ab_10k.py
