@@ -1,0 +1,11 @@
+checkpoint,branch,task,metric,fold_test,superfamily_test
+20k,canonical-lejepa-high-lr1e3-raw-step20k-upstream-l600-v1,CatBio,auroc,0.5566,0.6271
+20k,canonical-lejepa-high-lr1e3-raw-step20k-upstream-l600-v1,FlexRMSF,spearmanr,0.2154,0.2610
+20k,canonical-lejepa-high-lr1e3-raw-step20k-upstream-l600-v1,BindInt,auroc,0.5030,0.8627
+20k,canonical-lejepa-high-lr1e3-raw-step20k-upstream-l600-v1,BindBio,auroc,0.5909,0.6015
+20k,canonical-lejepa-high-lr1e3-raw-step20k-upstream-l600-v1,CatInt,auroc,0.5531,0.8133
+20k,canonical-lejepa-high-lr1e3-raw-step20k-upstream-l600-v1,Con,auroc,0.5430,0.7447
+20k,canonical-lejepa-high-lr1e3-raw-step20k-upstream-l600-v1,Rep,auroc,0.7431,0.8376
+20k,canonical-lejepa-high-lr1e3-raw-step20k-upstream-l600-v1,Ept,auroc,0.4963,0.6230
+20k,canonical-lejepa-high-lr1e3-raw-step20k-upstream-l600-v1,FlexBFactor,spearmanr,0.1229,0.1283
+20k,canonical-lejepa-high-lr1e3-raw-step20k-upstream-l600-v1,FlexNEQ,spearmanr,0.1941,0.1974

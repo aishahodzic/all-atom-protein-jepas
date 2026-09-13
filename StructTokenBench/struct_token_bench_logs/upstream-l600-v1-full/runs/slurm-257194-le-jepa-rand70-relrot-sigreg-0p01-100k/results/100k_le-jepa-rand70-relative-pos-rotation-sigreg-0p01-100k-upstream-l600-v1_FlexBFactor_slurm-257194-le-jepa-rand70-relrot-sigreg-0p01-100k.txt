@@ -1,0 +1,18 @@
+     Branch: le-jepa-rand70-relative-pos-rotation-sigreg-0p01-100k-upstream-l600-v1  |  Checkpoint: 100k  |  Task:      
+                                                      FlexBFactor                                                       
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Metric                                                                                  ┃                      Value ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│ fold_test_loss                                                                          │                     0.0193 │
+│ fold_test_pearsonr                                                                      │                     0.0693 │
+│ fold_test_r2                                                                            │                     0.0042 │
+│ fold_test_spearmanr                                                                     │                     0.0395 │
+│ superfamily_test_loss                                                                   │                     0.0148 │
+│ superfamily_test_pearsonr                                                               │                     0.0877 │
+│ superfamily_test_r2                                                                     │                    -0.0261 │
+│ superfamily_test_spearmanr                                                              │                     0.0576 │
+│ validation_loss                                                                         │                     0.0161 │
+│ validation_pearsonr                                                                     │                     0.0912 │
+│ validation_r2                                                                           │                    -0.0191 │
+│ validation_spearmanr                                                                    │                     0.0335 │
+└─────────────────────────────────────────────────────────────────────────────────────────┴────────────────────────────┘

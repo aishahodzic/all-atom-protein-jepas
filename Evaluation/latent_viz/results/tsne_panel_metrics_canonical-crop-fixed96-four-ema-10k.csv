@@ -1,0 +1,5 @@
+encoder,aa_purity_k10_original_8d,n_points,seed,perplexity,max_iter,metric
+canonical-lejepa-residue-cropped-fixed96-perview-sigreg-b96-ema-step10000,,15000,42,30.0,1000,cosine
+canonical-lejepa-protein-cropped-fixed96-perview-sigreg-b96-ema-step10000,,15000,42,30.0,1000,cosine
+canonical-lejepa-protein-cropped-fixed96-joint-sigreg-b96-ema-step10000,,15000,42,30.0,1000,cosine
+canonical-lejepa-protein-cropped-fixed96-joint-sigreg-b32-ema-step10000,,15000,42,30.0,1000,cosine

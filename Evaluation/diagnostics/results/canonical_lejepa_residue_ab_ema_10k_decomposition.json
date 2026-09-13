@@ -1,0 +1,33 @@
+{
+  "description": "Protein-mean decomposition of the matched canonical residue-LeJEPA A/B EMA 10k latent caches",
+  "checkpoint_ids": {
+    "iterative": "canonical-lejepa-residue-iterative-ema-step10000",
+    "visible_only": "canonical-lejepa-residue-visible-only-ema-step10000"
+  },
+  "sample": {
+    "proteins": 5224,
+    "residue_pool": 748402,
+    "sampled_residues": 15000,
+    "seed": 42,
+    "physical_sample_sha256": "6281211e2d1f3364f54c33fbde061601e4d35560a56f75bd6864b993b775d9b8"
+  },
+  "definitions": {
+    "protein_mean": "mean of all cached real-residue embeddings in each protein",
+    "residual": "raw residue embedding minus its protein mean",
+    "neighbours": "cosine 10-NN in the component space, excluding residues from the query protein",
+    "variance_fraction": "sum of component coordinate variances divided by the sum for raw z, evaluated on the frozen residue sample"
+  },
+  "decomposition_checks": {
+    "iterative": {
+      "protein_mean_variance_fraction": 0.9976575087551632,
+      "residual_variance_fraction": 0.0017554712396713177,
+      "cross_covariance_fraction": 0.0005870200051654464
+    },
+    "visible_only": {
+      "protein_mean_variance_fraction": 0.9986591442502648,
+      "residual_variance_fraction": 0.0010356527983775305,
+      "cross_covariance_fraction": 0.000305202951357662
+    }
+  },
+  "csv": "/mnt/data/slurm-storage/aishod/projects/la-proteina/Evaluation/diagnostics/results/canonical_lejepa_residue_ab_ema_10k_decomposition.csv"
+}

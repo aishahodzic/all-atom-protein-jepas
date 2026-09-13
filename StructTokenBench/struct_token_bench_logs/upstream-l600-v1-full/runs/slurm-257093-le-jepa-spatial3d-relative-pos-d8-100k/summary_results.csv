@@ -1,0 +1,11 @@
+checkpoint,branch,task,metric,fold_test,superfamily_test
+100k,le-jepa-spatial3d-relative-pos-d8-100k-upstream-l600-v1,BindInt,auroc,0.4946,0.8285
+100k,le-jepa-spatial3d-relative-pos-d8-100k-upstream-l600-v1,BindBio,auroc,0.6556,0.6596
+100k,le-jepa-spatial3d-relative-pos-d8-100k-upstream-l600-v1,CatInt,auroc,0.6310,0.8096
+100k,le-jepa-spatial3d-relative-pos-d8-100k-upstream-l600-v1,CatBio,auroc,0.7160,0.7670
+100k,le-jepa-spatial3d-relative-pos-d8-100k-upstream-l600-v1,Con,auroc,0.6216,0.7623
+100k,le-jepa-spatial3d-relative-pos-d8-100k-upstream-l600-v1,Rep,auroc,0.7411,0.7992
+100k,le-jepa-spatial3d-relative-pos-d8-100k-upstream-l600-v1,Ept,auroc,0.5155,0.5931
+100k,le-jepa-spatial3d-relative-pos-d8-100k-upstream-l600-v1,FlexRMSF,spearmanr,0.2799,0.2492
+100k,le-jepa-spatial3d-relative-pos-d8-100k-upstream-l600-v1,FlexBFactor,spearmanr,0.1855,0.1704
+100k,le-jepa-spatial3d-relative-pos-d8-100k-upstream-l600-v1,FlexNEQ,spearmanr,0.1222,0.1048

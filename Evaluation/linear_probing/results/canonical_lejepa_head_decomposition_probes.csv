@@ -1,0 +1,31 @@
+representation,dimension,property,metric,test_score,valid_train_residues,valid_test_residues,seed,checkpoint_path,checkpoint_sha256,global_step,encoder_source,evaluation_context,canonical_objective_uses_representation,convergence_warning,fit_warnings
+full_head,16,aa,accuracy,0.10654634527126149,600151,148602,42,/slurm-storage/aishod/projects/la-proteina/store/canonical_lejepa_v1_100k/checkpoints/step-00100000.ckpt,4f09dff610adaa75c8ac51b4cf01acb001c236c72dd91ac31568ffa191484527,100000,ema,full_unmasked_evaluation,False,False,
+full_head,16,ss,accuracy,0.5782276742432403,599874,148528,42,/slurm-storage/aishod/projects/la-proteina/store/canonical_lejepa_v1_100k/checkpoints/step-00100000.ckpt,4f09dff610adaa75c8ac51b4cf01acb001c236c72dd91ac31568ffa191484527,100000,ema,full_unmasked_evaluation,False,False,
+full_head,16,rsa,r2,0.054648096001691515,599926,148538,42,/slurm-storage/aishod/projects/la-proteina/store/canonical_lejepa_v1_100k/checkpoints/step-00100000.ckpt,4f09dff610adaa75c8ac51b4cf01acb001c236c72dd91ac31568ffa191484527,100000,ema,full_unmasked_evaluation,False,False,
+full_head,16,bfactor,spearman_rho,0.03849556648357894,597176,148031,42,/slurm-storage/aishod/projects/la-proteina/store/canonical_lejepa_v1_100k/checkpoints/step-00100000.ckpt,4f09dff610adaa75c8ac51b4cf01acb001c236c72dd91ac31568ffa191484527,100000,ema,full_unmasked_evaluation,False,False,
+latent_mean,8,aa,accuracy,0.09936609197722776,600151,148602,42,/slurm-storage/aishod/projects/la-proteina/store/canonical_lejepa_v1_100k/checkpoints/step-00100000.ckpt,4f09dff610adaa75c8ac51b4cf01acb001c236c72dd91ac31568ffa191484527,100000,ema,full_unmasked_evaluation,True,False,
+latent_mean,8,ss,accuracy,0.5667820208984164,599874,148528,42,/slurm-storage/aishod/projects/la-proteina/store/canonical_lejepa_v1_100k/checkpoints/step-00100000.ckpt,4f09dff610adaa75c8ac51b4cf01acb001c236c72dd91ac31568ffa191484527,100000,ema,full_unmasked_evaluation,True,False,
+latent_mean,8,rsa,r2,0.02892374685778698,599926,148538,42,/slurm-storage/aishod/projects/la-proteina/store/canonical_lejepa_v1_100k/checkpoints/step-00100000.ckpt,4f09dff610adaa75c8ac51b4cf01acb001c236c72dd91ac31568ffa191484527,100000,ema,full_unmasked_evaluation,True,False,
+latent_mean,8,bfactor,spearman_rho,0.01444195069505214,597176,148031,42,/slurm-storage/aishod/projects/la-proteina/store/canonical_lejepa_v1_100k/checkpoints/step-00100000.ckpt,4f09dff610adaa75c8ac51b4cf01acb001c236c72dd91ac31568ffa191484527,100000,ema,full_unmasked_evaluation,True,False,
+log_scale,8,aa,accuracy,0.09918439859490451,600151,148602,42,/slurm-storage/aishod/projects/la-proteina/store/canonical_lejepa_v1_100k/checkpoints/step-00100000.ckpt,4f09dff610adaa75c8ac51b4cf01acb001c236c72dd91ac31568ffa191484527,100000,ema,full_unmasked_evaluation,False,False,
+log_scale,8,ss,accuracy,0.5628501023376064,599874,148528,42,/slurm-storage/aishod/projects/la-proteina/store/canonical_lejepa_v1_100k/checkpoints/step-00100000.ckpt,4f09dff610adaa75c8ac51b4cf01acb001c236c72dd91ac31568ffa191484527,100000,ema,full_unmasked_evaluation,False,False,
+log_scale,8,rsa,r2,0.025432137418113787,599926,148538,42,/slurm-storage/aishod/projects/la-proteina/store/canonical_lejepa_v1_100k/checkpoints/step-00100000.ckpt,4f09dff610adaa75c8ac51b4cf01acb001c236c72dd91ac31568ffa191484527,100000,ema,full_unmasked_evaluation,False,False,
+log_scale,8,bfactor,spearman_rho,0.017111960674196777,597176,148031,42,/slurm-storage/aishod/projects/la-proteina/store/canonical_lejepa_v1_100k/checkpoints/step-00100000.ckpt,4f09dff610adaa75c8ac51b4cf01acb001c236c72dd91ac31568ffa191484527,100000,ema,full_unmasked_evaluation,False,False,
+block_12_layernorm,768,aa,accuracy,0.9773354329013069,600151,148602,42,/slurm-storage/aishod/projects/la-proteina/store/canonical_lejepa_v1_100k/checkpoints/step-00100000.ckpt,4f09dff610adaa75c8ac51b4cf01acb001c236c72dd91ac31568ffa191484527,100000,ema,full_unmasked_evaluation,False,True,"ConvergenceWarning: lbfgs failed to converge after 2000 iteration(s) (status=1):
+STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
+
+Increase the number of iterations to improve the convergence (max_iter=2000).
+You might also want to scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression"
+block_12_layernorm,768,ss,accuracy,0.8384345039319185,599874,148528,42,/slurm-storage/aishod/projects/la-proteina/store/canonical_lejepa_v1_100k/checkpoints/step-00100000.ckpt,4f09dff610adaa75c8ac51b4cf01acb001c236c72dd91ac31568ffa191484527,100000,ema,full_unmasked_evaluation,False,True,"ConvergenceWarning: lbfgs failed to converge after 2000 iteration(s) (status=1):
+STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
+
+Increase the number of iterations to improve the convergence (max_iter=2000).
+You might also want to scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression"
+block_12_layernorm,768,rsa,r2,0.5160939128531573,599926,148538,42,/slurm-storage/aishod/projects/la-proteina/store/canonical_lejepa_v1_100k/checkpoints/step-00100000.ckpt,4f09dff610adaa75c8ac51b4cf01acb001c236c72dd91ac31568ffa191484527,100000,ema,full_unmasked_evaluation,False,False,
+block_12_layernorm,768,bfactor,spearman_rho,0.17643927962050424,597176,148031,42,/slurm-storage/aishod/projects/la-proteina/store/canonical_lejepa_v1_100k/checkpoints/step-00100000.ckpt,4f09dff610adaa75c8ac51b4cf01acb001c236c72dd91ac31568ffa191484527,100000,ema,full_unmasked_evaluation,False,False,

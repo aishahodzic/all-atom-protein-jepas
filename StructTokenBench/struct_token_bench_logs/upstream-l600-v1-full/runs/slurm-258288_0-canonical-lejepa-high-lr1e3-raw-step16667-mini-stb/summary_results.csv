@@ -1,0 +1,3 @@
+checkpoint,branch,task,metric,fold_test,superfamily_test
+16667,canonical-lejepa-high-lr1e3-raw-step16667-upstream-l600-v1,CatBio,auroc,0.5593,0.6333
+16667,canonical-lejepa-high-lr1e3-raw-step16667-upstream-l600-v1,FlexRMSF,spearmanr,0.2062,0.2651

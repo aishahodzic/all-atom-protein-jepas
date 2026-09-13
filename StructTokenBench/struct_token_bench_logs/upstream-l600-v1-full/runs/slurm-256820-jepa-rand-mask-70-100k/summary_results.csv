@@ -1,0 +1,11 @@
+checkpoint,branch,task,metric,fold_test,superfamily_test
+100k,jepa-rand-mask-70-upstream-l600-v1,BindInt,auroc,0.4711,0.8006
+100k,jepa-rand-mask-70-upstream-l600-v1,BindBio,auroc,0.6556,0.6531
+100k,jepa-rand-mask-70-upstream-l600-v1,CatInt,auroc,0.5684,0.7671
+100k,jepa-rand-mask-70-upstream-l600-v1,CatBio,auroc,0.7150,0.7536
+100k,jepa-rand-mask-70-upstream-l600-v1,Con,auroc,0.6044,0.7208
+100k,jepa-rand-mask-70-upstream-l600-v1,Rep,auroc,0.7377,0.7846
+100k,jepa-rand-mask-70-upstream-l600-v1,Ept,auroc,0.4787,0.4929
+100k,jepa-rand-mask-70-upstream-l600-v1,FlexRMSF,spearmanr,0.3398,0.3426
+100k,jepa-rand-mask-70-upstream-l600-v1,FlexBFactor,spearmanr,0.2329,0.2169
+100k,jepa-rand-mask-70-upstream-l600-v1,FlexNEQ,spearmanr,0.2511,0.2519

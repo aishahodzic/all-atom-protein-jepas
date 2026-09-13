@@ -1,0 +1,4 @@
+encoder,aa_purity_k10_original_8d,n_points,seed,perplexity,max_iter,metric
+canonical-lejepa-v1-rotations-ema-step10000,,15000,42,30.0,1000,cosine
+canonical-lejepa-v1-rotations-ema-step30000,,15000,42,30.0,1000,cosine
+canonical-lejepa-v1-rotations-ema-step50000,,15000,42,30.0,1000,cosine

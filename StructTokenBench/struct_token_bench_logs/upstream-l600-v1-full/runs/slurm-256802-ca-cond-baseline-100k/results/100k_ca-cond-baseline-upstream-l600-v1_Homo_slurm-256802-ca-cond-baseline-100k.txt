@@ -1,0 +1,25 @@
+                     Branch: ca-cond-baseline-upstream-l600-v1  |  Checkpoint: 100k  |  Task: Homo                      
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━┓
+┃ Metric                                                                                         ┃               Value ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━┩
+│ test_family_holdout_accuracy                                                                   │              0.1863 │
+│ test_family_holdout_auroc                                                                      │              0.0798 │
+│ test_family_holdout_f1_score                                                                   │              0.2015 │
+│ test_family_holdout_loss                                                                       │              1.7526 │
+│ test_family_holdout_mcc                                                                        │              0.2305 │
+│ test_fold_holdout_accuracy                                                                     │              0.0633 │
+│ test_fold_holdout_auroc                                                                        │              0.1246 │
+│ test_fold_holdout_f1_score                                                                     │              0.0667 │
+│ test_fold_holdout_loss                                                                         │              3.0011 │
+│ test_fold_holdout_mcc                                                                          │              0.1832 │
+│ test_superfamily_holdout_accuracy                                                              │              0.0393 │
+│ test_superfamily_holdout_auroc                                                                 │              0.1097 │
+│ test_superfamily_holdout_f1_score                                                              │              0.0423 │
+│ test_superfamily_holdout_loss                                                                  │              3.0576 │
+│ test_superfamily_holdout_mcc                                                                   │              0.1087 │
+│ validation_accuracy                                                                            │              0.0719 │
+│ validation_auroc                                                                               │              0.2024 │
+│ validation_f1_score                                                                            │              0.0741 │
+│ validation_loss                                                                                │              3.0974 │
+│ validation_mcc                                                                                 │              0.1361 │
+└────────────────────────────────────────────────────────────────────────────────────────────────┴─────────────────────┘

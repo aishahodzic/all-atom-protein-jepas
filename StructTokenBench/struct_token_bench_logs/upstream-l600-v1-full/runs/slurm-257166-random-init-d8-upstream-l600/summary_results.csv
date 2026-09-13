@@ -1,0 +1,11 @@
+checkpoint,branch,task,metric,fold_test,superfamily_test
+step0,random-init-upstream-l600-v1,BindInt,auroc,0.4364,0.8003
+step0,random-init-upstream-l600-v1,BindBio,auroc,0.6108,0.6276
+step0,random-init-upstream-l600-v1,CatInt,auroc,0.5401,0.7761
+step0,random-init-upstream-l600-v1,CatBio,auroc,0.6434,0.7043
+step0,random-init-upstream-l600-v1,Con,auroc,0.5776,0.7205
+step0,random-init-upstream-l600-v1,Rep,auroc,0.7560,0.7928
+step0,random-init-upstream-l600-v1,Ept,auroc,0.5402,0.5532
+step0,random-init-upstream-l600-v1,FlexRMSF,spearmanr,0.2060,0.1778
+step0,random-init-upstream-l600-v1,FlexBFactor,spearmanr,0.1394,0.1142
+step0,random-init-upstream-l600-v1,FlexNEQ,spearmanr,0.0696,0.0655

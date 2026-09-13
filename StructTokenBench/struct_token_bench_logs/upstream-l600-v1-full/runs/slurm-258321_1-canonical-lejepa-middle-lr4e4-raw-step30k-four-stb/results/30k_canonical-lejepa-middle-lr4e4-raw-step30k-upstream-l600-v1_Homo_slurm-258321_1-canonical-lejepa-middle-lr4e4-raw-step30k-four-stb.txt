@@ -1,0 +1,25 @@
+         Branch: canonical-lejepa-middle-lr4e4-raw-step30k-upstream-l600-v1  |  Checkpoint: 30k  |  Task: Homo          
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━┓
+┃ Metric                                                                                         ┃               Value ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━┩
+│ test_family_holdout_accuracy                                                                   │              0.2800 │
+│ test_family_holdout_auroc                                                                      │              0.0809 │
+│ test_family_holdout_f1_score                                                                   │              0.2905 │
+│ test_family_holdout_loss                                                                       │              1.1513 │
+│ test_family_holdout_mcc                                                                        │              0.3648 │
+│ test_fold_holdout_accuracy                                                                     │              0.1689 │
+│ test_fold_holdout_auroc                                                                        │              0.1456 │
+│ test_fold_holdout_f1_score                                                                     │              0.1694 │
+│ test_fold_holdout_loss                                                                         │              1.7423 │
+│ test_fold_holdout_mcc                                                                          │              0.4001 │
+│ test_superfamily_holdout_accuracy                                                              │              0.1242 │
+│ test_superfamily_holdout_auroc                                                                 │              0.1195 │
+│ test_superfamily_holdout_f1_score                                                              │              0.1380 │
+│ test_superfamily_holdout_loss                                                                  │              2.3218 │
+│ test_superfamily_holdout_mcc                                                                   │              0.2742 │
+│ validation_accuracy                                                                            │              0.2273 │
+│ validation_auroc                                                                               │              0.2284 │
+│ validation_f1_score                                                                            │              0.2481 │
+│ validation_loss                                                                                │              2.1038 │
+│ validation_mcc                                                                                 │              0.3965 │
+└────────────────────────────────────────────────────────────────────────────────────────────────┴─────────────────────┘

@@ -1,0 +1,2 @@
+checkpoint,branch,task,metric,fold_test,superfamily_test
+2k,canonical-lejepa-residue-visible-only-protein-centered-sigreg-ema-step2k-upstream-l600-v1,FlexRMSF,spearmanr,0.2494,0.2442

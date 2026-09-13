@@ -1,0 +1,7 @@
+checkpoint,branch,task,metric,fold_test,superfamily_test
+10k,canonical-lejepa-residue-perview-rot-middle-lr-raw-step10k-upstream-l600-v1,BindInt,auroc,0.4806,0.8959
+10k,canonical-lejepa-residue-perview-rot-middle-lr-raw-step10k-upstream-l600-v1,BindBio,auroc,0.6528,0.6727
+10k,canonical-lejepa-residue-perview-rot-middle-lr-raw-step10k-upstream-l600-v1,CatInt,auroc,0.5563,0.8413
+10k,canonical-lejepa-residue-perview-rot-middle-lr-raw-step10k-upstream-l600-v1,CatBio,auroc,0.7078,0.7126
+10k,canonical-lejepa-residue-perview-rot-middle-lr-raw-step10k-upstream-l600-v1,Con,auroc,0.5700,0.7632
+10k,canonical-lejepa-residue-perview-rot-middle-lr-raw-step10k-upstream-l600-v1,Rep,auroc,0.7334,0.8382

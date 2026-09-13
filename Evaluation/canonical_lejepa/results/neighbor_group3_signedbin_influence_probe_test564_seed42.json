@@ -1,0 +1,203 @@
+{
+  "counts": {
+    "proteins": 564,
+    "result_rows": 1128
+  },
+  "eligibility_path": "/slurm-storage/aishod/projects/la-proteina/Evaluation/canonical_lejepa/results/neighbor_group_signedbin_pair50_eligibility_probe_test1045_seed42.json",
+  "eligibility_sha256": "7ade46cc8da5f2763f09f87ad93e990c600a7c96947146f7390338323695ce03",
+  "interpretation_limit": "Hidden-state replacement sensitivity, not mutation or proof of a biological pathway.",
+  "outputs": {
+    "csv": "/slurm-storage/aishod/projects/la-proteina/Evaluation/canonical_lejepa/results/neighbor_group3_signedbin_influence_probe_test564_seed42.csv",
+    "json": "/slurm-storage/aishod/projects/la-proteina/Evaluation/canonical_lejepa/results/neighbor_group3_signedbin_influence_probe_test564_seed42.json",
+    "pdf": "/slurm-storage/aishod/projects/la-proteina/Evaluation/canonical_lejepa/results/neighbor_group3_signedbin_influence_probe_test564_seed42.pdf",
+    "png": "/slurm-storage/aishod/projects/la-proteina/Evaluation/canonical_lejepa/results/neighbor_group3_signedbin_influence_probe_test564_seed42.png",
+    "pt": "/slurm-storage/aishod/projects/la-proteina/Evaluation/canonical_lejepa/results/neighbor_group3_signedbin_influence_probe_test564_seed42.pt"
+  },
+  "provenance": {
+    "checkpoint_path": "/slurm-storage/aishod/projects/la-proteina/store/canonical_lejepa_v1_100k/checkpoints/step-00100000.ckpt",
+    "checkpoint_sha256": "4f09dff610adaa75c8ac51b4cf01acb001c236c72dd91ac31568ffa191484527",
+    "ema_metadata": {
+      "decay": 0.9999,
+      "effective_decay": 0.9968049550435943,
+      "exclude": [],
+      "include": [
+        "encoder"
+      ],
+      "last_ema_step": 100000,
+      "num_updates": 3125,
+      "start_step": 0,
+      "update_every": 32,
+      "upstream_revision": "941526c428aa513a5bdfa38697724fda794d8496"
+    },
+    "encoder_config_path": "/slurm-storage/aishod/projects/la-proteina/StructTokenBench/100k-checkpoints/shared/exp_config_jepa_nn130m.json",
+    "encoder_config_sha256": "98e0350d418e7d840fa245ddfd7150064e87a9ac74c72c9150a946f0f66ccd9d",
+    "encoder_source": "ema",
+    "global_step": 100000,
+    "staged_evaluation_path": "/slurm-storage/aishod/projects/la-proteina/store/canonical_lejepa_v1_100k/evaluation/canonical-lejepa-v1-step100000-ema-staged.ckpt",
+    "staged_evaluation_provenance": {
+      "encoder_source": "ema",
+      "latent_dim": 8,
+      "projector": null,
+      "schema_version": 1,
+      "source_checkpoint_sha256": "4f09dff610adaa75c8ac51b4cf01acb001c236c72dd91ac31568ffa191484527",
+      "source_global_step": 100000
+    },
+    "staged_evaluation_sha256": "49aaae3dccc3835005bb6470b0f483a57cee4e28bead2408994693974389e273"
+  },
+  "purpose": "matched_three_residue_near_vs_far_block1_hidden_state_replacement",
+  "state_manifest_provenance": {
+    "checkpoint_path": "/slurm-storage/aishod/projects/la-proteina/store/canonical_lejepa_v1_100k/checkpoints/step-00100000.ckpt",
+    "checkpoint_sha256": "4f09dff610adaa75c8ac51b4cf01acb001c236c72dd91ac31568ffa191484527",
+    "ema_metadata": {
+      "decay": 0.9999,
+      "effective_decay": 0.9968049550435943,
+      "exclude": [],
+      "include": [
+        "encoder"
+      ],
+      "last_ema_step": 100000,
+      "num_updates": 3125,
+      "start_step": 0,
+      "update_every": 32,
+      "upstream_revision": "941526c428aa513a5bdfa38697724fda794d8496"
+    },
+    "encoder_config_path": "/slurm-storage/aishod/projects/la-proteina/StructTokenBench/100k-checkpoints/shared/exp_config_jepa_nn130m.json",
+    "encoder_config_sha256": "98e0350d418e7d840fa245ddfd7150064e87a9ac74c72c9150a946f0f66ccd9d",
+    "encoder_source": "ema",
+    "global_step": 100000,
+    "staged_evaluation_path": "/slurm-storage/aishod/projects/la-proteina/store/canonical_lejepa_v1_100k/evaluation/canonical-lejepa-v1-step100000-ema-staged.ckpt",
+    "staged_evaluation_provenance": {
+      "encoder_source": "ema",
+      "latent_dim": 8,
+      "projector": null,
+      "schema_version": 1,
+      "source_checkpoint_sha256": "4f09dff610adaa75c8ac51b4cf01acb001c236c72dd91ac31568ffa191484527",
+      "source_global_step": 100000
+    },
+    "staged_evaluation_sha256": "49aaae3dccc3835005bb6470b0f483a57cee4e28bead2408994693974389e273"
+  },
+  "summary": {
+    "block_12": {
+      "far_gain_mean": 0.8181210724980763,
+      "far_gain_median": 0.7025755782688462,
+      "fraction_near_gain_greater_than_far": 0.3723404255319149,
+      "n_proteins": 564,
+      "near_gain_mean": 0.6771634173399397,
+      "near_gain_median": 0.5740481152333468,
+      "paired_mean_difference_bootstrap_95_ci": [
+        -0.17726442011284638,
+        -0.10526817054064574
+      ],
+      "paired_mean_difference_near_minus_far": -0.14095765515813666
+    },
+    "latent_mean": {
+      "far_gain_mean": 0.001727154636807528,
+      "far_gain_median": 0.0015322483810254752,
+      "fraction_near_gain_greater_than_far": 0.35815602836879434,
+      "n_proteins": 564,
+      "near_gain_mean": 0.0014513199421769018,
+      "near_gain_median": 0.0012715483259941795,
+      "paired_mean_difference_bootstrap_95_ci": [
+        -0.00033778911511076875,
+        -0.0002145117881695088
+      ],
+      "paired_mean_difference_near_minus_far": -0.00027583469463062627
+    }
+  },
+  "summary_by_direction": {
+    "all_after": {
+      "block_12": {
+        "far_gain_mean": 0.7986514339989015,
+        "far_gain_median": 0.6626829326320403,
+        "fraction_near_gain_greater_than_far": 0.4195804195804196,
+        "n_proteins": 286,
+        "near_gain_mean": 0.7072911026364596,
+        "near_gain_median": 0.5815505542011219,
+        "paired_mean_difference_bootstrap_95_ci": [
+          -0.14258236359828647,
+          -0.04464568274415521
+        ],
+        "paired_mean_difference_near_minus_far": -0.09136033136244194
+      },
+      "latent_mean": {
+        "far_gain_mean": 0.0017433613030503866,
+        "far_gain_median": 0.0016108172883804663,
+        "fraction_near_gain_greater_than_far": 0.3531468531468531,
+        "n_proteins": 286,
+        "near_gain_mean": 0.001450309341571805,
+        "near_gain_median": 0.0012947605276829653,
+        "paired_mean_difference_bootstrap_95_ci": [
+          -0.00037420248895005755,
+          -0.00021089851704612306
+        ],
+        "paired_mean_difference_near_minus_far": -0.0002930519614785813
+      }
+    },
+    "all_before": {
+      "block_12": {
+        "far_gain_mean": 0.8448203893220505,
+        "far_gain_median": 0.7340940991884201,
+        "fraction_near_gain_greater_than_far": 0.33210332103321033,
+        "n_proteins": 271,
+        "near_gain_mean": 0.6510894452244776,
+        "near_gain_median": 0.5741917350895992,
+        "paired_mean_difference_bootstrap_95_ci": [
+          -0.24910530863157349,
+          -0.1410999749661527
+        ],
+        "paired_mean_difference_near_minus_far": -0.19373094409757297
+      },
+      "latent_mean": {
+        "far_gain_mean": 0.0017302420203935244,
+        "far_gain_median": 0.001448900238269609,
+        "fraction_near_gain_greater_than_far": 0.36162361623616235,
+        "n_proteins": 271,
+        "near_gain_mean": 0.001466859025975536,
+        "near_gain_median": 0.0012736834218993456,
+        "paired_mean_difference_bootstrap_95_ci": [
+          -0.00035965491212167506,
+          -0.0001703220302607878
+        ],
+        "paired_mean_difference_near_minus_far": -0.00026338299441798827
+      }
+    },
+    "mixed": {
+      "block_12": {
+        "far_gain_mean": 0.5799498941362116,
+        "far_gain_median": 0.5636042129237371,
+        "fraction_near_gain_greater_than_far": 0.0,
+        "n_proteins": 7,
+        "near_gain_mean": 0.4556674814092979,
+        "near_gain_median": 0.3275240628765928,
+        "paired_mean_difference_bootstrap_95_ci": [
+          -0.19418627691075754,
+          -0.05642382552864426
+        ],
+        "paired_mean_difference_near_minus_far": -0.12428241272691369
+      },
+      "latent_mean": {
+        "far_gain_mean": 0.0009454707086271565,
+        "far_gain_median": 0.0008132528911184606,
+        "fraction_near_gain_greater_than_far": 0.42857142857142855,
+        "n_proteins": 7,
+        "near_gain_mean": 0.0008910256655522778,
+        "near_gain_median": 0.0009458197795663153,
+        "paired_mean_difference_bootstrap_95_ci": [
+          -0.00023264226253337763,
+          0.00013129101376858885
+        ],
+        "paired_mean_difference_near_minus_far": -5.444504307487878e-05
+      }
+    }
+  },
+  "tests": {
+    "clean_forward_cache_parity": "passed",
+    "deterministic_forward_with_tolerance": "passed",
+    "ema_and_checkpoint_provenance": "passed",
+    "exact_three_row_replacement": "passed",
+    "focal_block1_untouched": "passed",
+    "input_pair_conditioning_and_masks_unchanged": "passed",
+    "shared_donors_and_all_other_rows_unchanged": "passed",
+    "test_protein": "1nys_C"
+  }
+}

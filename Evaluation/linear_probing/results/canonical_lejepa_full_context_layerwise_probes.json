@@ -1,0 +1,325 @@
+{
+  "alignment": {
+    "passed": true,
+    "property_row_selections": {
+      "aa": {
+        "probe_test": {
+          "residues": 148602,
+          "sha256": "16319d1ed5e7d5054d41fe2de2ac8080255fa3e4a01dd002c52e6f433cb55c09"
+        },
+        "probe_train": {
+          "residues": 600151,
+          "sha256": "9381a04405fb6a07e279f18e6d21dd7d1c4dc36bea22b97a50364e98adec51f1"
+        }
+      },
+      "bfactor": {
+        "probe_test": {
+          "residues": 148031,
+          "sha256": "cd6d4e1e655a302a6e82b9ad1a73572b92166ad663aaec0b5b8c9880277d1b39"
+        },
+        "probe_train": {
+          "residues": 597176,
+          "sha256": "29cef639b5af365d912366e57f67dfefe4bbf3d42dd4fa88886b9723b94b94f3"
+        }
+      },
+      "rsa": {
+        "probe_test": {
+          "residues": 148538,
+          "sha256": "ba8e4ac3e392f85a576a19e938276b7f21f5b89cf8135d40bba77ca5e56fdc6d"
+        },
+        "probe_train": {
+          "residues": 599926,
+          "sha256": "3b32af42edd49009f393350908ea72a7f6d25ff533516923aaf306228fcb8515"
+        }
+      },
+      "ss": {
+        "probe_test": {
+          "residues": 148528,
+          "sha256": "d0f5f869192234dec16f66e9bcaaa185dbc35504e97f1fbe0e9fec13957c560a"
+        },
+        "probe_train": {
+          "residues": 599874,
+          "sha256": "87879b21f45bd5a00a247e9a749bd9af4ea14ac126004f664572098d6a424016"
+        }
+      }
+    },
+    "protein_counts": {
+      "probe_test": 1045,
+      "probe_train": 4179
+    }
+  },
+  "fit_order": [
+    "latent_mean/aa",
+    "block_1/aa",
+    "block_1/ss",
+    "block_1/rsa",
+    "block_1/bfactor",
+    "block_6/aa",
+    "block_6/ss",
+    "block_6/rsa",
+    "block_6/bfactor",
+    "block_12/aa",
+    "block_12/ss",
+    "block_12/rsa",
+    "block_12/bfactor",
+    "latent_mean/ss",
+    "latent_mean/rsa",
+    "latent_mean/bfactor"
+  ],
+  "fits": {
+    "block_1/aa": {
+      "classes": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "convergence_warning": false,
+      "prediction_count": 148602,
+      "prediction_finite": true,
+      "recomputed_score": 0.9992866852397679,
+      "warnings": []
+    },
+    "block_1/bfactor": {
+      "classes": null,
+      "convergence_warning": false,
+      "prediction_count": 148031,
+      "prediction_finite": true,
+      "recomputed_score": 0.08834874351750174,
+      "warnings": []
+    },
+    "block_1/rsa": {
+      "classes": null,
+      "convergence_warning": false,
+      "prediction_count": 148538,
+      "prediction_finite": true,
+      "recomputed_score": 0.5828029749373793,
+      "warnings": []
+    },
+    "block_1/ss": {
+      "classes": [
+        0,
+        1,
+        2
+      ],
+      "convergence_warning": true,
+      "prediction_count": 148528,
+      "prediction_finite": true,
+      "recomputed_score": 0.8238109985995906,
+      "warnings": [
+        "ConvergenceWarning: lbfgs failed to converge after 2000 iteration(s) (status=1):\nSTOP: TOTAL NO. OF ITERATIONS REACHED LIMIT\n\nIncrease the number of iterations to improve the convergence (max_iter=2000).\nYou might also want to scale the data as shown in:\n    https://scikit-learn.org/stable/modules/preprocessing.html\nPlease also refer to the documentation for alternative solver options:\n    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression"
+      ]
+    },
+    "block_12/aa": {
+      "classes": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "convergence_warning": true,
+      "prediction_count": 148602,
+      "prediction_finite": true,
+      "recomputed_score": 0.9616492375607327,
+      "warnings": [
+        "ConvergenceWarning: lbfgs failed to converge after 2000 iteration(s) (status=1):\nSTOP: TOTAL NO. OF ITERATIONS REACHED LIMIT\n\nIncrease the number of iterations to improve the convergence (max_iter=2000).\nYou might also want to scale the data as shown in:\n    https://scikit-learn.org/stable/modules/preprocessing.html\nPlease also refer to the documentation for alternative solver options:\n    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression"
+      ]
+    },
+    "block_12/bfactor": {
+      "classes": null,
+      "convergence_warning": false,
+      "prediction_count": 148031,
+      "prediction_finite": true,
+      "recomputed_score": 0.17888250976715295,
+      "warnings": []
+    },
+    "block_12/rsa": {
+      "classes": null,
+      "convergence_warning": false,
+      "prediction_count": 148538,
+      "prediction_finite": true,
+      "recomputed_score": 0.5520324015403282,
+      "warnings": []
+    },
+    "block_12/ss": {
+      "classes": [
+        0,
+        1,
+        2
+      ],
+      "convergence_warning": true,
+      "prediction_count": 148528,
+      "prediction_finite": true,
+      "recomputed_score": 0.8370206291069697,
+      "warnings": [
+        "ConvergenceWarning: lbfgs failed to converge after 2000 iteration(s) (status=1):\nSTOP: TOTAL NO. OF ITERATIONS REACHED LIMIT\n\nIncrease the number of iterations to improve the convergence (max_iter=2000).\nYou might also want to scale the data as shown in:\n    https://scikit-learn.org/stable/modules/preprocessing.html\nPlease also refer to the documentation for alternative solver options:\n    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression"
+      ]
+    },
+    "block_6/aa": {
+      "classes": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "convergence_warning": false,
+      "prediction_count": 148602,
+      "prediction_finite": true,
+      "recomputed_score": 0.9962853797391691,
+      "warnings": []
+    },
+    "block_6/bfactor": {
+      "classes": null,
+      "convergence_warning": false,
+      "prediction_count": 148031,
+      "prediction_finite": true,
+      "recomputed_score": 0.1561212331414513,
+      "warnings": []
+    },
+    "block_6/rsa": {
+      "classes": null,
+      "convergence_warning": false,
+      "prediction_count": 148538,
+      "prediction_finite": true,
+      "recomputed_score": 0.6040126011613884,
+      "warnings": []
+    },
+    "block_6/ss": {
+      "classes": [
+        0,
+        1,
+        2
+      ],
+      "convergence_warning": false,
+      "prediction_count": 148528,
+      "prediction_finite": true,
+      "recomputed_score": 0.8516037380157276,
+      "warnings": []
+    },
+    "latent_mean/aa": {
+      "classes": [
+        0,
+        7,
+        10,
+        11,
+        19
+      ],
+      "convergence_warning": false,
+      "prediction_count": 148602,
+      "prediction_finite": true,
+      "recomputed_score": 0.09936609197722776,
+      "warnings": []
+    },
+    "latent_mean/bfactor": {
+      "classes": null,
+      "convergence_warning": false,
+      "prediction_count": 148031,
+      "prediction_finite": true,
+      "recomputed_score": 0.01444195069505214,
+      "warnings": []
+    },
+    "latent_mean/rsa": {
+      "classes": null,
+      "convergence_warning": false,
+      "prediction_count": 148538,
+      "prediction_finite": true,
+      "recomputed_score": 0.02892374685778698,
+      "warnings": []
+    },
+    "latent_mean/ss": {
+      "classes": [
+        0,
+        2
+      ],
+      "convergence_warning": false,
+      "prediction_count": 148528,
+      "prediction_finite": true,
+      "recomputed_score": 0.5667820208984164,
+      "warnings": []
+    }
+  },
+  "outputs": {
+    "csv": "/slurm-storage/aishod/projects/la-proteina/Evaluation/linear_probing/results/canonical_lejepa_full_context_layerwise_probes.csv",
+    "pdf": "/slurm-storage/aishod/projects/la-proteina/Evaluation/linear_probing/results/canonical_lejepa_full_context_layerwise_probes.pdf",
+    "png": "/slurm-storage/aishod/projects/la-proteina/Evaluation/linear_probing/results/canonical_lejepa_full_context_layerwise_probes.png"
+  },
+  "provenance": {
+    "checkpoint_path": "/slurm-storage/aishod/projects/la-proteina/store/canonical_lejepa_v1_100k/checkpoints/step-00100000.ckpt",
+    "checkpoint_sha256": "4f09dff610adaa75c8ac51b4cf01acb001c236c72dd91ac31568ffa191484527",
+    "ema_metadata": {
+      "decay": 0.9999,
+      "effective_decay": 0.9968049550435943,
+      "exclude": [],
+      "include": [
+        "encoder"
+      ],
+      "last_ema_step": 100000,
+      "num_updates": 3125,
+      "start_step": 0,
+      "update_every": 32,
+      "upstream_revision": "941526c428aa513a5bdfa38697724fda794d8496"
+    },
+    "encoder_config_path": "/slurm-storage/aishod/projects/la-proteina/StructTokenBench/100k-checkpoints/shared/exp_config_jepa_nn130m.json",
+    "encoder_config_sha256": "98e0350d418e7d840fa245ddfd7150064e87a9ac74c72c9150a946f0f66ccd9d",
+    "encoder_source": "ema",
+    "global_step": 100000,
+    "staged_evaluation_path": "/slurm-storage/aishod/projects/la-proteina/store/canonical_lejepa_v1_100k/evaluation/canonical-lejepa-v1-step100000-ema-staged.ckpt",
+    "staged_evaluation_provenance": {
+      "encoder_source": "ema",
+      "latent_dim": 8,
+      "projector": null,
+      "schema_version": 1,
+      "source_checkpoint_sha256": "4f09dff610adaa75c8ac51b4cf01acb001c236c72dd91ac31568ffa191484527",
+      "source_global_step": 100000
+    },
+    "staged_evaluation_sha256": "49aaae3dccc3835005bb6470b0f483a57cee4e28bead2408994693974389e273"
+  }
+}

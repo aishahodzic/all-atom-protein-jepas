@@ -1,0 +1,5 @@
+checkpoint,branch,task,metric,fold_test,superfamily_test
+15980,canonical-lejepa-protein-perview-rot-middle-lr-raw-step15980-upstream-l600-v1,FlexBFactor,spearmanr,0.1468,0.1494
+15980,canonical-lejepa-protein-perview-rot-middle-lr-raw-step15980-upstream-l600-v1,Ept,auroc,0.5770,0.5696
+15980,canonical-lejepa-protein-perview-rot-middle-lr-raw-step15980-upstream-l600-v1,FlexNEQ,spearmanr,0.2037,0.1992
+15980,canonical-lejepa-protein-perview-rot-middle-lr-raw-step15980-upstream-l600-v1,FlexRMSF,spearmanr,0.2787,0.2918

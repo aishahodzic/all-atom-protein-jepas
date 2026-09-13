@@ -1,0 +1,4 @@
+checkpoint,branch,task,metric,fold_test,superfamily_test
+16667,canonical-lejepa-low-lr1e4-raw-step16667-upstream-l600-v1,BindInt,auroc,0.4712,0.8600
+16667,canonical-lejepa-low-lr1e4-raw-step16667-upstream-l600-v1,BindBio,auroc,0.5961,0.6080
+16667,canonical-lejepa-low-lr1e4-raw-step16667-upstream-l600-v1,CatInt,auroc,0.5532,0.7659

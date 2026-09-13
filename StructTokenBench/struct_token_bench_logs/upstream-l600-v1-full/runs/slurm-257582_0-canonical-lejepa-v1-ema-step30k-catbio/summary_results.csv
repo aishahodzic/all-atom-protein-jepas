@@ -1,0 +1,2 @@
+checkpoint,branch,task,metric,fold_test,superfamily_test
+30k,canonical-lejepa-v1-ema-step30k-upstream-l600-v1,CatBio,auroc,0.5306,0.5956

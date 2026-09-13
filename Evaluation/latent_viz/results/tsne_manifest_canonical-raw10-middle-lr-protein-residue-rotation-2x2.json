@@ -1,0 +1,92 @@
+{
+  "description": "t-SNE of cached frozen full-context per-residue mean latents",
+  "checkpoint_note": "AE caches use the saved EMA encoders; JEPA/LeJEPA caches use online/student encoders. The exact checkpoint identities and latent dimensions are listed per encoder below.",
+  "selection": {
+    "shared_proteins": 5224,
+    "aa_and_ss_valid_residue_pool": 748402,
+    "sampled_residues": 15000,
+    "same_physical_residues_for_every_encoder": true,
+    "seed": 42
+  },
+  "tsne": {
+    "metric": "cosine",
+    "perplexity": 30.0,
+    "max_iter": 1000,
+    "learning_rate": "auto",
+    "early_exaggeration": 12.0,
+    "init": "random",
+    "method": "barnes_hut"
+  },
+  "views": {
+    "aa20": [
+      "ALA",
+      "ARG",
+      "ASN",
+      "ASP",
+      "CYS",
+      "GLN",
+      "GLU",
+      "GLY",
+      "HIS",
+      "ILE",
+      "LEU",
+      "LYS",
+      "MET",
+      "PHE",
+      "PRO",
+      "SER",
+      "THR",
+      "TRP",
+      "TYR",
+      "VAL"
+    ],
+    "charge": [
+      "Basic / positive (R,K,H)",
+      "Acidic / negative (D,E)",
+      "Neutral"
+    ],
+    "aromatic": [
+      "Aromatic (F,W,Y)",
+      "Non-aromatic"
+    ],
+    "size": [
+      "Small (A,C,D,G,N,P,S,T)",
+      "Larger (remaining 12)"
+    ]
+  },
+  "encoders": [
+    {
+      "checkpoint_id": "canonical-lejepa-middle-lr4e4-raw-step10000",
+      "latent_cache": "/slurm-storage/aishod/projects/la-proteina/Evaluation/linear_probing/latents/canonical-lejepa-middle-lr4e4-raw-step10000.pt",
+      "latent_dim": 8,
+      "n_points": 15000,
+      "input_sha256": "8d8ee94078d496c17cbf7ea7dd83519b58fa9a6457aae3073f0861e2e937e777",
+      "coordinate_cache": "/slurm-storage/aishod/projects/la-proteina/Evaluation/latent_viz/results/tsne_coordinates/canonical-lejepa-middle-lr4e4-raw-step10000_n15000_perp30p0_seed42_cosine.npz"
+    },
+    {
+      "checkpoint_id": "canonical-lejepa-jarvis-rotation-raw-step10000",
+      "latent_cache": "/slurm-storage/aishod/projects/la-proteina/Evaluation/linear_probing/latents/canonical-lejepa-jarvis-rotation-raw-step10000.pt",
+      "latent_dim": 8,
+      "n_points": 15000,
+      "input_sha256": "596dc066854c8f33bd010fa59457fc154862a680f83dc492390ed040ba3d498f",
+      "coordinate_cache": "/slurm-storage/aishod/projects/la-proteina/Evaluation/latent_viz/results/tsne_coordinates/canonical-lejepa-jarvis-rotation-raw-step10000_n15000_perp30p0_seed42_cosine.npz"
+    },
+    {
+      "checkpoint_id": "canonical-lejepa-jarvis-per-residue-raw-step10000",
+      "latent_cache": "/slurm-storage/aishod/projects/la-proteina/Evaluation/linear_probing/latents/canonical-lejepa-jarvis-per-residue-raw-step10000.pt",
+      "latent_dim": 8,
+      "n_points": 15000,
+      "input_sha256": "656ea0e804cfceb4ba63d8e516a35ed750eaeff588c8f69e8b738102bf2f4819",
+      "coordinate_cache": "/slurm-storage/aishod/projects/la-proteina/Evaluation/latent_viz/results/tsne_coordinates/canonical-lejepa-jarvis-per-residue-raw-step10000_n15000_perp30p0_seed42_cosine.npz"
+    },
+    {
+      "checkpoint_id": "canonical-lejepa-residue-perview-rot-middle-lr-raw-step10000",
+      "latent_cache": "/slurm-storage/aishod/projects/la-proteina/Evaluation/linear_probing/latents/canonical-lejepa-residue-perview-rot-middle-lr-raw-step10000.pt",
+      "latent_dim": 8,
+      "n_points": 15000,
+      "input_sha256": "faccc08da51d6e77a3622f357f170f51af4572e11021e6cae250a5189f7f4022",
+      "coordinate_cache": "/slurm-storage/aishod/projects/la-proteina/Evaluation/latent_viz/results/tsne_coordinates/canonical-lejepa-residue-perview-rot-middle-lr-raw-step10000_n15000_perp30p0_seed42_cosine.npz"
+    }
+  ],
+  "interpretation_warning": "t-SNE axes, orientation, scale, inter-cluster distances, and island shapes are not directly comparable between independently fitted encoder panels. Use original-8D k-NN purity/probes as quantitative evidence."
+}

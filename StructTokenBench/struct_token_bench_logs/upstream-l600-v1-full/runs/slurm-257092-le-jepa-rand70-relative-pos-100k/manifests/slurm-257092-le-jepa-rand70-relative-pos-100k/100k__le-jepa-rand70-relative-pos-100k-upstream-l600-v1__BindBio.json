@@ -1,0 +1,1986 @@
+{
+  "cohorts": {
+    "fold_test": {
+      "alignment_dropped_encoder_positions": 73,
+      "alignment_dropped_label_positions": 205,
+      "cache_identity_sha256": "4c1a228e5047ccc17009e186dcb6f2414513554ac3423c352808ca6f4c041409",
+      "canonical_count_asserted": false,
+      "canonical_expected_rows": null,
+      "checkpoint_filter_exclusion_rows": 0,
+      "cohort_sha256": "126219a23e1ef3cfbbb9579989d097765131f43e3f70cd60de51575f240dff02",
+      "dataset_name": "BioLIP2FunctionDataset",
+      "dataset_split": "fold_test",
+      "encoder_failure_rows": 0,
+      "final_rows": 8112,
+      "final_token_or_residue_count": 2353077,
+      "final_unique_pdb_chain_pairs": 5184,
+      "input_unique_pdb_chain_pairs": 5184,
+      "label_counts": {
+        "ignored_minus_100": 0,
+        "missing_or_non_finite": 0,
+        "one": 53942,
+        "other": 0,
+        "total": 2353077,
+        "zero": 2299135
+      },
+      "requested_split": "fold_test",
+      "resolve_or_parse_failure_reasons": {},
+      "resolve_or_parse_failure_rows": 0,
+      "resolve_or_parse_failure_unique_pairs": 0,
+      "row_conservation": {
+        "accounted": 8112,
+        "holds": true,
+        "input": 8112
+      },
+      "rows_after_stb_task_filters_before_laproteina": 8112,
+      "schema_version": 2,
+      "stb_filter_length": 600,
+      "structured_rows_before_runtime_stb_patches": 8112,
+      "structured_rows_loaded": 8112,
+      "structured_source": {
+        "path": "/mnt/hopper-raid/aishod/data/struct_token_bench_release_data/data/functional/local/biolip2/processed_structured_binding_label_fold_test",
+        "sha256": "82fe73209502fe6bcb6f7f9d9c8b9bfdf6f19f5550997a17ea33e6f0cc2cc4bf",
+        "size_bytes": 1522428148
+      },
+      "target_field": "binding_label",
+      "token_cache_artifact": {
+        "sha256": "eea586bedcc2c149a26cd4a9669459b00a3963af6bed6c4cfcc89fa5e7869892",
+        "size_bytes": 1607804553
+      }
+    },
+    "superfamily_test": {
+      "alignment_dropped_encoder_positions": 8,
+      "alignment_dropped_label_positions": 106,
+      "cache_identity_sha256": "8d542dc31ec3801ccf4a2bb26970f5c512e526e798fd43482bec447ec763ed9c",
+      "canonical_count_asserted": false,
+      "canonical_expected_rows": null,
+      "checkpoint_filter_exclusion_rows": 0,
+      "cohort_sha256": "c834b0b79b5b6b3a2908fd57dd67740c10270ae0c16cebbabd990c8b6374a41a",
+      "dataset_name": "BioLIP2FunctionDataset",
+      "dataset_split": "superfamily_test",
+      "encoder_failure_rows": 0,
+      "final_rows": 2510,
+      "final_token_or_residue_count": 668145,
+      "final_unique_pdb_chain_pairs": 2274,
+      "input_unique_pdb_chain_pairs": 2274,
+      "label_counts": {
+        "ignored_minus_100": 0,
+        "missing_or_non_finite": 0,
+        "one": 16821,
+        "other": 0,
+        "total": 668145,
+        "zero": 651324
+      },
+      "requested_split": "superfamily_test",
+      "resolve_or_parse_failure_reasons": {},
+      "resolve_or_parse_failure_rows": 0,
+      "resolve_or_parse_failure_unique_pairs": 0,
+      "row_conservation": {
+        "accounted": 2510,
+        "holds": true,
+        "input": 2510
+      },
+      "rows_after_stb_task_filters_before_laproteina": 2510,
+      "schema_version": 2,
+      "stb_filter_length": 600,
+      "structured_rows_before_runtime_stb_patches": 2510,
+      "structured_rows_loaded": 2510,
+      "structured_source": {
+        "path": "/mnt/hopper-raid/aishod/data/struct_token_bench_release_data/data/functional/local/biolip2/processed_structured_binding_label_superfamily_test",
+        "sha256": "6f7e80266270522c016b03c1410016a58fc5d4b55a78d89e4bd3cc4ede35dc8c",
+        "size_bytes": 432922064
+      },
+      "target_field": "binding_label",
+      "token_cache_artifact": {
+        "sha256": "bba91a52af5bbcd8d270e167139a6098dfd04fee58f1d24144cabaab16b44c25",
+        "size_bytes": 457317073
+      }
+    },
+    "train": {
+      "alignment_dropped_encoder_positions": 18,
+      "alignment_dropped_label_positions": 507,
+      "cache_identity_sha256": "751ce0b04c8a4f151a3e8b8eb46fde086d2f985da7091a83b56d55338b6b0224",
+      "canonical_count_asserted": false,
+      "canonical_expected_rows": null,
+      "checkpoint_filter_exclusion_rows": 0,
+      "cohort_sha256": "73c54fd5701fa1b8d162514890ab001fb4e480cca06e75e958049ce45be6e69e",
+      "dataset_name": "BioLIP2FunctionDataset",
+      "dataset_split": "train",
+      "encoder_failure_rows": 0,
+      "final_rows": 12566,
+      "final_token_or_residue_count": 3329613,
+      "final_unique_pdb_chain_pairs": 8240,
+      "input_unique_pdb_chain_pairs": 8240,
+      "label_counts": {
+        "ignored_minus_100": 0,
+        "missing_or_non_finite": 0,
+        "one": 85412,
+        "other": 0,
+        "total": 3329613,
+        "zero": 3244201
+      },
+      "requested_split": "train",
+      "resolve_or_parse_failure_reasons": {},
+      "resolve_or_parse_failure_rows": 0,
+      "resolve_or_parse_failure_unique_pairs": 0,
+      "row_conservation": {
+        "accounted": 12566,
+        "holds": true,
+        "input": 12566
+      },
+      "rows_after_stb_task_filters_before_laproteina": 12566,
+      "schema_version": 2,
+      "stb_filter_length": 600,
+      "structured_rows_before_runtime_stb_patches": 12566,
+      "structured_rows_loaded": 12566,
+      "structured_source": {
+        "path": "/mnt/hopper-raid/aishod/data/struct_token_bench_release_data/data/functional/local/biolip2/processed_structured_binding_label_train",
+        "sha256": "556fa3aaf8aedbfa411087e4dc61057e7f7f32640bbf3314d95ab5ca3586eeb0",
+        "size_bytes": 2156218916
+      },
+      "target_field": "binding_label",
+      "token_cache_artifact": {
+        "sha256": "0099172ece7c99b41d44535fe75c90fc364b2c5f1a49a2ece8804d7fd20490c9",
+        "size_bytes": 2277700651
+      }
+    },
+    "validation": {
+      "alignment_dropped_encoder_positions": 32,
+      "alignment_dropped_label_positions": 99,
+      "cache_identity_sha256": "2dcacdba850b0d28014fa3c23e72d2a7c0c6d40e9aeaa2f455efca0c901c769d",
+      "canonical_count_asserted": false,
+      "canonical_expected_rows": null,
+      "checkpoint_filter_exclusion_rows": 0,
+      "cohort_sha256": "4fb6aebd89f503bcb22ed946b0036a5e0cd44e320c0714b5e51fcde90ba4ed79",
+      "dataset_name": "BioLIP2FunctionDataset",
+      "dataset_split": "validation",
+      "encoder_failure_rows": 0,
+      "final_rows": 2678,
+      "final_token_or_residue_count": 760154,
+      "final_unique_pdb_chain_pairs": 2390,
+      "input_unique_pdb_chain_pairs": 2390,
+      "label_counts": {
+        "ignored_minus_100": 0,
+        "missing_or_non_finite": 0,
+        "one": 17953,
+        "other": 0,
+        "total": 760154,
+        "zero": 742201
+      },
+      "requested_split": "validation",
+      "resolve_or_parse_failure_reasons": {},
+      "resolve_or_parse_failure_rows": 0,
+      "resolve_or_parse_failure_unique_pairs": 0,
+      "row_conservation": {
+        "accounted": 2678,
+        "holds": true,
+        "input": 2678
+      },
+      "rows_after_stb_task_filters_before_laproteina": 2678,
+      "schema_version": 2,
+      "stb_filter_length": 600,
+      "structured_rows_before_runtime_stb_patches": 2678,
+      "structured_rows_loaded": 2678,
+      "structured_source": {
+        "path": "/mnt/hopper-raid/aishod/data/struct_token_bench_release_data/data/functional/local/biolip2/processed_structured_binding_label_validation",
+        "sha256": "93540cd6cfa1ec4fabd430741f957a730869c957c50a99bd56fe7cc0cb9c137b",
+        "size_bytes": 492214968
+      },
+      "target_field": "binding_label",
+      "token_cache_artifact": {
+        "sha256": "1c2653eef92ee508bdd920f032291407a3b91666a9371c6c1a5cedd15e55097a",
+        "size_bytes": 519836241
+      }
+    }
+  },
+  "encoder": {
+    "checkpoint_training_selector_recorded_but_not_applied": {
+      "best_resolution": null,
+      "exclude_ids": [
+        "1crr",
+        "1kld",
+        "1vve",
+        "2ezq",
+        "2ezr",
+        "2ezs",
+        "7i9a_b",
+        "7ll9_c",
+        "7ll9_d",
+        "7ll9_g",
+        "7ll9_h",
+        "7qiz",
+        "7suk",
+        "9b55",
+        "9b56",
+        "9b57",
+        "9b58",
+        "9b59",
+        "9b5a",
+        "9b5b",
+        "9b5c",
+        "9b5d",
+        "9b5e",
+        "9b5f",
+        "9b5g",
+        "9b5h",
+        "9b5i",
+        "9b5j",
+        "9b5k",
+        "9b5l",
+        "9b5l",
+        "9b5m",
+        "9b5n",
+        "9b5o",
+        "9b5p",
+        "9b5q",
+        "9b5r",
+        "9b5s",
+        "9b5t",
+        "9b5u",
+        "9b5v",
+        "9b5w",
+        "9b5x",
+        "9iix",
+        "9ij9",
+        "9uol"
+      ],
+      "experiment_types": [
+        "EM",
+        "diffraction"
+      ],
+      "max_length": 256,
+      "min_length": 50,
+      "remove_non_standard_residues": true,
+      "worst_resolution": 5.0
+    },
+    "checkpoint_type": "jepa",
+    "encoder_config": {
+      "path": "/slurm-storage/aishod/projects/la-proteina/StructTokenBench/100k-checkpoints/shared/exp_config_jepa_nn130m.json",
+      "sha256": "98e0350d418e7d840fa245ddfd7150064e87a9ac74c72c9150a946f0f66ccd9d",
+      "size_bytes": 3684
+    },
+    "latent_z_dim": 8,
+    "path": "/mnt/hopper-raid/aishod/runs/le_jepa_rand70_relative_positions_100k/store/le_jepa_rand70_relative_positions_100k/checkpoints/chk_epoch=00000019_step=000000100000.ckpt",
+    "sha256": "d0c471aadbf92029862d8c16edded696bf187178baa2a31df89f8943a8216253",
+    "size_bytes": 2063458572,
+    "state_prefix": "online_encoder"
+  },
+  "git": {
+    "available": true,
+    "commit": "f6a091d8168aeb75d1e56604a5f3010039426239",
+    "dirty": true,
+    "status_entry_count": 268,
+    "status_sha256": "fbfd205b59ce2a69f41f9c12f4e90d80f35cd412b3ec6c0feb299e3d3bc23173",
+    "tracked_diff_sha256": "5ebb7ecce22b552e2cf903e51049c52fe6d5992d1e455391bc4eeebb067173eb",
+    "untracked_files": [
+      {
+        "path": "Evaluation/diagnostics/plot_jepa_d64_rotation_arrows.py",
+        "sha256": "dc1f5b1a3b8ce86d6fded11346dbd04ef4adb33c774e56d8fd56e436e8c0c863",
+        "size_bytes": 4295
+      },
+      {
+        "path": "Evaluation/diagnostics/probe_lejepa_relative_organization.py",
+        "sha256": "cfe65c33f39b3db16f8a3910f35844cda9a22f0597739c4c480ea504468d1162",
+        "size_bytes": 7489
+      },
+      {
+        "path": "Evaluation/diagnostics/quick_lejepa_relative_position.py",
+        "sha256": "784af10a544a185966374457c8db2549c4285ab438653400e2279c2b1c5c944b",
+        "size_bytes": 6549
+      },
+      {
+        "path": "Evaluation/diagnostics/quick_lejepa_relative_position_step_matched.py",
+        "sha256": "a0e5ed1ea92f75c1f9319cc0f59bea1278ccbcfd5ac31088ed71d9f01164246b",
+        "size_bytes": 3942
+      },
+      {
+        "path": "Evaluation/diagnostics/rotation_latent_gauge.py",
+        "sha256": "d8889a7a82c90b7343369f5f40f0b542a3fefc23ff0fcda1e51ef9b2851b49f2",
+        "size_bytes": 10017
+      },
+      {
+        "path": "Evaluation/latent_viz/analyze_current_four_health.py",
+        "sha256": "e09cdb392c725f3a3b67f57846d14b7bedd2fea0374b5cbdfd4f4f8c1f7dfdb3",
+        "size_bytes": 11280
+      },
+      {
+        "path": "Evaluation/latent_viz/analyze_jepa_d64_2x2_10k.py",
+        "sha256": "ca5e04518dbe48618919edfcda2e953b0656fd54ddff0b254b88256005895015",
+        "size_bytes": 7132
+      },
+      {
+        "path": "Evaluation/latent_viz/analyze_lejepa_relative_positions.py",
+        "sha256": "449e89a0b07ed80d1b7be9f03558ed871f6175e0686cfe45eafed6361d3c7124",
+        "size_bytes": 8817
+      },
+      {
+        "path": "Evaluation/latent_viz/analyze_lejepa_relative_positions_30k.py",
+        "sha256": "e17ecafb5b7c99a58896097748e91d1415e4d3decbfc4b18802a641d25ec78dd",
+        "size_bytes": 8784
+      },
+      {
+        "path": "Evaluation/latent_viz/analyze_rotation_d8_spatial_relative_10k.py",
+        "sha256": "a0dc77ab176fa806ea2aa99150c015e9ab604e29483d25db6790c9e453c391b7",
+        "size_bytes": 12041
+      },
+      {
+        "path": "Evaluation/latent_viz/compare_meta_predictor_position.py",
+        "sha256": "c97733a10b8f8dddfa789848f69f2dddc6a7c3f45c3b92fb63f686b9a5f776fc",
+        "size_bytes": 7361
+      },
+      {
+        "path": "Evaluation/latent_viz/diagnose_jepa_d64_wave.py",
+        "sha256": "738f325383f1bfffa283c0702899ebf9ba5bca78ff00673a6fc2c91f89f26003",
+        "size_bytes": 6842
+      },
+      {
+        "path": "Evaluation/latent_viz/extract_and_plot_publication_100k.py",
+        "sha256": "c5c80a3fca86713790859d41404d021466b664fde02adfe56487b0a9ef50f077",
+        "size_bytes": 2602
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_10k/rotation_d8_spatial_relative_10k.png",
+        "sha256": "885114139cc3080c8548327419bd22a75746ad93958a6250bc15676092a0a1f8",
+        "size_bytes": 3245538
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_aa20_all-cached_grid.png",
+        "sha256": "5f9a79cb4ef9e83d678bf087042246e4e9f1ee4220e7f2014d1f272b0ad09d47",
+        "size_bytes": 3322547
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_aa20_current-four-latest-health_grid.png",
+        "sha256": "ca3d22e8ce8e0abdc8a7d824325ec0385a5c6b7c5a6dda94ad8eafcc56a0b650",
+        "size_bytes": 1022031
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_aa20_grid.png",
+        "sha256": "5d19635aa169cf0fbac75077e77e1727d3a73172cc9e3c6b9af36ec7195d2dc2",
+        "size_bytes": 1978180
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_aa20_jepa-d64-2x2-10k_grid.png",
+        "sha256": "65ede2563279cd7f70fdf5f95940dce360d52af9dbbcc0438e2cd0d90a80ef3e",
+        "size_bytes": 867013
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_aa20_lejepa-relative-position-10k-30k_grid.png",
+        "sha256": "cb88b8dbef2640f084f3e55d603235fd13f919baa038847be6805a1281fd7ba9",
+        "size_bytes": 584713
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_aa20_lejepa-relative-position_grid.png",
+        "sha256": "53fe613b19d186779394280587728acf306677086b7fef9cff5f30cdded4ceb5",
+        "size_bytes": 364077
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_aa20_lejepa_relative_position_10k_30k.png",
+        "sha256": "9fc9650bc97f7f3827e890bf9a20bf7b68540a693b255bb55911b549c61c6dc9",
+        "size_bytes": 1443434
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_aa20_publication-100k_grid.png",
+        "sha256": "89f7498145456fddb21cfde2ce1bd749be025333a826eec6f3b32ad10e7d9a63",
+        "size_bytes": 4097785
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_aa20_rotation-d8-spatial-relative-10k_grid.png",
+        "sha256": "28133a6d7894cc1eefb401937ac64e8d00de492bd6884e9460fe02251ce0678f",
+        "size_bytes": 961556
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_absolute_index/jepa_d64_2x2_10k_manifold.png",
+        "sha256": "51f09aa168290d59bfe16a9b062648de04bda91bd3de63a4c72b364caa8472fe",
+        "size_bytes": 4369281
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_absolute_index/jepa_rand70_d64_manifold_forensics.png",
+        "sha256": "7104422f4e46d366388d3b681884eccf964ae95efd01e4171db657de1fc4d46d",
+        "size_bytes": 3756856
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_absolute_index/jepa_rand70_d64_rotation_arrows_pca.png",
+        "sha256": "b06bf339bdcc2c4c61d96383524ad26e54adf12d6da5a247fff1935e99177529",
+        "size_bytes": 465154
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_absolute_index/jepa_rand70_d64_wave_diagnostic.png",
+        "sha256": "7964ef51e880287bc7ac4cea470135e9a8dea4d9fbe3268bda188b3d1c6f9e86",
+        "size_bytes": 3902998
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_absolute_index/le-jepa-mutation_absolute_residue_index_all_labeled.png",
+        "sha256": "dcb3cc0c217514972160b905d5a9f881e0c3cf154a294988e0884fad2a5b9aca",
+        "size_bytes": 848895
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_absolute_index/le-jepa-rand-mask-50_absolute_residue_index_all_labeled.png",
+        "sha256": "bd95958bce116b1a7be7a712cccef3f299a368dfaa923fef4e4e6cd83ccbde7e",
+        "size_bytes": 877873
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_absolute_index/le-jepa-rand-mask-50_protein_colored_index_labeled.png",
+        "sha256": "c3d987b21d723c6b113a37b2e832fd74ef8d636bdfade95b8671e2f805f5fb55",
+        "size_bytes": 1200611
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_absolute_index/le-jepa-rand-mask-70_absolute_residue_index_all_labeled.png",
+        "sha256": "60ba6d3cf869d01653d3ad9a8fd2363c6eb961c22ccecf4360c3d88bddab33b7",
+        "size_bytes": 880353
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_absolute_index/lejepa_absolute_residue_index_comparison.png",
+        "sha256": "b09b94e0cce59e89e491befa3d2fcf32d8f60f48f1941838c97b23ed2779f904",
+        "size_bytes": 592013
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_absolute_index/lejepa_relative_position_10k_30k.png",
+        "sha256": "a7302b895d2fce863562a184b218dd48a83463ccbe86c78c8047a8c9b1d88272",
+        "size_bytes": 2086898
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_absolute_index/lejepa_relative_position_quick128.png",
+        "sha256": "3b56e55a9a89096676968b33481b63344669ae736b106fb15d73aaa2c6509b5a",
+        "size_bytes": 997716
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_absolute_index/lejepa_relative_position_shortcut_comparison.png",
+        "sha256": "2c5579e4942cf03e89a338bb05b415fbc03156282e4ef8d0da6b4db521fad054",
+        "size_bytes": 1394421
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_absolute_index/meta_predictor_absolute_position_comparison.png",
+        "sha256": "76ce2239d250467e9fc071c892d5d3a0a91c4fd80e8f890d4df47e33fa29a1eb",
+        "size_bytes": 3207693
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_aromatic_all-cached_grid.png",
+        "sha256": "47cb3d27a14305cba9c742bc5ae5fe3bad59c1c82150ede508141aa1f564b291",
+        "size_bytes": 2624538
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_aromatic_current-four-latest-health_grid.png",
+        "sha256": "045da149dc0d8fad4a7f1ac296fc4a56a2f71c272355e3f33282db13aa69e645",
+        "size_bytes": 800573
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_aromatic_grid.png",
+        "sha256": "0095677a221b87b3e18ac7fabb523094150a5918cf560fab18111c1a684ba803",
+        "size_bytes": 1599198
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_aromatic_jepa-d64-2x2-10k_grid.png",
+        "sha256": "7d4b67d3a9305a34044a0851c825b4e9ed09f07e2eb335d98ceb2db50a3a1025",
+        "size_bytes": 709153
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_aromatic_lejepa-relative-position-10k-30k_grid.png",
+        "sha256": "94f11c76e733623d3250655dc33d10cb64cb8680d66e31661a9dc0eaf06b6265",
+        "size_bytes": 458777
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_aromatic_lejepa-relative-position_grid.png",
+        "sha256": "525d8b85e596b55ab4bbb29bbb770153df1a745322e7be670cbd9c456bdddfe1",
+        "size_bytes": 278460
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_aromatic_publication-100k_grid.png",
+        "sha256": "9861d9a908db70888529b806258811b4308589e4cab2785ed810d5a27401eb05",
+        "size_bytes": 3246062
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_aromatic_rotation-d8-spatial-relative-10k_grid.png",
+        "sha256": "c4d44c7422e1807e7a71543ef6f91c8b3b3e05c30920d11a03b5fc953b751aa0",
+        "size_bytes": 794391
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_charge_all-cached_grid.png",
+        "sha256": "8b07827075368c112fa975a74ee5ce1f8785068a35664067461b516a44dbdd0c",
+        "size_bytes": 2801784
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_charge_current-four-latest-health_grid.png",
+        "sha256": "94a23b656671ecd77abd91939fc20bfce17b0b16cf75321e44d11c268e90120a",
+        "size_bytes": 874675
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_charge_grid.png",
+        "sha256": "b283d4257e11265d24d3e76ef7103cdc76ad0e9a7598815fe1c1c830b5089076",
+        "size_bytes": 1675136
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_charge_jepa-d64-2x2-10k_grid.png",
+        "sha256": "935ecefe8c82507fb75d78424bcd11301f50a0e623478eaf33571b38db9fdc46",
+        "size_bytes": 744844
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_charge_lejepa-relative-position-10k-30k_grid.png",
+        "sha256": "4b8f8635eea55e89573a9e62e513c242a53ef81b2c84aedcb9429338271e4559",
+        "size_bytes": 514022
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_charge_lejepa-relative-position_grid.png",
+        "sha256": "d712aa34ede9e0a258cb7a33d38d7b46b44dc7479930672c1e83c3df83b1d382",
+        "size_bytes": 311279
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_charge_publication-100k_grid.png",
+        "sha256": "4414f3b23dbc6796b5ce361004d39cc6757f49adc8423b0e0c30dafd0b5611e4",
+        "size_bytes": 3459249
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_charge_rotation-d8-spatial-relative-10k_grid.png",
+        "sha256": "247e05b506175569c0b2d32f3668cfecb2272f1788deaed28f7bdec00f2df065",
+        "size_bytes": 827643
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_health/current_four_latest_health.png",
+        "sha256": "b5b8d15502a43cdbf3fd1d47c1f811ecbcea7be367c486f089c582b42ff48d25",
+        "size_bytes": 3360437
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_individual/ae1-external_aa20_labeled.png",
+        "sha256": "a277effd9d0e439f3d22fbc6a7f22b579edc89d362b0557a29ae463cade658a1",
+        "size_bytes": 415417
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_individual/ca-cond_aa20_labeled.png",
+        "sha256": "5a6236a69ac6010db3cfb530fa452f1824e24b836d96747f857bdc071fee4a14",
+        "size_bytes": 388508
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_individual/fully-latent_aa20_labeled.png",
+        "sha256": "ccb8c9e60ffbeb938bf492e4268b17ca117de46531834d1e3b9a31c0af51f57b",
+        "size_bytes": 398978
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_individual/jepa-d64-10k-baseline_aa20_labeled.png",
+        "sha256": "078fa9bb73ef11c7a5ee778ebe6a43714355ae22d14a1b09db07ea9d5ac049a0",
+        "size_bytes": 459053
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_individual/jepa-d64-10k-rot_aa20_labeled.png",
+        "sha256": "ff341e78a1bdb468a5d9073954046b06a1671902812c46b16a82f3ccc29faa19",
+        "size_bytes": 391385
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_individual/jepa-d64-10k-sigreg-rot_aa20_labeled.png",
+        "sha256": "dd3f500f2d00a3ecc72a6df03b4c9f2eb33f2b9033a727257b29f7d7f0ddde4f",
+        "size_bytes": 581130
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_individual/jepa-d64-10k-sigreg_aa20_labeled.png",
+        "sha256": "5968d3d88f05e23503a188736a5d7353ac3112970b8b554d09fe16b5aaebd5f9",
+        "size_bytes": 577260
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_individual/jepa-mutation_aa20_labeled.png",
+        "sha256": "b63d2cd22aec41859e2667d9cc70472b0d9ae89a1c972c85ab36bd7cf3b276f7",
+        "size_bytes": 582235
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_individual/jepa-new-predictor_aa20_labeled.png",
+        "sha256": "d0f056b56aa6965218650a50926ed90e66c4cd8cccbae712df13587611898862",
+        "size_bytes": 583206
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_individual/jepa-r70-d64-rot-step58755_aa20_labeled.png",
+        "sha256": "3c63f908685747359877732f214e06cb01f97ec85a0b8bd833e78b30b5775712",
+        "size_bytes": 409679
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_individual/jepa-r70-d8-rot-10k_aa20_labeled.png",
+        "sha256": "520c9190181344f312f9eeebe8b8b30d363417bdcba6de879e4896f1d5198e50",
+        "size_bytes": 568694
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_individual/jepa-rand-mask-50_aa20_labeled.png",
+        "sha256": "2a4a95eeaeb0dc542384a852da427b7a9d0484d5b544b30c0fe04331221de027",
+        "size_bytes": 590435
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_individual/jepa-rand-mask-70_aa20_labeled.png",
+        "sha256": "9a510632b248bd47a5686be35c2a523a60025a8bbd3ff9569c3f53f5119a241a",
+        "size_bytes": 593229
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_individual/jepa-rand50-control-30k_aa20_labeled.png",
+        "sha256": "d7dd9ec40b628d597a88e3d5345ae88e1b3ccc9a40f53a793c0a30961a4f5db0",
+        "size_bytes": 594313
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_individual/jepa-rand50-ema-30k_aa20_labeled.png",
+        "sha256": "6e08f36c88381f78682df3ec65ecb292faa847a43b1ee0e56152c3b10f5ffa86",
+        "size_bytes": 588362
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_individual/jepa-rand50-layernorm-30k_aa20_labeled.png",
+        "sha256": "31a9b0d441f8244e7930cbfe6295ed0cbcc98af103aabe1cc9f3a833313590d0",
+        "size_bytes": 588314
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_individual/jepa-rand50-predictor-30k_aa20_labeled.png",
+        "sha256": "1dc134cf4300caf394ea8609b56aef9402b4301a17de805c4cbbb153af220621",
+        "size_bytes": 587706
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_individual/jepa-rand70-d64_aa20_labeled.png",
+        "sha256": "1117354469ac257f603035054d6015d0af3709e2d68a74a733e992e4ce70b62f",
+        "size_bytes": 537898
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_individual/jepa-selfattn-rand50_aa20_labeled.png",
+        "sha256": "8bac542de426150f8a2d1b41d63cb1a1914a27bf31fbdbbb39d62d50f81dcbd8",
+        "size_bytes": 587253
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_individual/jepa-selfattn-rand70_aa20_labeled.png",
+        "sha256": "eb03443d2984c4a481cfd701a64a5f39b9975c8a0921cf9c7a7f533f27aea18d",
+        "size_bytes": 581730
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_individual/le-jepa-chem-exp1_aa20_labeled.png",
+        "sha256": "fc24c99625099d613d86666fbdfa717a24b178863a25c9e51b1e1354c2a90699",
+        "size_bytes": 235607
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_individual/le-jepa-chem-exp3_aa20_labeled.png",
+        "sha256": "88dd77f904cbbfdba39d30bc98d29a6a3b8ffb43754bd300e5d5ffa854e68228",
+        "size_bytes": 257873
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_individual/le-jepa-mutation_aa20_labeled.png",
+        "sha256": "fe473472f22a1ec59e336336bde0bb5e851a558760502d863ed5ff02890589f3",
+        "size_bytes": 218152
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_individual/le-jepa-new-predictor_aa20_labeled.png",
+        "sha256": "fc54806114b9ba952672bf7bb69664dd72cc482c57c0c31721dad9f231e20cbe",
+        "size_bytes": 601495
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_individual/le-jepa-r50-relpos-step45000_aa20_labeled.png",
+        "sha256": "e53d6c923ec9f0f4087947ce1c7dd46546db8aa43c6da72f96fc02c450f8512a",
+        "size_bytes": 567854
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_individual/le-jepa-r70-relpos-step100000_aa20_labeled.png",
+        "sha256": "3d1e23032dc3b775e3d315336eaa411768607549cb17ebbb56383f9b3a8e2a01",
+        "size_bytes": 588026
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_individual/le-jepa-rand-mask-50_aa20_labeled.png",
+        "sha256": "f62a31d8d75236565636fafad4606e8958086f4cdcc256da0ff2a45e9d8e88a8",
+        "size_bytes": 225049
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_individual/le-jepa-rand-mask-70_aa20_labeled.png",
+        "sha256": "efdd8b6db8f352a40782d606c9f91d3701a2583c9887de29992defbf748428e7",
+        "size_bytes": 224346
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_individual/le-jepa-rand50-relative-pos-10k_aa20_labeled.png",
+        "sha256": "9c266788749ed32b20aaa30886e0536cd09435b34b741c622f6de173d6b4100c",
+        "size_bytes": 574587
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_individual/le-jepa-rand50-relative-pos-30k_aa20_labeled.png",
+        "sha256": "48a6f49392325d5c0d803327a1c362ab5719567645868719cfe546a9240b4b39",
+        "size_bytes": 564347
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_individual/le-jepa-rand70-d64_aa20_labeled.png",
+        "sha256": "6e975bebf5681d04a21d87b8a9e7906338917e5affe1a5ebeb1e54dbe75ac6be",
+        "size_bytes": 222945
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_individual/le-jepa-sp3d-relpos-d8-10k_aa20_labeled.png",
+        "sha256": "4c3a9ba21ee35e99789ec9a23dad76a42547338788f5d1b3124ebba8dd6d018a",
+        "size_bytes": 472876
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_individual/le-jepa-sp3d-relpos-d8-step65000_aa20_labeled.png",
+        "sha256": "10a61260be49f9aaff24fada9ef14eab860eca442dececc01d15af295c1d179e",
+        "size_bytes": 595194
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_individual/le-jepa-spatial3d-d64_aa20_labeled.png",
+        "sha256": "75c8c100fb2e0785aa9ec55ac9f399bc20c235fe481051818c54ceb665548252",
+        "size_bytes": 232349
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_individual/random-init-64_aa20_labeled.png",
+        "sha256": "702593cb04d8aaf74687a317099c2bb797389d4303ec19f925bb619d813b018d",
+        "size_bytes": 400789
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_individual/random-init_aa20_labeled.png",
+        "sha256": "e350816ae356c0831016f04fcdf20748bbcc5c2895f6d085488f9a67b1158123",
+        "size_bytes": 468545
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_organization/lejepa_relative_position_organization_screen.png",
+        "sha256": "cc8325c3a0d69e0806e56b95d62c38a17f72e357a656bfa53d3f90d0dcd067ee",
+        "size_bytes": 4396910
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_size_all-cached_grid.png",
+        "sha256": "ddfb6988e926a13208a6f354852b0b9e37aa5f638fd95cdc464d2ee8cfe5a5d9",
+        "size_bytes": 3302838
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_size_current-four-latest-health_grid.png",
+        "sha256": "6d16202e5ab3410f179913476daebb9f69ffaabade96961672685501018b453a",
+        "size_bytes": 1028723
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_size_grid.png",
+        "sha256": "530eb4a782907d09b599dcdf48f465c74b4977bdf511186d09de211d1065682a",
+        "size_bytes": 1996442
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_size_jepa-d64-2x2-10k_grid.png",
+        "sha256": "24daa45d0bd1acec923329bf223cc32007fd3af7cf7d34670636d46585c942ad",
+        "size_bytes": 894633
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_size_lejepa-relative-position-10k-30k_grid.png",
+        "sha256": "08f705596c57e18342e19189b1de7e44b0301da32dcd1e04ddd08e8280c94c88",
+        "size_bytes": 585389
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_size_lejepa-relative-position_grid.png",
+        "sha256": "58dffd4321c2e4efb71aebe2638f0b9fa8b3b3a22ba972f346afc050f46dd4db",
+        "size_bytes": 351649
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_size_publication-100k_grid.png",
+        "sha256": "6da23f54276a4a85fa2dbc93e3b0a2026a81701b250e9081e148bff1e37fe2f1",
+        "size_bytes": 4073148
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_size_rotation-d8-spatial-relative-10k_grid.png",
+        "sha256": "d1c20e7cf8781d300a24ae7147a4487303bacdedfe095dcffe228d71b8be79ef",
+        "size_bytes": 1002820
+      },
+      {
+        "path": "Evaluation/latent_viz/label_tsne_worms.py",
+        "sha256": "275f72f90197371b2de7a9495a2ddfe1ce16f1deaa0e776106fef93093685252",
+        "size_bytes": 10685
+      },
+      {
+        "path": "Evaluation/latent_viz/plot_jepa_d64_manifold_forensics.py",
+        "sha256": "fa3832121e0eab0a2d15ccf9cd656e7edde727801751959965fdb88cd013b957",
+        "size_bytes": 3976
+      },
+      {
+        "path": "Evaluation/latent_viz/plot_lejepa_rand50_protein_worms.py",
+        "sha256": "cdc99b025e9750f0381258c7a1c98b952651dca74feba378a2c81af971cafcaf",
+        "size_bytes": 8786
+      },
+      {
+        "path": "Evaluation/latent_viz/publication_100k.py",
+        "sha256": "2b75e874228f5a863c4ba6a78cd9727e4cb8851454a390114497b76a4c21d20b",
+        "size_bytes": 2902
+      },
+      {
+        "path": "Evaluation/latent_viz/results/current_four_latest_health.csv",
+        "sha256": "1bb4cee8489014361273530e1d6dc5bc2a8a15396a5e67103993e0ae9ef6ef5e",
+        "size_bytes": 2601
+      },
+      {
+        "path": "Evaluation/latent_viz/results/jepa_d64_2x2_10k_manifold.csv",
+        "sha256": "2c905af4ac535fabf70d52a3864cc89770caf43d8270286fe52db61ec8087af2",
+        "size_bytes": 1412
+      },
+      {
+        "path": "Evaluation/latent_viz/results/jepa_rand70_d64_wave_diagnostic.csv",
+        "sha256": "04861a7ceb917eb8814ea079a14c422e8c0d4ec617389e1854aac35ad30acac7",
+        "size_bytes": 444
+      },
+      {
+        "path": "Evaluation/latent_viz/results/le-jepa-rand-mask-50_protein_worm_summary.csv",
+        "sha256": "abe76318c3a51b2fc04e25e2a8bd3a4c4e70cb09637d7c5682ec2489585b3600",
+        "size_bytes": 3641
+      },
+      {
+        "path": "Evaluation/latent_viz/results/le-jepa-rand-mask-50_tsne_point_provenance.csv",
+        "sha256": "602b6ccbaffb2d0067e6ece69cebefe063616884fb78ffdf8a74bdbfdbeba9c9",
+        "size_bytes": 1141576
+      },
+      {
+        "path": "Evaluation/latent_viz/results/lejepa_relative_position_milestones_10k_30k.csv",
+        "sha256": "904f310337b0b0c19c3614c7fe84ceb75a4b30b18b407aaeecd38d7a6fbd62c7",
+        "size_bytes": 866
+      },
+      {
+        "path": "Evaluation/latent_viz/results/lejepa_relative_position_organization_screen.csv",
+        "sha256": "4954387f337949af82a349bf4fee753bdfce9d1a827fefbb0d82349c6141c301",
+        "size_bytes": 3052
+      },
+      {
+        "path": "Evaluation/latent_viz/results/lejepa_relative_position_quick128_summary.csv",
+        "sha256": "83ae125a218f439b4ca37975793052878186c8cb733617166ce54a5264ca8c61",
+        "size_bytes": 387
+      },
+      {
+        "path": "Evaluation/latent_viz/results/lejepa_relative_position_shortcut_summary.csv",
+        "sha256": "c9c2bf1db1a1dd5902c6986a2d56189ec851e426e2236e7ea033271b49f9302f",
+        "size_bytes": 1003
+      },
+      {
+        "path": "Evaluation/latent_viz/results/lejepa_relative_position_step_matched_quick128.csv",
+        "sha256": "76d1bc7cba2d6baeaffd2e16ea5f29bfd444a4aa43c0d430e2a5f9d05df0e540",
+        "size_bytes": 734
+      },
+      {
+        "path": "Evaluation/latent_viz/results/meta_predictor_absolute_position_summary.csv",
+        "sha256": "ba64f110fff952edd360e80dc3e8835f1267df758ea122fa813447f5caf4b2dd",
+        "size_bytes": 1281
+      },
+      {
+        "path": "Evaluation/latent_viz/results/rotation_d8_spatial_relative_10k.csv",
+        "sha256": "3455cf2343634f1f37a5eb804ee20d4dad45b7f695a6ec125dc608c16c15a71a",
+        "size_bytes": 2264
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_coordinates/ae1-external_n15000_perp30p0_seed42_cosine.npz",
+        "sha256": "df2f85f9272389683c5884143fea51d82f50bd1367920ca5837656a2023fd9ec",
+        "size_bytes": 112291
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_coordinates/ca-cond_n15000_perp30p0_seed42_cosine.npz",
+        "sha256": "7de837a7cda1529e8171765b257e47ce28ce05ae8261a47078d1374b491ea8c3",
+        "size_bytes": 112115
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_coordinates/fully-latent_n15000_perp30p0_seed42_cosine.npz",
+        "sha256": "d766753e292ac6a0e0ef21e4b1caaeca9795fa7c76165e86d57b3295f3cbac9c",
+        "size_bytes": 112151
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_coordinates/jepa-d64-10k-baseline_n15000_perp30p0_seed42_cosine.npz",
+        "sha256": "de84b3a722dc42e468db94fcea671aac7c7162bf4cbaad214e2b7e61e49c4c8a",
+        "size_bytes": 112116
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_coordinates/jepa-d64-10k-rot_n15000_perp30p0_seed42_cosine.npz",
+        "sha256": "6c311da380ceddac04ff1e3e755721ac1bba6102aecb53c81c7b6485c4c30bb2",
+        "size_bytes": 112232
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_coordinates/jepa-d64-10k-sigreg-rot_n15000_perp30p0_seed42_cosine.npz",
+        "sha256": "78ff1b3c70cb0ba591dd812d957444c29ffc431dd6660170b7727d382003ffc9",
+        "size_bytes": 111788
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_coordinates/jepa-d64-10k-sigreg_n15000_perp30p0_seed42_cosine.npz",
+        "sha256": "ee623046d392efea8b681ef3b14bd2cadb70b049358a9c7a5854b3206c52256a",
+        "size_bytes": 112302
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_coordinates/jepa-mutation_n15000_perp30p0_seed42_cosine.npz",
+        "sha256": "225e38b0aac1dd44ec4547f4dd0e267d4abd523fb057f819d35a42b930202353",
+        "size_bytes": 112419
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_coordinates/jepa-new-predictor_n15000_perp30p0_seed42_cosine.npz",
+        "sha256": "9a0a7db86b9a1e57e3ddbde264035ec6688911cbff9a7e662b0645417f58b844",
+        "size_bytes": 112265
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_coordinates/jepa-r70-d64-rot-step58755_n15000_perp30p0_seed42_cosine.npz",
+        "sha256": "58c5c7a874ddea3c8a7a93fe639ac44805cf7c7797ab77edccb9502e61ac801e",
+        "size_bytes": 112216
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_coordinates/jepa-r70-d8-rot-10k_n15000_perp30p0_seed42_cosine.npz",
+        "sha256": "65df20feaff211d1d2b9480fefa67e6249ab698e0dcaba96bcbb126a2c0a67b2",
+        "size_bytes": 112222
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_coordinates/jepa-rand-mask-50_n15000_perp30p0_seed42_cosine.npz",
+        "sha256": "bab292453091395b5ef71cb14a2b7519b0312cc6a45a85f8771410937ae74d72",
+        "size_bytes": 112253
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_coordinates/jepa-rand-mask-70_n15000_perp30p0_seed42_cosine.npz",
+        "sha256": "f5997bf9d8e22c64c1d413d2840b254b12234ca9c64a4f75548b461e4195eb2d",
+        "size_bytes": 112344
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_coordinates/jepa-rand50-control-30k_n15000_perp30p0_seed42_cosine.npz",
+        "sha256": "03bc27ae8dfb22e1fd652760974681250d8294668979b201de02c27ab24439a2",
+        "size_bytes": 112379
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_coordinates/jepa-rand50-ema-30k_n15000_perp30p0_seed42_cosine.npz",
+        "sha256": "22bb8244705af0c55ca9d0bbb4c0e30a881c5a0dbba989bf120f401812b030ee",
+        "size_bytes": 112319
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_coordinates/jepa-rand50-layernorm-30k_n15000_perp30p0_seed42_cosine.npz",
+        "sha256": "787f22a03f576ede1a5fde92da920f422c55d478c95c34c2a80e0d843c994743",
+        "size_bytes": 112327
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_coordinates/jepa-rand50-predictor-30k_n15000_perp30p0_seed42_cosine.npz",
+        "sha256": "0697604febdcf4cc778325ecf29f962ede35ff885d4ced2c9ba3da77b59b59b8",
+        "size_bytes": 112408
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_coordinates/jepa-rand70-d64_n15000_perp30p0_seed42_cosine.npz",
+        "sha256": "0fe3efddef5750f27d6c3cd22fa9034576760c1a0c6493b1208e0bf0dd409974",
+        "size_bytes": 112400
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_coordinates/jepa-selfattn-rand50_n15000_perp30p0_seed42_cosine.npz",
+        "sha256": "d477aeb133019e8690bd6a8b35c9e92543ce19c7449980cdbec037d1df3b6554",
+        "size_bytes": 112394
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_coordinates/jepa-selfattn-rand70_n15000_perp30p0_seed42_cosine.npz",
+        "sha256": "2ec6b67453a83899a9bf67341c804ad4cdf159118c2e3295e5889bfa07b512e2",
+        "size_bytes": 112307
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_coordinates/le-jepa-chem-exp1_n15000_perp30p0_seed42_cosine.npz",
+        "sha256": "cecc48e0b40be81668362863d460f89eea00997541d633eeb669de33e1506b85",
+        "size_bytes": 111984
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_coordinates/le-jepa-chem-exp3_n15000_perp30p0_seed42_cosine.npz",
+        "sha256": "f443aced4d6bdae63976d417b4e917f96db93fe7588be2ae05616d13443fc96f",
+        "size_bytes": 111994
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_coordinates/le-jepa-mutation_n15000_perp30p0_seed42_cosine.npz",
+        "sha256": "bda66d0143b55c35d0ed62c0e2bb8843047d7be41eba57c3eeb0d12c8241700a",
+        "size_bytes": 111924
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_coordinates/le-jepa-new-predictor_n15000_perp30p0_seed42_cosine.npz",
+        "sha256": "43c9ad4a313c458447c12823520b027081d5c8cdad92dbd0befb13478da55f0f",
+        "size_bytes": 112367
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_coordinates/le-jepa-r50-relpos-step45000_n15000_perp30p0_seed42_cosine.npz",
+        "sha256": "d0fd283fe5363277322e8a812cc3597ddfaca60256fd4941a8013e513c68ea5d",
+        "size_bytes": 112261
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_coordinates/le-jepa-r70-relpos-step100000_n15000_perp30p0_seed42_cosine.npz",
+        "sha256": "892b8afd63de38ee8a8aaf22ce2f0e0863ecdb025bb77023bb6768aaf4a4ef99",
+        "size_bytes": 112274
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_coordinates/le-jepa-rand-mask-50_n15000_perp30p0_seed42_cosine.npz",
+        "sha256": "820a2210f6240610772ee7d5d23fd52882aeb7b9f081303b84d502ab3b987b6f",
+        "size_bytes": 112064
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_coordinates/le-jepa-rand-mask-70_n15000_perp30p0_seed42_cosine.npz",
+        "sha256": "08be35c685ffdc8d31fbfc5cc859c2a8a0fa963c66f29fbc4ddc02fb58b26f54",
+        "size_bytes": 112005
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_coordinates/le-jepa-rand50-relative-pos-10k_n15000_perp30p0_seed42_cosine.npz",
+        "sha256": "ccf355d3a32edfddc225da139b0cb6c60ebc254b10b72cddee398a60ac98d4f4",
+        "size_bytes": 112351
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_coordinates/le-jepa-rand50-relative-pos-30k_n15000_perp30p0_seed42_cosine.npz",
+        "sha256": "0a0bed3da8c7a56aae13f07e9057723f2b42c3383a5905e205fe50b7ff4b6632",
+        "size_bytes": 112140
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_coordinates/le-jepa-rand70-d64_n15000_perp30p0_seed42_cosine.npz",
+        "sha256": "9e8f5f1443fb1f563c20e1322b7d3bbbf0a5e94e4c31ab73015f9e16466c942f",
+        "size_bytes": 111992
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_coordinates/le-jepa-sp3d-relpos-d8-10k_n15000_perp30p0_seed42_cosine.npz",
+        "sha256": "49a6462e8854bb3bf6d911eb064303a924558182aefe59fd08a66b232091f9fb",
+        "size_bytes": 112278
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_coordinates/le-jepa-sp3d-relpos-d8-step65000_n15000_perp30p0_seed42_cosine.npz",
+        "sha256": "7f0f1d2de87814d5063090f8eb3f114e4474f59147964f48d8a6e4cb10b603ce",
+        "size_bytes": 112263
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_coordinates/le-jepa-spatial3d-d64_n15000_perp30p0_seed42_cosine.npz",
+        "sha256": "d62d11df894a590b64dd3675d337a26ff7321437070ae57e47be1f5019f464dd",
+        "size_bytes": 112000
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_coordinates/random-init-64_n15000_perp30p0_seed42_cosine.npz",
+        "sha256": "85b7613f63204025a7e9dc9deb8995a60a5c6c5b79716c7a28eb2c412613f8ee",
+        "size_bytes": 112172
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_coordinates/random-init_n15000_perp30p0_seed42_cosine.npz",
+        "sha256": "bbfd2c43dda52a762f4b9c72c31b5f5664906814961707a94a9a1f2b9301259b",
+        "size_bytes": 112211
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_manifest.json",
+        "sha256": "f7b496994ed92c43bae2f4c6ce0c321e9b856eb4e2ce0cb535a3c47b1a110fef",
+        "size_bytes": 6499
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_manifest_all-cached.json",
+        "sha256": "6b532f6c7cf5875633b47c7b778eeb62181f13d224ac51d6793a3d302ddef35e",
+        "size_bytes": 8595
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_manifest_current-four-latest-health.json",
+        "sha256": "75d9b9ab16acb52dbc7736fa46b2496f00a585d02f8b66b6e5916dad3d061e06",
+        "size_bytes": 3582
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_manifest_jepa-d64-2x2-10k.json",
+        "sha256": "ef8bd2faaf4f8b9819d8ae993492cf6fada9490857402e16ac9523afd541bb76",
+        "size_bytes": 3477
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_manifest_lejepa-relative-position-10k-30k.json",
+        "sha256": "36e051d224554e3eee59094a2e80aeffb49d2b36dcc604c258dde1e05e7513c5",
+        "size_bytes": 3045
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_manifest_lejepa-relative-position.json",
+        "sha256": "c18afeba7446d6ed427fa3e4ee0923379f551afd8e5539c9dde0a208c9d58462",
+        "size_bytes": 2551
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_manifest_publication-100k.json",
+        "sha256": "50ca62e436f50c8248cecff15c3d70d48b948a917695bc15ce47b1592a904baf",
+        "size_bytes": 11570
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_manifest_rotation-d8-spatial-relative-10k.json",
+        "sha256": "242e6518e8ef42c0100ede89818036ff8a68229530cce771365f5e5432711a92",
+        "size_bytes": 3971
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_panel_metrics.csv",
+        "sha256": "208d39b2f972d315dfd76163f991e77dcfddc0268a31b8b48b299f33ef7cd685",
+        "size_bytes": 692
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_panel_metrics_all-cached.csv",
+        "sha256": "39a4350990b2b95de0e80e05390b8e09ed4d0d742e7a949cc10cbfc88b79f741",
+        "size_bytes": 900
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_panel_metrics_current-four-latest-health.csv",
+        "sha256": "c2a92a06ef3d201293c117c4286d262846c0515379cd821c04090355fd3b9c3a",
+        "size_bytes": 307
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_panel_metrics_jepa-d64-2x2-10k.csv",
+        "sha256": "f462ce999306acf03bbf9d83d8103a42db98a13cd01b7ff8d23c2ac426694c4c",
+        "size_bytes": 271
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_panel_metrics_lejepa-relative-position-10k-30k.csv",
+        "sha256": "01e700b3781c38e267e254a48510686748afc43824a2c87f5ab1475aee21379c",
+        "size_bytes": 263
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_panel_metrics_lejepa-relative-position.csv",
+        "sha256": "e272ca0205bc5b6b5616fecf31307cb0d6e8c76f58644114b4c0ef88db9f1f59",
+        "size_bytes": 203
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_panel_metrics_publication-100k.csv",
+        "sha256": "675b1e91953df36272087d999f34ca4103634122cf0dd33c0c6a66f022c69b6d",
+        "size_bytes": 1163
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_panel_metrics_rotation-d8-spatial-relative-10k.csv",
+        "sha256": "04176c87fa1358b0db3597b3b4660aab11ef1034d0e8153021046db1a4f9b7da",
+        "size_bytes": 338
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_worm_absolute_index_centers.csv",
+        "sha256": "dafe0b58fac94f90cf1d366fcd8b9389e4744e7d034d89f9ea5d0b5e860d75ba",
+        "size_bytes": 51263
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_worm_absolute_index_summary.csv",
+        "sha256": "40eb04080beba1501614f7fdaa338220bb6fea4801ae1b365791ccaf81dbb12c",
+        "size_bytes": 477
+      },
+      {
+        "path": "Evaluation/latent_viz/run_tsne.py",
+        "sha256": "5925d798529b2328d2c8e0878bedb4742ad6e2b5b633c9af557d2865e5e9e496",
+        "size_bytes": 17688
+      },
+      {
+        "content_hash_skipped_over_bytes": 16777216,
+        "path": "artifacts/hf/stb-bindint-upstream-L600-v1.tar.zst",
+        "sha256": null,
+        "size_bytes": 540027317
+      },
+      {
+        "path": "artifacts/hf/stb-bindint-upstream-L600-v1.tar.zst.manifest.json",
+        "sha256": "8f99278c908de0d6cde0f87fa701de023aab65a6f67681305239d4105c0abbb9",
+        "size_bytes": 669
+      },
+      {
+        "path": "artifacts/smoke/exact_long_chains/1lrw.cif",
+        "sha256": "a9afd7e19c3a418af31a4ee27bca79305f0105310e0c65f5f9154ea849bebdbc",
+        "size_bytes": 1129145
+      },
+      {
+        "path": "artifacts/smoke/exact_long_chains/1mmo.cif",
+        "sha256": "e8cb875458c11bf3a928ca25b8488a56204efc390f18ce1ade9c4f85d5ec8343",
+        "size_bytes": 2389945
+      },
+      {
+        "path": "artifacts/smoke/exact_long_chains/5f6c.cif",
+        "sha256": "21b4c7985a434896cf2f46d7798eb22f902f74cc627d41e914b70fb815a37f5a",
+        "size_bytes": 1710335
+      },
+      {
+        "path": "artifacts/smoke/stb_exact_L512_L600_256789.json",
+        "sha256": "af8dc17c67e2ad5107d19315ec542957c7bd458eefa6c5b07805788f690328a6",
+        "size_bytes": 2158
+      },
+      {
+        "path": "artifacts/smoke/stb_exact_L512_L600_cpu_256778.json",
+        "sha256": "ae666b718473e21160619bf7af1e3d297b89c187684291a06e3e4b0f73ffd73a",
+        "size_bytes": 2049
+      },
+      {
+        "path": "jarvis-sesh-report-27-08-26.md",
+        "sha256": "b0d296e6d4b503c76ec3836f185036f39157251db82fa2a452cea03ce93a495a",
+        "size_bytes": 6403
+      },
+      {
+        "path": "jobs/analyze_current_four_health.job",
+        "sha256": "ff7cc7c1efc69fa8b8ac13c835d4fa73d6fb0fea0e83ed03f0c65a5f941305c6",
+        "size_bytes": 970
+      },
+      {
+        "path": "jobs/analyze_jepa_d64_2x2_10k.job",
+        "sha256": "93835e3d1dfda4e5343379d47df66436c924734b8c880db2d671a78e020b3059",
+        "size_bytes": 696
+      },
+      {
+        "path": "jobs/analyze_lejepa_relative_positions.job",
+        "sha256": "98fe9f6cc6405a2511fd99a5e5410e114e7fec5f55e80c5a994b52a29272c0f8",
+        "size_bytes": 924
+      },
+      {
+        "path": "jobs/analyze_lejepa_relative_positions_30k.job",
+        "sha256": "6975aeb93161034143427d70e8c68fb397b43178f912fb0b29c4753e9e8f2f17",
+        "size_bytes": 870
+      },
+      {
+        "path": "jobs/analyze_rotation_d8_spatial_relative_10k.job",
+        "sha256": "492e99115523b5232da6b4c6e3895a874ab61ebd4d39b0dd9b78223fb294953a",
+        "size_bytes": 818
+      },
+      {
+        "path": "jobs/calibrate_jepa_rand70_d64_sigreg.job",
+        "sha256": "c53d7d4e112de9655c71e8826727fd1a85e7274010d7bc41561693af360c64c4",
+        "size_bytes": 2734
+      },
+      {
+        "path": "jobs/diagnose_gauss_cuda.job",
+        "sha256": "73ff082472711632bdd98a5843972d767701b92079f93bb422f554306d4fffbc",
+        "size_bytes": 1509
+      },
+      {
+        "path": "jobs/eval_ca_cond_100k_upstream_l600_all.job",
+        "sha256": "ee65233114ba2750dd4e6a3d37506b5fbef3f7b0612245f6faf4aa60d0c4ae4a",
+        "size_bytes": 1929
+      },
+      {
+        "path": "jobs/eval_chem_masking_100k_upstream_l600_array.job",
+        "sha256": "f9a36d101e7aff4e55ed321dd0c0391b3df022130f165bb061b9827958c1e141",
+        "size_bytes": 2714
+      },
+      {
+        "path": "jobs/eval_fully_latent_100k_noether.job",
+        "sha256": "fbf45b0685a01398b7b80166e5dec7f7ba516f83201575d73807f7fae804e144",
+        "size_bytes": 1789
+      },
+      {
+        "path": "jobs/eval_jepa_rand50_100k_upstream_l600_all.job",
+        "sha256": "1480b30ce2aaca7ff7d5c0273ac573909d9c3ff74e31642ffe75d206660d90bb",
+        "size_bytes": 2535
+      },
+      {
+        "path": "jobs/eval_jepa_rand50_100k_upstream_l600_flex_array.job",
+        "sha256": "03684318ecb004720b2c3a262ec592c6810bfb1ceb70fda56e489d03d8c7257e",
+        "size_bytes": 2433
+      },
+      {
+        "path": "jobs/eval_jepa_rand50_100k_upstream_l600_remaining_array.job",
+        "sha256": "57cf34ce542846519fed95db1401e1413e18785fe70f34ad9b10fcd5b2ae1c95",
+        "size_bytes": 3017
+      },
+      {
+        "path": "jobs/eval_jepa_rand50_100k_upstream_l600_tail_array.job",
+        "sha256": "e9ed906b15f63b331ce6aad263db2f3dc3b93179a5975ea052289bfd16b01c4b",
+        "size_bytes": 2559
+      },
+      {
+        "path": "jobs/eval_jepa_rand70_100k_upstream_l600_all.job",
+        "sha256": "042a71d1f00885239b66f732cead7cf9dfae3741c1602db93252a336a5d2298e",
+        "size_bytes": 2191
+      },
+      {
+        "path": "jobs/eval_jepa_rand70_d64_independent_rotations_100k_upstream_l600_all.job",
+        "sha256": "61480b553cf54b7d489ec5a98c5263bd5a05a59adcf0f839b99cb6d8e3167b48",
+        "size_bytes": 3008
+      },
+      {
+        "path": "jobs/eval_jepa_rand70_d64_independent_rotations_60k_preliminary.job",
+        "sha256": "46643414b8a48c17721b2d09c6e0cc9cd57a2029bc0294813c8a6bcaece5761e",
+        "size_bytes": 2772
+      },
+      {
+        "path": "jobs/eval_knn_purity_spatial_chem.job",
+        "sha256": "25658d4e05c9072705caa9ed7f54ff8d9882d71c24e7c3992a2190f37fb44314",
+        "size_bytes": 936
+      },
+      {
+        "path": "jobs/eval_le_jepa_chemmask_exp1_100k_after_training.job",
+        "sha256": "c29579d4fb8398bd391210f85e71e7f09ed6ad3dc8ce1f68180fcdd98a5480db",
+        "size_bytes": 1982
+      },
+      {
+        "path": "jobs/eval_le_jepa_chemmask_exp1_30k.job",
+        "sha256": "919a729b5901c1dc42d8a7c0376d2e70bfb7ae8829e397d97a3ceacf32eed13a",
+        "size_bytes": 1312
+      },
+      {
+        "path": "jobs/eval_le_jepa_chemmask_exp3_100k_after_training.job",
+        "sha256": "deb0cf70c755471d8c26b92fc8ae5a919191cc928ea937aad0513e4c636da566",
+        "size_bytes": 1981
+      },
+      {
+        "path": "jobs/eval_le_jepa_chemmask_exp3_30k.job",
+        "sha256": "cedbdb6a1d968143bf5152dcff283c7c7434c90c00bb1f5ae0b5ac7eb4dc9ae9",
+        "size_bytes": 1974
+      },
+      {
+        "path": "jobs/eval_le_jepa_new_predictor_100k_noether.job",
+        "sha256": "f3f423ba6fa90e1d4155e66633c4a5e338a7e53762ebc2979febb7419caacbd7",
+        "size_bytes": 912
+      },
+      {
+        "path": "jobs/eval_le_jepa_new_predictor_30k_noether.job",
+        "sha256": "c46779fda84e893d82952c2dd2fcce7340aed0fd11369b5e4f12b61022976076",
+        "size_bytes": 902
+      },
+      {
+        "path": "jobs/eval_le_jepa_new_predictor_checkpoint_sweep_40_60_80.job",
+        "sha256": "f00bb6810efbc086792d57d275b11d4e49e9713fb6088ff11976f90a59dee0d1",
+        "size_bytes": 1460
+      },
+      {
+        "path": "jobs/eval_le_jepa_spatial3d_block_100k_after_training.job",
+        "sha256": "55555d03f52ab97b141ef00ef9ed2145fa11cf27c06b1961d286de0269c8837b",
+        "size_bytes": 2008
+      },
+      {
+        "path": "jobs/eval_le_jepa_spatial3d_block_checkpoint_sweep_30_60.job",
+        "sha256": "9c793f31aed85e73ad92990028a85ca5d34908f8a57f4862cb309555f83423df",
+        "size_bytes": 1390
+      },
+      {
+        "path": "jobs/eval_lejepa_rand50_relative_positions_100k_upstream_l600_all.job",
+        "sha256": "34f1886e663b360a36b8f64dcdadca3b9d4a3cb5969c9afdc5fe13ff1ec54847",
+        "size_bytes": 2946
+      },
+      {
+        "path": "jobs/eval_lejepa_rand70_relative_positions_100k_upstream_l600_all.job",
+        "sha256": "a0ae38900251aad85017a91c1a7e3808872568b949b0b27a68ea7bae6eeee7d8",
+        "size_bytes": 2967
+      },
+      {
+        "path": "jobs/eval_lejepa_spatial3d_relative_positions_d8_100k_upstream_l600_all.job",
+        "sha256": "a61585c15e5347105f13c99f89b6b8b461e3ec89a92ea604568eb8c1020d480a",
+        "size_bytes": 2984
+      },
+      {
+        "path": "jobs/eval_publication_100k_selected_array.job",
+        "sha256": "5c1addf863762496b9ff8c244286ec6bf3fdb869fda46033983a2aa21403dd99",
+        "size_bytes": 3007
+      },
+      {
+        "path": "jobs/eval_random_init_stb_8_64.job",
+        "sha256": "f29a926a8aebbc48354744cbf386d14f6d2534869f54700ae287d51473611dcb",
+        "size_bytes": 1607
+      },
+      {
+        "path": "jobs/extract_and_tsne_publication_100k_noether.job",
+        "sha256": "babfad80e5d083c6a2f7a907024c5bf117f22b3f158edaa50178dbdebf891058",
+        "size_bytes": 1008
+      },
+      {
+        "path": "jobs/quick_lejepa_relative_position_cpu.job",
+        "sha256": "0c40270055169d907f88971cd1209c509b9bba3ee6453428220b8135ac5ba9cc",
+        "size_bytes": 614
+      },
+      {
+        "path": "jobs/quick_lejepa_relative_position_step_matched_cpu.job",
+        "sha256": "a2950bee0e1da0e493af64a3bb5c55b0eace9f6beb10bdcf5d1ad244b59cda85",
+        "size_bytes": 612
+      },
+      {
+        "path": "jobs/resume_jepa_rand70_d64_independent_rotations_10k_to_100k.job",
+        "sha256": "be1b9218ecc7a2c74f39fd80e49dbfa6cbcc684faf448eacaa1e20fb1b128812",
+        "size_bytes": 2628
+      },
+      {
+        "path": "jobs/resume_jepa_rand70_d64_sigreg_10k_to_100k.job",
+        "sha256": "cb870de5cb9a2e453c99558a1c07d3342ad55e1d6b568d338c71127c531c3017",
+        "size_bytes": 2451
+      },
+      {
+        "path": "jobs/resume_jepa_rand70_d64_sigreg_independent_rotations_10k_to_100k.job",
+        "sha256": "0c58a38d91f13a44aad556d60420bcd91445625aa9e33b968df619805f60d9a7",
+        "size_bytes": 2500
+      },
+      {
+        "path": "jobs/resume_jepa_spatial3d_block_dim64_layernorm_ema_new_predictor_100k.job",
+        "sha256": "9656d2c63ee8bf9517ac94645e0357cd9d8df3d6fb948d6ac0dc500654350026",
+        "size_bytes": 2412
+      },
+      {
+        "path": "jobs/resume_jepa_spatial3d_block_dim64_new_predictor_100k_noether.job",
+        "sha256": "0767557da3a0152450daeed1c8cb557b4a8b7920b56c453452a02a2fa4e6b70d",
+        "size_bytes": 2301
+      },
+      {
+        "path": "jobs/resume_le_jepa_chemmask_exp1_aa_partial50_57k_to_100k.job",
+        "sha256": "e17ef72b71f3669cc0e27e374a40cf9f6270b8fd2c644e376bbd44f184302aca",
+        "size_bytes": 2724
+      },
+      {
+        "path": "jobs/resume_le_jepa_chemmask_exp3_noaa_sc50_10k_to_100k.job",
+        "sha256": "7461ac502f14d4230441c9551b85cc9229a69be87d6b0f579e37194e8084812f",
+        "size_bytes": 2438
+      },
+      {
+        "path": "jobs/resume_le_jepa_rand50_relative_positions_10k_to_100k.job",
+        "sha256": "1d0c5b795839277c50d16233d9481264f2c85e4560ebd38714fd4e32169f4811",
+        "size_bytes": 3013
+      },
+      {
+        "path": "jobs/resume_le_jepa_rand70_relative_positions_30k_to_100k.job",
+        "sha256": "e95820c96687755bff7a3eb2ca3319b264d948c0c31c63444aea4d2d881d5bc6",
+        "size_bytes": 3356
+      },
+      {
+        "path": "jobs/resume_le_jepa_spatial3d_block_dim64_new_predictor_100k.job",
+        "sha256": "b160d007f98aa4d1770556486e7671a7dadaa0a8af13965c8f5a4c15849aef97",
+        "size_bytes": 2277
+      },
+      {
+        "path": "jobs/resume_le_jepa_spatial3d_relative_positions_d8_100k.job",
+        "sha256": "9ba4f1c367bc751f27012d089cfebc8408b55aa0c54ee418fe1ecb5189337779",
+        "size_bytes": 3040
+      },
+      {
+        "path": "jobs/smoke_stb_exact_long_chains.job",
+        "sha256": "03576084277027d9a8821a03f7560f16ed6f3475339a91ced904e79d6ac1df01",
+        "size_bytes": 1390
+      },
+      {
+        "path": "jobs/smoke_stb_exact_long_chains_cpu.job",
+        "sha256": "bac49e9f8aeb1a09714fccceeb020e443f7b5f801ad7639a922545dee61b3a8f",
+        "size_bytes": 1246
+      },
+      {
+        "path": "jobs/smoke_stb_upstream_l600_noether.job",
+        "sha256": "c6c4714bd022dffccd6c4714b1c85f9920660da06570d3481686ab9724b50091",
+        "size_bytes": 1573
+      },
+      {
+        "path": "jobs/stage_and_eval_le_jepa_new_predictor_100k.job",
+        "sha256": "2c3b6a6027ae79a93271796d7e0409b0d079d8dcbcc2924358e30320573c44e0",
+        "size_bytes": 1369
+      },
+      {
+        "path": "jobs/stage_le_jepa_new_predictor_30k.job",
+        "sha256": "b89cba8e7c5857b82911a2c955cadfcea86e9135a33abc24dbc6ce6f9609baee",
+        "size_bytes": 1146
+      },
+      {
+        "path": "jobs/train_fully_latent_resume_45k.job",
+        "sha256": "83079ca74b4a224a8bee4640d679fd428b95d62c89edb3b6217bc758c66b7084",
+        "size_bytes": 1371
+      },
+      {
+        "path": "jobs/train_jepa_chemmask_aa_only.job",
+        "sha256": "b582503ea504ea5b368147d95ea3b1cca046f5b479b8aa450671c53d5a35c67a",
+        "size_bytes": 2317
+      },
+      {
+        "path": "jobs/train_jepa_chemmask_aa_only_resume_100k.job",
+        "sha256": "6b617fa33d62c7f97017da1727692f42f1d482461334fa5fac9d07da1d497636",
+        "size_bytes": 2629
+      },
+      {
+        "path": "jobs/train_jepa_chemmask_partial_coords_70.job",
+        "sha256": "b1d03f74ef4f0298958bb0ca13fe00cc0d9a89e526906c96826a91b0499eab02",
+        "size_bytes": 2960
+      },
+      {
+        "path": "jobs/train_jepa_chemmask_partial_coords_and_identity_70.job",
+        "sha256": "c070d05a956a9949c605cbe03902584624ad915450922b860971a0378ebeec0c",
+        "size_bytes": 1507
+      },
+      {
+        "path": "jobs/train_jepa_rand50_control_30k.job",
+        "sha256": "8c917b00e2eca94ac14300d1624e61e86eb2796bc937495509c8daecba0cf155",
+        "size_bytes": 1196
+      },
+      {
+        "path": "jobs/train_jepa_rand50_ema_30k.job",
+        "sha256": "ad4d730624c2576596c582cec32753060c711c92dfcf1fc3429bfa5c225c2f9d",
+        "size_bytes": 1204
+      },
+      {
+        "path": "jobs/train_jepa_rand50_layernorm_30k.job",
+        "sha256": "141ae992f682e72c5bad56a0e8a853b5095ef130946af9c4f321f76191ea1031",
+        "size_bytes": 1146
+      },
+      {
+        "path": "jobs/train_jepa_rand50_predictor_30k.job",
+        "sha256": "3732109c8ca20d7afd94f8bbaf6108f1f643c1a773b6dbec9fe2b0674505bc48",
+        "size_bytes": 1146
+      },
+      {
+        "path": "jobs/train_jepa_rand70_d64_independent_rotations_10k.job",
+        "sha256": "81fb1bb915ea1fd1bf5fbaf245d508c4705a4c20d093fde1913bf637127b1d86",
+        "size_bytes": 2527
+      },
+      {
+        "path": "jobs/train_jepa_rand70_d64_sigreg_10k.job",
+        "sha256": "a47da3c1325bed51dfce2957b8aabf1dcd0941e67ee836e3af2322aead22d578",
+        "size_bytes": 2527
+      },
+      {
+        "path": "jobs/train_jepa_rand70_d64_sigreg_independent_rotations_10k.job",
+        "sha256": "d1f8eeb6e2f088c142248d91664ee9f2871a728569fe51e18fd85a913794a661",
+        "size_bytes": 2711
+      },
+      {
+        "path": "jobs/train_jepa_rand70_d8_independent_rotations_100k.job",
+        "sha256": "43f00a1c5b7f735fcefee9dee1db5ee577402f4884c09fb9c659230bba8fb48e",
+        "size_bytes": 2397
+      },
+      {
+        "path": "jobs/train_jepa_spatial3d_block_dim64_layernorm_ema_new_predictor_100k.job",
+        "sha256": "b33fbe916c0256e94fb4deda96818157c10987719012d66c3bf4b6147b04feba",
+        "size_bytes": 2089
+      },
+      {
+        "path": "jobs/train_jepa_spatial3d_block_dim64_new_predictor_100k_noether.job",
+        "sha256": "f124b3d949a73c3a6779d313120195b056abb880623768f140235935a712714c",
+        "size_bytes": 1986
+      },
+      {
+        "path": "jobs/train_le_jepa_rand50_new_predictor_noema_100k.job",
+        "sha256": "1bc8e8500166941879056d1fcbf912c90e986ea4df19d66e05e8559a3bf98b59",
+        "size_bytes": 2604
+      },
+      {
+        "path": "jobs/train_le_jepa_rand50_relative_positions_10k.job",
+        "sha256": "dde8d3625d24fcc0532eaf22bdceb344f9b470a7d61cc1848fbcc82ef9615614",
+        "size_bytes": 3088
+      },
+      {
+        "path": "jobs/train_le_jepa_spatial3d_block_dim64_new_predictor_100k_noether.job",
+        "sha256": "ba5c57991b9d483d302c64af4127851e9f406f736b8fe7520b295eefbc2ed95f",
+        "size_bytes": 1983
+      },
+      {
+        "path": "jobs/train_le_jepa_spatial3d_relative_positions_d8_100k.job",
+        "sha256": "3161abfcae31ff3cfc4d9cf680aa4e4d7749434a341664c9315a969da54fb737",
+        "size_bytes": 3027
+      },
+      {
+        "path": "proteinfoundation/jepa/tests/chemmask_partial_coordinates_probe.py",
+        "sha256": "b4a08d61fabe488e7b7838ce02c8b2904e8ad6ef3a841cb2216efcf14b509691",
+        "size_bytes": 7631
+      },
+      {
+        "path": "proteinfoundation/jepa/tests/chemmask_probe.py",
+        "sha256": "a674dbcc77bed354baa0187260cd066d335362f31cd002b14ac45b89258843c0",
+        "size_bytes": 9016
+      },
+      {
+        "path": "report-review.md",
+        "sha256": "b4d43304c2bc58df0e3b56dd3f0630ead298c9c4669caa912a33554521d4abc7",
+        "size_bytes": 10390
+      },
+      {
+        "path": "report-source.md",
+        "sha256": "e7a16a11676ab212c3ac079a69e08f0d6c74df17830bf0a9ade2e21fe49524ec",
+        "size_bytes": 79388
+      },
+      {
+        "path": "script_utils/prepare_stb_bindint_bundle.py",
+        "sha256": "d53b32bb6d0795c67680b7b19b2e8f5ac0e7c01f1f1c3b92ee6e40c4ffef6275",
+        "size_bytes": 6490
+      },
+      {
+        "path": "script_utils/smoke_stb_exact_long_chains.py",
+        "sha256": "c7752142f13a1d11e32647c1f916f4f772884e27c7549f89e952c4decc422131",
+        "size_bytes": 4771
+      },
+      {
+        "path": "time-task-priorities.md",
+        "sha256": "6104d5c832c510c4b67429ec328f84d1af3e1beb372beede423676949f7477f3",
+        "size_bytes": 5293
+      },
+      {
+        "path": "watchdog/.watchdog.lock",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size_bytes": 0
+      },
+      {
+        "path": "watchdog/README.md",
+        "sha256": "a97bbe3c2ff2d40b6d702424114e9609aa17ad0f773797a13ac51da018dd9bcc",
+        "size_bytes": 1642
+      },
+      {
+        "path": "watchdog/codex_repair_schema.json",
+        "sha256": "2f4595cf1901f4653ab3618373cc4d54eeadaeb8d41b721040d9baf58b6e9f7b",
+        "size_bytes": 377
+      },
+      {
+        "path": "watchdog/install_cron.sh",
+        "sha256": "a2beda060062f39d9aea72e6bdc55d7c50f992adc2cfd18f6ab8bca59aaa6479",
+        "size_bytes": 506
+      },
+      {
+        "path": "watchdog/slurm_watchdog.py",
+        "sha256": "d678e72a1b134ebed8709f58afa117429cdbb5f78ab2fcded39b502fd411c24d",
+        "size_bytes": 19105
+      },
+      {
+        "path": "watchdog/state.json",
+        "sha256": "0f9b9b5bb704be83c6a7181c6c1acdf256443e885ade889e0853e317a39bbc08",
+        "size_bytes": 12076
+      },
+      {
+        "path": "watchdog/test_slurm_watchdog.py",
+        "sha256": "86dfd6d8d29cb1a7c3529d9fe151052c61b8c9493fb6d2a43ce12ddf0ffb2204",
+        "size_bytes": 4957
+      },
+      {
+        "path": "watchdog/uninstall_cron.sh",
+        "sha256": "19cb231c648bee4060509b3390a1d5d53d16d4e21a5f21ce4b733f05af31ffee",
+        "size_bytes": 244
+      },
+      {
+        "path": "watchdog/watchdog.env",
+        "sha256": "cdcb974b403f4943f26d7003686fc351272a4656751c5518a9167d3049801ba4",
+        "size_bytes": 603
+      }
+    ],
+    "working_tree_content_sha256": "fa38e72b4341465f0251fc3d32f71a049f2766408dfc6be25aa96de76a647de6"
+  },
+  "metrics": {
+    "fold_test_accuracy": 0.64656001329422,
+    "fold_test_auroc": 0.6609085202217102,
+    "fold_test_f1_score": 0.07270942628383636,
+    "fold_test_false_neg": 0.40887999534606934,
+    "fold_test_false_neg_toall": 0.009469633921980858,
+    "fold_test_false_pos": 0.35233768820762634,
+    "fold_test_false_pos_toall": 0.3439703583717346,
+    "fold_test_loss": 0.6535269021987915,
+    "fold_test_mcc": 0.07501127570867538,
+    "fold_test_neg_weight": 0.5120651125907898,
+    "fold_test_pos_weight": 23.742008209228516,
+    "fold_test_true_neg": 0.647662341594696,
+    "fold_test_true_neg_toall": 0.6325365900993347,
+    "fold_test_true_pos": 0.5911200642585754,
+    "fold_test_true_pos_toall": 0.014023425057530403,
+    "fold_test_unweighted_loss": 0.6370794177055359,
+    "superfamily_test_accuracy": 0.6335895657539368,
+    "superfamily_test_auroc": 0.6624707579612732,
+    "superfamily_test_f1_score": 0.07855682820081711,
+    "superfamily_test_false_neg": 0.39496806263923645,
+    "superfamily_test_false_neg_toall": 0.010073882527649403,
+    "superfamily_test_false_pos": 0.3659946918487549,
+    "superfamily_test_false_pos_toall": 0.3563366234302521,
+    "superfamily_test_loss": 0.6522760391235352,
+    "superfamily_test_mcc": 0.07795647531747818,
+    "superfamily_test_neg_weight": 0.5133808255195618,
+    "superfamily_test_pos_weight": 21.794513702392578,
+    "superfamily_test_true_neg": 0.6340053081512451,
+    "superfamily_test_true_neg_toall": 0.6176860332489014,
+    "superfamily_test_true_pos": 0.6050319671630859,
+    "superfamily_test_true_pos_toall": 0.015903467312455177,
+    "superfamily_test_unweighted_loss": 0.646655261516571,
+    "validation_accuracy": 0.6416551470756531,
+    "validation_auroc": 0.6620944142341614,
+    "validation_f1_score": 0.07467988133430481,
+    "validation_false_neg": 0.40347132086753845,
+    "validation_false_neg_toall": 0.009627302177250385,
+    "validation_false_pos": 0.357496976852417,
+    "validation_false_pos_toall": 0.3487176299095154,
+    "validation_loss": 0.652482807636261,
+    "validation_mcc": 0.07609562575817108,
+    "validation_neg_weight": 0.5124607086181641,
+    "validation_pos_weight": 23.049293518066406,
+    "validation_true_neg": 0.642503023147583,
+    "validation_true_neg_toall": 0.6270376443862915,
+    "validation_true_pos": 0.5965287089347839,
+    "validation_true_pos_toall": 0.014617444947361946,
+    "validation_unweighted_loss": 0.6399033069610596
+  },
+  "non_finite_fields_serialized_as_null": [],
+  "probe": {
+    "best_checkpoint": {
+      "file_count": 4,
+      "kind": "directory",
+      "path": "/slurm-storage/aishod/projects/la-proteina/StructTokenBench/struct_token_bench_logs/upstream-l600-v1-full/runs/slurm-257092-le-jepa-rand70-relative-pos-100k/bindbio_laproteina_le_jepa_rand70_relative_pos_100k_upstream_l600_v1_lr0.001/version_0/checkpoints/epoch=3-step=6280-validation_f1_score=0.07.ckpt",
+      "sha256": "8824e103064294733587be5938ba4fe26c3ea29c2c2e2eac91b20402ee5ae14b",
+      "size_bytes": 220366
+    },
+    "checkpoint_every_n_validations": 1,
+    "early_stopping_patience": 10,
+    "max_steps": 10000,
+    "micro_batch_size": 8,
+    "precision": "32-true",
+    "resolved_config": {
+      "autorestart": {
+        "filter_keywords": [
+          "last.ckpt"
+        ]
+      },
+      "data": {
+        "data_name": "BioLIP2FunctionDataset",
+        "data_path": "/mnt/hopper-raid/aishod/data/struct_token_bench_release_data//data/functional/local/",
+        "fast_dev_run": false,
+        "filter_length": 600,
+        "is_global_or_local": "local",
+        "multi_label": false,
+        "num_workers": 8,
+        "pdb_data_dir": "/mnt/hopper-raid/aishod/data/struct_token_bench_pdb_data/mmcif_files/",
+        "prefetch_factor": 2,
+        "target_field": "binding_label",
+        "truncation_length": 5000,
+        "use_continuous": false,
+        "use_sequence": false
+      },
+      "deepspeed_path": "src/script/config/deepspeed/32_stage2.json",
+      "default_data_dir": "/mnt/hopper-raid/aishod/data/struct_token_bench_release_data/",
+      "experiment_name": "bindbio_laproteina_le_jepa_rand70_relative_pos_100k_upstream_l600_v1_lr0.001",
+      "lightning": {
+        "callbacks": {
+          "checkpoint": {
+            "_target_": "pytorch_lightning.callbacks.ModelCheckpoint",
+            "dirpath": null,
+            "every_n_epochs": 1,
+            "every_n_train_steps": null,
+            "filename": "{epoch}-{step}-{validation_f1_score:.2f}",
+            "mode": "max",
+            "monitor": "validation_f1_score",
+            "save_last": true,
+            "save_top_k": 3
+          },
+          "early_stopping": {
+            "_target_": "pytorch_lightning.callbacks.EarlyStopping",
+            "mode": "max",
+            "monitor": "validation_f1_score",
+            "patience": 10
+          },
+          "lr_monitor": {
+            "_target_": "pytorch_lightning.callbacks.LearningRateMonitor",
+            "logging_interval": "step"
+          },
+          "progress_bar": {
+            "_target_": "pytorch_lightning.callbacks.progress.TQDMProgressBar",
+            "refresh_rate": 10
+          }
+        },
+        "data_module": {
+          "_target_": "data_module.ProteinDataModule"
+        },
+        "logger": {
+          "_target_": "pytorch_lightning.loggers.TensorBoardLogger",
+          "name": "bindbio_laproteina_le_jepa_rand70_relative_pos_100k_upstream_l600_v1_lr0.001",
+          "save_dir": "/mnt/data/slurm-storage/aishod/projects/la-proteina/StructTokenBench/struct_token_bench_logs/upstream-l600-v1-full/runs/slurm-257092-le-jepa-rand70-relative-pos-100k/"
+        },
+        "model_module": {
+          "_target_": "model_module.PlModel",
+          "model_cfg": null,
+          "optimizer_cfg": null,
+          "py_logger": null
+        },
+        "strategy": {
+          "_target_": "pytorch_lightning.strategies.DeepSpeedStrategy",
+          "config": "src/script/config/deepspeed/32_stage2.json",
+          "remote_device": null
+        }
+      },
+      "max_steps": 10000,
+      "model": {
+        "add_noise": null,
+        "binary_class_weighting": "legacy_batch",
+        "binary_negative_weight": 1.0,
+        "binary_positive_weight": 1.0,
+        "ckpt_path": null,
+        "class_name": "SequenceClassificationModel",
+        "classification_metric_aggregation": "legacy_batch_mean",
+        "d_model": 8,
+        "dropout": 0.1,
+        "hidden_size": 512,
+        "is_global_or_local": "local",
+        "multi_label": false,
+        "num_labels": 1,
+        "num_layer": 1,
+        "num_tokens": null,
+        "pretrained_ckpt_path": "",
+        "regression": false,
+        "sequence_only": false,
+        "use_sequence": false
+      },
+      "model_encoder_dmodel": 1024,
+      "model_encoder_dout": 128,
+      "model_encoder_nlayers": 2,
+      "model_encoder_vheads": 128,
+      "optimization": {
+        "micro_batch_size": 8,
+        "optimizer": {
+          "adam_w_mode": true,
+          "betas": [
+            0.9,
+            0.98
+          ],
+          "eps": 1e-08,
+          "lr": 0.001,
+          "name": "adam",
+          "params": null,
+          "weight_decay": 0.01
+        },
+        "override": {
+          "add_index": 0,
+          "mult_factor": 1.0
+        },
+        "scheduler": {
+          "_target_": "util.get_cosine_schedule_with_warmup",
+          "min_ratio": 0.1,
+          "num_training_steps": 10000,
+          "num_warmup_steps": 200,
+          "optimizer": null,
+          "plateau_ratio": 0.1
+        },
+        "seed": 1234
+      },
+      "precompute_tokens": true,
+      "quantizer_codebook_embed_size": 128,
+      "quantizer_codebook_size": 4096,
+      "quantizer_use_linear_project": false,
+      "run_name": "slurm-257092-le-jepa-rand70-relative-pos-100k_le-jepa-rand70-relative-pos-100k_BindBio",
+      "save_dir_path": "/mnt/data/slurm-storage/aishod/projects/la-proteina/StructTokenBench/struct_token_bench_logs/upstream-l600-v1-full/runs/slurm-257092-le-jepa-rand70-relative-pos-100k/slurm-257092-le-jepa-rand70-relative-pos-100k_le-jepa-rand70-relative-pos-100k_BindBio",
+      "test_only": false,
+      "tokenizer": "WrappedLaProteinaTokenizer",
+      "tokenizer_cache_tag": "upstream-l600-v1",
+      "tokenizer_checkpoint_type": "jepa",
+      "tokenizer_ckpt_name": null,
+      "tokenizer_device": "cuda",
+      "tokenizer_encoder_cfg_path": "/mnt/data/slurm-storage/aishod/projects/la-proteina/StructTokenBench/100k-checkpoints/shared/exp_config_jepa_nn130m.json",
+      "tokenizer_encoder_source": "online",
+      "tokenizer_eval_max_length": null,
+      "tokenizer_eval_protocol": "upstream-l600-v1",
+      "tokenizer_pretrained_ckpt_path": "/mnt/hopper-raid/aishod/runs/le_jepa_rand70_relative_positions_100k/store/le_jepa_rand70_relative_positions_100k/checkpoints/stb-step-100000.ckpt",
+      "trainer": {
+        "accelerator": "gpu",
+        "accumulate_grad_batches": 1,
+        "check_val_every_n_epoch": 2,
+        "default_root_dir": "/mnt/data/slurm-storage/aishod/projects/la-proteina/StructTokenBench/struct_token_bench_logs/upstream-l600-v1-full/runs/slurm-257092-le-jepa-rand70-relative-pos-100k/",
+        "deterministic": true,
+        "devices": [
+          0
+        ],
+        "enable_checkpointing": true,
+        "enable_model_summary": true,
+        "enable_progress_bar": true,
+        "gradient_clip_val": 1.0,
+        "limit_train_batches": null,
+        "limit_val_batches": null,
+        "log_every_n_steps": 20,
+        "max_epochs": null,
+        "max_steps": 10000,
+        "num_nodes": 1,
+        "num_sanity_val_steps": 0,
+        "precision": "32-true",
+        "reload_dataloaders_every_n_epochs": 1,
+        "val_check_interval": 1.0
+      },
+      "validate_only": false
+    },
+    "resolved_config_sha256": "57eb5fadf08fefc05c86f6327c2dae3391e6f8806aff4f0423fbaa6338e8f741",
+    "scientific_config": {
+      "data": {
+        "data_name": "BioLIP2FunctionDataset",
+        "fast_dev_run": false,
+        "filter_length": 600,
+        "is_global_or_local": "local",
+        "multi_label": false,
+        "target_field": "binding_label",
+        "truncation_length": 5000,
+        "use_continuous": false,
+        "use_sequence": false
+      },
+      "model": {
+        "add_noise": null,
+        "binary_class_weighting": "legacy_batch",
+        "binary_negative_weight": 1.0,
+        "binary_positive_weight": 1.0,
+        "class_name": "SequenceClassificationModel",
+        "classification_metric_aggregation": "legacy_batch_mean",
+        "d_model": 8,
+        "dropout": 0.1,
+        "hidden_size": 512,
+        "is_global_or_local": "local",
+        "multi_label": false,
+        "num_labels": 1,
+        "num_layer": 1,
+        "num_tokens": null,
+        "regression": false,
+        "sequence_only": false,
+        "use_sequence": false
+      },
+      "optimization": {
+        "micro_batch_size": 8,
+        "optimizer": {
+          "adam_w_mode": true,
+          "betas": [
+            0.9,
+            0.98
+          ],
+          "eps": 1e-08,
+          "lr": 0.001,
+          "name": "adam",
+          "params": null,
+          "weight_decay": 0.01
+        },
+        "override": {
+          "add_index": 0,
+          "mult_factor": 1.0
+        },
+        "scheduler": {
+          "_target_": "util.get_cosine_schedule_with_warmup",
+          "min_ratio": 0.1,
+          "num_training_steps": 10000,
+          "num_warmup_steps": 200,
+          "optimizer": null,
+          "plateau_ratio": 0.1
+        },
+        "seed": 1234
+      },
+      "stopping": {
+        "checkpoint_every_n_epochs": 1,
+        "early_stopping_mode": "max",
+        "early_stopping_monitor": "validation_f1_score",
+        "early_stopping_patience": 10,
+        "max_steps": 10000
+      },
+      "trainer": {
+        "accumulate_grad_batches": 1,
+        "deterministic": true,
+        "gradient_clip_val": 1.0,
+        "limit_train_batches": null,
+        "limit_val_batches": null,
+        "precision": "32-true",
+        "reload_dataloaders_every_n_epochs": 1,
+        "val_check_interval": 1.0
+      }
+    },
+    "scientific_config_sha256": "602b52a206e5dbcfe1d1abb8564049a0662f01af47130f45bf37990843ea566d",
+    "seed": 1234
+  },
+  "protocol": {
+    "binary_class_weighting": "legacy_batch",
+    "cache_tag": "upstream-l600-v1",
+    "checkpoint_training_filters_applied": false,
+    "classification_metric_aggregation": "legacy_batch_mean",
+    "encoder_source": "online",
+    "local_alignment_policy": "upstream-optimal-alignment-report-drops-v1",
+    "name": "upstream-l600-v1",
+    "single_class_present_sample_weight": 0.5,
+    "stb_selected_residue_filter_length": 600,
+    "unknown_residue_adapter": "zero-aa-identity-v1",
+    "whole_chain_max_length_filter": null
+  },
+  "run": {
+    "checkpoint_label": "100k",
+    "environment": {
+      "CUDA_VISIBLE_DEVICES": "0",
+      "EVALUATION_RUN_ID": "slurm-257092-le-jepa-rand70-relative-pos-100k",
+      "SLURM_JOB_ID": "257092"
+    },
+    "experiment": "le-jepa-rand70-relative-pos-100k-upstream-l600-v1",
+    "finished_at_utc": "2026-08-28T09:47:18.001623+00:00",
+    "hostname": "klein",
+    "id": "slurm-257092-le-jepa-rand70-relative-pos-100k",
+    "pid": 1211106,
+    "smoke": false,
+    "started_at_utc": "2026-08-28T07:45:12Z",
+    "task": "BindBio"
+  },
+  "schema_version": 1,
+  "scientific_identity_sha256": "8ad39d621f68d5c050e073409e6c18c0f4724679a67e6f0c3f0c239e16113375",
+  "scientific_runtime_versions": {
+    "biotite": "1.6.0",
+    "graphein": "1.7.7",
+    "numpy": "2.4.6",
+    "python": "3.11.15",
+    "scipy": "1.17.1",
+    "torch": "2.7.0+cu118",
+    "torch-geometric": "2.8.0.post1"
+  },
+  "source_files": {
+    "data_module": {
+      "path": "/slurm-storage/aishod/projects/la-proteina/StructTokenBench/src/data_module.py",
+      "sha256": "a211540d8367132ce625ed13b5dfb239617198553815f7ad782edc3b72965b44",
+      "size_bytes": 12962
+    },
+    "dataset_base": {
+      "path": "/slurm-storage/aishod/projects/la-proteina/StructTokenBench/src/dataset/base.py",
+      "sha256": "fa527f34dc1295d3bdc62f5fd04055651cb022c298d60e77f4c60f8b94b3415b",
+      "size_bytes": 71115
+    },
+    "feature_factory": {
+      "path": "/slurm-storage/aishod/projects/la-proteina/proteinfoundation/nn/feature_factory.py",
+      "sha256": "61cc046d83375d814ce09873e05f09df00596bcb6fdaae5ecd5dc54fa5dcc39e",
+      "size_bytes": 78732
+    },
+    "metric_aggregation": {
+      "path": "/slurm-storage/aishod/projects/la-proteina/StructTokenBench/src/metric_aggregation.py",
+      "sha256": "a1c03c37f90b5635f99a6b1ef3f7e65e14d5fb3d8b01d0c3fbdc3952cbd0a323",
+      "size_bytes": 7749
+    },
+    "model_module": {
+      "path": "/slurm-storage/aishod/projects/la-proteina/StructTokenBench/src/model_module.py",
+      "sha256": "27b556b6132b3960f52d662f90e70bbc1dd8bdcb3c0befc19f4d1c2547790a84",
+      "size_bytes": 30439
+    },
+    "run_supervised_task": {
+      "path": "/slurm-storage/aishod/projects/la-proteina/StructTokenBench/src/script/run_supervised_task.py",
+      "sha256": "cf8536ce630c4327f97eb90d98b74480af7aaafa7e6e8af900df6743ed5f6845",
+      "size_bytes": 29538
+    },
+    "tokenizer": {
+      "path": "/slurm-storage/aishod/projects/la-proteina/StructTokenBench/src/tokenizer.py",
+      "sha256": "87117eb4e0deea945a61b16025b0f2be2eba9371318ae4f4c96e20982efe8f0b",
+      "size_bytes": 51035
+    }
+  }
+}

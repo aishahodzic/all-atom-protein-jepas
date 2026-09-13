@@ -1,0 +1,38 @@
+   Branch: canonical-lejepa-protein-perview-rot-high-lr-raw-step15k-upstream-l600-v1  |  Checkpoint: 15000  |  Task:    
+                                                       BindShake                                                        
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Metric                                                                                    ┃                    Value ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│ test_accuracy                                                                             │                   0.5893 │
+│ test_auroc                                                                                │                   0.6263 │
+│ test_f1_score                                                                             │                   0.3385 │
+│ test_false_neg                                                                            │                   0.4052 │
+│ test_false_neg_toall                                                                      │                   0.0719 │
+│ test_false_pos                                                                            │                   0.4122 │
+│ test_false_pos_toall                                                                      │                   0.3388 │
+│ test_loss                                                                                 │                   0.6705 │
+│ test_mcc                                                                                  │                   0.1410 │
+│ test_neg_weight                                                                           │                   0.6085 │
+│ test_pos_weight                                                                           │                   2.8583 │
+│ test_true_neg                                                                             │                   0.5878 │
+│ test_true_neg_toall                                                                       │                   0.4835 │
+│ test_true_pos                                                                             │                   0.5948 │
+│ test_true_pos_toall                                                                       │                   0.1058 │
+│ test_unweighted_loss                                                                      │                   0.6671 │
+│ validation_accuracy                                                                       │                   0.6016 │
+│ validation_auroc                                                                          │                   0.6300 │
+│ validation_f1_score                                                                       │                   0.3356 │
+│ validation_false_neg                                                                      │                   0.4016 │
+│ validation_false_neg_toall                                                                │                   0.0669 │
+│ validation_false_pos                                                                      │                   0.3998 │
+│ validation_false_pos_toall                                                                │                   0.3315 │
+│ validation_loss                                                                           │                   0.6705 │
+│ validation_mcc                                                                            │                   0.1516 │
+│ validation_neg_weight                                                                     │                   0.6019 │
+│ validation_pos_weight                                                                     │                   3.0052 │
+│ validation_true_neg                                                                       │                   0.6002 │
+│ validation_true_neg_toall                                                                 │                   0.4997 │
+│ validation_true_pos                                                                       │                   0.5984 │
+│ validation_true_pos_toall                                                                 │                   0.1019 │
+│ validation_unweighted_loss                                                                │                   0.6568 │
+└───────────────────────────────────────────────────────────────────────────────────────────┴──────────────────────────┘

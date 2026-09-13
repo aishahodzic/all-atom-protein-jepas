@@ -1,0 +1,2 @@
+checkpoint,branch,task,metric,fold_test,superfamily_test
+100k,jepa-rand-mask-50-upstream-l600-v1,FlexNEQ,spearmanr,0.0910,0.1243
