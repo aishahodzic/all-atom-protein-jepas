@@ -1,0 +1,38 @@
+depth,dimension,property,metric,test_score,valid_train_residues,valid_test_residues,seed,checkpoint_path,checkpoint_sha256,global_step,encoder_source,evaluation_context,convergence_warning,fit_warnings
+latent_mean,8,aa,accuracy,0.09936609197722776,600151,148602,42,/slurm-storage/aishod/projects/la-proteina/store/canonical_lejepa_v1_100k/checkpoints/step-00100000.ckpt,4f09dff610adaa75c8ac51b4cf01acb001c236c72dd91ac31568ffa191484527,100000,ema,full_unmasked_evaluation,False,
+block_1,768,aa,accuracy,0.9992866852397679,600151,148602,42,/slurm-storage/aishod/projects/la-proteina/store/canonical_lejepa_v1_100k/checkpoints/step-00100000.ckpt,4f09dff610adaa75c8ac51b4cf01acb001c236c72dd91ac31568ffa191484527,100000,ema,full_unmasked_evaluation,False,
+block_1,768,ss,accuracy,0.8238109985995906,599874,148528,42,/slurm-storage/aishod/projects/la-proteina/store/canonical_lejepa_v1_100k/checkpoints/step-00100000.ckpt,4f09dff610adaa75c8ac51b4cf01acb001c236c72dd91ac31568ffa191484527,100000,ema,full_unmasked_evaluation,True,"ConvergenceWarning: lbfgs failed to converge after 2000 iteration(s) (status=1):
+STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
+
+Increase the number of iterations to improve the convergence (max_iter=2000).
+You might also want to scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression"
+block_1,768,rsa,r2,0.5828029749373793,599926,148538,42,/slurm-storage/aishod/projects/la-proteina/store/canonical_lejepa_v1_100k/checkpoints/step-00100000.ckpt,4f09dff610adaa75c8ac51b4cf01acb001c236c72dd91ac31568ffa191484527,100000,ema,full_unmasked_evaluation,False,
+block_1,768,bfactor,spearman_rho,0.08834874351750174,597176,148031,42,/slurm-storage/aishod/projects/la-proteina/store/canonical_lejepa_v1_100k/checkpoints/step-00100000.ckpt,4f09dff610adaa75c8ac51b4cf01acb001c236c72dd91ac31568ffa191484527,100000,ema,full_unmasked_evaluation,False,
+block_6,768,aa,accuracy,0.9962853797391691,600151,148602,42,/slurm-storage/aishod/projects/la-proteina/store/canonical_lejepa_v1_100k/checkpoints/step-00100000.ckpt,4f09dff610adaa75c8ac51b4cf01acb001c236c72dd91ac31568ffa191484527,100000,ema,full_unmasked_evaluation,False,
+block_6,768,ss,accuracy,0.8516037380157276,599874,148528,42,/slurm-storage/aishod/projects/la-proteina/store/canonical_lejepa_v1_100k/checkpoints/step-00100000.ckpt,4f09dff610adaa75c8ac51b4cf01acb001c236c72dd91ac31568ffa191484527,100000,ema,full_unmasked_evaluation,False,
+block_6,768,rsa,r2,0.6040126011613884,599926,148538,42,/slurm-storage/aishod/projects/la-proteina/store/canonical_lejepa_v1_100k/checkpoints/step-00100000.ckpt,4f09dff610adaa75c8ac51b4cf01acb001c236c72dd91ac31568ffa191484527,100000,ema,full_unmasked_evaluation,False,
+block_6,768,bfactor,spearman_rho,0.1561212331414513,597176,148031,42,/slurm-storage/aishod/projects/la-proteina/store/canonical_lejepa_v1_100k/checkpoints/step-00100000.ckpt,4f09dff610adaa75c8ac51b4cf01acb001c236c72dd91ac31568ffa191484527,100000,ema,full_unmasked_evaluation,False,
+block_12,768,aa,accuracy,0.9616492375607327,600151,148602,42,/slurm-storage/aishod/projects/la-proteina/store/canonical_lejepa_v1_100k/checkpoints/step-00100000.ckpt,4f09dff610adaa75c8ac51b4cf01acb001c236c72dd91ac31568ffa191484527,100000,ema,full_unmasked_evaluation,True,"ConvergenceWarning: lbfgs failed to converge after 2000 iteration(s) (status=1):
+STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
+
+Increase the number of iterations to improve the convergence (max_iter=2000).
+You might also want to scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression"
+block_12,768,ss,accuracy,0.8370206291069697,599874,148528,42,/slurm-storage/aishod/projects/la-proteina/store/canonical_lejepa_v1_100k/checkpoints/step-00100000.ckpt,4f09dff610adaa75c8ac51b4cf01acb001c236c72dd91ac31568ffa191484527,100000,ema,full_unmasked_evaluation,True,"ConvergenceWarning: lbfgs failed to converge after 2000 iteration(s) (status=1):
+STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
+
+Increase the number of iterations to improve the convergence (max_iter=2000).
+You might also want to scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression"
+block_12,768,rsa,r2,0.5520324015403282,599926,148538,42,/slurm-storage/aishod/projects/la-proteina/store/canonical_lejepa_v1_100k/checkpoints/step-00100000.ckpt,4f09dff610adaa75c8ac51b4cf01acb001c236c72dd91ac31568ffa191484527,100000,ema,full_unmasked_evaluation,False,
+block_12,768,bfactor,spearman_rho,0.17888250976715295,597176,148031,42,/slurm-storage/aishod/projects/la-proteina/store/canonical_lejepa_v1_100k/checkpoints/step-00100000.ckpt,4f09dff610adaa75c8ac51b4cf01acb001c236c72dd91ac31568ffa191484527,100000,ema,full_unmasked_evaluation,False,
+latent_mean,8,ss,accuracy,0.5667820208984164,599874,148528,42,/slurm-storage/aishod/projects/la-proteina/store/canonical_lejepa_v1_100k/checkpoints/step-00100000.ckpt,4f09dff610adaa75c8ac51b4cf01acb001c236c72dd91ac31568ffa191484527,100000,ema,full_unmasked_evaluation,False,
+latent_mean,8,rsa,r2,0.02892374685778698,599926,148538,42,/slurm-storage/aishod/projects/la-proteina/store/canonical_lejepa_v1_100k/checkpoints/step-00100000.ckpt,4f09dff610adaa75c8ac51b4cf01acb001c236c72dd91ac31568ffa191484527,100000,ema,full_unmasked_evaluation,False,
+latent_mean,8,bfactor,spearman_rho,0.01444195069505214,597176,148031,42,/slurm-storage/aishod/projects/la-proteina/store/canonical_lejepa_v1_100k/checkpoints/step-00100000.ckpt,4f09dff610adaa75c8ac51b4cf01acb001c236c72dd91ac31568ffa191484527,100000,ema,full_unmasked_evaluation,False,

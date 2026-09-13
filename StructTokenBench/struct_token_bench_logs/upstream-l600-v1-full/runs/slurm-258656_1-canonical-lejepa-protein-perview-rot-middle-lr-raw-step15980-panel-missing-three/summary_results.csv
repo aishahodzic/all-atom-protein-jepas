@@ -1,0 +1,2 @@
+checkpoint,branch,task,metric,fold_test,superfamily_test
+15980,canonical-lejepa-protein-perview-rot-middle-lr-raw-step15980-upstream-l600-v1,BindInt,auroc,0.5484,0.8978

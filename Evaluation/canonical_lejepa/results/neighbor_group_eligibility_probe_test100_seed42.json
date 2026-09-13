@@ -1,0 +1,932 @@
+{
+  "counts": {
+    "3": 0,
+    "4": 0,
+    "5": 0
+  },
+  "purpose": "eligibility_only_no_encoder_forwards_or_interventions",
+  "results": [
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 8,
+      "protein_id": "1fj0_B"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 10,
+      "protein_id": "1kn0_G"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 11,
+      "protein_id": "1kva_A"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 6,
+      "protein_id": "1m7w_A"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 10,
+      "protein_id": "1m9u_C"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 9,
+      "protein_id": "1n3s_D"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 9,
+      "protein_id": "1nys_C"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 4,
+      "protein_id": "1p7j_B"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 10,
+      "protein_id": "1pub_A"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 0,
+      "protein_id": "1s3q_D"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 0,
+      "protein_id": "1s3q_E"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 11,
+      "protein_id": "1ugr_B"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 10,
+      "protein_id": "1v8p_G"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 8,
+      "protein_id": "1vha_D"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 8,
+      "protein_id": "1vha_E"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 11,
+      "protein_id": "2ag2_A"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 11,
+      "protein_id": "2ipb_A"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 11,
+      "protein_id": "2j5x_A"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 11,
+      "protein_id": "2j5x_B"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 7,
+      "protein_id": "2jd7_1"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 7,
+      "protein_id": "2jd7_P"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 9,
+      "protein_id": "2jjt_B"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 6,
+      "protein_id": "2pd0_A"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 11,
+      "protein_id": "2w83_E"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 5,
+      "protein_id": "2wu5_G"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 0,
+      "protein_id": "2yad_C"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 1,
+      "protein_id": "2ztt_A"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 12,
+      "protein_id": "3cbg_A"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 9,
+      "protein_id": "3dll_L"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 3,
+      "protein_id": "3gxx_C"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 6,
+      "protein_id": "3kx9_V"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 10,
+      "protein_id": "3lme_E"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 12,
+      "protein_id": "3lte_B"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 11,
+      "protein_id": "3n2e_C"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 11,
+      "protein_id": "3ne1_A"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 8,
+      "protein_id": "3pip_Q"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 12,
+      "protein_id": "3q08_K"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 9,
+      "protein_id": "3v32_A"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 4,
+      "protein_id": "4aij_B"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 10,
+      "protein_id": "4aym_A"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 6,
+      "protein_id": "4b7w_C"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 7,
+      "protein_id": "4dv2_S"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 8,
+      "protein_id": "4eqg_A"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 6,
+      "protein_id": "4etr_B"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 10,
+      "protein_id": "4fao_L"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 13,
+      "protein_id": "4fun_A"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 9,
+      "protein_id": "4gqh_b"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 9,
+      "protein_id": "4gqh_h"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 14,
+      "protein_id": "4hoy_A"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 3,
+      "protein_id": "4noa_A"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 11,
+      "protein_id": "4s1l_A"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 0,
+      "protein_id": "4y66_E"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 10,
+      "protein_id": "4ylg_B"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 12,
+      "protein_id": "4zd6_C"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 13,
+      "protein_id": "4zxp_B"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 10,
+      "protein_id": "5b0o_I"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 11,
+      "protein_id": "5c46_F"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 8,
+      "protein_id": "5dm7_L"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 12,
+      "protein_id": "5h9w_A"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 11,
+      "protein_id": "5tkg_A"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 10,
+      "protein_id": "5v50_A"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 11,
+      "protein_id": "5xo0_B"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 8,
+      "protein_id": "5xo1_F"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 10,
+      "protein_id": "5xs0_O"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 5,
+      "protein_id": "6cht_K"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 9,
+      "protein_id": "6j5z_C"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 8,
+      "protein_id": "6jla_B"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 10,
+      "protein_id": "6ltq_A"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 4,
+      "protein_id": "6oqu_X"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 10,
+      "protein_id": "6qhk_A"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 9,
+      "protein_id": "6rlp_I"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 10,
+      "protein_id": "6tqs_B"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 7,
+      "protein_id": "6vjz_C"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 6,
+      "protein_id": "6zkf_f"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 9,
+      "protein_id": "7bl4_O"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 6,
+      "protein_id": "7dya_B"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 6,
+      "protein_id": "7dyb_H"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 6,
+      "protein_id": "7g82_B"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 6,
+      "protein_id": "7nwz_C"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 6,
+      "protein_id": "7nx0_A"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 6,
+      "protein_id": "7w2u_H"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 5,
+      "protein_id": "7xpc_D"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 9,
+      "protein_id": "8d0b_C"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 5,
+      "protein_id": "8ey4_I"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 10,
+      "protein_id": "8h1i_A"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 11,
+      "protein_id": "8i6n_B"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 4,
+      "protein_id": "8jcd_D"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 6,
+      "protein_id": "8om1_V"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 8,
+      "protein_id": "8pai_A"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 12,
+      "protein_id": "8qpa_M"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 11,
+      "protein_id": "8s5e_A"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 5,
+      "protein_id": "8xi2_e"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 8,
+      "protein_id": "8ydf_X"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 8,
+      "protein_id": "9bsl_O"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 8,
+      "protein_id": "9d85_B"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 7,
+      "protein_id": "9e4w_P"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 8,
+      "protein_id": "9gut_T"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 5,
+      "protein_id": "9jhd_P"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 8,
+      "protein_id": "9o3i_2s"
+    },
+    {
+      "eligible": {
+        "3": null,
+        "4": null,
+        "5": null
+      },
+      "maximum_structural_neighbours": 8,
+      "protein_id": "9qqq_n"
+    }
+  ],
+  "rules": {
+    "control_and_donor_to_focal_min_nm": 1.5,
+    "group_maximum_magnitude_mismatch": 0.1,
+    "minimum_sequence_separation": 20,
+    "near_residues_per_group": [
+      3,
+      4,
+      5
+    ],
+    "near_to_focal_max_nm": 0.8,
+    "per_triple_maximum_magnitude_mismatch": 0.1,
+    "same_aa_per_near_control_donor_triple": true,
+    "same_chain_segment_and_observed_ca": true,
+    "sequence_tolerance_per_matched_triple": 5,
+    "unique_recipients_and_donors_within_group": true
+  },
+  "selected_proteins": 100,
+  "structural_ceiling_counts": {
+    "3": 95,
+    "4": 93,
+    "5": 89
+  }
+}

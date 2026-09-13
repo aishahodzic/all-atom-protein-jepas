@@ -1,0 +1,11 @@
+checkpoint,branch,task,metric,fold_test,superfamily_test
+10k,canonical-lejepa-residue-perview-b96-ema-step10k-upstream-l600-v1,BindInt,auroc,0.4362,0.7887
+10k,canonical-lejepa-residue-perview-b96-ema-step10k-upstream-l600-v1,BindBio,auroc,0.5718,0.5857
+10k,canonical-lejepa-residue-perview-b96-ema-step10k-upstream-l600-v1,CatInt,auroc,0.5350,0.7221
+10k,canonical-lejepa-residue-perview-b96-ema-step10k-upstream-l600-v1,CatBio,auroc,0.5626,0.6113
+10k,canonical-lejepa-residue-perview-b96-ema-step10k-upstream-l600-v1,Con,auroc,0.5640,0.7155
+10k,canonical-lejepa-residue-perview-b96-ema-step10k-upstream-l600-v1,Rep,auroc,0.7605,0.7918
+10k,canonical-lejepa-residue-perview-b96-ema-step10k-upstream-l600-v1,Ept,auroc,0.4767,0.5649
+10k,canonical-lejepa-residue-perview-b96-ema-step10k-upstream-l600-v1,FlexRMSF,spearmanr,0.2066,0.1588
+10k,canonical-lejepa-residue-perview-b96-ema-step10k-upstream-l600-v1,FlexBFactor,spearmanr,0.1078,0.1045
+10k,canonical-lejepa-residue-perview-b96-ema-step10k-upstream-l600-v1,FlexNEQ,spearmanr,0.2570,0.2258

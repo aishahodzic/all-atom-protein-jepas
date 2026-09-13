@@ -1,0 +1,11 @@
+checkpoint,branch,task,metric,fold_test,superfamily_test
+10k,canonical-lejepa-protein-joint-b32-ema-step10k-upstream-l600-v1,BindInt,auroc,0.5100,0.8323
+10k,canonical-lejepa-protein-joint-b32-ema-step10k-upstream-l600-v1,BindBio,auroc,0.6247,0.6356
+10k,canonical-lejepa-protein-joint-b32-ema-step10k-upstream-l600-v1,CatInt,auroc,0.5806,0.7877
+10k,canonical-lejepa-protein-joint-b32-ema-step10k-upstream-l600-v1,CatBio,auroc,0.6462,0.7066
+10k,canonical-lejepa-protein-joint-b32-ema-step10k-upstream-l600-v1,Con,auroc,0.5918,0.7515
+10k,canonical-lejepa-protein-joint-b32-ema-step10k-upstream-l600-v1,Rep,auroc,0.7458,0.8017
+10k,canonical-lejepa-protein-joint-b32-ema-step10k-upstream-l600-v1,Ept,auroc,0.5240,0.5944
+10k,canonical-lejepa-protein-joint-b32-ema-step10k-upstream-l600-v1,FlexRMSF,spearmanr,0.3701,0.3612
+10k,canonical-lejepa-protein-joint-b32-ema-step10k-upstream-l600-v1,FlexBFactor,spearmanr,0.2339,0.2490
+10k,canonical-lejepa-protein-joint-b32-ema-step10k-upstream-l600-v1,FlexNEQ,spearmanr,0.0884,0.0796

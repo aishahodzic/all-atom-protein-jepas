@@ -1,0 +1,3 @@
+encoder,aa_purity_k10_original_8d,n_points,seed,perplexity,max_iter,metric
+canonical-lejepa-residue-iterative-protein-centered-sigreg-ema-step20000,,15000,42,30.0,1000,cosine
+canonical-lejepa-residue-visible-only-protein-centered-sigreg-ema-step20000,,15000,42,30.0,1000,cosine

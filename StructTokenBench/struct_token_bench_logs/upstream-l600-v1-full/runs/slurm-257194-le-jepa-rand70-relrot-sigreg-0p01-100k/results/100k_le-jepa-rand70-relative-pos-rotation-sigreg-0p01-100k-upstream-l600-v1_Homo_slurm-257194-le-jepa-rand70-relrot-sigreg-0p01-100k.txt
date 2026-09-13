@@ -1,0 +1,25 @@
+   Branch: le-jepa-rand70-relative-pos-rotation-sigreg-0p01-100k-upstream-l600-v1  |  Checkpoint: 100k  |  Task: Homo   
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━┓
+┃ Metric                                                                                         ┃               Value ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━┩
+│ test_family_holdout_accuracy                                                                   │              0.1444 │
+│ test_family_holdout_auroc                                                                      │              0.0765 │
+│ test_family_holdout_f1_score                                                                   │              0.1574 │
+│ test_family_holdout_loss                                                                       │              1.9732 │
+│ test_family_holdout_mcc                                                                        │              0.1962 │
+│ test_fold_holdout_accuracy                                                                     │              0.1012 │
+│ test_fold_holdout_auroc                                                                        │              0.1134 │
+│ test_fold_holdout_f1_score                                                                     │              0.1005 │
+│ test_fold_holdout_loss                                                                         │              3.3153 │
+│ test_fold_holdout_mcc                                                                          │              0.2285 │
+│ test_superfamily_holdout_accuracy                                                              │              0.0361 │
+│ test_superfamily_holdout_auroc                                                                 │              0.1037 │
+│ test_superfamily_holdout_f1_score                                                              │              0.0396 │
+│ test_superfamily_holdout_loss                                                                  │              3.4881 │
+│ test_superfamily_holdout_mcc                                                                   │              0.0976 │
+│ validation_accuracy                                                                            │              0.0822 │
+│ validation_auroc                                                                               │              0.1957 │
+│ validation_f1_score                                                                            │              0.0753 │
+│ validation_loss                                                                                │              3.2125 │
+│ validation_mcc                                                                                 │              0.1547 │
+└────────────────────────────────────────────────────────────────────────────────────────────────┴─────────────────────┘

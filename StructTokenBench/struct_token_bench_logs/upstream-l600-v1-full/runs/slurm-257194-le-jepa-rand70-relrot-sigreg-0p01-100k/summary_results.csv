@@ -1,0 +1,11 @@
+checkpoint,branch,task,metric,fold_test,superfamily_test
+100k,le-jepa-rand70-relative-pos-rotation-sigreg-0p01-100k-upstream-l600-v1,BindInt,auroc,0.4427,0.8869
+100k,le-jepa-rand70-relative-pos-rotation-sigreg-0p01-100k-upstream-l600-v1,BindBio,auroc,0.5763,0.6000
+100k,le-jepa-rand70-relative-pos-rotation-sigreg-0p01-100k-upstream-l600-v1,CatInt,auroc,0.5029,0.8490
+100k,le-jepa-rand70-relative-pos-rotation-sigreg-0p01-100k-upstream-l600-v1,CatBio,auroc,0.5541,0.6239
+100k,le-jepa-rand70-relative-pos-rotation-sigreg-0p01-100k-upstream-l600-v1,Con,auroc,0.5723,0.7974
+100k,le-jepa-rand70-relative-pos-rotation-sigreg-0p01-100k-upstream-l600-v1,Rep,auroc,0.7386,0.8558
+100k,le-jepa-rand70-relative-pos-rotation-sigreg-0p01-100k-upstream-l600-v1,Ept,auroc,0.5071,0.5121
+100k,le-jepa-rand70-relative-pos-rotation-sigreg-0p01-100k-upstream-l600-v1,FlexRMSF,spearmanr,0.1123,0.0994
+100k,le-jepa-rand70-relative-pos-rotation-sigreg-0p01-100k-upstream-l600-v1,FlexBFactor,spearmanr,0.0395,0.0576
+100k,le-jepa-rand70-relative-pos-rotation-sigreg-0p01-100k-upstream-l600-v1,FlexNEQ,spearmanr,0.0567,0.0336

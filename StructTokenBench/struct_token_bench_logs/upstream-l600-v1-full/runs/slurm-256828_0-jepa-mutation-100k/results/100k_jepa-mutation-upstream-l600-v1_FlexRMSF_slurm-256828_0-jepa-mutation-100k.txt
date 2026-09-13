@@ -1,0 +1,17 @@
+                     Branch: jepa-mutation-upstream-l600-v1  |  Checkpoint: 100k  |  Task: FlexRMSF                     
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Metric                                                                                    ┃                    Value ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│ fold_test_loss                                                                            │                   0.0194 │
+│ fold_test_pearsonr                                                                        │                   0.4472 │
+│ fold_test_r2                                                                              │                   0.0984 │
+│ fold_test_spearmanr                                                                       │                   0.3508 │
+│ superfamily_test_loss                                                                     │                   0.0248 │
+│ superfamily_test_pearsonr                                                                 │                   0.3974 │
+│ superfamily_test_r2                                                                       │                   0.0144 │
+│ superfamily_test_spearmanr                                                                │                   0.3561 │
+│ validation_loss                                                                           │                   0.0254 │
+│ validation_pearsonr                                                                       │                   0.3733 │
+│ validation_r2                                                                             │                   0.0999 │
+│ validation_spearmanr                                                                      │                   0.3158 │
+└───────────────────────────────────────────────────────────────────────────────────────────┴──────────────────────────┘

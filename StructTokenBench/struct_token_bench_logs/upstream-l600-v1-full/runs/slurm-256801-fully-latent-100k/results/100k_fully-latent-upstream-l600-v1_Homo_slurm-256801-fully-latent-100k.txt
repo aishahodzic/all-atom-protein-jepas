@@ -1,0 +1,25 @@
+                       Branch: fully-latent-upstream-l600-v1  |  Checkpoint: 100k  |  Task: Homo                        
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━┓
+┃ Metric                                                                                         ┃               Value ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━┩
+│ test_family_holdout_accuracy                                                                   │              0.1314 │
+│ test_family_holdout_auroc                                                                      │              0.0747 │
+│ test_family_holdout_f1_score                                                                   │              0.1436 │
+│ test_family_holdout_loss                                                                       │              2.0575 │
+│ test_family_holdout_mcc                                                                        │              0.1874 │
+│ test_fold_holdout_accuracy                                                                     │              0.0804 │
+│ test_fold_holdout_auroc                                                                        │              0.1188 │
+│ test_fold_holdout_f1_score                                                                     │              0.0823 │
+│ test_fold_holdout_loss                                                                         │              3.2201 │
+│ test_fold_holdout_mcc                                                                          │              0.2149 │
+│ test_superfamily_holdout_accuracy                                                              │              0.0425 │
+│ test_superfamily_holdout_auroc                                                                 │              0.1046 │
+│ test_superfamily_holdout_f1_score                                                              │              0.0513 │
+│ test_superfamily_holdout_loss                                                                  │              3.2987 │
+│ test_superfamily_holdout_mcc                                                                   │              0.1172 │
+│ validation_accuracy                                                                            │              0.0711 │
+│ validation_auroc                                                                               │              0.1951 │
+│ validation_f1_score                                                                            │              0.0750 │
+│ validation_loss                                                                                │              3.1742 │
+│ validation_mcc                                                                                 │              0.1664 │
+└────────────────────────────────────────────────────────────────────────────────────────────────┴─────────────────────┘

@@ -1,0 +1,3 @@
+checkpoint,branch,task,metric,fold_test,superfamily_test
+100k,jepa-rand-mask-50-upstream-l600-v1,BindInt,auroc,0.4446,0.8167
+100k,jepa-rand-mask-50-upstream-l600-v1,BindBio,auroc,0.6059,0.6180

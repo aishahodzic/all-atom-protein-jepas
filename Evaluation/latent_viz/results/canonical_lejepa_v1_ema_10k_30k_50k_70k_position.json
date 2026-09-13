@@ -1,0 +1,49 @@
+{
+  "description": "Matched canonical LeJEPA V1 EMA 10k/30k/50k/70k position and length audit",
+  "encoder_source": "EMA (canonical evaluation encoder)",
+  "selection": {
+    "proteins": 5224,
+    "aa_ss_valid_residue_pool": 748402,
+    "sampled_residues": 15000,
+    "seed": 42,
+    "same_physical_residues": true,
+    "physical_sample_sha256": "6281211e2d1f3364f54c33fbde061601e4d35560a56f75bd6864b993b775d9b8"
+  },
+  "tsne": {
+    "metric": "cosine",
+    "perplexity": 30.0,
+    "max_iter": 1000,
+    "init": "random",
+    "same_settings_but_independent_fit_per_checkpoint": true
+  },
+  "position": {
+    "raw_index": "one-based local tensor-row ordinal within chain",
+    "normalized_position": "one-based i/L",
+    "length_control": [
+      "partial Spearman after residualizing ranked log(chain length)",
+      "cross-protein kNN restricted to 16-residue length bins"
+    ]
+  },
+  "checkpoints": [
+    {
+      "id": "canonical-lejepa-v1-ema-step10000",
+      "source": "/mnt/data/slurm-storage/aishod/projects/la-proteina/store/canonical_lejepa_v1_100k/checkpoints/step-00010000.ckpt",
+      "staged": "/mnt/data/slurm-storage/aishod/projects/la-proteina/store/canonical_lejepa_v1_100k/evaluation/canonical-lejepa-v1-step10000-ema-staged.ckpt"
+    },
+    {
+      "id": "canonical-lejepa-v1-ema-step30000",
+      "source": "/mnt/data/slurm-storage/aishod/projects/la-proteina/store/canonical_lejepa_v1_100k/checkpoints/step-00030000.ckpt",
+      "staged": "/mnt/data/slurm-storage/aishod/projects/la-proteina/store/canonical_lejepa_v1_100k/evaluation/canonical-lejepa-v1-step30000-ema-staged.ckpt"
+    },
+    {
+      "id": "canonical-lejepa-v1-ema-step50000",
+      "source": "/mnt/data/slurm-storage/aishod/projects/la-proteina/store/canonical_lejepa_v1_100k/checkpoints/step-00050000.ckpt",
+      "staged": "/mnt/data/slurm-storage/aishod/projects/la-proteina/store/canonical_lejepa_v1_100k/evaluation/canonical-lejepa-v1-step50000-ema-staged.ckpt"
+    },
+    {
+      "id": "canonical-lejepa-v1-ema-step70000",
+      "source": "/mnt/data/slurm-storage/aishod/projects/la-proteina/store/canonical_lejepa_v1_100k/checkpoints/step-00070000.ckpt",
+      "staged": "/mnt/data/slurm-storage/aishod/projects/la-proteina/store/canonical_lejepa_v1_100k/evaluation/canonical-lejepa-v1-step70000-ema-staged.ckpt"
+    }
+  ]
+}

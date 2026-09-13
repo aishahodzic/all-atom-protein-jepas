@@ -1,0 +1,2 @@
+checkpoint,branch,task,metric,fold_test,superfamily_test
+50k,canonical-lejepa-v1-ema-step50k-upstream-l600-v1,FlexRMSF,spearmanr,0.2828,0.4181

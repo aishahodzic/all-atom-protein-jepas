@@ -1,0 +1,2 @@
+checkpoint,branch,task,metric,fold_test,superfamily_test
+20k,canonical-lejepa-low-lr1e4-raw-step20k-upstream-l600-v1,Ept,auroc,0.4797,0.5862

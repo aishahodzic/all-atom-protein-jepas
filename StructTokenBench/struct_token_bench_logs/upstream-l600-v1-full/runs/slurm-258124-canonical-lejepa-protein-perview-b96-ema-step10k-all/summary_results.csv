@@ -1,0 +1,11 @@
+checkpoint,branch,task,metric,fold_test,superfamily_test
+10k,canonical-lejepa-protein-perview-b96-ema-step10k-upstream-l600-v1,BindInt,auroc,0.4686,0.8437
+10k,canonical-lejepa-protein-perview-b96-ema-step10k-upstream-l600-v1,BindBio,auroc,0.5914,0.6075
+10k,canonical-lejepa-protein-perview-b96-ema-step10k-upstream-l600-v1,CatInt,auroc,0.5383,0.7786
+10k,canonical-lejepa-protein-perview-b96-ema-step10k-upstream-l600-v1,CatBio,auroc,0.5453,0.6248
+10k,canonical-lejepa-protein-perview-b96-ema-step10k-upstream-l600-v1,Con,auroc,0.5612,0.7379
+10k,canonical-lejepa-protein-perview-b96-ema-step10k-upstream-l600-v1,Rep,auroc,0.7602,0.8124
+10k,canonical-lejepa-protein-perview-b96-ema-step10k-upstream-l600-v1,Ept,auroc,0.4993,0.4998
+10k,canonical-lejepa-protein-perview-b96-ema-step10k-upstream-l600-v1,FlexRMSF,spearmanr,0.1782,0.2474
+10k,canonical-lejepa-protein-perview-b96-ema-step10k-upstream-l600-v1,FlexBFactor,spearmanr,0.0910,0.1375
+10k,canonical-lejepa-protein-perview-b96-ema-step10k-upstream-l600-v1,FlexNEQ,spearmanr,0.0763,0.0534

@@ -1,0 +1,18 @@
+   Branch: canonical-lejepa-residue-perview-rot-middle-lr-raw-step10k-upstream-l600-v1  |  Checkpoint: 10k  |  Task:    
+                                                      FlexBFactor                                                       
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Metric                                                                                    ┃                    Value ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│ fold_test_loss                                                                            │                   0.0190 │
+│ fold_test_pearsonr                                                                        │                   0.1907 │
+│ fold_test_r2                                                                              │                   0.0339 │
+│ fold_test_spearmanr                                                                       │                   0.1841 │
+│ superfamily_test_loss                                                                     │                   0.0141 │
+│ superfamily_test_pearsonr                                                                 │                   0.1815 │
+│ superfamily_test_r2                                                                       │                   0.0194 │
+│ superfamily_test_spearmanr                                                                │                   0.1688 │
+│ validation_loss                                                                           │                   0.0152 │
+│ validation_pearsonr                                                                       │                   0.2127 │
+│ validation_r2                                                                             │                   0.0355 │
+│ validation_spearmanr                                                                      │                   0.1931 │
+└───────────────────────────────────────────────────────────────────────────────────────────┴──────────────────────────┘

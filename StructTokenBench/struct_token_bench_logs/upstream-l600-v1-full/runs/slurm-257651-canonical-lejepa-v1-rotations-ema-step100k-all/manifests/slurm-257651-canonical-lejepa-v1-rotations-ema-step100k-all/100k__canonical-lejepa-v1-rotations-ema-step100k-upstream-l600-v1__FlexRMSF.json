@@ -1,0 +1,1403 @@
+{
+  "cohorts": {
+    "fold_test": {
+      "alignment_dropped_encoder_positions": 0,
+      "alignment_dropped_label_positions": 0,
+      "cache_identity_sha256": "274af3e88ecc69bec698b7355f9cd822fa36eeef1631a886defb399fe33a8cbc",
+      "canonical_count_asserted": true,
+      "canonical_expected_rows": 225,
+      "checkpoint_filter_exclusion_rows": 0,
+      "cohort_sha256": "1c56e33eb220fab6c31ecfeb0b615d153306d86f61db83c7b0c324f8220df8c3",
+      "dataset_name": "AtlasDataset",
+      "dataset_split": "fold_test",
+      "encoder_failure_rows": 0,
+      "final_rows": 225,
+      "final_token_or_residue_count": 49632,
+      "final_unique_pdb_chain_pairs": 225,
+      "input_unique_pdb_chain_pairs": 225,
+      "label_counts": {
+        "ignored_minus_100": 0,
+        "missing_or_non_finite": 0,
+        "one": 0,
+        "other": 49632,
+        "total": 49632,
+        "zero": 0
+      },
+      "requested_split": "fold_test",
+      "resolve_or_parse_failure_reasons": {},
+      "resolve_or_parse_failure_rows": 0,
+      "resolve_or_parse_failure_unique_pairs": 0,
+      "row_conservation": {
+        "accounted": 225,
+        "holds": true,
+        "input": 225
+      },
+      "rows_after_stb_task_filters_before_laproteina": 225,
+      "schema_version": 2,
+      "stb_filter_length": 600,
+      "structured_rows_before_runtime_stb_patches": 225,
+      "structured_rows_loaded": 225,
+      "structured_source": {
+        "path": "/mnt/hopper-raid/aishod/data/struct_token_bench_release_data/data/physicochemical/atlas/processed_structured_fold_test",
+        "sha256": "a76115f5b789ed08f010621c16234ef92f2f08bbee4fd292e807d67d9e38c2ed",
+        "size_bytes": 33893436
+      },
+      "target_field": "rmsf_score",
+      "token_cache_artifact": {
+        "sha256": "d66aa7239e1a666e0f577d9cac8a31d4468b490a61ec447272c745d85f4c830b",
+        "size_bytes": 36169691
+      }
+    },
+    "superfamily_test": {
+      "alignment_dropped_encoder_positions": 0,
+      "alignment_dropped_label_positions": 0,
+      "cache_identity_sha256": "d86b6fd9cb52a04dd15c8e27dab2eb9fb5e909d8d22b26eb0cc3ff0a63f4bf40",
+      "canonical_count_asserted": true,
+      "canonical_expected_rows": 104,
+      "checkpoint_filter_exclusion_rows": 0,
+      "cohort_sha256": "740ca174ecb80e2a1c1bae141d710db9edc4d92d55f470d75138214311bab8c3",
+      "dataset_name": "AtlasDataset",
+      "dataset_split": "superfamily_test",
+      "encoder_failure_rows": 0,
+      "final_rows": 104,
+      "final_token_or_residue_count": 21548,
+      "final_unique_pdb_chain_pairs": 104,
+      "input_unique_pdb_chain_pairs": 104,
+      "label_counts": {
+        "ignored_minus_100": 0,
+        "missing_or_non_finite": 0,
+        "one": 0,
+        "other": 21548,
+        "total": 21548,
+        "zero": 0
+      },
+      "requested_split": "superfamily_test",
+      "resolve_or_parse_failure_reasons": {},
+      "resolve_or_parse_failure_rows": 0,
+      "resolve_or_parse_failure_unique_pairs": 0,
+      "row_conservation": {
+        "accounted": 104,
+        "holds": true,
+        "input": 104
+      },
+      "rows_after_stb_task_filters_before_laproteina": 104,
+      "schema_version": 2,
+      "stb_filter_length": 600,
+      "structured_rows_before_runtime_stb_patches": 104,
+      "structured_rows_loaded": 104,
+      "structured_source": {
+        "path": "/mnt/hopper-raid/aishod/data/struct_token_bench_release_data/data/physicochemical/atlas/processed_structured_superfamily_test",
+        "sha256": "c26c7d4f5468216105e4d4d4b251eb4edccc033682b5086e9bf11460eb44b3e2",
+        "size_bytes": 14729688
+      },
+      "target_field": "rmsf_score",
+      "token_cache_artifact": {
+        "sha256": "c4422e49062fefb59436040d54c268aff4a6a56058062da53b13350f88e8890d",
+        "size_bytes": 15723949
+      }
+    },
+    "train": {
+      "alignment_dropped_encoder_positions": 0,
+      "alignment_dropped_label_positions": 0,
+      "cache_identity_sha256": "c016f609100d9bafffc1bc4ead5efabad50e953634df6a7d9ea93fea2c23f295",
+      "canonical_count_asserted": true,
+      "canonical_expected_rows": 643,
+      "checkpoint_filter_exclusion_rows": 0,
+      "cohort_sha256": "72231b1e7def37d86bb756a207d0aac661ea058f8730bb4261c421ccddf90a71",
+      "dataset_name": "AtlasDataset",
+      "dataset_split": "train",
+      "encoder_failure_rows": 0,
+      "final_rows": 643,
+      "final_token_or_residue_count": 137019,
+      "final_unique_pdb_chain_pairs": 643,
+      "input_unique_pdb_chain_pairs": 643,
+      "label_counts": {
+        "ignored_minus_100": 0,
+        "missing_or_non_finite": 0,
+        "one": 3,
+        "other": 137016,
+        "total": 137019,
+        "zero": 0
+      },
+      "requested_split": "train",
+      "resolve_or_parse_failure_reasons": {},
+      "resolve_or_parse_failure_rows": 0,
+      "resolve_or_parse_failure_unique_pairs": 0,
+      "row_conservation": {
+        "accounted": 643,
+        "holds": true,
+        "input": 643
+      },
+      "rows_after_stb_task_filters_before_laproteina": 643,
+      "schema_version": 2,
+      "stb_filter_length": 600,
+      "structured_rows_before_runtime_stb_patches": 643,
+      "structured_rows_loaded": 643,
+      "structured_source": {
+        "path": "/mnt/hopper-raid/aishod/data/struct_token_bench_release_data/data/physicochemical/atlas/processed_structured_train",
+        "sha256": "444eb977fbf0e2f8560d1d086c8f207412779ffbf850f1293d32dfe7c46c01e2",
+        "size_bytes": 93590252
+      },
+      "target_field": "rmsf_score",
+      "token_cache_artifact": {
+        "sha256": "b0178e3b3d49059452d5a910c9f04257cf97b9fd6d9dcfdaa93c2469a80c4b62",
+        "size_bytes": 99879191
+      }
+    },
+    "validation": {
+      "alignment_dropped_encoder_positions": 0,
+      "alignment_dropped_label_positions": 0,
+      "cache_identity_sha256": "158d697fb5d519dea67f429a0e1e3242965e74e903e0c5019ce36a2a02168966",
+      "canonical_count_asserted": true,
+      "canonical_expected_rows": 81,
+      "checkpoint_filter_exclusion_rows": 0,
+      "cohort_sha256": "a41be09a0d4f36f8173e6252205db6327b2e67e0848ba5de22311e404af6b51d",
+      "dataset_name": "AtlasDataset",
+      "dataset_split": "validation",
+      "encoder_failure_rows": 0,
+      "final_rows": 81,
+      "final_token_or_residue_count": 16196,
+      "final_unique_pdb_chain_pairs": 81,
+      "input_unique_pdb_chain_pairs": 81,
+      "label_counts": {
+        "ignored_minus_100": 0,
+        "missing_or_non_finite": 0,
+        "one": 0,
+        "other": 16196,
+        "total": 16196,
+        "zero": 0
+      },
+      "requested_split": "validation",
+      "resolve_or_parse_failure_reasons": {},
+      "resolve_or_parse_failure_rows": 0,
+      "resolve_or_parse_failure_unique_pairs": 0,
+      "row_conservation": {
+        "accounted": 81,
+        "holds": true,
+        "input": 81
+      },
+      "rows_after_stb_task_filters_before_laproteina": 81,
+      "schema_version": 2,
+      "stb_filter_length": 600,
+      "structured_rows_before_runtime_stb_patches": 81,
+      "structured_rows_loaded": 81,
+      "structured_source": {
+        "path": "/mnt/hopper-raid/aishod/data/struct_token_bench_release_data/data/physicochemical/atlas/processed_structured_validation",
+        "sha256": "283c7d69a29d806821d1e7c98e953de375bbf0c9fefc3a5511b2ebbb85ba4496",
+        "size_bytes": 11073472
+      },
+      "target_field": "rmsf_score",
+      "token_cache_artifact": {
+        "sha256": "247f25d88345392a8487cbc40e47b16e5555bff7f960ca0d55e5fd4e36358bfe",
+        "size_bytes": 11822277
+      }
+    }
+  },
+  "encoder": {
+    "checkpoint_training_selector_recorded_but_not_applied": {
+      "best_resolution": null,
+      "exclude_ids": [
+        "1crr",
+        "1kld",
+        "1vve",
+        "2ezq",
+        "2ezr",
+        "2ezs",
+        "7i9a_b",
+        "7ll9_c",
+        "7ll9_d",
+        "7ll9_g",
+        "7ll9_h",
+        "7qiz",
+        "7suk",
+        "9b55",
+        "9b56",
+        "9b57",
+        "9b58",
+        "9b59",
+        "9b5a",
+        "9b5b",
+        "9b5c",
+        "9b5d",
+        "9b5e",
+        "9b5f",
+        "9b5g",
+        "9b5h",
+        "9b5i",
+        "9b5j",
+        "9b5k",
+        "9b5l",
+        "9b5l",
+        "9b5m",
+        "9b5n",
+        "9b5o",
+        "9b5p",
+        "9b5q",
+        "9b5r",
+        "9b5s",
+        "9b5t",
+        "9b5u",
+        "9b5v",
+        "9b5w",
+        "9b5x",
+        "9iix",
+        "9ij9",
+        "9uol"
+      ],
+      "experiment_types": [
+        "EM",
+        "diffraction"
+      ],
+      "max_length": 256,
+      "min_length": 50,
+      "remove_non_standard_residues": true,
+      "worst_resolution": 5.0
+    },
+    "checkpoint_type": "jepa",
+    "encoder_config": {
+      "path": "/slurm-storage/aishod/projects/la-proteina/StructTokenBench/100k-checkpoints/shared/exp_config_jepa_nn130m.json",
+      "sha256": "98e0350d418e7d840fa245ddfd7150064e87a9ac74c72c9150a946f0f66ccd9d",
+      "size_bytes": 3684
+    },
+    "latent_z_dim": 8,
+    "path": "/slurm-storage/aishod/projects/la-proteina/store/canonical_lejepa_rotations_100k/evaluation/canonical-lejepa-v1-rotations-step100000-ema-staged.ckpt",
+    "sha256": "104dcefd97d4d782f9c56ec9f404f6b8d64961766fd3c9eb3f47923b1409897d",
+    "size_bytes": 512650904,
+    "state_prefix": "online_encoder"
+  },
+  "git": {
+    "available": true,
+    "commit": "8235130b07b82aef121895cf0c5810e7da7ceb23",
+    "dirty": true,
+    "status_entry_count": 154,
+    "status_sha256": "604b6b2f9304f255d159a741592ccd4a1a454d6cc7a1074d4082c7927a45bddf",
+    "tracked_diff_sha256": "d4bac9847bef7e003ecd7f505d0ef68d418ec755e936760af647e3f1a974591f",
+    "untracked_files": [
+      {
+        "path": "Evaluation/canonical_lejepa/__init__.py",
+        "sha256": "53ca0db7fd05fa83bdccf585ce2ddc6ca3e9325c21d7cdc6de231a5deb225224",
+        "size_bytes": 340
+      },
+      {
+        "path": "Evaluation/canonical_lejepa/checkpoint.py",
+        "sha256": "a9961b7ff6052d7c9a2c4a05425392332b297f6e06e6e8698b32b71ecfa21b85",
+        "size_bytes": 5152
+      },
+      {
+        "path": "Evaluation/canonical_lejepa/stage_for_structtokenbench.py",
+        "sha256": "6efaec669bcf6af523c9a60f31ce30cf02af3cf5dca58091707661da87c1e631",
+        "size_bytes": 668
+      },
+      {
+        "path": "Evaluation/canonical_lejepa/test_checkpoint.py",
+        "sha256": "8a85f34d7c502b4c013ae0995a04ef4690b65ffc0b8989ff73bcd40cb498e41b",
+        "size_bytes": 4494
+      },
+      {
+        "path": "Evaluation/latent_viz/analyze_canonical_lejepa_rotations_10k_30k_50k.py",
+        "sha256": "673f4159345990004d1fbb53e4de2158c9b4baa6ccd99c93d0f3c76fc8ea2c5c",
+        "size_bytes": 4398
+      },
+      {
+        "path": "Evaluation/latent_viz/analyze_canonical_lejepa_rotations_seed43_10k.py",
+        "sha256": "06f45420ce8d386829e2670e3a3d5ac9b5017e3c6a59e3fbdce87ff94c663566",
+        "size_bytes": 2682
+      },
+      {
+        "path": "Evaluation/latent_viz/analyze_canonical_lejepa_v1_10k.py",
+        "sha256": "ef9dc5c89cfbcccdb9de6ad16380b5e9eae04e892c5a7c60e2d825012bc1e87c",
+        "size_bytes": 7415
+      },
+      {
+        "path": "Evaluation/latent_viz/analyze_canonical_lejepa_v1_10k_30k.py",
+        "sha256": "ef3a887305424ff1a1986af34535386482a909335c4185ca4c4a8170b724fc61",
+        "size_bytes": 23977
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/canonical_lejepa/tsne_canonical_lejepa_v1_ema_10k-v-30k-v-50k-v-70k_aa-and-ss.png",
+        "sha256": "99f090983d05dc9a9b08a99474178122117622ea8b7df45dc59358258f35ae52",
+        "size_bytes": 3028050
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/canonical_lejepa/tsne_canonical_lejepa_v1_ema_10k-v-30k-v-50k-v-70k_position-and-length.png",
+        "sha256": "1c142213be0873f44b7fa14506cbdba0956f83527aa03413f721bcf49fa3d51a",
+        "size_bytes": 4714659
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/canonical_lejepa/tsne_canonical_lejepa_v1_ema_10k-v-30k-v-50k_aa-and-ss.png",
+        "sha256": "6f11d90509b728301df2fbb8a347060a9148648aa7988b125610ba14a4381126",
+        "size_bytes": 2287814
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/canonical_lejepa/tsne_canonical_lejepa_v1_ema_10k-v-30k-v-50k_position-and-length.png",
+        "sha256": "dfef56bfb8d59efd4f1872231149bc47c096d1232d986562ce047f063323243e",
+        "size_bytes": 3574501
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/canonical_lejepa/tsne_canonical_lejepa_v1_ema_10k-v-30k_aa-and-ss.png",
+        "sha256": "11828c233a4dc0405479a1f33ce1f91180d923f4d834f69dea97a42f1d13b173",
+        "size_bytes": 1512084
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/canonical_lejepa/tsne_canonical_lejepa_v1_ema_10k-v-30k_position-and-length.png",
+        "sha256": "2f96b890e9c20e1cbf671362ceca92e657d6c800d6a4f44b1f1e368b74b8f0f8",
+        "size_bytes": 2363346
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/canonical_lejepa/tsne_canonical_lejepa_v1_ema_10k_aa-and-absolute-index.png",
+        "sha256": "05e65b9877fd1a7f2a493304698ea17f3be3615d0ba90e5bf0f7a61bf7f9a9e9",
+        "size_bytes": 1194242
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/canonical_lejepa/tsne_canonical_lejepa_v1_rotations_ema_10k-v-30k-v-50k-v-70k_aa-and-ss.png",
+        "sha256": "c75b5b8395818dfa48f9a4c1e4ef9b2d95194c9008dbeeb2b24fe0ad695c9cdb",
+        "size_bytes": 2886479
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/canonical_lejepa/tsne_canonical_lejepa_v1_rotations_ema_10k-v-30k-v-50k-v-70k_position-and-length.png",
+        "sha256": "e1a3c26c59a94a53d929bde0c46f50291717df2910cb98ad19e394203ad76d8c",
+        "size_bytes": 4360189
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/canonical_lejepa/tsne_canonical_lejepa_v1_rotations_ema_10k-v-30k-v-50k_aa-and-ss.png",
+        "sha256": "b133f96b9ad491f9721b71b96c56c9c8f789a68bbd1f05e51d29850e5a1cf15d",
+        "size_bytes": 2302459
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/canonical_lejepa/tsne_canonical_lejepa_v1_rotations_ema_10k-v-30k-v-50k_position-and-length.png",
+        "sha256": "5ebdfbbd92e267409c270e8e74d092dd572052e548f8960c79f13ee5c8a405be",
+        "size_bytes": 3509429
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/canonical_lejepa/tsne_canonical_lejepa_v1_rotations_seed43_ema_10k_aa-and-ss.png",
+        "sha256": "c70f0518590d316dc215ab3986492538471a74e509d9a103f5d176403436be5e",
+        "size_bytes": 930496
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/canonical_lejepa/tsne_canonical_lejepa_v1_rotations_seed43_ema_10k_position-and-length.png",
+        "sha256": "7eb29156e293acf9635d87dc600ed9f508a6e0b75491119b57cd3f16ef5cb7ba",
+        "size_bytes": 1457041
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_aa20_canonical-lejepa-v1-ema-10k-v-30k-v-50k-v-70k_grid.png",
+        "sha256": "d05c661ec722c17ca8fb78e2e14cc22f5224e0758ac2bcb25d19c516602e4a85",
+        "size_bytes": 950121
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_aa20_canonical-lejepa-v1-ema-10k-v-30k-v-50k_grid.png",
+        "sha256": "589c766c9f03e641bd29a707da42309f1d5899a1dddcb81846f952c4d42100ca",
+        "size_bytes": 715563
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_aa20_canonical-lejepa-v1-ema-10k-v-30k_grid.png",
+        "sha256": "079aa3723c9bbdf5b2f10a4d82e5a941ab2756db5b998841a01a4daf65fa5d4a",
+        "size_bytes": 487996
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_aa20_canonical-lejepa-v1-ema-10k_grid.png",
+        "sha256": "8c8769f794df47b8a484bca01a4a53209ed78ed627f41b5eb4561dd037a5a8ea",
+        "size_bytes": 265462
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_aa20_canonical-lejepa-v1-rotations-ema-10k-v-30k-v-50k-v-70k_grid.png",
+        "sha256": "d0ac10345e0f12c75c597c655018baa125d7ddc6c908525f9bfa867b6f0c7493",
+        "size_bytes": 881449
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_aa20_canonical-lejepa-v1-rotations-ema-10k-v-30k-v-50k_grid.png",
+        "sha256": "31cda79450a39979b7ffdf5101e351a237241f28a2e76c2d55b77ba9faed0572",
+        "size_bytes": 698268
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_aa20_canonical-lejepa-v1-rotations-seed43-ema-10k_grid.png",
+        "sha256": "4271931a27d362d156eca83120939e068f5e471101cb045607af7edbee7c1418",
+        "size_bytes": 315691
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_aromatic_canonical-lejepa-v1-ema-10k-v-30k-v-50k-v-70k_grid.png",
+        "sha256": "44144d36f447251388d109046ea3656db692982dca0bf7fb45df8a7f1e5c0f75",
+        "size_bytes": 712137
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_aromatic_canonical-lejepa-v1-ema-10k-v-30k-v-50k_grid.png",
+        "sha256": "40a07170edcebc15ab96de0ac70126eb7bc3705b249f92efae58a54c5986ba11",
+        "size_bytes": 533935
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_aromatic_canonical-lejepa-v1-ema-10k-v-30k_grid.png",
+        "sha256": "bcb550efdb32859b8e3190d748f30c0050d4d3f83305e0eccaaf146af4a92b02",
+        "size_bytes": 362309
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_aromatic_canonical-lejepa-v1-ema-10k_grid.png",
+        "sha256": "79627ad7fb6cc519668852f12481ead3553c155465ec84765488df47dca27b1e",
+        "size_bytes": 185965
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_aromatic_canonical-lejepa-v1-rotations-ema-10k-v-30k-v-50k-v-70k_grid.png",
+        "sha256": "074fe38931c5cb77852334b9af2facbd44b81b94069724c6103e9d323a7bebe2",
+        "size_bytes": 669019
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_aromatic_canonical-lejepa-v1-rotations-ema-10k-v-30k-v-50k_grid.png",
+        "sha256": "925f33cc01fc28429b408fba1e763b095abd8f2bce0a06de4466e482074d8981",
+        "size_bytes": 526256
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_aromatic_canonical-lejepa-v1-rotations-seed43-ema-10k_grid.png",
+        "sha256": "d3f5681c4f0d1586874d1e5f4531f0991f6475b69dba896bbe314890ab213b01",
+        "size_bytes": 225253
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_charge_canonical-lejepa-v1-ema-10k-v-30k-v-50k-v-70k_grid.png",
+        "sha256": "ed44093dbe26dcf6923dc2f7e565b6edadc0a81fb96909a78720982dba966198",
+        "size_bytes": 802993
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_charge_canonical-lejepa-v1-ema-10k-v-30k-v-50k_grid.png",
+        "sha256": "c67eaaff632ec6260f6718c6786631a6d9524928c0040a7a65e771c73155ac24",
+        "size_bytes": 601541
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_charge_canonical-lejepa-v1-ema-10k-v-30k_grid.png",
+        "sha256": "610f5aeeca94c5ab7b67c1a05adc5940c55480b8ea6f3225898a447cb5a10d9b",
+        "size_bytes": 409002
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_charge_canonical-lejepa-v1-ema-10k_grid.png",
+        "sha256": "e5d5fc810d8bc59573b65630bb0ae8e706da1eb2b0919c1fe7686710b668c180",
+        "size_bytes": 215881
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_charge_canonical-lejepa-v1-rotations-ema-10k-v-30k-v-50k-v-70k_grid.png",
+        "sha256": "9d43361c3765d607faec4114be27ef0e1eb3c50cf3f715c3f69a75eb78104732",
+        "size_bytes": 749912
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_charge_canonical-lejepa-v1-rotations-ema-10k-v-30k-v-50k_grid.png",
+        "sha256": "8025e791bcbb388ab898e47dbd01aae5e49d322d1bd53107d539878380af7410",
+        "size_bytes": 589950
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_charge_canonical-lejepa-v1-rotations-seed43-ema-10k_grid.png",
+        "sha256": "ad97f7a03569ee16ea801e84ee370bf4ff2ddba103699fc5c5eaec69d5ca48f1",
+        "size_bytes": 257041
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_individual/canonical-lejepa-v1-ema-step10000_aa20_labeled.png",
+        "sha256": "6d80d412e14e9bf1956245fde4dc68a6ab2ff55ac4e9d6a8a88d349144d0b1c2",
+        "size_bytes": 489529
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_individual/canonical-lejepa-v1-ema-step30000_aa20_labeled.png",
+        "sha256": "955a50c2f635de63903c6129ee2e8175b056e79952194f57ac4e7020e7b4a899",
+        "size_bytes": 485583
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_individual/canonical-lejepa-v1-ema-step50000_aa20_labeled.png",
+        "sha256": "4435f3905b3e3295bf5f008daf7b02873ce327a0140037abff4531ae5ec810db",
+        "size_bytes": 490583
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_individual/canonical-lejepa-v1-ema-step70000_aa20_labeled.png",
+        "sha256": "9bf3b0b8c81e0938fcf700613c58f7e29afcc72f01c1d7736af48c1445375979",
+        "size_bytes": 475725
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_individual/canonical-lejepa-v1-rotations-ema-step10000_aa20_labeled.png",
+        "sha256": "55b2714f10f849e2e80b1bd61445d4d8cd1c4aef6d0b0303adfa8980d5379249",
+        "size_bytes": 563067
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_individual/canonical-lejepa-v1-rotations-ema-step30000_aa20_labeled.png",
+        "sha256": "d2e1f386dbc4d562432886d11bc577644c741f238866dfe31b342f06fe878b46",
+        "size_bytes": 498032
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_individual/canonical-lejepa-v1-rotations-ema-step50000_aa20_labeled.png",
+        "sha256": "cfd353bafe7255555336441fb22a41fcf73e8c585e4208f1a26720f67d3c1b11",
+        "size_bytes": 447830
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_individual/canonical-lejepa-v1-rotations-ema-step70000_aa20_labeled.png",
+        "sha256": "69606d2d24e5a108f6cca13205bf2e4aee98f9669448a4e9374344aab4b5874d",
+        "size_bytes": 415426
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_individual/canonical-lejepa-v1-rotations-seed43-ema-step10000_aa20_labeled.png",
+        "sha256": "b6741193080614aa4ceae6a87d24c486ec7102112fa5f7f8111b1d5ba6165de0",
+        "size_bytes": 566037
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_size_canonical-lejepa-v1-ema-10k-v-30k-v-50k-v-70k_grid.png",
+        "sha256": "f68407e09e9ab0b9a7716cad27b2e3f1fedf76fd2d1299861273ae28ceb2e738",
+        "size_bytes": 913111
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_size_canonical-lejepa-v1-ema-10k-v-30k-v-50k_grid.png",
+        "sha256": "ea21bdac822a72f746e7f80e1709ff7651fa7049dc32d461fc4a9c37c34f601b",
+        "size_bytes": 685317
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_size_canonical-lejepa-v1-ema-10k-v-30k_grid.png",
+        "sha256": "40c567b580de9892d5128157c97e07638bf84647ac1ca780b95d0d5fd450fa2b",
+        "size_bytes": 463004
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_size_canonical-lejepa-v1-ema-10k_grid.png",
+        "sha256": "a8d5288ab2fda32c577247dc4b13b8a68d7d685fc516bd021aee40636757aead",
+        "size_bytes": 237976
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_size_canonical-lejepa-v1-rotations-ema-10k-v-30k-v-50k-v-70k_grid.png",
+        "sha256": "08b90fb3e438ca4d2934fdc62002d32e9579698682914f006b8ed2c3e9faa81b",
+        "size_bytes": 859024
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_size_canonical-lejepa-v1-rotations-ema-10k-v-30k-v-50k_grid.png",
+        "sha256": "230b188dfd550b64e941909713b8280e18ae3fba43f390383b53b12502926c92",
+        "size_bytes": 678548
+      },
+      {
+        "path": "Evaluation/latent_viz/figures/tsne_size_canonical-lejepa-v1-rotations-seed43-ema-10k_grid.png",
+        "sha256": "793a191a01ca6d7d5b3e15e5593196ade0710e0a26d5560b5313e1ccf03ee6d8",
+        "size_bytes": 288779
+      },
+      {
+        "path": "Evaluation/latent_viz/results/canonical_lejepa_v1_ema_10k_30k_50k_70k_position.csv",
+        "sha256": "d58dd2253efcf6d4ed731ad0510e8b0dd72ed5ed12f71f998433700b4947e340",
+        "size_bytes": 2846
+      },
+      {
+        "path": "Evaluation/latent_viz/results/canonical_lejepa_v1_ema_10k_30k_50k_70k_position.json",
+        "sha256": "8e1a2959bf728563b723943931caa4ad3fe50b56a106793e5816f2415e757a5e",
+        "size_bytes": 2321
+      },
+      {
+        "path": "Evaluation/latent_viz/results/canonical_lejepa_v1_ema_10k_30k_50k_position.csv",
+        "sha256": "298ecdd18e1369e7bbb16c051f39f58207c301318e5e0da900e1382c40fb7cd7",
+        "size_bytes": 2331
+      },
+      {
+        "path": "Evaluation/latent_viz/results/canonical_lejepa_v1_ema_10k_30k_50k_position.json",
+        "sha256": "1e61f1715ee6470918923beeea76b3506dec8eee167336426e4e76b0fcd1150a",
+        "size_bytes": 1964
+      },
+      {
+        "path": "Evaluation/latent_viz/results/canonical_lejepa_v1_ema_10k_30k_position.csv",
+        "sha256": "fc036e80a12994173c24f1793880e885e55c09de1e7d026acc896d37a452f818",
+        "size_bytes": 1788
+      },
+      {
+        "path": "Evaluation/latent_viz/results/canonical_lejepa_v1_ema_10k_30k_position.json",
+        "sha256": "96d09692d5eae558a159bc4f2dff04efb242530927b96ccd6c70ee0d237ec94f",
+        "size_bytes": 1607
+      },
+      {
+        "path": "Evaluation/latent_viz/results/canonical_lejepa_v1_ema_10k_health.csv",
+        "sha256": "9515a408ae0dd623b4a663f5995b1aaa54cfed759bd38b49be9ca9fc37ae447d",
+        "size_bytes": 896
+      },
+      {
+        "path": "Evaluation/latent_viz/results/canonical_lejepa_v1_rotations_ema_10k_30k_50k_70k_position.csv",
+        "sha256": "a6d419c7c95f3c17d40ae01c29698654587d4558dda0a3f552da6b384c19e86f",
+        "size_bytes": 3011
+      },
+      {
+        "path": "Evaluation/latent_viz/results/canonical_lejepa_v1_rotations_ema_10k_30k_50k_70k_position.json",
+        "sha256": "bcc3ba15fa9cc7f491039dbe140fe6f93cf865cbd3e9646a9a6324f2b5ad6dff",
+        "size_bytes": 2408
+      },
+      {
+        "path": "Evaluation/latent_viz/results/canonical_lejepa_v1_rotations_ema_10k_30k_50k_position.csv",
+        "sha256": "99e11491e5c03e66a16f792b4740340f06ed97f66f1e597eb21fe4b9ec6df0ef",
+        "size_bytes": 2441
+      },
+      {
+        "path": "Evaluation/latent_viz/results/canonical_lejepa_v1_rotations_ema_10k_30k_50k_position.json",
+        "sha256": "60fb1ca7fb47e22da2831c512bb7f8be66e40190baaafb249e8143b4c7378b9b",
+        "size_bytes": 2035
+      },
+      {
+        "path": "Evaluation/latent_viz/results/canonical_lejepa_v1_rotations_seed43_ema_10k_position.csv",
+        "sha256": "e98122c8d161e4f195093867232c14bef25c5df2d5d1f849a1d6fb759c9fde62",
+        "size_bytes": 1299
+      },
+      {
+        "path": "Evaluation/latent_viz/results/canonical_lejepa_v1_rotations_seed43_ema_10k_position.json",
+        "sha256": "a9ee569d557245cfba60abb95241344e42472107ad3ec59eb20c6c7fc2e942f7",
+        "size_bytes": 1333
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_coordinates/canonical-lejepa-v1-ema-step10000_n15000_perp30p0_seed42_cosine.npz",
+        "sha256": "86719d10b2c30ef3b626ae687051ea3b1cabbfa44938edf347b484ce839ac475",
+        "size_bytes": 112045
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_coordinates/canonical-lejepa-v1-ema-step30000_n15000_perp30p0_seed42_cosine.npz",
+        "sha256": "6ca5a01308a0176019589e84d67c51844d36b26ec97d1894a040195e76679c1d",
+        "size_bytes": 112240
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_coordinates/canonical-lejepa-v1-ema-step50000_n15000_perp30p0_seed42_cosine.npz",
+        "sha256": "281080f19268c4de38923d19c4d88b6d2e87ff006779264baeaf8e2c5c8e0afe",
+        "size_bytes": 112126
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_coordinates/canonical-lejepa-v1-ema-step70000_n15000_perp30p0_seed42_cosine.npz",
+        "sha256": "c9241cb3faadaa8d11d4666427e108d27999902af295f9e81a70a097c7f0294f",
+        "size_bytes": 112036
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_coordinates/canonical-lejepa-v1-rotations-ema-step10000_n15000_perp30p0_seed42_cosine.npz",
+        "sha256": "0221b59c4cc35652b88f46636779933a8a32cbab86b9c534727e9c95d898c7ce",
+        "size_bytes": 112094
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_coordinates/canonical-lejepa-v1-rotations-ema-step30000_n15000_perp30p0_seed42_cosine.npz",
+        "sha256": "1138fadf30110e2f899b003e9fa1097e243a2516248210d55c1801838d8f0b04",
+        "size_bytes": 111927
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_coordinates/canonical-lejepa-v1-rotations-ema-step50000_n15000_perp30p0_seed42_cosine.npz",
+        "sha256": "8c75d396e0ce1f9490469f80b4b6397459bcff6828de95cf401f54141d4aba6a",
+        "size_bytes": 111960
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_coordinates/canonical-lejepa-v1-rotations-ema-step70000_n15000_perp30p0_seed42_cosine.npz",
+        "sha256": "265e2ac0bb3cfc673797ae9b940f211c083e3b750bcbb657ed777eaa2ffaf8a6",
+        "size_bytes": 112013
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_coordinates/canonical-lejepa-v1-rotations-seed43-ema-step10000_n15000_perp30p0_seed42_cosine.npz",
+        "sha256": "3d0e133ea56f2287745ef920ad83b9a838930f893b4eeb615dafed1d37365428",
+        "size_bytes": 112072
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_manifest_canonical-lejepa-v1-ema-10k-v-30k-v-50k-v-70k.json",
+        "sha256": "9a1f1d1127c66dee131f1e6f3bce0a96be1f1a9078fd34d2e5e670fe566c76d7",
+        "size_bytes": 3704
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_manifest_canonical-lejepa-v1-ema-10k-v-30k-v-50k.json",
+        "sha256": "cf2a0c7b4c27d966f704ff80bbc98648837cd460e256b8c6ad880787b4941e55",
+        "size_bytes": 3150
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_manifest_canonical-lejepa-v1-ema-10k-v-30k.json",
+        "sha256": "16ae7db9fc3d2656f24ce1a11950af2090a0234bd64cfbb29fcb2fd4cd63a896",
+        "size_bytes": 2596
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_manifest_canonical-lejepa-v1-ema-10k.json",
+        "sha256": "cafc8aadc9b2a41775084c332426396e225e83199283339e2ea10138580b17d1",
+        "size_bytes": 2042
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_manifest_canonical-lejepa-v1-rotations-ema-10k-v-30k-v-50k-v-70k.json",
+        "sha256": "48bdaa770d00d8a9d3989885c49e79f261bbdbda0cee43268b46a0af43842dcb",
+        "size_bytes": 3752
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_manifest_canonical-lejepa-v1-rotations-ema-10k-v-30k-v-50k.json",
+        "sha256": "08446d784f959134a171df21be933d5b5ee5fa7d64651f6964e5141c3473659a",
+        "size_bytes": 3186
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_manifest_canonical-lejepa-v1-rotations-seed43-ema-10k.json",
+        "sha256": "bfaeddf16cd0fade4902e252532ac4e8b187ca7925ca4d7baded0095398df8bc",
+        "size_bytes": 2075
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_panel_metrics_canonical-lejepa-v1-ema-10k-v-30k-v-50k-v-70k.csv",
+        "sha256": "73bf75655cc71f1aad0df212a9e466f0d0f24e89e315a05c473033d47d62b0b3",
+        "size_bytes": 324
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_panel_metrics_canonical-lejepa-v1-ema-10k-v-30k-v-50k.csv",
+        "sha256": "0e36a19465a01bee6d5d97e541bc79426f2cba2359d926e2d79af5fc34e585aa",
+        "size_bytes": 262
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_panel_metrics_canonical-lejepa-v1-ema-10k-v-30k.csv",
+        "sha256": "40bd46b126ccb8832608702bf14a3e5648f8f679bd33df830d7f73c59c810ac0",
+        "size_bytes": 200
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_panel_metrics_canonical-lejepa-v1-ema-10k.csv",
+        "sha256": "e44043d5750a63ba546a506cf255712bc1bbb639ebebfbe1159679131087fbb3",
+        "size_bytes": 138
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_panel_metrics_canonical-lejepa-v1-rotations-ema-10k-v-30k-v-50k-v-70k.csv",
+        "sha256": "7edb0a4f36b5510fca89714b24b8ef1de8fa5dfd90a7ab316e99409bb8cea3a9",
+        "size_bytes": 364
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_panel_metrics_canonical-lejepa-v1-rotations-ema-10k-v-30k-v-50k.csv",
+        "sha256": "e0f4ab532f179c10014dba3b86b910d0ffb4d2ee8cbd8f6a5483d338d37bbef4",
+        "size_bytes": 292
+      },
+      {
+        "path": "Evaluation/latent_viz/results/tsne_panel_metrics_canonical-lejepa-v1-rotations-seed43-ema-10k.csv",
+        "sha256": "7d65119302656af515f69c7aea6182bf01efdfd0444d00d04fc8dea9250c5633",
+        "size_bytes": 155
+      },
+      {
+        "path": "configs/dataset/pdb/pdb_train_canonical_lejepa.yaml",
+        "sha256": "109c020bea940a64217651752e4a722a7c4693e9fc0f8ee45e84fd149ce1d884",
+        "size_bytes": 1892
+      },
+      {
+        "path": "configs/training_canonical_lejepa.yaml",
+        "sha256": "f23c4ca7d805d405cc2e2a47a7f521deac9fb03bf94935d803927bb10d3f3b9c",
+        "size_bytes": 1948
+      },
+      {
+        "path": "jobs/analyze_canonical_lejepa_rotations_10k_30k_50k_70k_tsne.job",
+        "sha256": "60278f05558ca010ac07516b8edcad2d3b562f94319db0c3a0eb7aa8aef881e7",
+        "size_bytes": 1494
+      },
+      {
+        "path": "jobs/analyze_canonical_lejepa_rotations_10k_30k_50k_tsne.job",
+        "sha256": "c82444b2b466c3f13928bda4abebbb5868b244edde17679fa0cc27764b9b5f4d",
+        "size_bytes": 1538
+      },
+      {
+        "path": "jobs/analyze_canonical_lejepa_rotations_seed43_10k_tsne.job",
+        "sha256": "57d7e6cadaf170dcedef65947da9027d85e263b95341c0e50c74d2c90850b30d",
+        "size_bytes": 4600
+      },
+      {
+        "path": "jobs/analyze_canonical_lejepa_v1_10k_30k_50k_70k_tsne.job",
+        "sha256": "95cafa6a07f7938cf9d1ce0156f5e1c33d2224307a8382f76fc727e04d865252",
+        "size_bytes": 1760
+      },
+      {
+        "path": "jobs/analyze_canonical_lejepa_v1_10k_30k_50k_tsne.job",
+        "sha256": "c44cb4c13bc7af88c59c531c094f82359ac7ddf4cb7006faa7ce23483cf2c448",
+        "size_bytes": 1748
+      },
+      {
+        "path": "jobs/analyze_canonical_lejepa_v1_10k_30k_tsne.job",
+        "sha256": "da31e3fff6cb9cf9ac9af26c6b6e6b413d5611d992a7b27f2a2fed2ca28f5732",
+        "size_bytes": 1153
+      },
+      {
+        "path": "jobs/analyze_canonical_lejepa_v1_10k_tsne.job",
+        "sha256": "db8d7dcbd263f67b2828b42538dbb68f6e174a502b91e4376f30051e367fb870",
+        "size_bytes": 1140
+      },
+      {
+        "path": "jobs/benchmark_canonical_packed_b16.job",
+        "sha256": "d1ff519e19cdd84961ccb7736211a259756c7d99eca72ab86651c055a84dd657",
+        "size_bytes": 782
+      },
+      {
+        "path": "jobs/benchmark_canonical_packed_b32.job",
+        "sha256": "5e337ae20cc339df766bec7671c97ed65115b9b36b78de030c909173dcf12e89",
+        "size_bytes": 881
+      },
+      {
+        "path": "jobs/diagnose_canonical_view_memory_b32.job",
+        "sha256": "9293628a1a45eaee4c3be5d2d5dd43b95f50b6c10ff571daa409af955d7ded84",
+        "size_bytes": 856
+      },
+      {
+        "path": "jobs/eval_canonical_lejepa_rotations_ema_100k_upstream_l600_all.job",
+        "sha256": "f12c314f869374bf3bc7b355269533c1264ede79fe6247e09fffd3ddb062b4c9",
+        "size_bytes": 5104
+      },
+      {
+        "path": "jobs/eval_canonical_lejepa_rotations_ema_10k_30k_50k_flexrmsf_upstream_l600.job",
+        "sha256": "0d67432b4d34a48fb397b59093d8b22b4fb2bcf08b2508c7172ab4d9347fa87e",
+        "size_bytes": 5251
+      },
+      {
+        "path": "jobs/eval_canonical_lejepa_rotations_ema_10k_upstream_l600_all.job",
+        "sha256": "7bd8912eb5f86e905a7a33fa6c1d2c64aa6086f2b1e13522b78f2995c4e347fc",
+        "size_bytes": 5121
+      },
+      {
+        "path": "jobs/eval_canonical_lejepa_rotations_ema_70k_flexrmsf_upstream_l600.job",
+        "sha256": "42254b4383dc8840a4ac4d57c3994d5a34d8ed68d6ad3d78944410bb41688d09",
+        "size_bytes": 4789
+      },
+      {
+        "path": "jobs/eval_canonical_lejepa_rotations_raw_10k_flexrmsf_upstream_l600.job",
+        "sha256": "efe79bdaeb5340ed508c11c266116eb1ac3a3e9fa4e42978c1c80e91237b7576",
+        "size_bytes": 4702
+      },
+      {
+        "path": "jobs/eval_canonical_lejepa_rotations_raw_30k_50k_flexrmsf_upstream_l600.job",
+        "sha256": "d425fbc3f09b9f3716368196c3e2c8600a9565b2d24f914acc2f5411a5d1ad35",
+        "size_bytes": 5424
+      },
+      {
+        "path": "jobs/eval_canonical_lejepa_rotations_seed43_ema_10k_flexrmsf_upstream_l600.job",
+        "sha256": "07bd63a197f2b5d95e4e33c132b6de53798448e631e6c0d75175feb4a45dd634",
+        "size_bytes": 4992
+      },
+      {
+        "path": "jobs/eval_canonical_lejepa_v1_ema_100k_upstream_l600_all.job",
+        "sha256": "755aba1d087045aaeb20ed12ddff5d9e5884371e5f990ab50146825399320777",
+        "size_bytes": 4365
+      },
+      {
+        "path": "jobs/eval_canonical_lejepa_v1_ema_10k_flexrmsf_upstream_l600.job",
+        "sha256": "11b029d4be447a03a645215039bb3a761cbba040dfac921471e73251bb97effb",
+        "size_bytes": 3815
+      },
+      {
+        "path": "jobs/eval_canonical_lejepa_v1_ema_30k_50k_70k_catbio_upstream_l600.job",
+        "sha256": "f346e062d2f6e9121e3ec1853b265b8d26be58b1e4348e626192cd36838b7eba",
+        "size_bytes": 3855
+      },
+      {
+        "path": "jobs/eval_canonical_lejepa_v1_ema_30k_flexrmsf_upstream_l600.job",
+        "sha256": "d03df136197734205d54a6ba44b5c18128d725a368fbbcbacb451e760dfaf9c7",
+        "size_bytes": 2269
+      },
+      {
+        "path": "jobs/eval_canonical_lejepa_v1_ema_40k_60k_flexrmsf_upstream_l600.job",
+        "sha256": "a93c1ad55ca20db718fc9d55c34947f186b3e45297d42e87c43d8515671085b9",
+        "size_bytes": 4441
+      },
+      {
+        "path": "jobs/eval_canonical_lejepa_v1_ema_50k_flexrmsf_upstream_l600.job",
+        "sha256": "61fa107f9645cb5dec7343e44bd505fea8ae49c3d7004b99e4da2c5a05e92fa3",
+        "size_bytes": 4182
+      },
+      {
+        "path": "jobs/eval_canonical_lejepa_v1_ema_70k_flexrmsf_upstream_l600.job",
+        "sha256": "0f6998cf687111a99fb3969bed2891eef55c04e37d51fb0cf85c6b74b709f888",
+        "size_bytes": 3517
+      },
+      {
+        "path": "jobs/smoke_canonical_lejepa_v1.job",
+        "sha256": "c859a78a71cbf0290b8cd22c2f75b68b104093cc42f20bb6769e01a5991abf3c",
+        "size_bytes": 707
+      },
+      {
+        "path": "jobs/smoke_canonical_lejepa_v1_production_a10.job",
+        "sha256": "9e132f09f466853f39d666f7b644a7dce8401b80e7ebbadefbd7a60fd3c82785",
+        "size_bytes": 2228
+      },
+      {
+        "path": "jobs/test_canonical_packed_bf16_parity.job",
+        "sha256": "59965e7a0c07b9175467f48f9c0589ef9de86b33653ea6834c2ea08827171f3e",
+        "size_bytes": 787
+      },
+      {
+        "path": "jobs/test_canonical_sigreg_nccl.job",
+        "sha256": "49d15f21c652c9c908de3419beaef72cc566d6b02fd98d35fa77dc098257b5ab",
+        "size_bytes": 683
+      },
+      {
+        "path": "jobs/train_canonical_lejepa_rotations_100k.job",
+        "sha256": "076e934008a2b0178e723d0a17c552fafe4565d1b7c2e848d3a6962bb5107f29",
+        "size_bytes": 1061
+      },
+      {
+        "path": "jobs/train_canonical_lejepa_rotations_seed43_10k.job",
+        "sha256": "06a7ed2ecc658be3ec8f071bb0beda54c347a8239d6e859a5f5601c41b702ab6",
+        "size_bytes": 1528
+      },
+      {
+        "path": "jobs/train_canonical_lejepa_v1_100k_a10.job",
+        "sha256": "d3cfc55560141e8138b090bce653852a79fe6770d418bd294325390fcd944a1d",
+        "size_bytes": 1391
+      },
+      {
+        "path": "jobs/wait_canonical_lejepa_v1_50k_checkpoint.job",
+        "sha256": "09e12bbbd81fc6685ba5f070934317b3c4796df3aafa7b747013492965a9980e",
+        "size_bytes": 1988
+      },
+      {
+        "path": "proteinfoundation/jepa/LEVJEPA_MIT_LICENSE",
+        "sha256": "ff0b00150aa5d2ad4e4658a5f7b90d9316f9baa2199429255e61e3a47ee54252",
+        "size_bytes": 1070
+      },
+      {
+        "path": "proteinfoundation/jepa/benchmark_canonical_packed_memory.py",
+        "sha256": "faf7489345a0db06caeeb574107bf4f996cf1b04b6ed449561b3e4b7df06d2dc",
+        "size_bytes": 10396
+      },
+      {
+        "path": "proteinfoundation/jepa/canonical_lejepa_ema.py",
+        "sha256": "6de1de3ca3e1928b1c580fc1acc16df331a1d057ce46f7d7174fa4096a377c33",
+        "size_bytes": 8402
+      },
+      {
+        "path": "proteinfoundation/jepa/canonical_lejepa_model.py",
+        "sha256": "2e0535444fd522d4a470d4d7d29e1949d03993ec6373c0f1e5f86a24bf050c93",
+        "size_bytes": 33195
+      },
+      {
+        "path": "proteinfoundation/jepa/canonical_sigreg.py",
+        "sha256": "beefe98e4feb0c7cbbbf3561872c7a78aeabf1e26324352cb2ae0a32f80569db",
+        "size_bytes": 3743
+      },
+      {
+        "path": "proteinfoundation/jepa/diagnose_canonical_view_memory.py",
+        "sha256": "d1a4a0d96148544a3312ee0d733f1932187f01f5ce2d4b434b3a0e5079d7bde4",
+        "size_bytes": 5106
+      },
+      {
+        "path": "proteinfoundation/jepa/smoke_canonical_lejepa.py",
+        "sha256": "03654b71c26d051834d3e43da352516edecb03c6415d4ed99aa48e65d726c6d7",
+        "size_bytes": 4325
+      },
+      {
+        "path": "proteinfoundation/jepa/tests/__init__.py",
+        "sha256": "d61f913df6880751339ce7f48089adc9f45bff108006d98962cccbc8c7a90945",
+        "size_bytes": 66
+      },
+      {
+        "path": "proteinfoundation/jepa/tests/canonical_test_utils.py",
+        "sha256": "8003cf46a8a7aeb4a93bb1f93d4962bd613e42368994db8095c0e5835a2927b3",
+        "size_bytes": 4852
+      },
+      {
+        "path": "proteinfoundation/jepa/tests/run_canonical_sigreg_nccl.py",
+        "sha256": "b95cf0546e18d517d137717371524c61eb543785fa57d7acadd1f539b7e8a554",
+        "size_bytes": 6260
+      },
+      {
+        "path": "proteinfoundation/jepa/tests/test_canonical_lejepa_ema.py",
+        "sha256": "42515c5f8e6957450b2bd53ae1ed40f778fd840e4ede298d8351d0731996473f",
+        "size_bytes": 5115
+      },
+      {
+        "path": "proteinfoundation/jepa/tests/test_canonical_lejepa_model.py",
+        "sha256": "2a8d71623986a0980deb93c677c76412513d115952ca612189096298cc75abfc",
+        "size_bytes": 5976
+      },
+      {
+        "path": "proteinfoundation/jepa/tests/test_canonical_lejepa_packed.py",
+        "sha256": "86579d998b4c0121cd54a3df64eaba56fd179280d06fb237d6e8e6cca832ac24",
+        "size_bytes": 27898
+      },
+      {
+        "path": "proteinfoundation/jepa/tests/test_canonical_lejepa_views.py",
+        "sha256": "a6097948ed04e53ec82fbe689f532f3009642da01526de9e518286a117cfb0eb",
+        "size_bytes": 14264
+      },
+      {
+        "path": "proteinfoundation/jepa/tests/test_canonical_packed_adversarial_agent2.py",
+        "sha256": "0745d78feb8193cf92fc70624b8c82bd0ab59d324676f843d4d7321b41d44929",
+        "size_bytes": 15232
+      },
+      {
+        "path": "proteinfoundation/jepa/tests/test_canonical_sigreg.py",
+        "sha256": "bf8802c6b64c188e83186afad7c3aa7137bd295cc055b427d2b3c938d2acccc5",
+        "size_bytes": 5866
+      },
+      {
+        "path": "proteinfoundation/jepa/tests/test_train_canonical_lejepa.py",
+        "sha256": "e72f8a5017ef57c52cbd056794abd3cb242b57b1ffce59d40748959c7f74f94a",
+        "size_bytes": 10591
+      },
+      {
+        "path": "proteinfoundation/jepa/train_canonical_lejepa.py",
+        "sha256": "9ecc1626ee96deb8d0fef79061b0bad214183abf1deb224613b132d444a3a6bb",
+        "size_bytes": 7327
+      },
+      {
+        "path": "proteinfoundation/vendor/__init__.py",
+        "sha256": "8c37dcce44efec05b935fe205ee1122cc826d7e46428cce4a622583c0899f227",
+        "size_bytes": 68
+      },
+      {
+        "path": "proteinfoundation/vendor/stable_pretraining/LICENSE",
+        "sha256": "a935e338cdd35210b9c6868ea3c5c609f5942c8693d6d1f7a776652c8b7d9c54",
+        "size_bytes": 1070
+      },
+      {
+        "path": "proteinfoundation/vendor/stable_pretraining/__init__.py",
+        "sha256": "044d3bdb51024966f6c14d6f9b07bffdeeafa8d354a0d474482d288569abedaa",
+        "size_bytes": 175
+      },
+      {
+        "path": "proteinfoundation/vendor/stable_pretraining/lr_scheduler.py",
+        "sha256": "6d82996d2ea14c10e921eec7dffaa11903c9dfd6b8549e34bae99344d841d792",
+        "size_bytes": 2375
+      },
+      {
+        "path": "proteinfoundation/vendor/stable_pretraining/tests/__init__.py",
+        "sha256": "776e2e0e42f2b7555eaf3d0d1d1b8e1bea53d2cfdab461ce53ee9e7d029dd810",
+        "size_bytes": 66
+      },
+      {
+        "path": "proteinfoundation/vendor/stable_pretraining/tests/test_lr_scheduler.py",
+        "sha256": "a9cb88cf9088704707b67655a3a419fc35469e0b887b7fdfc983b015a99f4927",
+        "size_bytes": 5498
+      }
+    ],
+    "working_tree_content_sha256": "036c9e45b07a793f957338bfa0753ec597a6a539e07aad370460ccc82e1e70d7"
+  },
+  "metrics": {
+    "fold_test_loss": 0.0177232064306736,
+    "fold_test_pearsonr": 0.4626421630382538,
+    "fold_test_r2": 0.16025274991989136,
+    "fold_test_spearmanr": 0.3515044152736664,
+    "superfamily_test_loss": 0.023913003504276276,
+    "superfamily_test_pearsonr": 0.3567482531070709,
+    "superfamily_test_r2": 0.04153859615325928,
+    "superfamily_test_spearmanr": 0.42821943759918213,
+    "validation_loss": 0.02128322422504425,
+    "validation_pearsonr": 0.5066068768501282,
+    "validation_r2": 0.2390010952949524,
+    "validation_spearmanr": 0.46502000093460083
+  },
+  "non_finite_fields_serialized_as_null": [],
+  "probe": {
+    "best_checkpoint": {
+      "file_count": 4,
+      "kind": "directory",
+      "path": "/slurm-storage/aishod/projects/la-proteina/StructTokenBench/struct_token_bench_logs/upstream-l600-v1-full/runs/slurm-257651-canonical-lejepa-v1-rotations-ema-step100k-all/flexrmsf_laproteina_canonical_lejepa_v1_rotations_ema_step100k_upstream_l600_v1_lr0.001/version_0/checkpoints/epoch=67-step=5440-validation_f1_score=0.00.ckpt",
+      "sha256": "0d8658ebdc8bbaca8095714a0439ff05523ba70c44e22b0aa95571b33f0abfaa",
+      "size_bytes": 220814
+    },
+    "checkpoint_every_n_validations": 1,
+    "early_stopping_patience": 10,
+    "max_steps": 10000,
+    "micro_batch_size": 8,
+    "precision": "32-true",
+    "resolved_config": {
+      "autorestart": {
+        "filter_keywords": [
+          "last.ckpt"
+        ]
+      },
+      "data": {
+        "data_name": "AtlasDataset",
+        "data_path": "/mnt/hopper-raid/aishod/data/struct_token_bench_release_data//data/physicochemical",
+        "fast_dev_run": false,
+        "filter_length": 600,
+        "is_global_or_local": "local",
+        "multi_label": false,
+        "num_workers": 8,
+        "pdb_data_dir": "/mnt/hopper-raid/aishod/data/struct_token_bench_release_data/data/physicochemical/",
+        "prefetch_factor": 2,
+        "target_field": "rmsf_score",
+        "truncation_length": 5000,
+        "use_continuous": false,
+        "use_sequence": false
+      },
+      "deepspeed_path": "src/script/config/deepspeed/32_stage2.json",
+      "default_data_dir": "/mnt/hopper-raid/aishod/data/struct_token_bench_release_data/",
+      "experiment_name": "flexrmsf_laproteina_canonical_lejepa_v1_rotations_ema_step100k_upstream_l600_v1_lr0.001",
+      "lightning": {
+        "callbacks": {
+          "checkpoint": {
+            "_target_": "pytorch_lightning.callbacks.ModelCheckpoint",
+            "dirpath": null,
+            "every_n_epochs": 1,
+            "every_n_train_steps": null,
+            "filename": "{epoch}-{step}-{validation_f1_score:.2f}",
+            "mode": "max",
+            "monitor": "validation_spearmanr",
+            "save_last": true,
+            "save_top_k": 3
+          },
+          "early_stopping": {
+            "_target_": "pytorch_lightning.callbacks.EarlyStopping",
+            "mode": "max",
+            "monitor": "validation_spearmanr",
+            "patience": 10
+          },
+          "lr_monitor": {
+            "_target_": "pytorch_lightning.callbacks.LearningRateMonitor",
+            "logging_interval": "step"
+          },
+          "progress_bar": {
+            "_target_": "pytorch_lightning.callbacks.progress.TQDMProgressBar",
+            "refresh_rate": 10
+          }
+        },
+        "data_module": {
+          "_target_": "data_module.ProteinDataModule"
+        },
+        "logger": {
+          "_target_": "pytorch_lightning.loggers.TensorBoardLogger",
+          "name": "flexrmsf_laproteina_canonical_lejepa_v1_rotations_ema_step100k_upstream_l600_v1_lr0.001",
+          "save_dir": "/mnt/data/slurm-storage/aishod/projects/la-proteina/StructTokenBench/struct_token_bench_logs/upstream-l600-v1-full/runs/slurm-257651-canonical-lejepa-v1-rotations-ema-step100k-all/"
+        },
+        "model_module": {
+          "_target_": "model_module.PlModel",
+          "model_cfg": null,
+          "optimizer_cfg": null,
+          "py_logger": null
+        },
+        "strategy": {
+          "_target_": "pytorch_lightning.strategies.DeepSpeedStrategy",
+          "config": "src/script/config/deepspeed/32_stage2.json",
+          "remote_device": null
+        }
+      },
+      "max_steps": 10000,
+      "model": {
+        "add_noise": null,
+        "ckpt_path": null,
+        "class_name": "SequenceClassificationModel",
+        "d_model": 8,
+        "dropout": 0.1,
+        "hidden_size": 512,
+        "is_global_or_local": "local",
+        "multi_label": false,
+        "num_labels": 1,
+        "num_layer": 1,
+        "num_tokens": null,
+        "pretrained_ckpt_path": "",
+        "regression": true,
+        "sequence_only": false,
+        "use_sequence": false
+      },
+      "model_encoder_dmodel": 1024,
+      "model_encoder_dout": 128,
+      "model_encoder_nlayers": 2,
+      "model_encoder_vheads": 128,
+      "optimization": {
+        "micro_batch_size": 8,
+        "optimizer": {
+          "adam_w_mode": true,
+          "betas": [
+            0.9,
+            0.98
+          ],
+          "eps": 1e-08,
+          "lr": 0.001,
+          "name": "adam",
+          "params": null,
+          "weight_decay": 0.01
+        },
+        "override": {
+          "add_index": 0,
+          "mult_factor": 1.0
+        },
+        "scheduler": {
+          "_target_": "util.get_cosine_schedule_with_warmup",
+          "min_ratio": 0.1,
+          "num_training_steps": 10000,
+          "num_warmup_steps": 200,
+          "optimizer": null,
+          "plateau_ratio": 0.1
+        },
+        "seed": 1234
+      },
+      "precompute_tokens": true,
+      "quantizer_codebook_embed_size": 128,
+      "quantizer_codebook_size": 4096,
+      "quantizer_use_linear_project": false,
+      "run_name": "slurm-257651-canonical-lejepa-v1-rotations-ema-step100k-all_canonical-lejepa-v1-rotations-ema-step100k_FlexRMSF",
+      "save_dir_path": "/mnt/data/slurm-storage/aishod/projects/la-proteina/StructTokenBench/struct_token_bench_logs/upstream-l600-v1-full/runs/slurm-257651-canonical-lejepa-v1-rotations-ema-step100k-all/slurm-257651-canonical-lejepa-v1-rotations-ema-step100k-all_canonical-lejepa-v1-rotations-ema-step100k_FlexRMSF",
+      "test_only": false,
+      "tokenizer": "WrappedLaProteinaTokenizer",
+      "tokenizer_cache_tag": "upstream-l600-v1",
+      "tokenizer_checkpoint_type": "jepa",
+      "tokenizer_ckpt_name": null,
+      "tokenizer_device": "cuda",
+      "tokenizer_encoder_cfg_path": "/mnt/data/slurm-storage/aishod/projects/la-proteina/StructTokenBench/100k-checkpoints/shared/exp_config_jepa_nn130m.json",
+      "tokenizer_encoder_source": "online",
+      "tokenizer_eval_max_length": null,
+      "tokenizer_eval_protocol": "upstream-l600-v1",
+      "tokenizer_pretrained_ckpt_path": "/mnt/data/slurm-storage/aishod/projects/la-proteina/store/canonical_lejepa_rotations_100k/evaluation/canonical-lejepa-v1-rotations-step100000-ema-staged.ckpt",
+      "trainer": {
+        "accelerator": "gpu",
+        "accumulate_grad_batches": 1,
+        "check_val_every_n_epoch": 2,
+        "default_root_dir": "/mnt/data/slurm-storage/aishod/projects/la-proteina/StructTokenBench/struct_token_bench_logs/upstream-l600-v1-full/runs/slurm-257651-canonical-lejepa-v1-rotations-ema-step100k-all/",
+        "deterministic": true,
+        "devices": [
+          0
+        ],
+        "enable_checkpointing": true,
+        "enable_model_summary": true,
+        "enable_progress_bar": true,
+        "gradient_clip_val": 1.0,
+        "limit_train_batches": null,
+        "limit_val_batches": null,
+        "log_every_n_steps": 20,
+        "max_epochs": null,
+        "max_steps": 10000,
+        "num_nodes": 1,
+        "num_sanity_val_steps": 0,
+        "precision": "32-true",
+        "reload_dataloaders_every_n_epochs": 1,
+        "val_check_interval": 1.0
+      },
+      "validate_only": false
+    },
+    "resolved_config_sha256": "64db9f3c7eb87a2ae2ab10e0bf638b7b8706e5b951d950090161e7df12676b84",
+    "scientific_config": {
+      "data": {
+        "data_name": "AtlasDataset",
+        "fast_dev_run": false,
+        "filter_length": 600,
+        "is_global_or_local": "local",
+        "multi_label": false,
+        "target_field": "rmsf_score",
+        "truncation_length": 5000,
+        "use_continuous": false,
+        "use_sequence": false
+      },
+      "model": {
+        "add_noise": null,
+        "class_name": "SequenceClassificationModel",
+        "d_model": 8,
+        "dropout": 0.1,
+        "hidden_size": 512,
+        "is_global_or_local": "local",
+        "multi_label": false,
+        "num_labels": 1,
+        "num_layer": 1,
+        "num_tokens": null,
+        "regression": true,
+        "sequence_only": false,
+        "use_sequence": false
+      },
+      "optimization": {
+        "micro_batch_size": 8,
+        "optimizer": {
+          "adam_w_mode": true,
+          "betas": [
+            0.9,
+            0.98
+          ],
+          "eps": 1e-08,
+          "lr": 0.001,
+          "name": "adam",
+          "params": null,
+          "weight_decay": 0.01
+        },
+        "override": {
+          "add_index": 0,
+          "mult_factor": 1.0
+        },
+        "scheduler": {
+          "_target_": "util.get_cosine_schedule_with_warmup",
+          "min_ratio": 0.1,
+          "num_training_steps": 10000,
+          "num_warmup_steps": 200,
+          "optimizer": null,
+          "plateau_ratio": 0.1
+        },
+        "seed": 1234
+      },
+      "stopping": {
+        "checkpoint_every_n_epochs": 1,
+        "early_stopping_mode": "max",
+        "early_stopping_monitor": "validation_spearmanr",
+        "early_stopping_patience": 10,
+        "max_steps": 10000
+      },
+      "trainer": {
+        "accumulate_grad_batches": 1,
+        "deterministic": true,
+        "gradient_clip_val": 1.0,
+        "limit_train_batches": null,
+        "limit_val_batches": null,
+        "precision": "32-true",
+        "reload_dataloaders_every_n_epochs": 1,
+        "val_check_interval": 1.0
+      }
+    },
+    "scientific_config_sha256": "0fc923badcd0e3d603d09c83131cb963ca108c95d6dd3f7bf0cc9b3732d1d288",
+    "seed": 1234
+  },
+  "protocol": {
+    "binary_class_weighting": null,
+    "cache_tag": "upstream-l600-v1",
+    "checkpoint_training_filters_applied": false,
+    "classification_metric_aggregation": null,
+    "encoder_source": "online",
+    "local_alignment_policy": "upstream-optimal-alignment-report-drops-v1",
+    "name": "upstream-l600-v1",
+    "single_class_present_sample_weight": 0.5,
+    "stb_selected_residue_filter_length": 600,
+    "unknown_residue_adapter": "zero-aa-identity-v1",
+    "whole_chain_max_length_filter": null
+  },
+  "run": {
+    "checkpoint_label": "100k",
+    "environment": {
+      "CUDA_VISIBLE_DEVICES": "0",
+      "EVALUATION_RUN_ID": "slurm-257651-canonical-lejepa-v1-rotations-ema-step100k-all",
+      "SLURM_JOB_ID": "257651"
+    },
+    "experiment": "canonical-lejepa-v1-rotations-ema-step100k-upstream-l600-v1",
+    "finished_at_utc": "2026-09-03T20:33:51.229030+00:00",
+    "hostname": "gauss",
+    "id": "slurm-257651-canonical-lejepa-v1-rotations-ema-step100k-all",
+    "pid": 1544669,
+    "smoke": false,
+    "started_at_utc": "2026-09-03T15:44:40Z",
+    "task": "FlexRMSF"
+  },
+  "schema_version": 1,
+  "scientific_identity_sha256": "cf20737e42615381d48e88863b3b24b3afa5efecc094bd1c75886ee7937ec39b",
+  "scientific_runtime_versions": {
+    "biotite": "1.6.0",
+    "graphein": "1.7.7",
+    "numpy": "2.4.6",
+    "python": "3.11.15",
+    "scipy": "1.17.1",
+    "torch": "2.7.0+cu118",
+    "torch-geometric": "2.8.0.post1"
+  },
+  "shared_embedding_cache": {
+    "enabled": true,
+    "root": "/mnt/hopper-raid/aishod/data/struct_token_bench_release_data/shared_embedding_cache",
+    "schema_version": 1,
+    "semantics": "frozen-full-structure-embedding-only; labels-attached-afterward",
+    "stats": {
+      "hits": 0,
+      "misses": 1053,
+      "writes": 1053
+    },
+    "tokenizer_namespace_sha256": "6d5201150723dd0cec4000448123224d953b152b2a2c3e1d14de3a95c8fd1831"
+  },
+  "source_files": {
+    "data_module": {
+      "path": "/slurm-storage/aishod/projects/la-proteina/StructTokenBench/src/data_module.py",
+      "sha256": "a211540d8367132ce625ed13b5dfb239617198553815f7ad782edc3b72965b44",
+      "size_bytes": 12962
+    },
+    "dataset_base": {
+      "path": "/slurm-storage/aishod/projects/la-proteina/StructTokenBench/src/dataset/base.py",
+      "sha256": "fa527f34dc1295d3bdc62f5fd04055651cb022c298d60e77f4c60f8b94b3415b",
+      "size_bytes": 71115
+    },
+    "feature_factory": {
+      "path": "/slurm-storage/aishod/projects/la-proteina/proteinfoundation/nn/feature_factory.py",
+      "sha256": "61cc046d83375d814ce09873e05f09df00596bcb6fdaae5ecd5dc54fa5dcc39e",
+      "size_bytes": 78732
+    },
+    "metric_aggregation": {
+      "path": "/slurm-storage/aishod/projects/la-proteina/StructTokenBench/src/metric_aggregation.py",
+      "sha256": "a1c03c37f90b5635f99a6b1ef3f7e65e14d5fb3d8b01d0c3fbdc3952cbd0a323",
+      "size_bytes": 7749
+    },
+    "model_module": {
+      "path": "/slurm-storage/aishod/projects/la-proteina/StructTokenBench/src/model_module.py",
+      "sha256": "27b556b6132b3960f52d662f90e70bbc1dd8bdcb3c0befc19f4d1c2547790a84",
+      "size_bytes": 30439
+    },
+    "run_supervised_task": {
+      "path": "/slurm-storage/aishod/projects/la-proteina/StructTokenBench/src/script/run_supervised_task.py",
+      "sha256": "9fff486958d6149f926d2d20cc455224bf5bebbc8bb89256690b2225684e4c1b",
+      "size_bytes": 29850
+    },
+    "shared_embedding_cache": {
+      "path": "/slurm-storage/aishod/projects/la-proteina/StructTokenBench/src/shared_embedding_cache.py",
+      "sha256": "c01e3fdb40b7ff56db8e4f92bab1dceb259d1d36ffe02b17fdba0c748274be7f",
+      "size_bytes": 16302
+    },
+    "tokenizer": {
+      "path": "/slurm-storage/aishod/projects/la-proteina/StructTokenBench/src/tokenizer.py",
+      "sha256": "87117eb4e0deea945a61b16025b0f2be2eba9371318ae4f4c96e20982efe8f0b",
+      "size_bytes": 51035
+    }
+  }
+}

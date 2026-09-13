@@ -1,0 +1,4 @@
+checkpoint,branch,task,metric,fold_test,superfamily_test
+60k,jepa-rand70-d64-independent-rotations-100k-upstream-l600-v1,BindInt,auroc,0.4260,0.7915
+60k,jepa-rand70-d64-independent-rotations-100k-upstream-l600-v1,CatInt,auroc,0.5237,0.7485
+60k,jepa-rand70-d64-independent-rotations-100k-upstream-l600-v1,FlexRMSF,spearmanr,0.3323,0.3331

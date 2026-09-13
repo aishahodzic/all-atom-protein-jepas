@@ -1,0 +1,11 @@
+checkpoint,branch,task,metric,fold_test,superfamily_test
+10k,canonical-lejepa-v1-rotations-ema-step10k-upstream-l600-v1,BindInt,auroc,0.4797,0.8777
+10k,canonical-lejepa-v1-rotations-ema-step10k-upstream-l600-v1,BindBio,auroc,0.6833,0.6919
+10k,canonical-lejepa-v1-rotations-ema-step10k-upstream-l600-v1,CatInt,auroc,0.6387,0.8148
+10k,canonical-lejepa-v1-rotations-ema-step10k-upstream-l600-v1,CatBio,auroc,0.7327,0.7888
+10k,canonical-lejepa-v1-rotations-ema-step10k-upstream-l600-v1,Con,auroc,0.6060,0.7809
+10k,canonical-lejepa-v1-rotations-ema-step10k-upstream-l600-v1,Rep,auroc,0.7401,0.8294
+10k,canonical-lejepa-v1-rotations-ema-step10k-upstream-l600-v1,Ept,auroc,0.4751,0.4919
+10k,canonical-lejepa-v1-rotations-ema-step10k-upstream-l600-v1,FlexRMSF,spearmanr,0.5322,0.5804
+10k,canonical-lejepa-v1-rotations-ema-step10k-upstream-l600-v1,FlexBFactor,spearmanr,0.2845,0.3039
+10k,canonical-lejepa-v1-rotations-ema-step10k-upstream-l600-v1,FlexNEQ,spearmanr,0.1260,0.1357

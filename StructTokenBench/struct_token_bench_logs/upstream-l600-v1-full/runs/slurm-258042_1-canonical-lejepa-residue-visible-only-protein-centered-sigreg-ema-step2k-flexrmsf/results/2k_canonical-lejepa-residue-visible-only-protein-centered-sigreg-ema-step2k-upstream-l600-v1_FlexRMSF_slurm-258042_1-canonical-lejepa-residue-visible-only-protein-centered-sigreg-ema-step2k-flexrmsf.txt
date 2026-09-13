@@ -1,0 +1,18 @@
+Branch: canonical-lejepa-residue-visible-only-protein-centered-sigreg-ema-step2k-upstream-l600-v1  |  Checkpoint: 2k  | 
+                                                     Task: FlexRMSF                                                     
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Metric                                                                                    ┃                    Value ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│ fold_test_loss                                                                            │                   0.0188 │
+│ fold_test_pearsonr                                                                        │                   0.3667 │
+│ fold_test_r2                                                                              │                   0.1344 │
+│ fold_test_spearmanr                                                                       │                   0.2494 │
+│ superfamily_test_loss                                                                     │                   0.0236 │
+│ superfamily_test_pearsonr                                                                 │                   0.3154 │
+│ superfamily_test_r2                                                                       │                   0.0944 │
+│ superfamily_test_spearmanr                                                                │                   0.2442 │
+│ validation_loss                                                                           │                   0.0253 │
+│ validation_pearsonr                                                                       │                   0.3548 │
+│ validation_r2                                                                             │                   0.1005 │
+│ validation_spearmanr                                                                      │                   0.2308 │
+└───────────────────────────────────────────────────────────────────────────────────────────┴──────────────────────────┘

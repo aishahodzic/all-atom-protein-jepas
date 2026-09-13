@@ -1,0 +1,451 @@
+section,task_or_diagnostic,split,metric,learning_rate,step,value,status
+STB,BindInt,fold,AUROC,Low LR,0,0.4364,complete
+STB,BindInt,fold,AUROC,Low LR,10000,0.4937,complete
+STB,BindInt,fold,AUROC,Low LR,16667,0.4712,complete
+STB,BindInt,fold,AUROC,Low LR,20000,,pending
+STB,BindInt,fold,AUROC,Low LR,30000,,pending
+STB,BindInt,fold,AUROC,Middle LR,0,0.4364,complete
+STB,BindInt,fold,AUROC,Middle LR,10000,0.4832,complete
+STB,BindInt,fold,AUROC,Middle LR,16667,,pending
+STB,BindInt,fold,AUROC,Middle LR,20000,0.471,complete
+STB,BindInt,fold,AUROC,Middle LR,30000,,pending
+STB,BindInt,fold,AUROC,High LR,0,0.4364,complete
+STB,BindInt,fold,AUROC,High LR,10000,0.4584,complete
+STB,BindInt,fold,AUROC,High LR,16667,0.5029,complete
+STB,BindInt,fold,AUROC,High LR,20000,0.503,complete
+STB,BindInt,fold,AUROC,High LR,30000,0.4695,complete
+STB,BindInt,superfamily,AUROC,Low LR,0,0.8003,complete
+STB,BindInt,superfamily,AUROC,Low LR,10000,0.7775,complete
+STB,BindInt,superfamily,AUROC,Low LR,16667,0.86,complete
+STB,BindInt,superfamily,AUROC,Low LR,20000,,pending
+STB,BindInt,superfamily,AUROC,Low LR,30000,,pending
+STB,BindInt,superfamily,AUROC,Middle LR,0,0.8003,complete
+STB,BindInt,superfamily,AUROC,Middle LR,10000,0.8659,complete
+STB,BindInt,superfamily,AUROC,Middle LR,16667,,pending
+STB,BindInt,superfamily,AUROC,Middle LR,20000,0.8694,complete
+STB,BindInt,superfamily,AUROC,Middle LR,30000,,pending
+STB,BindInt,superfamily,AUROC,High LR,0,0.8003,complete
+STB,BindInt,superfamily,AUROC,High LR,10000,0.7952,complete
+STB,BindInt,superfamily,AUROC,High LR,16667,0.861,complete
+STB,BindInt,superfamily,AUROC,High LR,20000,0.8627,complete
+STB,BindInt,superfamily,AUROC,High LR,30000,0.7916,complete
+STB,BindBio,fold,AUROC,Low LR,0,0.6108,complete
+STB,BindBio,fold,AUROC,Low LR,10000,0.6066,complete
+STB,BindBio,fold,AUROC,Low LR,16667,0.5961,complete
+STB,BindBio,fold,AUROC,Low LR,20000,,pending
+STB,BindBio,fold,AUROC,Low LR,30000,,pending
+STB,BindBio,fold,AUROC,Middle LR,0,0.6108,complete
+STB,BindBio,fold,AUROC,Middle LR,10000,0.5766,complete
+STB,BindBio,fold,AUROC,Middle LR,16667,,pending
+STB,BindBio,fold,AUROC,Middle LR,20000,0.5754,complete
+STB,BindBio,fold,AUROC,Middle LR,30000,,pending
+STB,BindBio,fold,AUROC,High LR,0,0.6108,complete
+STB,BindBio,fold,AUROC,High LR,10000,0.5889,complete
+STB,BindBio,fold,AUROC,High LR,16667,0.5953,complete
+STB,BindBio,fold,AUROC,High LR,20000,0.5909,complete
+STB,BindBio,fold,AUROC,High LR,30000,,pending
+STB,BindBio,superfamily,AUROC,Low LR,0,0.6276,complete
+STB,BindBio,superfamily,AUROC,Low LR,10000,0.6184,complete
+STB,BindBio,superfamily,AUROC,Low LR,16667,0.608,complete
+STB,BindBio,superfamily,AUROC,Low LR,20000,,pending
+STB,BindBio,superfamily,AUROC,Low LR,30000,,pending
+STB,BindBio,superfamily,AUROC,Middle LR,0,0.6276,complete
+STB,BindBio,superfamily,AUROC,Middle LR,10000,0.5895,complete
+STB,BindBio,superfamily,AUROC,Middle LR,16667,,pending
+STB,BindBio,superfamily,AUROC,Middle LR,20000,0.5929,complete
+STB,BindBio,superfamily,AUROC,Middle LR,30000,,pending
+STB,BindBio,superfamily,AUROC,High LR,0,0.6276,complete
+STB,BindBio,superfamily,AUROC,High LR,10000,0.6032,complete
+STB,BindBio,superfamily,AUROC,High LR,16667,0.6057,complete
+STB,BindBio,superfamily,AUROC,High LR,20000,0.6015,complete
+STB,BindBio,superfamily,AUROC,High LR,30000,,pending
+STB,BindShake,test,AUROC,Low LR,0,0.647,complete
+STB,BindShake,test,AUROC,Low LR,10000,0.5826,complete
+STB,BindShake,test,AUROC,Low LR,16667,0.5833,complete
+STB,BindShake,test,AUROC,Low LR,20000,,pending
+STB,BindShake,test,AUROC,Low LR,30000,0.5844,complete
+STB,BindShake,test,AUROC,Middle LR,0,0.647,complete
+STB,BindShake,test,AUROC,Middle LR,10000,0.5881,complete
+STB,BindShake,test,AUROC,Middle LR,16667,0.5957,complete
+STB,BindShake,test,AUROC,Middle LR,20000,0.589,complete
+STB,BindShake,test,AUROC,Middle LR,30000,0.5859,complete
+STB,BindShake,test,AUROC,High LR,0,0.647,complete
+STB,BindShake,test,AUROC,High LR,10000,0.5888,complete
+STB,BindShake,test,AUROC,High LR,16667,0.5958,complete
+STB,BindShake,test,AUROC,High LR,20000,0.5869,complete
+STB,BindShake,test,AUROC,High LR,30000,0.589,complete
+STB,CatInt,fold,AUROC,Low LR,0,0.5401,complete
+STB,CatInt,fold,AUROC,Low LR,10000,0.5538,complete
+STB,CatInt,fold,AUROC,Low LR,16667,0.5532,complete
+STB,CatInt,fold,AUROC,Low LR,20000,,pending
+STB,CatInt,fold,AUROC,Low LR,30000,,pending
+STB,CatInt,fold,AUROC,Middle LR,0,0.5401,complete
+STB,CatInt,fold,AUROC,Middle LR,10000,0.5647,complete
+STB,CatInt,fold,AUROC,Middle LR,16667,,pending
+STB,CatInt,fold,AUROC,Middle LR,20000,0.5379,complete
+STB,CatInt,fold,AUROC,Middle LR,30000,,pending
+STB,CatInt,fold,AUROC,High LR,0,0.5401,complete
+STB,CatInt,fold,AUROC,High LR,10000,0.577,complete
+STB,CatInt,fold,AUROC,High LR,16667,0.5763,complete
+STB,CatInt,fold,AUROC,High LR,20000,0.5531,complete
+STB,CatInt,fold,AUROC,High LR,30000,,pending
+STB,CatInt,superfamily,AUROC,Low LR,0,0.7761,complete
+STB,CatInt,superfamily,AUROC,Low LR,10000,0.7979,complete
+STB,CatInt,superfamily,AUROC,Low LR,16667,0.7659,complete
+STB,CatInt,superfamily,AUROC,Low LR,20000,,pending
+STB,CatInt,superfamily,AUROC,Low LR,30000,,pending
+STB,CatInt,superfamily,AUROC,Middle LR,0,0.7761,complete
+STB,CatInt,superfamily,AUROC,Middle LR,10000,0.81,complete
+STB,CatInt,superfamily,AUROC,Middle LR,16667,,pending
+STB,CatInt,superfamily,AUROC,Middle LR,20000,0.8074,complete
+STB,CatInt,superfamily,AUROC,Middle LR,30000,,pending
+STB,CatInt,superfamily,AUROC,High LR,0,0.7761,complete
+STB,CatInt,superfamily,AUROC,High LR,10000,0.8081,complete
+STB,CatInt,superfamily,AUROC,High LR,16667,0.8119,complete
+STB,CatInt,superfamily,AUROC,High LR,20000,0.8133,complete
+STB,CatInt,superfamily,AUROC,High LR,30000,,pending
+STB,CatBio,fold,AUROC,Low LR,0,0.6434,complete
+STB,CatBio,fold,AUROC,Low LR,10000,0.5798,complete
+STB,CatBio,fold,AUROC,Low LR,16667,0.5677,complete
+STB,CatBio,fold,AUROC,Low LR,20000,,pending
+STB,CatBio,fold,AUROC,Low LR,30000,0.5644,complete
+STB,CatBio,fold,AUROC,Middle LR,0,0.6434,complete
+STB,CatBio,fold,AUROC,Middle LR,10000,0.5667,complete
+STB,CatBio,fold,AUROC,Middle LR,16667,0.5711,complete
+STB,CatBio,fold,AUROC,Middle LR,20000,0.569,complete
+STB,CatBio,fold,AUROC,Middle LR,30000,0.5695,complete
+STB,CatBio,fold,AUROC,High LR,0,0.6434,complete
+STB,CatBio,fold,AUROC,High LR,10000,0.5707,complete
+STB,CatBio,fold,AUROC,High LR,16667,0.5593,complete
+STB,CatBio,fold,AUROC,High LR,20000,0.5566,complete
+STB,CatBio,fold,AUROC,High LR,30000,0.5591,complete
+STB,CatBio,superfamily,AUROC,Low LR,0,0.7043,complete
+STB,CatBio,superfamily,AUROC,Low LR,10000,0.6408,complete
+STB,CatBio,superfamily,AUROC,Low LR,16667,0.6393,complete
+STB,CatBio,superfamily,AUROC,Low LR,20000,,pending
+STB,CatBio,superfamily,AUROC,Low LR,30000,0.6345,complete
+STB,CatBio,superfamily,AUROC,Middle LR,0,0.7043,complete
+STB,CatBio,superfamily,AUROC,Middle LR,10000,0.6218,complete
+STB,CatBio,superfamily,AUROC,Middle LR,16667,0.6181,complete
+STB,CatBio,superfamily,AUROC,Middle LR,20000,0.6121,complete
+STB,CatBio,superfamily,AUROC,Middle LR,30000,0.6144,complete
+STB,CatBio,superfamily,AUROC,High LR,0,0.7043,complete
+STB,CatBio,superfamily,AUROC,High LR,10000,0.6199,complete
+STB,CatBio,superfamily,AUROC,High LR,16667,0.6333,complete
+STB,CatBio,superfamily,AUROC,High LR,20000,0.6271,complete
+STB,CatBio,superfamily,AUROC,High LR,30000,0.6281,complete
+STB,Con,fold,AUROC,Low LR,0,0.5776,complete
+STB,Con,fold,AUROC,Low LR,10000,0.5481,complete
+STB,Con,fold,AUROC,Low LR,16667,0.5391,complete
+STB,Con,fold,AUROC,Low LR,20000,,pending
+STB,Con,fold,AUROC,Low LR,30000,,pending
+STB,Con,fold,AUROC,Middle LR,0,0.5776,complete
+STB,Con,fold,AUROC,Middle LR,10000,0.5504,complete
+STB,Con,fold,AUROC,Middle LR,16667,,pending
+STB,Con,fold,AUROC,Middle LR,20000,,pending
+STB,Con,fold,AUROC,Middle LR,30000,,pending
+STB,Con,fold,AUROC,High LR,0,0.5776,complete
+STB,Con,fold,AUROC,High LR,10000,0.5637,complete
+STB,Con,fold,AUROC,High LR,16667,0.5467,complete
+STB,Con,fold,AUROC,High LR,20000,0.543,complete
+STB,Con,fold,AUROC,High LR,30000,,pending
+STB,Con,superfamily,AUROC,Low LR,0,0.7205,complete
+STB,Con,superfamily,AUROC,Low LR,10000,0.7405,complete
+STB,Con,superfamily,AUROC,Low LR,16667,0.7397,complete
+STB,Con,superfamily,AUROC,Low LR,20000,,pending
+STB,Con,superfamily,AUROC,Low LR,30000,,pending
+STB,Con,superfamily,AUROC,Middle LR,0,0.7205,complete
+STB,Con,superfamily,AUROC,Middle LR,10000,0.7363,complete
+STB,Con,superfamily,AUROC,Middle LR,16667,,pending
+STB,Con,superfamily,AUROC,Middle LR,20000,,pending
+STB,Con,superfamily,AUROC,Middle LR,30000,,pending
+STB,Con,superfamily,AUROC,High LR,0,0.7205,complete
+STB,Con,superfamily,AUROC,High LR,10000,0.7419,complete
+STB,Con,superfamily,AUROC,High LR,16667,0.7415,complete
+STB,Con,superfamily,AUROC,High LR,20000,0.7447,complete
+STB,Con,superfamily,AUROC,High LR,30000,,pending
+STB,Rep,fold,AUROC,Low LR,0,0.756,complete
+STB,Rep,fold,AUROC,Low LR,10000,0.7333,complete
+STB,Rep,fold,AUROC,Low LR,16667,0.7354,complete
+STB,Rep,fold,AUROC,Low LR,20000,,pending
+STB,Rep,fold,AUROC,Low LR,30000,,pending
+STB,Rep,fold,AUROC,Middle LR,0,0.756,complete
+STB,Rep,fold,AUROC,Middle LR,10000,0.743,complete
+STB,Rep,fold,AUROC,Middle LR,16667,,pending
+STB,Rep,fold,AUROC,Middle LR,20000,,pending
+STB,Rep,fold,AUROC,Middle LR,30000,,pending
+STB,Rep,fold,AUROC,High LR,0,0.756,complete
+STB,Rep,fold,AUROC,High LR,10000,0.7467,complete
+STB,Rep,fold,AUROC,High LR,16667,0.7432,complete
+STB,Rep,fold,AUROC,High LR,20000,0.7431,complete
+STB,Rep,fold,AUROC,High LR,30000,,pending
+STB,Rep,superfamily,AUROC,Low LR,0,0.7928,complete
+STB,Rep,superfamily,AUROC,Low LR,10000,0.8299,complete
+STB,Rep,superfamily,AUROC,Low LR,16667,0.8316,complete
+STB,Rep,superfamily,AUROC,Low LR,20000,,pending
+STB,Rep,superfamily,AUROC,Low LR,30000,,pending
+STB,Rep,superfamily,AUROC,Middle LR,0,0.7928,complete
+STB,Rep,superfamily,AUROC,Middle LR,10000,0.8189,complete
+STB,Rep,superfamily,AUROC,Middle LR,16667,,pending
+STB,Rep,superfamily,AUROC,Middle LR,20000,,pending
+STB,Rep,superfamily,AUROC,Middle LR,30000,,pending
+STB,Rep,superfamily,AUROC,High LR,0,0.7928,complete
+STB,Rep,superfamily,AUROC,High LR,10000,0.8353,complete
+STB,Rep,superfamily,AUROC,High LR,16667,0.8404,complete
+STB,Rep,superfamily,AUROC,High LR,20000,0.8376,complete
+STB,Rep,superfamily,AUROC,High LR,30000,,pending
+STB,Ept,fold,AUROC,Low LR,0,0.5402,complete
+STB,Ept,fold,AUROC,Low LR,10000,0.4602,complete
+STB,Ept,fold,AUROC,Low LR,16667,0.4781,complete
+STB,Ept,fold,AUROC,Low LR,20000,0.4797,complete
+STB,Ept,fold,AUROC,Low LR,30000,,pending
+STB,Ept,fold,AUROC,Middle LR,0,0.5402,complete
+STB,Ept,fold,AUROC,Middle LR,10000,0.4704,complete
+STB,Ept,fold,AUROC,Middle LR,16667,,pending
+STB,Ept,fold,AUROC,Middle LR,20000,,pending
+STB,Ept,fold,AUROC,Middle LR,30000,,pending
+STB,Ept,fold,AUROC,High LR,0,0.5402,complete
+STB,Ept,fold,AUROC,High LR,10000,0.4325,complete
+STB,Ept,fold,AUROC,High LR,16667,0.4348,complete
+STB,Ept,fold,AUROC,High LR,20000,0.4963,complete
+STB,Ept,fold,AUROC,High LR,30000,,pending
+STB,Ept,superfamily,AUROC,Low LR,0,0.5532,complete
+STB,Ept,superfamily,AUROC,Low LR,10000,0.5423,complete
+STB,Ept,superfamily,AUROC,Low LR,16667,0.5898,complete
+STB,Ept,superfamily,AUROC,Low LR,20000,0.5862,complete
+STB,Ept,superfamily,AUROC,Low LR,30000,,pending
+STB,Ept,superfamily,AUROC,Middle LR,0,0.5532,complete
+STB,Ept,superfamily,AUROC,Middle LR,10000,0.5822,complete
+STB,Ept,superfamily,AUROC,Middle LR,16667,,pending
+STB,Ept,superfamily,AUROC,Middle LR,20000,,pending
+STB,Ept,superfamily,AUROC,Middle LR,30000,,pending
+STB,Ept,superfamily,AUROC,High LR,0,0.5532,complete
+STB,Ept,superfamily,AUROC,High LR,10000,0.5598,complete
+STB,Ept,superfamily,AUROC,High LR,16667,0.5645,complete
+STB,Ept,superfamily,AUROC,High LR,20000,0.623,complete
+STB,Ept,superfamily,AUROC,High LR,30000,,pending
+STB,FlexBFactor,fold,Spearman rho,Low LR,0,0.1394,complete
+STB,FlexBFactor,fold,Spearman rho,Low LR,10000,0.0531,complete
+STB,FlexBFactor,fold,Spearman rho,Low LR,16667,0.0519,complete
+STB,FlexBFactor,fold,Spearman rho,Low LR,20000,,pending
+STB,FlexBFactor,fold,Spearman rho,Low LR,30000,,pending
+STB,FlexBFactor,fold,Spearman rho,Middle LR,0,0.1394,complete
+STB,FlexBFactor,fold,Spearman rho,Middle LR,10000,0.0973,complete
+STB,FlexBFactor,fold,Spearman rho,Middle LR,16667,,pending
+STB,FlexBFactor,fold,Spearman rho,Middle LR,20000,,pending
+STB,FlexBFactor,fold,Spearman rho,Middle LR,30000,,pending
+STB,FlexBFactor,fold,Spearman rho,High LR,0,0.1394,complete
+STB,FlexBFactor,fold,Spearman rho,High LR,10000,0.1069,complete
+STB,FlexBFactor,fold,Spearman rho,High LR,16667,0.1127,complete
+STB,FlexBFactor,fold,Spearman rho,High LR,20000,0.1229,complete
+STB,FlexBFactor,fold,Spearman rho,High LR,30000,,pending
+STB,FlexBFactor,superfamily,Spearman rho,Low LR,0,0.1142,complete
+STB,FlexBFactor,superfamily,Spearman rho,Low LR,10000,0.0875,complete
+STB,FlexBFactor,superfamily,Spearman rho,Low LR,16667,0.0978,complete
+STB,FlexBFactor,superfamily,Spearman rho,Low LR,20000,,pending
+STB,FlexBFactor,superfamily,Spearman rho,Low LR,30000,,pending
+STB,FlexBFactor,superfamily,Spearman rho,Middle LR,0,0.1142,complete
+STB,FlexBFactor,superfamily,Spearman rho,Middle LR,10000,0.1018,complete
+STB,FlexBFactor,superfamily,Spearman rho,Middle LR,16667,,pending
+STB,FlexBFactor,superfamily,Spearman rho,Middle LR,20000,,pending
+STB,FlexBFactor,superfamily,Spearman rho,Middle LR,30000,,pending
+STB,FlexBFactor,superfamily,Spearman rho,High LR,0,0.1142,complete
+STB,FlexBFactor,superfamily,Spearman rho,High LR,10000,0.1287,complete
+STB,FlexBFactor,superfamily,Spearman rho,High LR,16667,0.1407,complete
+STB,FlexBFactor,superfamily,Spearman rho,High LR,20000,0.1283,complete
+STB,FlexBFactor,superfamily,Spearman rho,High LR,30000,,pending
+STB,FlexNEQ,fold,Spearman rho,Low LR,0,0.0696,complete
+STB,FlexNEQ,fold,Spearman rho,Low LR,10000,0.1847,complete
+STB,FlexNEQ,fold,Spearman rho,Low LR,16667,0.1823,complete
+STB,FlexNEQ,fold,Spearman rho,Low LR,20000,,pending
+STB,FlexNEQ,fold,Spearman rho,Low LR,30000,,pending
+STB,FlexNEQ,fold,Spearman rho,Middle LR,0,0.0696,complete
+STB,FlexNEQ,fold,Spearman rho,Middle LR,10000,0.2,complete
+STB,FlexNEQ,fold,Spearman rho,Middle LR,16667,,pending
+STB,FlexNEQ,fold,Spearman rho,Middle LR,20000,,pending
+STB,FlexNEQ,fold,Spearman rho,Middle LR,30000,,pending
+STB,FlexNEQ,fold,Spearman rho,High LR,0,0.0696,complete
+STB,FlexNEQ,fold,Spearman rho,High LR,10000,0.2423,complete
+STB,FlexNEQ,fold,Spearman rho,High LR,16667,0.2146,complete
+STB,FlexNEQ,fold,Spearman rho,High LR,20000,0.1941,complete
+STB,FlexNEQ,fold,Spearman rho,High LR,30000,,pending
+STB,FlexNEQ,superfamily,Spearman rho,Low LR,0,0.0655,complete
+STB,FlexNEQ,superfamily,Spearman rho,Low LR,10000,0.1629,complete
+STB,FlexNEQ,superfamily,Spearman rho,Low LR,16667,0.1669,complete
+STB,FlexNEQ,superfamily,Spearman rho,Low LR,20000,,pending
+STB,FlexNEQ,superfamily,Spearman rho,Low LR,30000,,pending
+STB,FlexNEQ,superfamily,Spearman rho,Middle LR,0,0.0655,complete
+STB,FlexNEQ,superfamily,Spearman rho,Middle LR,10000,0.1916,complete
+STB,FlexNEQ,superfamily,Spearman rho,Middle LR,16667,,pending
+STB,FlexNEQ,superfamily,Spearman rho,Middle LR,20000,,pending
+STB,FlexNEQ,superfamily,Spearman rho,Middle LR,30000,,pending
+STB,FlexNEQ,superfamily,Spearman rho,High LR,0,0.0655,complete
+STB,FlexNEQ,superfamily,Spearman rho,High LR,10000,0.2333,complete
+STB,FlexNEQ,superfamily,Spearman rho,High LR,16667,0.2156,complete
+STB,FlexNEQ,superfamily,Spearman rho,High LR,20000,0.1974,complete
+STB,FlexNEQ,superfamily,Spearman rho,High LR,30000,,pending
+STB,FlexRMSF,fold,Spearman rho,Low LR,0,0.206,complete
+STB,FlexRMSF,fold,Spearman rho,Low LR,10000,0.1616,complete
+STB,FlexRMSF,fold,Spearman rho,Low LR,16667,0.1612,complete
+STB,FlexRMSF,fold,Spearman rho,Low LR,20000,,pending
+STB,FlexRMSF,fold,Spearman rho,Low LR,30000,0.1703,complete
+STB,FlexRMSF,fold,Spearman rho,Middle LR,0,0.206,complete
+STB,FlexRMSF,fold,Spearman rho,Middle LR,10000,0.1901,complete
+STB,FlexRMSF,fold,Spearman rho,Middle LR,16667,0.171,complete
+STB,FlexRMSF,fold,Spearman rho,Middle LR,20000,0.1808,complete
+STB,FlexRMSF,fold,Spearman rho,Middle LR,30000,0.171,complete
+STB,FlexRMSF,fold,Spearman rho,High LR,0,0.206,complete
+STB,FlexRMSF,fold,Spearman rho,High LR,10000,0.1826,complete
+STB,FlexRMSF,fold,Spearman rho,High LR,16667,0.2062,complete
+STB,FlexRMSF,fold,Spearman rho,High LR,20000,0.2154,complete
+STB,FlexRMSF,fold,Spearman rho,High LR,30000,0.2035,complete
+STB,FlexRMSF,superfamily,Spearman rho,Low LR,0,0.1778,complete
+STB,FlexRMSF,superfamily,Spearman rho,Low LR,10000,0.2106,complete
+STB,FlexRMSF,superfamily,Spearman rho,Low LR,16667,0.2212,complete
+STB,FlexRMSF,superfamily,Spearman rho,Low LR,20000,,pending
+STB,FlexRMSF,superfamily,Spearman rho,Low LR,30000,0.2299,complete
+STB,FlexRMSF,superfamily,Spearman rho,Middle LR,0,0.1778,complete
+STB,FlexRMSF,superfamily,Spearman rho,Middle LR,10000,0.2546,complete
+STB,FlexRMSF,superfamily,Spearman rho,Middle LR,16667,0.2327,complete
+STB,FlexRMSF,superfamily,Spearman rho,Middle LR,20000,0.2412,complete
+STB,FlexRMSF,superfamily,Spearman rho,Middle LR,30000,0.222,complete
+STB,FlexRMSF,superfamily,Spearman rho,High LR,0,0.1778,complete
+STB,FlexRMSF,superfamily,Spearman rho,High LR,10000,0.2375,complete
+STB,FlexRMSF,superfamily,Spearman rho,High LR,16667,0.2651,complete
+STB,FlexRMSF,superfamily,Spearman rho,High LR,20000,0.261,complete
+STB,FlexRMSF,superfamily,Spearman rho,High LR,30000,0.2551,complete
+STB,Homo,family,AUROC,Low LR,0,0.0764,complete
+STB,Homo,family,AUROC,Low LR,10000,0.0768,complete
+STB,Homo,family,AUROC,Low LR,16667,0.08,complete
+STB,Homo,family,AUROC,Low LR,20000,,pending
+STB,Homo,family,AUROC,Low LR,30000,0.0797,complete
+STB,Homo,family,AUROC,Middle LR,0,0.0764,complete
+STB,Homo,family,AUROC,Middle LR,10000,0.0817,complete
+STB,Homo,family,AUROC,Middle LR,16667,0.0813,complete
+STB,Homo,family,AUROC,Middle LR,20000,0.0814,complete
+STB,Homo,family,AUROC,Middle LR,30000,0.0809,complete
+STB,Homo,family,AUROC,High LR,0,0.0764,complete
+STB,Homo,family,AUROC,High LR,10000,0.0818,complete
+STB,Homo,family,AUROC,High LR,16667,0.0816,complete
+STB,Homo,family,AUROC,High LR,20000,0.0825,complete
+STB,Homo,family,AUROC,High LR,30000,0.0819,complete
+STB,Homo,fold,AUROC,Low LR,0,0.1131,complete
+STB,Homo,fold,AUROC,Low LR,10000,0.1357,complete
+STB,Homo,fold,AUROC,Low LR,16667,0.1441,complete
+STB,Homo,fold,AUROC,Low LR,20000,,pending
+STB,Homo,fold,AUROC,Low LR,30000,0.1458,complete
+STB,Homo,fold,AUROC,Middle LR,0,0.1131,complete
+STB,Homo,fold,AUROC,Middle LR,10000,0.1434,complete
+STB,Homo,fold,AUROC,Middle LR,16667,0.1461,complete
+STB,Homo,fold,AUROC,Middle LR,20000,0.1465,complete
+STB,Homo,fold,AUROC,Middle LR,30000,0.1456,complete
+STB,Homo,fold,AUROC,High LR,0,0.1131,complete
+STB,Homo,fold,AUROC,High LR,10000,0.1429,complete
+STB,Homo,fold,AUROC,High LR,16667,0.1415,complete
+STB,Homo,fold,AUROC,High LR,20000,0.1408,complete
+STB,Homo,fold,AUROC,High LR,30000,0.1418,complete
+STB,Homo,superfamily,AUROC,Low LR,0,0.1055,complete
+STB,Homo,superfamily,AUROC,Low LR,10000,0.1126,complete
+STB,Homo,superfamily,AUROC,Low LR,16667,0.1173,complete
+STB,Homo,superfamily,AUROC,Low LR,20000,,pending
+STB,Homo,superfamily,AUROC,Low LR,30000,0.1174,complete
+STB,Homo,superfamily,AUROC,Middle LR,0,0.1055,complete
+STB,Homo,superfamily,AUROC,Middle LR,10000,0.1193,complete
+STB,Homo,superfamily,AUROC,Middle LR,16667,0.1197,complete
+STB,Homo,superfamily,AUROC,Middle LR,20000,0.1202,complete
+STB,Homo,superfamily,AUROC,Middle LR,30000,0.1195,complete
+STB,Homo,superfamily,AUROC,High LR,0,0.1055,complete
+STB,Homo,superfamily,AUROC,High LR,10000,0.1208,complete
+STB,Homo,superfamily,AUROC,High LR,16667,0.1201,complete
+STB,Homo,superfamily,AUROC,High LR,20000,0.1204,complete
+STB,Homo,superfamily,AUROC,High LR,30000,0.1202,complete
+latent diagnostic,Effective rank / 8 ↑,,,Low LR,0,5.2232536569,complete
+latent diagnostic,Effective rank / 8 ↑,,,Low LR,10000,7.90203,complete
+latent diagnostic,Effective rank / 8 ↑,,,Low LR,16667,7.85282,complete
+latent diagnostic,Effective rank / 8 ↑,,,Low LR,20000,7.84232,complete
+latent diagnostic,Effective rank / 8 ↑,,,Low LR,30000,7.83992,complete
+latent diagnostic,Effective rank / 8 ↑,,,Middle LR,0,5.2232536569,complete
+latent diagnostic,Effective rank / 8 ↑,,,Middle LR,10000,7.85774,complete
+latent diagnostic,Effective rank / 8 ↑,,,Middle LR,16667,7.90371,complete
+latent diagnostic,Effective rank / 8 ↑,,,Middle LR,20000,7.86463,complete
+latent diagnostic,Effective rank / 8 ↑,,,Middle LR,30000,7.9034,complete
+latent diagnostic,Effective rank / 8 ↑,,,High LR,0,5.2232536569,complete
+latent diagnostic,Effective rank / 8 ↑,,,High LR,10000,7.7907,complete
+latent diagnostic,Effective rank / 8 ↑,,,High LR,16667,7.8827,complete
+latent diagnostic,Effective rank / 8 ↑,,,High LR,20000,7.90724,complete
+latent diagnostic,Effective rank / 8 ↑,,,High LR,30000,7.92748,complete
+latent diagnostic,AA purity ↑,,,Low LR,0,0.8209466667,complete
+latent diagnostic,AA purity ↑,,,Low LR,10000,0.08776,complete
+latent diagnostic,AA purity ↑,,,Low LR,16667,0.08265,complete
+latent diagnostic,AA purity ↑,,,Low LR,20000,0.08135,complete
+latent diagnostic,AA purity ↑,,,Low LR,30000,0.07998,complete
+latent diagnostic,AA purity ↑,,,Middle LR,0,0.8209466667,complete
+latent diagnostic,AA purity ↑,,,Middle LR,10000,0.08533,complete
+latent diagnostic,AA purity ↑,,,Middle LR,16667,0.0777,complete
+latent diagnostic,AA purity ↑,,,Middle LR,20000,0.07811,complete
+latent diagnostic,AA purity ↑,,,Middle LR,30000,0.07597,complete
+latent diagnostic,AA purity ↑,,,High LR,0,0.8209466667,complete
+latent diagnostic,AA purity ↑,,,High LR,10000,0.07593,complete
+latent diagnostic,AA purity ↑,,,High LR,16667,0.07665,complete
+latent diagnostic,AA purity ↑,,,High LR,20000,0.07839,complete
+latent diagnostic,AA purity ↑,,,High LR,30000,0.07757,complete
+latent diagnostic,Secondary-structure purity ↑,,,Low LR,0,0.43486,complete
+latent diagnostic,Secondary-structure purity ↑,,,Low LR,10000,0.52435,complete
+latent diagnostic,Secondary-structure purity ↑,,,Low LR,16667,0.52091,complete
+latent diagnostic,Secondary-structure purity ↑,,,Low LR,20000,0.51561,complete
+latent diagnostic,Secondary-structure purity ↑,,,Low LR,30000,0.51539,complete
+latent diagnostic,Secondary-structure purity ↑,,,Middle LR,0,0.43486,complete
+latent diagnostic,Secondary-structure purity ↑,,,Middle LR,10000,0.51074,complete
+latent diagnostic,Secondary-structure purity ↑,,,Middle LR,16667,0.50305,complete
+latent diagnostic,Secondary-structure purity ↑,,,Middle LR,20000,0.50239,complete
+latent diagnostic,Secondary-structure purity ↑,,,Middle LR,30000,0.50449,complete
+latent diagnostic,Secondary-structure purity ↑,,,High LR,0,0.43486,complete
+latent diagnostic,Secondary-structure purity ↑,,,High LR,10000,0.52344,complete
+latent diagnostic,Secondary-structure purity ↑,,,High LR,16667,0.52329,complete
+latent diagnostic,Secondary-structure purity ↑,,,High LR,20000,0.5178,complete
+latent diagnostic,Secondary-structure purity ↑,,,High LR,30000,0.516,complete
+latent diagnostic,RSA Spearman ↑,,,Low LR,0,0.5130903939,complete
+latent diagnostic,RSA Spearman ↑,,,Low LR,10000,0.18732,complete
+latent diagnostic,RSA Spearman ↑,,,Low LR,16667,0.17867,complete
+latent diagnostic,RSA Spearman ↑,,,Low LR,20000,0.17544,complete
+latent diagnostic,RSA Spearman ↑,,,Low LR,30000,0.17111,complete
+latent diagnostic,RSA Spearman ↑,,,Middle LR,0,0.5130903939,complete
+latent diagnostic,RSA Spearman ↑,,,Middle LR,10000,0.16535,complete
+latent diagnostic,RSA Spearman ↑,,,Middle LR,16667,0.14479,complete
+latent diagnostic,RSA Spearman ↑,,,Middle LR,20000,0.14701,complete
+latent diagnostic,RSA Spearman ↑,,,Middle LR,30000,0.15882,complete
+latent diagnostic,RSA Spearman ↑,,,High LR,0,0.5130903939,complete
+latent diagnostic,RSA Spearman ↑,,,High LR,10000,0.16642,complete
+latent diagnostic,RSA Spearman ↑,,,High LR,16667,0.1503,complete
+latent diagnostic,RSA Spearman ↑,,,High LR,20000,0.17005,complete
+latent diagnostic,RSA Spearman ↑,,,High LR,30000,0.14963,complete
+latent diagnostic,Chain-length shortcut ↓,,,Low LR,0,0.1923410246,complete
+latent diagnostic,Chain-length shortcut ↓,,,Low LR,10000,0.33009,complete
+latent diagnostic,Chain-length shortcut ↓,,,Low LR,16667,0.34311,complete
+latent diagnostic,Chain-length shortcut ↓,,,Low LR,20000,0.33963,complete
+latent diagnostic,Chain-length shortcut ↓,,,Low LR,30000,0.34165,complete
+latent diagnostic,Chain-length shortcut ↓,,,Middle LR,0,0.1923410246,complete
+latent diagnostic,Chain-length shortcut ↓,,,Middle LR,10000,0.36204,complete
+latent diagnostic,Chain-length shortcut ↓,,,Middle LR,16667,0.39502,complete
+latent diagnostic,Chain-length shortcut ↓,,,Middle LR,20000,0.40081,complete
+latent diagnostic,Chain-length shortcut ↓,,,Middle LR,30000,0.41889,complete
+latent diagnostic,Chain-length shortcut ↓,,,High LR,0,0.1923410246,complete
+latent diagnostic,Chain-length shortcut ↓,,,High LR,10000,0.31254,complete
+latent diagnostic,Chain-length shortcut ↓,,,High LR,16667,0.37476,complete
+latent diagnostic,Chain-length shortcut ↓,,,High LR,20000,0.39447,complete
+latent diagnostic,Chain-length shortcut ↓,,,High LR,30000,0.41265,complete
+latent diagnostic,Normalized-position shortcut ↓,,,Low LR,0,0.0531022532,complete
+latent diagnostic,Normalized-position shortcut ↓,,,Low LR,10000,0.16974,complete
+latent diagnostic,Normalized-position shortcut ↓,,,Low LR,16667,0.18688,complete
+latent diagnostic,Normalized-position shortcut ↓,,,Low LR,20000,0.19194,complete
+latent diagnostic,Normalized-position shortcut ↓,,,Low LR,30000,0.17608,complete
+latent diagnostic,Normalized-position shortcut ↓,,,Middle LR,0,0.0531022532,complete
+latent diagnostic,Normalized-position shortcut ↓,,,Middle LR,10000,0.20953,complete
+latent diagnostic,Normalized-position shortcut ↓,,,Middle LR,16667,0.21694,complete
+latent diagnostic,Normalized-position shortcut ↓,,,Middle LR,20000,0.21899,complete
+latent diagnostic,Normalized-position shortcut ↓,,,Middle LR,30000,0.22039,complete
+latent diagnostic,Normalized-position shortcut ↓,,,High LR,0,0.0531022532,complete
+latent diagnostic,Normalized-position shortcut ↓,,,High LR,10000,0.21279,complete
+latent diagnostic,Normalized-position shortcut ↓,,,High LR,16667,0.23826,complete
+latent diagnostic,Normalized-position shortcut ↓,,,High LR,20000,0.24637,complete
+latent diagnostic,Normalized-position shortcut ↓,,,High LR,30000,0.23144,complete

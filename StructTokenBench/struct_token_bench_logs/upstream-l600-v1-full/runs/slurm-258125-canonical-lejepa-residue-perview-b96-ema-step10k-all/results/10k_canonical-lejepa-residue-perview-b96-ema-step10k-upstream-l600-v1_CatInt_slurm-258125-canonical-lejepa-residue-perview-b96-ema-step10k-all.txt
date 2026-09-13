@@ -1,0 +1,53 @@
+     Branch: canonical-lejepa-residue-perview-b96-ema-step10k-upstream-l600-v1  |  Checkpoint: 10k  |  Task: CatInt     
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Metric                                                                                      ┃                  Value ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━┩
+│ fold_test_accuracy                                                                          │                 0.5380 │
+│ fold_test_auroc                                                                             │                 0.5350 │
+│ fold_test_f1_score                                                                          │                 0.1357 │
+│ fold_test_false_neg                                                                         │                 0.4911 │
+│ fold_test_false_neg_toall                                                                   │                 0.0350 │
+│ fold_test_false_pos                                                                         │                 0.4603 │
+│ fold_test_false_pos_toall                                                                   │                 0.4271 │
+│ fold_test_loss                                                                              │                 0.7311 │
+│ fold_test_mcc                                                                               │                 0.0255 │
+│ fold_test_neg_weight                                                                        │                 0.5389 │
+│ fold_test_pos_weight                                                                        │                 7.5091 │
+│ fold_test_true_neg                                                                          │                 0.5397 │
+│ fold_test_true_neg_toall                                                                    │                 0.5012 │
+│ fold_test_true_pos                                                                          │                 0.5089 │
+│ fold_test_true_pos_toall                                                                    │                 0.0368 │
+│ fold_test_unweighted_loss                                                                   │                 0.6918 │
+│ superfamily_test_accuracy                                                                   │                 0.5863 │
+│ superfamily_test_auroc                                                                      │                 0.7221 │
+│ superfamily_test_f1_score                                                                   │                 0.1489 │
+│ superfamily_test_false_neg                                                                  │                 0.2463 │
+│ superfamily_test_false_neg_toall                                                            │                 0.0117 │
+│ superfamily_test_false_pos                                                                  │                 0.4225 │
+│ superfamily_test_false_pos_toall                                                            │                 0.4020 │
+│ superfamily_test_loss                                                                       │                 0.6149 │
+│ superfamily_test_mcc                                                                        │                 0.1424 │
+│ superfamily_test_neg_weight                                                                 │                 0.5253 │
+│ superfamily_test_pos_weight                                                                 │                10.7464 │
+│ superfamily_test_true_neg                                                                   │                 0.5775 │
+│ superfamily_test_true_neg_toall                                                             │                 0.5499 │
+│ superfamily_test_true_pos                                                                   │                 0.7537 │
+│ superfamily_test_true_pos_toall                                                             │                 0.0364 │
+│ superfamily_test_unweighted_loss                                                            │                 0.6496 │
+│ validation_accuracy                                                                         │                 0.5566 │
+│ validation_auroc                                                                            │                 0.6173 │
+│ validation_f1_score                                                                         │                 0.1464 │
+│ validation_false_neg                                                                        │                 0.3824 │
+│ validation_false_neg_toall                                                                  │                 0.0258 │
+│ validation_false_pos                                                                        │                 0.4466 │
+│ validation_false_pos_toall                                                                  │                 0.4175 │
+│ validation_loss                                                                             │                 0.6792 │
+│ validation_mcc                                                                              │                 0.0774 │
+│ validation_neg_weight                                                                       │                 0.5345 │
+│ validation_pos_weight                                                                       │                 8.5214 │
+│ validation_true_neg                                                                         │                 0.5534 │
+│ validation_true_neg_toall                                                                   │                 0.5183 │
+│ validation_true_pos                                                                         │                 0.6176 │
+│ validation_true_pos_toall                                                                   │                 0.0383 │
+│ validation_unweighted_loss                                                                  │                 0.6742 │
+└─────────────────────────────────────────────────────────────────────────────────────────────┴────────────────────────┘

@@ -1,0 +1,4 @@
+encoder,aa_purity_k10_original_8d,n_points,seed,perplexity,max_iter,metric
+canonical-lejepa-middle-lr4e4-raw-step10000,,15000,42,30.0,1000,cosine
+canonical-lejepa-jarvis-rotation-raw-step10000,,15000,42,30.0,1000,cosine
+canonical-lejepa-jarvis-per-residue-raw-step10000,,15000,42,30.0,1000,cosine

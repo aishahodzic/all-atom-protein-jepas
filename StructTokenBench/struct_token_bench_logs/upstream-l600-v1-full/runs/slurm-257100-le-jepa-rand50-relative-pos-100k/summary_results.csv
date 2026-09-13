@@ -1,0 +1,11 @@
+checkpoint,branch,task,metric,fold_test,superfamily_test
+100k,le-jepa-rand50-relative-pos-100k-upstream-l600-v1,BindInt,auroc,0.4643,0.8126
+100k,le-jepa-rand50-relative-pos-100k-upstream-l600-v1,BindBio,auroc,0.6698,0.6720
+100k,le-jepa-rand50-relative-pos-100k-upstream-l600-v1,CatInt,auroc,0.6228,0.7976
+100k,le-jepa-rand50-relative-pos-100k-upstream-l600-v1,CatBio,auroc,0.7404,0.7870
+100k,le-jepa-rand50-relative-pos-100k-upstream-l600-v1,Con,auroc,0.6068,0.7425
+100k,le-jepa-rand50-relative-pos-100k-upstream-l600-v1,Rep,auroc,0.7517,0.7968
+100k,le-jepa-rand50-relative-pos-100k-upstream-l600-v1,Ept,auroc,0.5175,0.5890
+100k,le-jepa-rand50-relative-pos-100k-upstream-l600-v1,FlexRMSF,spearmanr,0.3156,0.2592
+100k,le-jepa-rand50-relative-pos-100k-upstream-l600-v1,FlexBFactor,spearmanr,0.2104,0.1942
+100k,le-jepa-rand50-relative-pos-100k-upstream-l600-v1,FlexNEQ,spearmanr,0.1682,0.1408

@@ -1,0 +1,117 @@
+{
+  "counts": {
+    "proteins": 56,
+    "result_rows": 112
+  },
+  "eligibility_path": "/slurm-storage/aishod/projects/la-proteina/Evaluation/canonical_lejepa/results/neighbor_group_revised_pair50_eligibility_probe_test100_seed42.json",
+  "eligibility_sha256": "c5f6fa19cff08f453f3b93b169dceee230d623e4e025e8400c49900bf1baf578",
+  "interpretation_limit": "Hidden-state replacement sensitivity, not mutation or proof of a biological pathway.",
+  "outputs": {
+    "csv": "/slurm-storage/aishod/projects/la-proteina/Evaluation/canonical_lejepa/results/neighbor_group3_influence_probe_test56_seed42.csv",
+    "json": "/slurm-storage/aishod/projects/la-proteina/Evaluation/canonical_lejepa/results/neighbor_group3_influence_probe_test56_seed42.json",
+    "pdf": "/slurm-storage/aishod/projects/la-proteina/Evaluation/canonical_lejepa/results/neighbor_group3_influence_probe_test56_seed42.pdf",
+    "png": "/slurm-storage/aishod/projects/la-proteina/Evaluation/canonical_lejepa/results/neighbor_group3_influence_probe_test56_seed42.png",
+    "pt": "/slurm-storage/aishod/projects/la-proteina/Evaluation/canonical_lejepa/results/neighbor_group3_influence_probe_test56_seed42.pt"
+  },
+  "provenance": {
+    "checkpoint_path": "/slurm-storage/aishod/projects/la-proteina/store/canonical_lejepa_v1_100k/checkpoints/step-00100000.ckpt",
+    "checkpoint_sha256": "4f09dff610adaa75c8ac51b4cf01acb001c236c72dd91ac31568ffa191484527",
+    "ema_metadata": {
+      "decay": 0.9999,
+      "effective_decay": 0.9968049550435943,
+      "exclude": [],
+      "include": [
+        "encoder"
+      ],
+      "last_ema_step": 100000,
+      "num_updates": 3125,
+      "start_step": 0,
+      "update_every": 32,
+      "upstream_revision": "941526c428aa513a5bdfa38697724fda794d8496"
+    },
+    "encoder_config_path": "/slurm-storage/aishod/projects/la-proteina/StructTokenBench/100k-checkpoints/shared/exp_config_jepa_nn130m.json",
+    "encoder_config_sha256": "98e0350d418e7d840fa245ddfd7150064e87a9ac74c72c9150a946f0f66ccd9d",
+    "encoder_source": "ema",
+    "global_step": 100000,
+    "staged_evaluation_path": "/slurm-storage/aishod/projects/la-proteina/store/canonical_lejepa_v1_100k/evaluation/canonical-lejepa-v1-step100000-ema-staged.ckpt",
+    "staged_evaluation_provenance": {
+      "encoder_source": "ema",
+      "latent_dim": 8,
+      "projector": null,
+      "schema_version": 1,
+      "source_checkpoint_sha256": "4f09dff610adaa75c8ac51b4cf01acb001c236c72dd91ac31568ffa191484527",
+      "source_global_step": 100000
+    },
+    "staged_evaluation_sha256": "49aaae3dccc3835005bb6470b0f483a57cee4e28bead2408994693974389e273"
+  },
+  "purpose": "matched_three_residue_near_vs_far_block1_hidden_state_replacement",
+  "state_manifest_provenance": {
+    "checkpoint_path": "/slurm-storage/aishod/projects/la-proteina/store/canonical_lejepa_v1_100k/checkpoints/step-00100000.ckpt",
+    "checkpoint_sha256": "4f09dff610adaa75c8ac51b4cf01acb001c236c72dd91ac31568ffa191484527",
+    "ema_metadata": {
+      "decay": 0.9999,
+      "effective_decay": 0.9968049550435943,
+      "exclude": [],
+      "include": [
+        "encoder"
+      ],
+      "last_ema_step": 100000,
+      "num_updates": 3125,
+      "start_step": 0,
+      "update_every": 32,
+      "upstream_revision": "941526c428aa513a5bdfa38697724fda794d8496"
+    },
+    "encoder_config_path": "/slurm-storage/aishod/projects/la-proteina/StructTokenBench/100k-checkpoints/shared/exp_config_jepa_nn130m.json",
+    "encoder_config_sha256": "98e0350d418e7d840fa245ddfd7150064e87a9ac74c72c9150a946f0f66ccd9d",
+    "encoder_source": "ema",
+    "global_step": 100000,
+    "staged_evaluation_path": "/slurm-storage/aishod/projects/la-proteina/store/canonical_lejepa_v1_100k/evaluation/canonical-lejepa-v1-step100000-ema-staged.ckpt",
+    "staged_evaluation_provenance": {
+      "encoder_source": "ema",
+      "latent_dim": 8,
+      "projector": null,
+      "schema_version": 1,
+      "source_checkpoint_sha256": "4f09dff610adaa75c8ac51b4cf01acb001c236c72dd91ac31568ffa191484527",
+      "source_global_step": 100000
+    },
+    "staged_evaluation_sha256": "49aaae3dccc3835005bb6470b0f483a57cee4e28bead2408994693974389e273"
+  },
+  "summary": {
+    "block_12": {
+      "far_gain_mean": 1.1622491237883705,
+      "far_gain_median": 0.7810418283458322,
+      "fraction_near_gain_greater_than_far": 0.3392857142857143,
+      "n_proteins": 56,
+      "near_gain_mean": 0.8828885077523668,
+      "near_gain_median": 0.7312722893753643,
+      "paired_mean_difference_bootstrap_95_ci": [
+        -0.5471331131531694,
+        -0.07498452067693993
+      ],
+      "paired_mean_difference_near_minus_far": -0.27936061603600354
+    },
+    "latent_mean": {
+      "far_gain_mean": 0.0021081414028715196,
+      "far_gain_median": 0.0018220170893355793,
+      "fraction_near_gain_greater_than_far": 0.42857142857142855,
+      "n_proteins": 56,
+      "near_gain_mean": 0.0016661224411980975,
+      "near_gain_median": 0.0015251589081844833,
+      "paired_mean_difference_bootstrap_95_ci": [
+        -0.0007369027801230848,
+        -0.00018965387406987146
+      ],
+      "paired_mean_difference_near_minus_far": -0.00044201896167342207
+    }
+  },
+  "tests": {
+    "clean_forward_cache_parity": "passed",
+    "deterministic_forward_with_tolerance": "passed",
+    "ema_and_checkpoint_provenance": "passed",
+    "exact_three_row_replacement": "passed",
+    "focal_block1_untouched": "passed",
+    "input_pair_conditioning_and_masks_unchanged": "passed",
+    "shared_donors_and_all_other_rows_unchanged": "passed",
+    "test_protein": "9bsl_O"
+  }
+}

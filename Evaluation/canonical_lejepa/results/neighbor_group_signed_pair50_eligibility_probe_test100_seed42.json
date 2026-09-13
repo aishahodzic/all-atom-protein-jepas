@@ -1,0 +1,1335 @@
+{
+  "checkpoint_provenance": {
+    "checkpoint_path": "/slurm-storage/aishod/projects/la-proteina/store/canonical_lejepa_v1_100k/checkpoints/step-00100000.ckpt",
+    "checkpoint_sha256": "4f09dff610adaa75c8ac51b4cf01acb001c236c72dd91ac31568ffa191484527",
+    "ema_metadata": {
+      "decay": 0.9999,
+      "effective_decay": 0.9968049550435943,
+      "exclude": [],
+      "include": [
+        "encoder"
+      ],
+      "last_ema_step": 100000,
+      "num_updates": 3125,
+      "start_step": 0,
+      "update_every": 32,
+      "upstream_revision": "941526c428aa513a5bdfa38697724fda794d8496"
+    },
+    "encoder_config_path": "/slurm-storage/aishod/projects/la-proteina/StructTokenBench/100k-checkpoints/shared/exp_config_jepa_nn130m.json",
+    "encoder_config_sha256": "98e0350d418e7d840fa245ddfd7150064e87a9ac74c72c9150a946f0f66ccd9d",
+    "encoder_source": "ema",
+    "global_step": 100000,
+    "staged_evaluation_path": "/slurm-storage/aishod/projects/la-proteina/store/canonical_lejepa_v1_100k/evaluation/canonical-lejepa-v1-step100000-ema-staged.ckpt",
+    "staged_evaluation_provenance": {
+      "encoder_source": "ema",
+      "latent_dim": 8,
+      "projector": null,
+      "schema_version": 1,
+      "source_checkpoint_sha256": "4f09dff610adaa75c8ac51b4cf01acb001c236c72dd91ac31568ffa191484527",
+      "source_global_step": 100000
+    },
+    "staged_evaluation_sha256": "49aaae3dccc3835005bb6470b0f483a57cee4e28bead2408994693974389e273"
+  },
+  "config": {
+    "control_and_donor_distance_nm_min": 1.5,
+    "donor_sequence_tolerance": null,
+    "encoder_forward_run": false,
+    "group_size": 3,
+    "maximum_group_magnitude_relative_mismatch": 0.1,
+    "maximum_pair_magnitude_relative_mismatch": 0.5,
+    "maximum_single_squared_magnitude_fraction": 0.5,
+    "minimum_relative_intervention_per_row": 0.001,
+    "minimum_sequence_separation_for_near_control_and_donor": 20,
+    "near_control_sequence_matching": "signed",
+    "near_control_sequence_tolerance": 5,
+    "near_distance_nm_max": 0.8,
+    "same_aa_within_each_near_control_donor_triple": true,
+    "same_chain_segment_and_observed_ca": true,
+    "seed": 42,
+    "selected_probe_test_proteins": 100,
+    "unique_near_control_and_donor_rows": true
+  },
+  "counts": {
+    "eligible": 5,
+    "eligible_direction_balance": {
+      "all_after": 1,
+      "all_before": 3,
+      "mixed": 1
+    },
+    "excluded": 95,
+    "selected": 100,
+    "status": {
+      "eligible": 5,
+      "no_disjoint_group": 5,
+      "no_three_donor_options": 1,
+      "no_three_same_aa_sequence_matched_controls": 84,
+      "no_three_structural_neighbours": 5
+    }
+  },
+  "input_manifest": "/mnt/data/slurm-storage/aishod/projects/la-proteina/store/canonical_lejepa_v1_100k/evaluation/full_context_layer_states/full/manifest.json",
+  "per_protein_funnel": [
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 44,
+      "group_magnitude_matches": 0,
+      "protein_id": "1fj0_B",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 60,
+      "group_magnitude_matches": 0,
+      "protein_id": "1kn0_G",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 79,
+      "group_magnitude_matches": 0,
+      "protein_id": "1kva_A",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 44,
+      "group_magnitude_matches": 0,
+      "protein_id": "1m7w_A",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 81,
+      "group_magnitude_matches": 0,
+      "protein_id": "1m9u_C",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 19,
+      "focals_with_three_neighbours_having_controls": 1,
+      "focals_with_three_neighbours_having_donors": 1,
+      "focals_with_three_structural_neighbours": 97,
+      "group_magnitude_matches": 1,
+      "protein_id": "1n3s_D",
+      "status": "eligible"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 47,
+      "group_magnitude_matches": 0,
+      "protein_id": "1nys_C",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 1,
+      "group_magnitude_matches": 0,
+      "protein_id": "1p7j_B",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 3,
+      "focals_with_three_neighbours_having_controls": 2,
+      "focals_with_three_neighbours_having_donors": 2,
+      "focals_with_three_structural_neighbours": 101,
+      "group_magnitude_matches": 1,
+      "protein_id": "1pub_A",
+      "status": "eligible"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 0,
+      "group_magnitude_matches": 0,
+      "protein_id": "1s3q_D",
+      "status": "no_three_structural_neighbours"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 0,
+      "group_magnitude_matches": 0,
+      "protein_id": "1s3q_E",
+      "status": "no_three_structural_neighbours"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 77,
+      "group_magnitude_matches": 0,
+      "protein_id": "1ugr_B",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 31,
+      "group_magnitude_matches": 0,
+      "protein_id": "1v8p_G",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 14,
+      "group_magnitude_matches": 0,
+      "protein_id": "1vha_D",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 14,
+      "group_magnitude_matches": 0,
+      "protein_id": "1vha_E",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 1,
+      "focals_with_three_neighbours_having_controls": 2,
+      "focals_with_three_neighbours_having_donors": 2,
+      "focals_with_three_structural_neighbours": 101,
+      "group_magnitude_matches": 1,
+      "protein_id": "2ag2_A",
+      "status": "eligible"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 93,
+      "group_magnitude_matches": 0,
+      "protein_id": "2ipb_A",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 71,
+      "group_magnitude_matches": 0,
+      "protein_id": "2j5x_A",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 70,
+      "group_magnitude_matches": 0,
+      "protein_id": "2j5x_B",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 47,
+      "group_magnitude_matches": 0,
+      "protein_id": "2jd7_1",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 47,
+      "group_magnitude_matches": 0,
+      "protein_id": "2jd7_P",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 65,
+      "group_magnitude_matches": 0,
+      "protein_id": "2jjt_B",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 26,
+      "group_magnitude_matches": 0,
+      "protein_id": "2pd0_A",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 70,
+      "group_magnitude_matches": 0,
+      "protein_id": "2w83_E",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 22,
+      "group_magnitude_matches": 0,
+      "protein_id": "2wu5_G",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 0,
+      "group_magnitude_matches": 0,
+      "protein_id": "2yad_C",
+      "status": "no_three_structural_neighbours"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 0,
+      "group_magnitude_matches": 0,
+      "protein_id": "2ztt_A",
+      "status": "no_three_structural_neighbours"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 96,
+      "group_magnitude_matches": 0,
+      "protein_id": "3cbg_A",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 40,
+      "group_magnitude_matches": 0,
+      "protein_id": "3dll_L",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 6,
+      "group_magnitude_matches": 0,
+      "protein_id": "3gxx_C",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 44,
+      "group_magnitude_matches": 0,
+      "protein_id": "3kx9_V",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 60,
+      "group_magnitude_matches": 0,
+      "protein_id": "3lme_E",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 40,
+      "group_magnitude_matches": 0,
+      "protein_id": "3lte_B",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 38,
+      "group_magnitude_matches": 0,
+      "protein_id": "3n2e_C",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 23,
+      "focals_with_three_neighbours_having_controls": 4,
+      "focals_with_three_neighbours_having_donors": 2,
+      "focals_with_three_structural_neighbours": 47,
+      "group_magnitude_matches": 1,
+      "protein_id": "3ne1_A",
+      "status": "eligible"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 31,
+      "group_magnitude_matches": 0,
+      "protein_id": "3pip_Q",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 1,
+      "focals_with_three_neighbours_having_donors": 1,
+      "focals_with_three_structural_neighbours": 115,
+      "group_magnitude_matches": 0,
+      "protein_id": "3q08_K",
+      "status": "no_disjoint_group"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 38,
+      "group_magnitude_matches": 0,
+      "protein_id": "3v32_A",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 10,
+      "group_magnitude_matches": 0,
+      "protein_id": "4aij_B",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 39,
+      "group_magnitude_matches": 0,
+      "protein_id": "4aym_A",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 48,
+      "group_magnitude_matches": 0,
+      "protein_id": "4b7w_C",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 12,
+      "group_magnitude_matches": 0,
+      "protein_id": "4dv2_S",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 34,
+      "group_magnitude_matches": 0,
+      "protein_id": "4eqg_A",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 15,
+      "group_magnitude_matches": 0,
+      "protein_id": "4etr_B",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 48,
+      "group_magnitude_matches": 0,
+      "protein_id": "4fao_L",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 6,
+      "focals_with_three_neighbours_having_donors": 6,
+      "focals_with_three_structural_neighbours": 160,
+      "group_magnitude_matches": 0,
+      "protein_id": "4fun_A",
+      "status": "no_disjoint_group"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 24,
+      "group_magnitude_matches": 0,
+      "protein_id": "4gqh_b",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 25,
+      "group_magnitude_matches": 0,
+      "protein_id": "4gqh_h",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 90,
+      "group_magnitude_matches": 0,
+      "protein_id": "4hoy_A",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 4,
+      "group_magnitude_matches": 0,
+      "protein_id": "4noa_A",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 109,
+      "group_magnitude_matches": 0,
+      "protein_id": "4s1l_A",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 0,
+      "group_magnitude_matches": 0,
+      "protein_id": "4y66_E",
+      "status": "no_three_structural_neighbours"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 61,
+      "group_magnitude_matches": 0,
+      "protein_id": "4ylg_B",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 119,
+      "group_magnitude_matches": 0,
+      "protein_id": "4zd6_C",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 78,
+      "group_magnitude_matches": 0,
+      "protein_id": "4zxp_B",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 35,
+      "group_magnitude_matches": 0,
+      "protein_id": "5b0o_I",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 81,
+      "group_magnitude_matches": 0,
+      "protein_id": "5c46_F",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 1,
+      "focals_with_three_neighbours_having_donors": 1,
+      "focals_with_three_structural_neighbours": 35,
+      "group_magnitude_matches": 0,
+      "protein_id": "5dm7_L",
+      "status": "no_disjoint_group"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 56,
+      "group_magnitude_matches": 0,
+      "protein_id": "5h9w_A",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 163,
+      "group_magnitude_matches": 0,
+      "protein_id": "5tkg_A",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 47,
+      "group_magnitude_matches": 0,
+      "protein_id": "5v50_A",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 114,
+      "group_magnitude_matches": 0,
+      "protein_id": "5xo0_B",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 58,
+      "group_magnitude_matches": 0,
+      "protein_id": "5xo1_F",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 59,
+      "group_magnitude_matches": 0,
+      "protein_id": "5xs0_O",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 33,
+      "group_magnitude_matches": 0,
+      "protein_id": "6cht_K",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 34,
+      "group_magnitude_matches": 0,
+      "protein_id": "6j5z_C",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 66,
+      "group_magnitude_matches": 0,
+      "protein_id": "6jla_B",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 2,
+      "focals_with_three_neighbours_having_donors": 2,
+      "focals_with_three_structural_neighbours": 60,
+      "group_magnitude_matches": 0,
+      "protein_id": "6ltq_A",
+      "status": "no_disjoint_group"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 3,
+      "group_magnitude_matches": 0,
+      "protein_id": "6oqu_X",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 31,
+      "group_magnitude_matches": 0,
+      "protein_id": "6qhk_A",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 48,
+      "group_magnitude_matches": 0,
+      "protein_id": "6rlp_I",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 68,
+      "group_magnitude_matches": 0,
+      "protein_id": "6tqs_B",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 22,
+      "group_magnitude_matches": 0,
+      "protein_id": "6vjz_C",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 15,
+      "group_magnitude_matches": 0,
+      "protein_id": "6zkf_f",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 3,
+      "focals_with_three_neighbours_having_controls": 1,
+      "focals_with_three_neighbours_having_donors": 1,
+      "focals_with_three_structural_neighbours": 36,
+      "group_magnitude_matches": 1,
+      "protein_id": "7bl4_O",
+      "status": "eligible"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 47,
+      "group_magnitude_matches": 0,
+      "protein_id": "7dya_B",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 45,
+      "group_magnitude_matches": 0,
+      "protein_id": "7dyb_H",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 61,
+      "group_magnitude_matches": 0,
+      "protein_id": "7g82_B",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 10,
+      "group_magnitude_matches": 0,
+      "protein_id": "7nwz_C",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 12,
+      "group_magnitude_matches": 0,
+      "protein_id": "7nx0_A",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 16,
+      "group_magnitude_matches": 0,
+      "protein_id": "7w2u_H",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 6,
+      "group_magnitude_matches": 0,
+      "protein_id": "7xpc_D",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 39,
+      "group_magnitude_matches": 0,
+      "protein_id": "8d0b_C",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 4,
+      "group_magnitude_matches": 0,
+      "protein_id": "8ey4_I",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 129,
+      "group_magnitude_matches": 0,
+      "protein_id": "8h1i_A",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 74,
+      "group_magnitude_matches": 0,
+      "protein_id": "8i6n_B",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 3,
+      "group_magnitude_matches": 0,
+      "protein_id": "8jcd_D",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 15,
+      "group_magnitude_matches": 0,
+      "protein_id": "8om1_V",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 37,
+      "group_magnitude_matches": 0,
+      "protein_id": "8pai_A",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 45,
+      "group_magnitude_matches": 0,
+      "protein_id": "8qpa_M",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 1,
+      "focals_with_three_neighbours_having_donors": 1,
+      "focals_with_three_structural_neighbours": 69,
+      "group_magnitude_matches": 0,
+      "protein_id": "8s5e_A",
+      "status": "no_disjoint_group"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 26,
+      "group_magnitude_matches": 0,
+      "protein_id": "8xi2_e",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 15,
+      "group_magnitude_matches": 0,
+      "protein_id": "8ydf_X",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 30,
+      "group_magnitude_matches": 0,
+      "protein_id": "9bsl_O",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 76,
+      "group_magnitude_matches": 0,
+      "protein_id": "9d85_B",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 16,
+      "group_magnitude_matches": 0,
+      "protein_id": "9e4w_P",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 16,
+      "group_magnitude_matches": 0,
+      "protein_id": "9gut_T",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 10,
+      "group_magnitude_matches": 0,
+      "protein_id": "9jhd_P",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 0,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 14,
+      "group_magnitude_matches": 0,
+      "protein_id": "9o3i_2s",
+      "status": "no_three_same_aa_sequence_matched_controls"
+    },
+    {
+      "complete_disjoint_groups": 0,
+      "focals_with_three_neighbours_having_controls": 1,
+      "focals_with_three_neighbours_having_donors": 0,
+      "focals_with_three_structural_neighbours": 45,
+      "group_magnitude_matches": 0,
+      "protein_id": "9qqq_n",
+      "status": "no_three_donor_options"
+    }
+  ],
+  "purpose": "revised_group_eligibility_only_no_encoder_forwards_or_interventions",
+  "selected_groups": [
+    {
+      "far_group_l2": 171.65749871889966,
+      "far_maximum_single_energy_fraction": 0.48052084050672245,
+      "focal_i": 123,
+      "group_magnitude_relative_mismatch": 0.022088847032808057,
+      "near_group_l2": 175.4915599461171,
+      "near_maximum_single_energy_fraction": 0.4777957262667527,
+      "protein_id": "1n3s_D",
+      "selection_sha256": "5d68bee76abb2d05f75d679740a4456f464085015790c390199af5239d83c10a",
+      "triples": [
+        {
+          "aa_integer": 12,
+          "control": 92,
+          "control_distance_nm": 1.8361620903015137,
+          "control_sequence_separation": 31,
+          "control_signed_sequence_separation": -31,
+          "donor": 29,
+          "donor_distance_nm": 4.0387797355651855,
+          "donor_sequence_separation": 94,
+          "donor_signed_sequence_separation": -94,
+          "far_l2": 118.9923095703125,
+          "far_relative_intervention": 1.3851893265384876,
+          "near": 97,
+          "near_distance_nm": 0.7049996852874756,
+          "near_l2": 113.0636215209961,
+          "near_relative_intervention": 1.436534339912351,
+          "near_sequence_separation": 26,
+          "near_signed_sequence_separation": -26,
+          "pair_magnitude_relative_mismatch": 0.05109706113896831
+        },
+        {
+          "aa_integer": 19,
+          "control": 177,
+          "control_distance_nm": 2.145451784133911,
+          "control_sequence_separation": 54,
+          "control_signed_sequence_separation": 54,
+          "donor": 14,
+          "donor_distance_nm": 2.341093063354492,
+          "donor_sequence_separation": 109,
+          "donor_signed_sequence_separation": -109,
+          "far_l2": 75.96469116210938,
+          "far_relative_intervention": 1.0815562923187119,
+          "near": 172,
+          "near_distance_nm": 0.6553927659988403,
+          "near_l2": 57.43772888183594,
+          "near_relative_intervention": 0.8554949618432337,
+          "near_sequence_separation": 49,
+          "near_signed_sequence_separation": 49,
+          "pair_magnitude_relative_mismatch": 0.2777605125030011
+        },
+        {
+          "aa_integer": 0,
+          "control": 176,
+          "control_distance_nm": 1.770213007926941,
+          "control_sequence_separation": 53,
+          "control_signed_sequence_separation": 53,
+          "donor": 54,
+          "donor_distance_nm": 5.18400764465332,
+          "donor_sequence_separation": 69,
+          "donor_signed_sequence_separation": -69,
+          "far_l2": 97.65496826171875,
+          "far_relative_intervention": 1.2078581261420542,
+          "near": 171,
+          "near_distance_nm": 0.5063716769218445,
+          "near_l2": 121.30462646484375,
+          "near_relative_intervention": 1.5210844295593768,
+          "near_sequence_separation": 48,
+          "near_signed_sequence_separation": 48,
+          "pair_magnitude_relative_mismatch": 0.21601846891120505
+        }
+      ]
+    },
+    {
+      "far_group_l2": 139.6500532637084,
+      "far_maximum_single_energy_fraction": 0.4347692203639829,
+      "focal_i": 110,
+      "group_magnitude_relative_mismatch": 0.024698000332492673,
+      "near_group_l2": 136.2430492943527,
+      "near_maximum_single_energy_fraction": 0.46593020882573977,
+      "protein_id": "1pub_A",
+      "selection_sha256": "5723cf37a8d1af1673a58b295c11f6a058c6966b7a9656432133cbf4ec96ab04",
+      "triples": [
+        {
+          "aa_integer": 14,
+          "control": 47,
+          "control_distance_nm": 1.6243999004364014,
+          "control_sequence_separation": 63,
+          "control_signed_sequence_separation": -63,
+          "donor": 29,
+          "donor_distance_nm": 3.6444435119628906,
+          "donor_sequence_separation": 81,
+          "donor_signed_sequence_separation": -81,
+          "far_l2": 92.08110046386719,
+          "far_relative_intervention": 1.2715887392013634,
+          "near": 43,
+          "near_distance_nm": 0.4952847361564636,
+          "near_l2": 90.34737396240234,
+          "near_relative_intervention": 1.2356578468478545,
+          "near_sequence_separation": 67,
+          "near_signed_sequence_separation": -67,
+          "pair_magnitude_relative_mismatch": 0.019007191798510032
+        },
+        {
+          "aa_integer": 15,
+          "control": 35,
+          "control_distance_nm": 2.0033199787139893,
+          "control_sequence_separation": 75,
+          "control_signed_sequence_separation": -75,
+          "donor": 143,
+          "donor_distance_nm": 1.5533068180084229,
+          "donor_sequence_separation": 33,
+          "donor_signed_sequence_separation": 33,
+          "far_l2": 62.5768928527832,
+          "far_relative_intervention": 0.9212206112434562,
+          "near": 39,
+          "near_distance_nm": 0.7380304336547852,
+          "near_l2": 41.84310531616211,
+          "near_relative_intervention": 0.5859438985423356,
+          "near_sequence_separation": 71,
+          "near_signed_sequence_separation": -71,
+          "pair_magnitude_relative_mismatch": 0.397122924730856
+        },
+        {
+          "aa_integer": 10,
+          "control": 48,
+          "control_distance_nm": 1.504477858543396,
+          "control_sequence_separation": 62,
+          "control_signed_sequence_separation": -62,
+          "donor": 61,
+          "donor_distance_nm": 3.8632073402404785,
+          "donor_sequence_separation": 49,
+          "donor_signed_sequence_separation": -49,
+          "far_l2": 84.30504608154297,
+          "far_relative_intervention": 1.1584002547844416,
+          "near": 44,
+          "near_distance_nm": 0.7808237075805664,
+          "near_l2": 92.99825286865234,
+          "near_relative_intervention": 1.2682099344403552,
+          "near_sequence_separation": 66,
+          "near_signed_sequence_separation": -66,
+          "pair_magnitude_relative_mismatch": 0.09806029372923632
+        }
+      ]
+    },
+    {
+      "far_group_l2": 134.90441775985852,
+      "far_maximum_single_energy_fraction": 0.43377798069361734,
+      "focal_i": 80,
+      "group_magnitude_relative_mismatch": 0.036279185713927846,
+      "near_group_l2": 130.09739280976723,
+      "near_maximum_single_energy_fraction": 0.46820401309906073,
+      "protein_id": "2ag2_A",
+      "selection_sha256": "fa8d555111303424312d0ce3d688e833a3461ba205b7c643c64f7cee814400b7",
+      "triples": [
+        {
+          "aa_integer": 14,
+          "control": 45,
+          "control_distance_nm": 1.5390833616256714,
+          "control_sequence_separation": 35,
+          "control_signed_sequence_separation": -35,
+          "donor": 31,
+          "donor_distance_nm": 3.104827404022217,
+          "donor_sequence_separation": 49,
+          "donor_signed_sequence_separation": -49,
+          "far_l2": 88.85050964355469,
+          "far_relative_intervention": 1.24963787714402,
+          "near": 49,
+          "near_distance_nm": 0.5553290843963623,
+          "near_l2": 89.01970672607422,
+          "near_relative_intervention": 1.2461860088918453,
+          "near_sequence_separation": 31,
+          "near_signed_sequence_separation": -31,
+          "pair_magnitude_relative_mismatch": 0.0019024779524406247
+        },
+        {
+          "aa_integer": 15,
+          "control": 43,
+          "control_distance_nm": 2.0538604259490967,
+          "control_sequence_separation": 37,
+          "control_signed_sequence_separation": -37,
+          "donor": 159,
+          "donor_distance_nm": 2.9348971843719482,
+          "donor_sequence_separation": 79,
+          "donor_signed_sequence_separation": 79,
+          "far_l2": 83.67073059082031,
+          "far_relative_intervention": 1.161851684071486,
+          "near": 48,
+          "near_distance_nm": 0.692986011505127,
+          "near_l2": 83.49609375,
+          "near_relative_intervention": 1.1886573157654474,
+          "near_sequence_separation": 32,
+          "near_signed_sequence_separation": -32,
+          "pair_magnitude_relative_mismatch": 0.0020893719972123453
+        },
+        {
+          "aa_integer": 19,
+          "control": 55,
+          "control_distance_nm": 1.683801531791687,
+          "control_sequence_separation": 25,
+          "control_signed_sequence_separation": -25,
+          "donor": 17,
+          "donor_distance_nm": 1.9773097038269043,
+          "donor_sequence_separation": 63,
+          "donor_signed_sequence_separation": -63,
+          "far_l2": 57.480411529541016,
+          "far_relative_intervention": 0.8450811456291644,
+          "near": 52,
+          "near_distance_nm": 0.778640866279602,
+          "near_l2": 45.04692840576172,
+          "near_relative_intervention": 0.686549509046121,
+          "near_sequence_separation": 28,
+          "near_signed_sequence_separation": -28,
+          "pair_magnitude_relative_mismatch": 0.242539855839918
+        }
+      ]
+    },
+    {
+      "far_group_l2": 100.26565791391289,
+      "far_maximum_single_energy_fraction": 0.46807744419758857,
+      "focal_i": 121,
+      "group_magnitude_relative_mismatch": 0.08288093424415577,
+      "near_group_l2": 92.28621822162377,
+      "near_maximum_single_energy_fraction": 0.3868316466826438,
+      "protein_id": "3ne1_A",
+      "selection_sha256": "a95228642bf9ec61e130014de4a144e750c8381723ab1b1c2315c324fa7c2b5b",
+      "triples": [
+        {
+          "aa_integer": 9,
+          "control": 1,
+          "control_distance_nm": 1.7429869174957275,
+          "control_sequence_separation": 120,
+          "control_signed_sequence_separation": -120,
+          "donor": 77,
+          "donor_distance_nm": 1.7878860235214233,
+          "donor_sequence_separation": 44,
+          "donor_signed_sequence_separation": -44,
+          "far_l2": 68.59793853759766,
+          "far_relative_intervention": 0.995634112808138,
+          "near": 6,
+          "near_distance_nm": 0.5680641531944275,
+          "near_l2": 57.39814376831055,
+          "near_relative_intervention": 0.8829735381030144,
+          "near_sequence_separation": 115,
+          "near_signed_sequence_separation": -115,
+          "pair_magnitude_relative_mismatch": 0.17778004782870824
+        },
+        {
+          "aa_integer": 7,
+          "control": 0,
+          "control_distance_nm": 2.0749802589416504,
+          "control_sequence_separation": 121,
+          "control_signed_sequence_separation": -121,
+          "donor": 89,
+          "donor_distance_nm": 1.5947246551513672,
+          "donor_sequence_separation": 32,
+          "donor_signed_sequence_separation": -32,
+          "far_l2": 67.3600082397461,
+          "far_relative_intervention": 0.9833563607061133,
+          "near": 5,
+          "near_distance_nm": 0.7970870137214661,
+          "near_l2": 57.006591796875,
+          "near_relative_intervention": 0.8696598674926919,
+          "near_sequence_separation": 116,
+          "near_signed_sequence_separation": -116,
+          "pair_magnitude_relative_mismatch": 0.16649834344305334
+        },
+        {
+          "aa_integer": 0,
+          "control": 45,
+          "control_distance_nm": 1.5327186584472656,
+          "control_sequence_separation": 76,
+          "control_signed_sequence_separation": -76,
+          "donor": 37,
+          "donor_distance_nm": 1.8258930444717407,
+          "donor_sequence_separation": 84,
+          "donor_signed_sequence_separation": -84,
+          "far_l2": 28.46320915222168,
+          "far_relative_intervention": 0.42686154176028895,
+          "near": 50,
+          "near_distance_nm": 0.6892344355583191,
+          "near_l2": 44.41224670410156,
+          "near_relative_intervention": 0.6715636854126916,
+          "near_sequence_separation": 71,
+          "near_signed_sequence_separation": -71,
+          "pair_magnitude_relative_mismatch": 0.4377066973913418
+        }
+      ]
+    },
+    {
+      "far_group_l2": 93.47360905749804,
+      "far_maximum_single_energy_fraction": 0.49075743770950375,
+      "focal_i": 5,
+      "group_magnitude_relative_mismatch": 0.06016509626048151,
+      "near_group_l2": 99.27188464880491,
+      "near_maximum_single_energy_fraction": 0.3917040673387846,
+      "protein_id": "7bl4_O",
+      "selection_sha256": "50844448435f8df292cc9d946d47d18f574c30ba1b6e796d4e9619c63f8b0627",
+      "triples": [
+        {
+          "aa_integer": 13,
+          "control": 90,
+          "control_distance_nm": 1.685109257698059,
+          "control_sequence_separation": 85,
+          "control_signed_sequence_separation": 85,
+          "donor": 115,
+          "donor_distance_nm": 2.3507256507873535,
+          "donor_sequence_separation": 110,
+          "donor_signed_sequence_separation": 110,
+          "far_l2": 39.7174186706543,
+          "far_relative_intervention": 0.6058768233304361,
+          "near": 95,
+          "near_distance_nm": 0.7535693049430847,
+          "near_l2": 56.70194625854492,
+          "near_relative_intervention": 0.8381967559964262,
+          "near_sequence_separation": 90,
+          "near_signed_sequence_separation": 90,
+          "pair_magnitude_relative_mismatch": 0.35230531958725037
+        },
+        {
+          "aa_integer": 15,
+          "control": 89,
+          "control_distance_nm": 2.001429319381714,
+          "control_sequence_separation": 84,
+          "control_signed_sequence_separation": 84,
+          "donor": 50,
+          "donor_distance_nm": 2.0335779190063477,
+          "donor_sequence_separation": 45,
+          "donor_signed_sequence_separation": 45,
+          "far_l2": 53.59048080444336,
+          "far_relative_intervention": 0.8155479227955732,
+          "near": 93,
+          "near_distance_nm": 0.7799216508865356,
+          "near_l2": 52.72180938720703,
+          "near_relative_intervention": 0.7901877417610841,
+          "near_sequence_separation": 88,
+          "near_signed_sequence_separation": 88,
+          "pair_magnitude_relative_mismatch": 0.01634188136988422
+        },
+        {
+          "aa_integer": 7,
+          "control": 99,
+          "control_distance_nm": 1.6055995225906372,
+          "control_sequence_separation": 94,
+          "control_signed_sequence_separation": 94,
+          "donor": 84,
+          "donor_distance_nm": 3.0817384719848633,
+          "donor_sequence_separation": 79,
+          "donor_signed_sequence_separation": 79,
+          "far_l2": 65.4820785522461,
+          "far_relative_intervention": 1.0373201121212607,
+          "near": 94,
+          "near_distance_nm": 0.5393914580345154,
+          "near_l2": 62.13056564331055,
+          "near_relative_intervention": 0.9623861110457853,
+          "near_sequence_separation": 89,
+          "near_signed_sequence_separation": 89,
+          "pair_magnitude_relative_mismatch": 0.052526345332984545
+        }
+      ]
+    }
+  ]
+}

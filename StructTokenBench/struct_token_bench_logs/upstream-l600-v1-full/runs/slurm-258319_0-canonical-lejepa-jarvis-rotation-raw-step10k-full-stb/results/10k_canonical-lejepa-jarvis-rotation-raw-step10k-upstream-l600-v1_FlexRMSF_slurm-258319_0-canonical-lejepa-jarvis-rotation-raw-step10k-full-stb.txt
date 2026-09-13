@@ -1,0 +1,17 @@
+      Branch: canonical-lejepa-jarvis-rotation-raw-step10k-upstream-l600-v1  |  Checkpoint: 10k  |  Task: FlexRMSF      
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Metric                                                                                    ┃                    Value ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│ fold_test_loss                                                                            │                   0.0184 │
+│ fold_test_pearsonr                                                                        │                   0.3957 │
+│ fold_test_r2                                                                              │                   0.1432 │
+│ fold_test_spearmanr                                                                       │                   0.2977 │
+│ superfamily_test_loss                                                                     │                   0.0227 │
+│ superfamily_test_pearsonr                                                                 │                   0.3594 │
+│ superfamily_test_r2                                                                       │                   0.1288 │
+│ superfamily_test_spearmanr                                                                │                   0.3013 │
+│ validation_loss                                                                           │                   0.0239 │
+│ validation_pearsonr                                                                       │                   0.4031 │
+│ validation_r2                                                                             │                   0.1538 │
+│ validation_spearmanr                                                                      │                   0.2771 │
+└───────────────────────────────────────────────────────────────────────────────────────────┴──────────────────────────┘

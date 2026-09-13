@@ -1,0 +1,17 @@
+                   Branch: ca-cond-baseline-upstream-l600-v1  |  Checkpoint: 100k  |  Task: FlexRMSF                    
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Metric                                                                                    ┃                    Value ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│ fold_test_loss                                                                            │                   0.0199 │
+│ fold_test_pearsonr                                                                        │                   0.3092 │
+│ fold_test_r2                                                                              │                   0.0928 │
+│ fold_test_spearmanr                                                                       │                   0.1601 │
+│ superfamily_test_loss                                                                     │                   0.0247 │
+│ superfamily_test_pearsonr                                                                 │                   0.2368 │
+│ superfamily_test_r2                                                                       │                   0.0535 │
+│ superfamily_test_spearmanr                                                                │                   0.1215 │
+│ validation_loss                                                                           │                   0.0262 │
+│ validation_pearsonr                                                                       │                   0.3042 │
+│ validation_r2                                                                             │                   0.0724 │
+│ validation_spearmanr                                                                      │                   0.1378 │
+└───────────────────────────────────────────────────────────────────────────────────────────┴──────────────────────────┘

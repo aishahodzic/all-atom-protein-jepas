@@ -1,0 +1,16 @@
+{
+  "checkpoint_ids": [
+    "canonical-lejepa-middle-lr4e4-raw-step10000",
+    "canonical-lejepa-jarvis-rotation-raw-step10000",
+    "canonical-lejepa-jarvis-per-residue-raw-step10000",
+    "canonical-lejepa-residue-perview-rot-middle-lr-raw-step10000"
+  ],
+  "encoder_source": "raw",
+  "source_step": 10000,
+  "proteins": 5224,
+  "residue_pool": 748402,
+  "sampled_residues": 15000,
+  "physical_sample_sha256": "6281211e2d1f3364f54c33fbde061601e4d35560a56f75bd6864b993b775d9b8",
+  "biochemical_output_tag": "canonical-raw10-middle-lr-protein-residue-rotation-2x2",
+  "position_figure": "/slurm-storage/aishod/projects/la-proteina/Evaluation/latent_viz/figures/canonical_lejepa/tsne_canonical_raw10_middle-lr_protein-residue-rotation-2x2_position.png"
+}

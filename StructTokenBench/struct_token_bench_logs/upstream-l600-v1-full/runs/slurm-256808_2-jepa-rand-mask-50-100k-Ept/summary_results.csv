@@ -1,0 +1,2 @@
+checkpoint,branch,task,metric,fold_test,superfamily_test
+100k,jepa-rand-mask-50-upstream-l600-v1,Ept,auroc,0.4692,0.4975

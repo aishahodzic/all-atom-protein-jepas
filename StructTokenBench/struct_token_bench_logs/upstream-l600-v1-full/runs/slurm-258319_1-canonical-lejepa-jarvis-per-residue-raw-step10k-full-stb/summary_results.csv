@@ -1,0 +1,11 @@
+checkpoint,branch,task,metric,fold_test,superfamily_test
+10k,canonical-lejepa-jarvis-per-residue-raw-step10k-upstream-l600-v1,BindInt,auroc,0.4414,0.8287
+10k,canonical-lejepa-jarvis-per-residue-raw-step10k-upstream-l600-v1,BindBio,auroc,0.5785,0.5903
+10k,canonical-lejepa-jarvis-per-residue-raw-step10k-upstream-l600-v1,CatInt,auroc,0.5528,0.7744
+10k,canonical-lejepa-jarvis-per-residue-raw-step10k-upstream-l600-v1,CatBio,auroc,0.5782,0.6157
+10k,canonical-lejepa-jarvis-per-residue-raw-step10k-upstream-l600-v1,Con,auroc,0.5567,0.7123
+10k,canonical-lejepa-jarvis-per-residue-raw-step10k-upstream-l600-v1,Rep,auroc,0.7441,0.7969
+10k,canonical-lejepa-jarvis-per-residue-raw-step10k-upstream-l600-v1,Ept,auroc,0.5056,0.5264
+10k,canonical-lejepa-jarvis-per-residue-raw-step10k-upstream-l600-v1,FlexRMSF,spearmanr,0.1655,0.1606
+10k,canonical-lejepa-jarvis-per-residue-raw-step10k-upstream-l600-v1,FlexBFactor,spearmanr,0.0958,0.1007
+10k,canonical-lejepa-jarvis-per-residue-raw-step10k-upstream-l600-v1,FlexNEQ,spearmanr,0.4933,0.4972

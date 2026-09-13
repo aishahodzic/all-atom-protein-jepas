@@ -1,0 +1,11 @@
+checkpoint,branch,task,metric,fold_test,superfamily_test
+100k,ca-cond-baseline-upstream-l600-v1,BindInt,auroc,0.4460,0.8001
+100k,ca-cond-baseline-upstream-l600-v1,BindBio,auroc,0.6312,0.6377
+100k,ca-cond-baseline-upstream-l600-v1,CatInt,auroc,0.5453,0.7770
+100k,ca-cond-baseline-upstream-l600-v1,CatBio,auroc,0.6722,0.7366
+100k,ca-cond-baseline-upstream-l600-v1,Con,auroc,0.5653,0.7058
+100k,ca-cond-baseline-upstream-l600-v1,Rep,auroc,0.7512,0.7958
+100k,ca-cond-baseline-upstream-l600-v1,Ept,auroc,0.4708,0.5360
+100k,ca-cond-baseline-upstream-l600-v1,FlexRMSF,spearmanr,0.1601,0.1215
+100k,ca-cond-baseline-upstream-l600-v1,FlexBFactor,spearmanr,0.1132,0.1075
+100k,ca-cond-baseline-upstream-l600-v1,FlexNEQ,spearmanr,0.1435,0.1265

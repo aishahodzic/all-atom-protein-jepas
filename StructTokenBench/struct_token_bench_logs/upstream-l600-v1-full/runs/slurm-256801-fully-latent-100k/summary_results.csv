@@ -1,0 +1,11 @@
+checkpoint,branch,task,metric,fold_test,superfamily_test
+100k,fully-latent-upstream-l600-v1,BindInt,auroc,0.4482,0.8148
+100k,fully-latent-upstream-l600-v1,BindBio,auroc,0.6961,0.6965
+100k,fully-latent-upstream-l600-v1,CatInt,auroc,0.5986,0.8008
+100k,fully-latent-upstream-l600-v1,CatBio,auroc,0.7730,0.8356
+100k,fully-latent-upstream-l600-v1,Con,auroc,0.6162,0.7496
+100k,fully-latent-upstream-l600-v1,Rep,auroc,0.7360,0.8044
+100k,fully-latent-upstream-l600-v1,Ept,auroc,0.4774,0.5238
+100k,fully-latent-upstream-l600-v1,FlexRMSF,spearmanr,0.4283,0.4104
+100k,fully-latent-upstream-l600-v1,FlexBFactor,spearmanr,0.2881,0.2427
+100k,fully-latent-upstream-l600-v1,FlexNEQ,spearmanr,0.2013,0.1957

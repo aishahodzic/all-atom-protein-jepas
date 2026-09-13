@@ -1,0 +1,18 @@
+ Branch: canonical-lejepa-protein-perview-rot-middle-lr-raw-step15980-upstream-l600-v1  |  Checkpoint: 15980  |  Task:  
+                                                        FlexRMSF                                                        
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Metric                                                                                    ┃                    Value ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│ fold_test_loss                                                                            │                   0.0187 │
+│ fold_test_pearsonr                                                                        │                   0.3759 │
+│ fold_test_r2                                                                              │                   0.1266 │
+│ fold_test_spearmanr                                                                       │                   0.2787 │
+│ superfamily_test_loss                                                                     │                   0.0229 │
+│ superfamily_test_pearsonr                                                                 │                   0.3498 │
+│ superfamily_test_r2                                                                       │                   0.1210 │
+│ superfamily_test_spearmanr                                                                │                   0.2918 │
+│ validation_loss                                                                           │                   0.0243 │
+│ validation_pearsonr                                                                       │                   0.3862 │
+│ validation_r2                                                                             │                   0.1389 │
+│ validation_spearmanr                                                                      │                   0.2575 │
+└───────────────────────────────────────────────────────────────────────────────────────────┴──────────────────────────┘

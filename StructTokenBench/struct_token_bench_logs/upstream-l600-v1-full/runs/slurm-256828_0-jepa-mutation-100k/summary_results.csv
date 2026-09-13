@@ -1,0 +1,11 @@
+checkpoint,branch,task,metric,fold_test,superfamily_test
+100k,jepa-mutation-upstream-l600-v1,BindInt,auroc,0.4546,0.8184
+100k,jepa-mutation-upstream-l600-v1,BindBio,auroc,0.6396,0.6456
+100k,jepa-mutation-upstream-l600-v1,CatInt,auroc,0.5668,0.7713
+100k,jepa-mutation-upstream-l600-v1,CatBio,auroc,0.6803,0.7236
+100k,jepa-mutation-upstream-l600-v1,Con,auroc,0.6033,0.7210
+100k,jepa-mutation-upstream-l600-v1,Rep,auroc,0.7355,0.7992
+100k,jepa-mutation-upstream-l600-v1,Ept,auroc,0.5138,0.5311
+100k,jepa-mutation-upstream-l600-v1,FlexRMSF,spearmanr,0.3508,0.3561
+100k,jepa-mutation-upstream-l600-v1,FlexBFactor,spearmanr,0.2209,0.1776
+100k,jepa-mutation-upstream-l600-v1,FlexNEQ,spearmanr,0.1007,0.1060

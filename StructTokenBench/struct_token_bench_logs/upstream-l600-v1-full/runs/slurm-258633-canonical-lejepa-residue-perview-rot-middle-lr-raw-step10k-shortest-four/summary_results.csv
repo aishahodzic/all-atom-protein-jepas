@@ -1,0 +1,5 @@
+checkpoint,branch,task,metric,fold_test,superfamily_test
+10k,canonical-lejepa-residue-perview-rot-middle-lr-raw-step10k-upstream-l600-v1,FlexBFactor,spearmanr,0.1841,0.1688
+10k,canonical-lejepa-residue-perview-rot-middle-lr-raw-step10k-upstream-l600-v1,Ept,auroc,0.5065,0.5479
+10k,canonical-lejepa-residue-perview-rot-middle-lr-raw-step10k-upstream-l600-v1,FlexNEQ,spearmanr,0.5937,0.5858
+10k,canonical-lejepa-residue-perview-rot-middle-lr-raw-step10k-upstream-l600-v1,FlexRMSF,spearmanr,0.3606,0.3070
