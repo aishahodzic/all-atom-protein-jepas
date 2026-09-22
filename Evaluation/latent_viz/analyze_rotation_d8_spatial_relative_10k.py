@@ -86,10 +86,6 @@ NAMES = {
 
 
 def register() -> None:
-    # The already-verified reference latent caches outlive their source
-    # checkpoint files when a continuing run's top-k retention prunes early
-    # milestones. They are registered only so run_tsne can reuse those exact
-    # caches; the new checkpoint files must still exist.
     for checkpoint_id, path in REFERENCE_CHECKPOINTS.items():
         entry = (str(path), "jepa")
         checkpoints.CHECKPOINTS[checkpoint_id] = entry

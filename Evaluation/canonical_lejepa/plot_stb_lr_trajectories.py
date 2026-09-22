@@ -20,8 +20,6 @@ LR_LABELS = {
     "High LR": "High LR (1e-3)",
 }
 
-# Headline test metrics from the canonical STB result files: AUROC for
-# BindShake/CatBio/Homo and Spearman rho for FlexRMSF.
 DATA = {
     ("BindShake", "test", "AUROC"): {
         "random": 0.6470,
@@ -322,8 +320,6 @@ def save_combined_figure() -> None:
     header = 105
     section_h = 34
     stb_panel_w, stb_panel_h = 390, 280
-    # Keep STB and diagnostic panels identical in size. The final two
-    # diagnostic panels are centered in the four-column grid below.
     diagnostic_panel_w, diagnostic_panel_h = stb_panel_w, stb_panel_h
     stb_y = header + section_h
     stb_rows = math.ceil(len(STB_ORDER) / 4)

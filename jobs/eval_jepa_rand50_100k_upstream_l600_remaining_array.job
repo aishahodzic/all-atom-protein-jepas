@@ -39,9 +39,6 @@ fi
 echo "bbc0761375db3813c981e4d09379b57b314085db2c412d06bf0ace2e56523896  $CHECKPOINT" | sha256sum -c -
 echo "98e0350d418e7d840fa245ddfd7150064e87a9ac74c72c9150a946f0f66ccd9d  $ENCODER_CONFIG" | sha256sum -c -
 
-# An immutable manifest is written only after training, final evaluation, and
-# result persistence.  Search all run roots so resubmission cannot duplicate a
-# result merely because it would use a new SLURM job/run ID.
 shopt -s nullglob
 existing_manifests=(
     "$PROTOCOL_ROOT"/*/manifests/*/100k__jepa-rand-mask-50-upstream-l600-v1__"$TASK".json

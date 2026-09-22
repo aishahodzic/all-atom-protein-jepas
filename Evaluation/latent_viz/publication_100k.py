@@ -10,9 +10,6 @@ weights (8 or 64), so predictor/masking differences do not affect loading.
 from typing import Dict, Tuple
 
 
-# Paths are relative to StructTokenBench/100k-checkpoints.  Intermediate
-# checkpoint sweeps and the 30k component ablations are intentionally absent:
-# this is the major final/100k comparison requested for the paper.
 ADDITIONAL_PUBLICATION_100K: Dict[str, Tuple[str, str]] = {
     "random-init-64": ("random-init-64/step0.ckpt", "jepa"),
     "jepa-rand70-d64": ("bottle-inspect/64dim/jepa/100k.ckpt", "jepa"),

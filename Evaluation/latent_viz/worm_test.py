@@ -167,13 +167,6 @@ def run_protein_dense_test(per_protein_by_checkpoint, protein_ids, labels_by_pro
             keep_mask[pos:pos + n] = True
         pos += n
     keep_idx = np.nonzero(keep_mask)[0]
-    # Shuffle plotting order: keep_idx (and everything derived from it below)
-    # otherwise follows ascending protein-id order, same order palette colors
-    # were assigned in -- so higher-index (tab20b, more muted) colors would
-    # always draw LAST / on top wherever points from different proteins land
-    # close together in the embedding, visually dominating regardless of how
-    # many proteins actually got a muted color. scatter() has no z-order
-    # control besides input order, so a random permutation is the fix.
     rng.shuffle(keep_idx)
     protein_idx_dense = selection.protein_idx[keep_idx]
     local_idx_dense = build_local_idx_flat(selection)[keep_idx]
@@ -186,11 +179,6 @@ def run_protein_dense_test(per_protein_by_checkpoint, protein_ids, labels_by_pro
                 f"(min 30 residues each, mean {len(keep_idx) / len(chosen):.0f} pts/protein)")
 
     import matplotlib.pyplot as plt
-    # tab20+tab20b+tab20c concatenated: 60 genuinely distinct qualitative colors,
-    # no perceptual clustering (unlike gist_ncar, whose first ~6/20 samples are
-    # all blue/cyan-family) and no accidental duplicates for up to 60 proteins
-    # (the previous version's `% 20` wrapped even for colormaps with no such
-    # limit, silently giving proteins #20-24 the exact same colors as #0-4).
     palette = list(plt.get_cmap("tab20").colors) + list(plt.get_cmap("tab20b").colors) + list(plt.get_cmap("tab20c").colors)
     protein_int_to_color = {p: palette[i % len(palette)] for i, p in enumerate(np.unique(protein_idx_dense))}
 
@@ -284,13 +272,6 @@ def print_worm_verdict(checkpoint_ids, umap_embeddings, protein_idx_sub, seq_pos
     lines = ["", "=" * 78, "WORM TEST -- quantitative companion to the two grids", "=" * 78]
     for checkpoint_id in checkpoint_ids:
         emb = umap_embeddings[checkpoint_id]
-        # crude "threadiness": within each of a sample of proteins with >=5
-        # points here, correlate sequence position against arc-length position
-        # along that protein's own points sorted by embedding proximity is
-        # expensive; use a cheap proxy instead -- correlate seq_pos directly
-        # against each of the two UMAP axes, pooled across all proteins after
-        # centering each protein's points at its own mean (removes the
-        # across-protein clumping so only within-protein structure remains).
         proteins, counts = np.unique(protein_idx_sub, return_counts=True)
         keep = proteins[counts >= 5]
         if len(keep) == 0:

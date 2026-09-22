@@ -24,9 +24,6 @@ set -a
 source "$REPO/.env"
 set +a
 
-# STB imports DeepSpeed transitively but does not build or use its custom CUDA
-# ops. Some normal nodes expose the allocated GPU without a local CUDA toolkit,
-# so skip DeepSpeed's unnecessary CUDA-toolkit compatibility probe.
 export DS_IGNORE_CUDA_DETECTION=1
 
 if [[ "$(git -C "$REPO" branch --show-current)" != "main" ]]; then

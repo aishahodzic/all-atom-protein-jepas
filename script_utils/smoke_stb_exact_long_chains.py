@@ -14,9 +14,6 @@ from pathlib import Path
 
 import torch
 
-# The CPU-only smoke does not use STB's VQ-VAE tokenizer.  Avoid importing its
-# optional DeepSpeed/Triton stack, which requires an active CUDA driver even
-# though WrappedLaProteinaTokenizer itself is device-agnostic.
 if os.environ.get("STB_LAPROTEINA_ONLY_IMPORT") == "1":
     vqvae_stub = types.ModuleType("vqvae_model")
     vqvae_stub.VQVAEModel = object

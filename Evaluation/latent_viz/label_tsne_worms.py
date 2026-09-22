@@ -107,9 +107,6 @@ def render_index_atlas(
         s=7, alpha=0.72, linewidths=0, rasterized=True,
     )
 
-    # Every observed index is normally represented by dozens of points.  The
-    # >=3 guard prevents a lone sampled outlier from receiving a misleading
-    # "worm" label at very sparsely represented chain tails.
     for index0 in sorted(counts):
         mask = residue_index == index0
         if mask.sum() < 3:

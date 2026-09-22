@@ -191,8 +191,6 @@ def _graph_row_count(graph: Any) -> int:
 
 
 def _graph_encoder_valid_count(graph: Any) -> int:
-    # The production collator's mask_dict["coords"] is the dense-row padding
-    # mask, not the source atom-observation mask in graph.coord_mask.
     return _graph_row_count(graph)
 
 

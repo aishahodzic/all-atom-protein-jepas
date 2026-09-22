@@ -23,9 +23,6 @@ set +a
 
 cd /mnt/data/slurm-storage/aishod/projects/la-proteina/StructTokenBench
 
-# Task menu numbers (1-indexed): BindInt=1 BindBio=2 BindShake=3 CatInt=4 CatBio=5
-# Con=6 Rep=7 Ept=8 FlexRMSF=9 FlexBFactor=10 FlexNEQ=11 Homo=12
-# 1 and 3 (BindInt, BindShake) already completed -- skipped.
 for TASK_IDX in 2 4 5 6 7 8 9 10 11 12; do
     echo "=== Starting task index $TASK_IDX ==="
     bash src/script/run_eval.sh --checkpoint=100k --experiment=ae1-external --tasks=$TASK_IDX

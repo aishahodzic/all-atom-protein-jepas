@@ -67,10 +67,6 @@ def main() -> None:
                 f"{len(sampled)} sampled residues"
             )
         scatter_panel(ax, embedding, aa, view="aa20", annotate_aa=False)
-        # At 100k the no-rotation panel has no AA-specific cluster centers:
-        # all 20 representative labels land on the same central coordinates.
-        # Keep its color legend, and label only the distinct clusters that
-        # actually exist in the independent-rotation representation.
         if checkpoint_id == "jepa-r70-d64-rot-step58755":
             annotate_aa_locations(
                 ax, embedding, aa, ["black"] * len(aa_labels)

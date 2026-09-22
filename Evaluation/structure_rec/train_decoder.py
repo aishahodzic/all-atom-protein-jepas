@@ -62,8 +62,6 @@ CA_SLOT = 1  # OpenFold atom37 ordering, confirmed earlier in this session
 
 DECODER_DONOR = {"ca-cond": "ca-cond", "fully-latent": "fully-latent"}
 
-# encoder_id -> decoder_style ("ca-cond" or "fully-latent"), per the agreed group assignment.
-# random-init is handled separately (run.py passes --decoder-style explicitly since it needs both).
 GROUP_OF = {
     "ca-cond": "ca-cond",
     "fully-latent": "latent-only",
@@ -315,8 +313,6 @@ def train_one(
             if step_1 % 10000 == 0 or step_1 == max_steps:
                 torch.save(model.decoder.state_dict(), CKPT_DIR / f"{run_id}_step{step_1}.pt")
 
-            # C-alpha coordinates are supplied explicitly to every decoder, so
-            # non-CA RMSD is the meaningful reconstruction stopping metric.
             stopping_rmsd = metrics["rmsd_no_ca"]
             if stopping_rmsd < best_rmsd * (1 - patience_threshold):
                 best_rmsd, best_step = stopping_rmsd, step_1

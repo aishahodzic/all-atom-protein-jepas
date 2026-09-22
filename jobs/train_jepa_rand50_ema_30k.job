@@ -29,7 +29,6 @@ fi
 mkdir -p "$RAID_ROOT/runs/jepa_rand50_ema_30k"
 cd "$RAID_ROOT/runs/jepa_rand50_ema_30k"
 
-# The finite 30k max-step budget is also the endpoint of the 0.996 -> 1.0 EMA schedule.
 echo "scratch" | srun python /mnt/data/slurm-storage/aishod/projects/la-proteina/proteinfoundation/jepa/train.py \
     run_name_=jepa_rand50_ema_30k +single=true +masked_pct=0.5 +opt.max_steps=30000 \
     baseline_run_ema=true dataset.datamodule.num_workers=16

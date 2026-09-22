@@ -39,19 +39,12 @@ elif [ "$(hostname -s)" = "gauss" ]; then
     export DATA_PATH=/data-gauss/aishod/data
     RAID_ROOT=/data-gauss/aishod
 elif [ "$(hostname -s)" = "noether" ]; then
-    # DATA_PATH from .env already points at /mnt/hopper-raid/aishod/data, which is
-    # correct here (noether reaches hopper-raid over NFS, no rewrite needed).
-    # NOTE: this is the path the original job avoided -- its own comment says
-    # noether's NFS checkpoint writes have hit ENOSPC every time it's been tried.
-    # hopper-raid is at 96% full (249G free) as of this submission.
     RAID_ROOT=/mnt/hopper-raid/aishod
 else
     echo "unexpected node $(hostname -s): only hopper, gauss, and noether are set up for this job" >&2
     exit 1
 fi
 
-# same run dir as the original run -- do not change run_name_ below, or this
-# resumes nothing and starts a fresh run instead.
 mkdir -p "$RAID_ROOT/runs/jepa_chemmask_aa_only"
 cd "$RAID_ROOT/runs/jepa_chemmask_aa_only"
 

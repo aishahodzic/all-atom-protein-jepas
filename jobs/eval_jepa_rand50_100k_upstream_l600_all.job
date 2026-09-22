@@ -43,9 +43,6 @@ cd "$STB_ROOT"
 export STB_SKIP_BOOTSTRAP=1
 export STB_SKIP_DATA_SETUP=1
 export STB_SMOKE=0
-# Gauss has a working NVIDIA driver/runtime but no CUDA compiler toolkit.
-# StructTokenBench does not build or use DeepSpeed CUDA extensions, so prevent
-# DeepSpeed's import-time compatibility probe from requiring CUDA_HOME/nvcc.
 export DS_IGNORE_CUDA_DETECTION=1
 export PYTHON_BIN
 export NUM_WORKERS=8

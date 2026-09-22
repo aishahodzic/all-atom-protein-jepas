@@ -123,8 +123,6 @@ def main() -> None:
     )
     configure_shared_analysis()
     stage_and_validate_ema()
-    # The reused entry point has optional baseline-only extension flags.  This
-    # analysis has already supplied its complete three-checkpoint registry.
     sys.argv = [sys.argv[0]]
     analysis.main()
 

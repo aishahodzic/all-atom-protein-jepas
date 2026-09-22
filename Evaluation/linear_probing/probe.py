@@ -69,7 +69,6 @@ def _gather(protein_ids, probe_split, split_name, labels_by_protein, label_key, 
 def _fit_eval(X_train, y_train, X_test, y_test, kind: str, seed: int) -> tuple:
     """Returns (probe_score, baseline_or_None)."""
     if kind == "classification":
-        # StandardScaler: unscaled lbfgs at 768 dims took 570s/fit and didn't converge; scaled, 95s and clean.
         model = make_pipeline(StandardScaler(), LogisticRegression(max_iter=2000, random_state=seed))
         model.fit(X_train, y_train)
         score = accuracy_score(y_test, model.predict(X_test))

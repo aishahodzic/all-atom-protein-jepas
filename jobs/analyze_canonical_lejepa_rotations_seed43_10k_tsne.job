@@ -56,9 +56,6 @@ assert candidate["trainer"]["max_steps"] == 10_000
 assert candidate["schedule"]["total_steps"] == 10_000
 assert candidate["schedule"]["peak_step"] == 12_000
 
-# Prove this is the seed-42 rotation recipe with only the declared replicate
-# seed/run identity and stopping horizon changed.  The LR trace through 10k is
-# unchanged because both recipes share peak_step=12k.
 normalized = copy.deepcopy(candidate)
 normalized["run_name_"] = reference["run_name_"]
 normalized["seed"] = reference["seed"]

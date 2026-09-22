@@ -180,9 +180,6 @@ def print_interpretation_note(probe_rows) -> None:
 
 def main(seed: int = SEED, use_wandb: bool = True):
     torch.manual_seed(seed)  # reproducible "random" init -- consumed by EncoderTransformer's
-    # construction inside extract() -> load_frozen_encoder(); nothing before that touches
-    # torch's global RNG (protein-pool split uses Python's own random.Random, transforms are
-    # all deterministic), so this seeding is exact, not just "probably fine".
     probe_rows, _latent_dim = run_probes(seed=seed, use_wandb=use_wandb)
     _collapse_row, _flag = run_collapse(use_wandb=use_wandb)
     print_interpretation_note(probe_rows)

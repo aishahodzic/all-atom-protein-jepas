@@ -50,9 +50,6 @@ IMPORTED_FROM="$(cd /tmp && "$PYTHON" -c 'import proteinfoundation; print(protei
     exit 1
 }
 
-# The rolling last.ckpt is step 9k, whereas the numbered checkpoint is exactly
-# step 10k. Register the exact checkpoint as the newest resumable `last` file
-# without altering either original checkpoint.
 if [[ ! -e "$RESUME_LINK" && ! -L "$RESUME_LINK" ]]; then
     ln -s "$(basename "$EXACT_10K")" "$RESUME_LINK"
 fi

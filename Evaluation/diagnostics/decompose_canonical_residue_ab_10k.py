@@ -166,8 +166,6 @@ def main() -> None:
         [len(labels[protein_id]["aa"]) for protein_id, _ in selection.keys],
         dtype=np.float64,
     )
-    # CombinedSelection protein indices are derived from the common sorted ID
-    # list.  All frozen-cohort proteins contribute valid residues here.
     if not np.array_equal(
         np.unique(selection.protein_idx), np.arange(len(selection.keys))
     ):

@@ -24,9 +24,6 @@ from proteinfoundation.nn.feature_factory import (
 
 torch.manual_seed(0)
 
-# One protein, all residues valid, real (nonzero, non-trivial) coordinates so a
-# leak would show up as a nonzero value rather than being accidentally masked
-# by coincidence.
 B, L, A = 1, 40, 37
 coords = torch.randn(B, L, A, 3) * 2.0 + 5.0  # away from origin, so [0,0,0] can't be confused with real data
 coords_nm = coords / 10.0
@@ -68,7 +65,6 @@ assert torch.equal(atom_feat[0][tgt], torch.zeros_like(atom_feat[0][tgt])), "Ato
 assert torch.equal(atom_feat_rel[0][tgt], torch.zeros_like(atom_feat_rel[0][tgt])), "Atom37NanometersCoorsSeqFeat(rel=True) leaked geometry on a target residue"
 assert not torch.equal(atom_feat[0][ctx], torch.zeros_like(atom_feat[0][ctx])), "Atom37NanometersCoorsSeqFeat wrongly zeroed a context residue"
 
-# any pair (i, j) where EITHER i or j is a target residue must be all-zero
 tgt_pair = tgt[:, None] | tgt[None, :]  # [L, L]
 ctx_only_pair = ctx[:, None] & ctx[None, :]  # [L, L], both endpoints context
 assert torch.equal(pair_dist_feat[0][tgt_pair], torch.zeros_like(pair_dist_feat[0][tgt_pair])), "BackbonePairDistancesNanometerPairFeat leaked geometry on a target residue pair"
@@ -76,11 +72,6 @@ assert torch.equal(pair_orient_feat[0][tgt_pair], torch.zeros_like(pair_orient_f
 assert not torch.equal(pair_dist_feat[0][ctx_only_pair], torch.zeros_like(pair_dist_feat[0][ctx_only_pair])), "BackbonePairDistancesNanometerPairFeat wrongly zeroed a context-context pair"
 print("geometry features (atom + pair) are exactly zero for target residues, present for context residues")
 
-# --- identity feature must survive (nonzero one-hot) for EVERY real residue ---
-# (This is the raw per-feature output; the actual online encoder additionally
-# applies EncoderTransformer's blanket seqs = seq_f_repr * mask[..., None] step
-# using mask_dict["coords"][..., 0, 0] -- reproduced below since that's what
-# really reaches the transformer, not this raw value.)
 aa_feat_raw = ResidueTypeSeqFeat()(masked_batch)  # [B, L, 20]
 final_mask = masked_batch["mask_dict"]["coords"][..., 0, 0]  # [B, L], True for every real (non-padding) residue
 aa_feat = aa_feat_raw * final_mask[..., None]
@@ -133,9 +124,6 @@ masked_batch4 = mask_batch_for_encoder_chemmask_aa_only(batch4, context_mask4)
 atom_feat4 = Atom37NanometersCoorsSeqFeat()(masked_batch4)  # [1, 4, 37*4]
 aa_feat4_raw = ResidueTypeSeqFeat()(masked_batch4)  # [1, 4, 20]
 
-# Same blanket step as above -- mask_dict["coords"] is untouched by
-# mask_batch_for_encoder_chemmask_aa_only, so this is a no-op multiply by all-True
-# here (no padding in this toy batch), included for parity with the real encoder.
 final_mask4 = masked_batch4["mask_dict"]["coords"][..., 0, 0]  # [1, 4]
 aa_feat4 = aa_feat4_raw * final_mask4[..., None]
 

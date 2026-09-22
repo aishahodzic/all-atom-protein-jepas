@@ -23,8 +23,6 @@ CHECKPOINTS = {
         "store/jepa_rand70_d8_abspos_ema0p996_30k_s42/checkpoints/"
         "chk_epoch=00000005_step=000000030000.ckpt"
     ),
-    # The run reached 30k, but its exact-30k save failed from ENOSPC. This is
-    # the latest intact rolling checkpoint and records global_step=28,500.
     "jepa-r70-d8-relpos-step28500": pathlib.Path(
         "/mnt/hopper-raid/aishod/runs/jepa_rand70_d8_relpos128_ema0p996_30k_s42/"
         "store/jepa_rand70_d8_relpos128_ema0p996_30k_s42/checkpoints/last.ckpt"

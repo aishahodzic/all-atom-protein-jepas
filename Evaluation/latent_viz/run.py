@@ -147,9 +147,6 @@ def run_all(n_points: int = DEFAULT_N_POINTS, device: str = None, seed: int = SE
         pca_embeddings[checkpoint_id] = pca_emb
         umap_embeddings[checkpoint_id] = umap_emb
 
-        # apples-to-apples baseline: 8-dim purity on the SAME subsample/all-queried
-        # protocol as the projections, so comparing against it isolates what the
-        # 2D projection itself lost (not what subsampling lost).
         purity_8dim_sub = {
             "aa": embedding_purity(X_sub, y_aa, protein_idx_sub, k=10, device=device),
             "ss": embedding_purity(X_sub, y_ss, protein_idx_sub, k=10, device=device),

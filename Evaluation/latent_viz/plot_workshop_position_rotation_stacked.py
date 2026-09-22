@@ -153,8 +153,6 @@ def main() -> None:
         for spine in ax.spines.values():
             spine.set_visible(False)
 
-    # Keep the four embedding panels equal-sized; the compact colorbar sits in
-    # the whitespace after the position pair.
     colorbar_ax = spacer_ax.inset_axes([0.03, 0.13, 0.16, 0.72])
     fig.colorbar(
         scatter,
@@ -173,9 +171,6 @@ def main() -> None:
                 f"{len(rotation_sampled)} sampled residues"
             )
         scatter_panel(ax, embedding, aa, view="aa20", annotate_aa=False)
-        # The stacked layout reduces each AA panel substantially. Strengthen
-        # the categorical colors so they retain the saturation of the
-        # standalone rotation figure after downscaling.
         for collection in ax.collections:
             collection.set_alpha(0.92)
             collection.set_sizes([4.6])
@@ -183,8 +178,6 @@ def main() -> None:
             annotate_aa_locations(ax, embedding, aa, ["black"] * 20)
         ax.set_aspect("equal", adjustable="box")
 
-    # Equal-aspect axes can have different internal top edges. Put every model
-    # name on one figure-level row so the four titles align exactly.
     title_y = 0.925
     for ax, checkpoint_id in zip(position_axes, POSITION_CHECKPOINTS):
         bounds = ax.get_position()

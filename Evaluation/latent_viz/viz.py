@@ -44,7 +44,6 @@ DEFAULT_N_POINTS = 15_000  # subsample size for plotting (within the 10-20k rang
 UMAP_N_NEIGHBORS = 15
 UMAP_MIN_DIST = 0.1
 
-# restypes order: A,R,N,D,C,Q,E,G,H,I,L,K,M,F,P,S,T,W,Y,V (openfold.np.residue_constants)
 AA_LETTERS = list("ARNDCQEGHILKMFPSTWYV")
 AA_GROUP_NAMES = ["Hydrophobic", "Polar", "Charged", "Special (Gly/Pro)"]
 _GROUP_OF_LETTER = {
@@ -55,7 +54,7 @@ _GROUP_OF_LETTER = {
 }
 AA_GROUP = np.array([_GROUP_OF_LETTER[l] for l in AA_LETTERS], dtype=np.int64)  # [20], index-aligned with restypes
 
-SS_STATE_NAMES = ["Helix", "Sheet", "Loop"]  # matches labels.py's SS_STATE_TO_INT = {"a":0 helix, "b":1 sheet, "c":2 coil}
+SS_STATE_NAMES = ["Helix", "Sheet", "Loop"]
 
 SS_COLORS = {0: "#d62728", 1: "#1f77b4", 2: "#7f7f7f"}       # helix red, sheet blue, loop gray
 AA_GROUP_COLORS = {0: "#2ca02c", 1: "#ff7f0e", 2: "#9467bd", 3: "#8c564b"}  # green/orange/purple/brown

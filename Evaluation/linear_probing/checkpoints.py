@@ -19,8 +19,6 @@ CKPT_ROOT = REPO_ROOT / "StructTokenBench" / "100k-checkpoints"
 JEPA_ENCODER_CFG = CKPT_ROOT / "shared" / "exp_config_jepa_nn130m.json"
 EXTERNAL_CKPT_ROOT = REPO_ROOT / "checkpoints_laproteina"
 
-# checkpoint_id -> (path, checkpoint_type). Path is resolved against CKPT_ROOT
-# if relative; used as-is if absolute (see EXTERNAL_CHECKPOINTS below).
 CHECKPOINTS = {
     "ca-cond": ("ae/ca-cond/100k-EMA.ckpt", "ae"),
     "fully-latent": ("ae/fully_latent/100k-EMA.ckpt", "ae"),
@@ -33,37 +31,20 @@ CHECKPOINTS = {
     "le-jepa-rand70-relative-position-rotation": (
         "le-jepa/relative-position-and-rotation/100k.ckpt", "jepa"
     ),
-    # rand-50 ablations at 30k steps (matched-step comparison, not 100k): control has
-    # every baseline_run_* flag False, each ablation flips exactly one. All 4 copied
-    # from their explicit chk_epoch=..._step=000000030000.ckpt (not last.ckpt), size
-    # + MD5 verified against the training-dir source before registering here.
     "jepa-rand50-control-30k": ("baseline_ablations/control/last.ckpt", "jepa"),
     "jepa-rand50-ema-30k": ("baseline_ablations/ema/last.ckpt", "jepa"),
     "jepa-rand50-layernorm-30k": ("baseline_ablations/layernorm/last.ckpt", "jepa"),
     "jepa-rand50-predictor-30k": ("baseline_ablations/predictor/last.ckpt", "jepa"),
 }
 
-# checkpoint_id -> (absolute path, checkpoint_type). Not "my 8" -- external
-# reference points (e.g. NVIDIA's published La-Proteina AE). Kept separate
-# from CHECKPOINTS so downstream code can tell "my models" from "reference".
 EXTERNAL_CHECKPOINTS = {
     "ae1-external": (str(EXTERNAL_CKPT_ROOT / "AE1_ucond_512.ckpt"), "ae"),
 }
 
-# checkpoint_id -> (None, "random"). Not a checkpoint at all -- a sanity
-# floor: same EncoderTransformer config as CHECKPOINTS (verified identical
-# across all 8, so one floor covers them), random-initialized, no weight
-# load. Kept separate so it's obviously not "my 8" or a real reference model.
 RANDOM_INIT_CHECKPOINTS = {
     "random-init": (None, "random"),
 }
 RANDOM_INIT_SEED = 42
-# Weights persisted to disk (not just seeded-and-reconstructed) so every
-# extraction that touches "random-init" -- 8-dim, 768-dim, any future run,
-# in any process -- loads the exact same weights. Verified a fresh
-# torch.manual_seed(42) reconstruction matches the original run to float32
-# noise (~8e-7 after 12 transformer layers), but this removes even that
-# doubt: one weight realization, reused everywhere.
 RANDOM_INIT_WEIGHTS_PATH = pathlib.Path(__file__).resolve().parent / "latents" / "random_init_weights_seed42.pt"
 
 ALL_CHECKPOINTS = {**CHECKPOINTS, **EXTERNAL_CHECKPOINTS, **RANDOM_INIT_CHECKPOINTS}
@@ -144,10 +125,6 @@ def load_frozen_encoder(
                     f"Checkpoint {ckpt_path} has no {encoder_source!r} encoder branch; "
                     f"tried {source_prefixes[encoder_source]}"
                 )
-            # latent_z_dim inferred from the checkpoint's own weights (see
-            # _infer_latent_z_dim), not assumed from JEPA_ENCODER_CFG's default (8)
-            # -- lets dim-64 checkpoints (or any future dim) load correctly without
-            # a separate config file or a naming-convention lookup.
             latent_z_dim = _infer_latent_z_dim(encoder_weights)
             print(
                 f"[checkpoints] {checkpoint_id}: encoder_source={encoder_source} "
