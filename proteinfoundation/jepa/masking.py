@@ -3,9 +3,6 @@ import warnings
 import torch
 
 
-# OpenFold atom37 order starts [N, CA, C, CB, O, ...] and ends with OXT.
-# CB is a side-chain atom; the peptide backbone is N, CA, C, O and the optional
-# terminal oxygen OXT.
 BACKBONE_ATOM37_INDICES = (0, 1, 2, 4, 36)
 
 
@@ -32,8 +29,6 @@ def _batch_with_hidden_coordinates(batch, hidden):
         if key in batch:
             masked_batch[key] = batch[key] * visible[..., None].to(batch[key].dtype)
 
-    # Some data pipelines cache CA coordinates separately. Keep that cache
-    # consistent with atom37 slot 1 so hiding CA cannot leak through it.
     if "ca_coors_nm" in batch:
         masked_batch["ca_coors_nm"] = (
             batch["ca_coors_nm"]
@@ -102,9 +97,6 @@ def mask_partial_sidechain_coordinates(batch, mask_pct, mask_aa_identity=False):
             raise KeyError("AA masking requires batch['mask_dict']['residue_type']")
         valid_residues = batch["mask_dict"]["coords"][..., 0, 0].bool()
 
-        # Zero the raw value as defence in depth for any feature that might read
-        # residue_type without consulting its mask. Zero is not exposed by the
-        # standard one-hot feature because its mask is also cleared below.
         residue_type = batch["residue_type"].clone()
         residue_type[valid_residues] = 0
         masked_batch["residue_type"] = residue_type
@@ -228,8 +220,6 @@ def _spatial_3d_block_mask_for_single_protein(
     if n_valid < 2:
         raise ValueError("spatial_3d_block_mask requires at least two valid residues")
 
-    # Very small proteins use two anchors. Larger proteins try four, reducing the
-    # count only when the 15 A separation constraint cannot be satisfied.
     desired_seeds = min(2 if n_valid < 20 else num_seeds, n_valid - 1)
     pairwise = torch.cdist(ca_coords_nm.float(), ca_coords_nm.float())
 
@@ -281,9 +271,6 @@ def _spatial_3d_block_mask_for_single_protein(
         ca_coords_nm.float(), seed_coords.float()
     ).min(dim=1).values
 
-    # Every distinct nearest-seed distance is a radius at which coverage changes.
-    # Choose the radius closest to 75% among candidates respecting the 60--85%
-    # band. If a 30 A cap prevents 60%, take the largest attainable coverage.
     candidate_radii = torch.unique(
         torch.cat(
             (
@@ -351,9 +338,6 @@ def spatial_3d_block_mask(batch):
     for protein_idx in range(valid_res.shape[0]):
         residue_idx = torch.where(valid_res[protein_idx])[0]
         if residue_idx.numel() < 2:
-            # A rare malformed crop can retain only one valid residue despite the
-            # dataset length filter. Keep it as context-only so it contributes no
-            # ill-posed spatial target while the other proteins in the batch train.
             context_mask[protein_idx, residue_idx] = True
             warnings.warn(
                 "spatial_3d_block_mask kept a protein with fewer than two valid "
@@ -396,8 +380,6 @@ def apply_mask_to_latents(latents, context_mask, target_mask):
     B, L, latent_z_dim = latents.shape
     device = latents.device
 
-    #Variable lengths: each protein has a different num. of context/target residues
-    # gather each protein's context/target latents and indices
     context_lat_list, context_idx_list = [], []
     target_lat_list, target_idx_list = [], []
     for i in range(B):  # loop only over the batch dimension
@@ -408,8 +390,6 @@ def apply_mask_to_latents(latents, context_mask, target_mask):
         context_idx_list.append(c_idx)              # [n_ctx_i]
         target_idx_list.append(t_idx)               # [n_tgt_i]
 
-    # Compute max num el. of each residue
-    # then pad to the batch's maximum count so the residues can be stacked into one tensor
     L_ctx = max(idx.numel() for idx in context_idx_list)  # max context residues across batch
     L_tgt = max(idx.numel() for idx in target_idx_list)   # max target residues across batch
 

@@ -1,15 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Portable launcher for the two side-chain chemical objectives.
-# Usage:
-#   bash jobs/run_le_jepa_chemmask_sidechain.sh sc70 old
-#   bash jobs/run_le_jepa_chemmask_sidechain.sh sc70 new
-#   bash jobs/run_le_jepa_chemmask_sidechain.sh noaa-sc50 old
-#   bash jobs/run_le_jepa_chemmask_sidechain.sh noaa-sc50 new
-#
-# Override pilot length with MAX_STEPS, e.g. MAX_STEPS=100000 for a full run.
-# Override direct same-residue access with SELF_EXCLUDE=true.
 
 experiment="${1:-}"
 predictor_variant="${2:-}"

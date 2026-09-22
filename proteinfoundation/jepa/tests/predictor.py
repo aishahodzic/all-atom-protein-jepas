@@ -22,8 +22,6 @@ with torch.no_grad():
 assert out_ref.shape == (B, L_tgt, z)
 print(f"scenario 1 (shape): out = {tuple(out_ref.shape)} == {(B, L_tgt, z)}")
 
-# Scenario 2: padded context positions masked by key_padding_mask must be ignored.
-# Append garbage context columns and mask them out -> predictions must not change.
 pad = 4
 ctx_padded = torch.cat([context_latents, torch.randn(B, pad, z)], dim=1)            # [B, L_ctx+pad, z]
 idx_padded = torch.cat([context_indices, torch.zeros(B, pad, dtype=torch.long)], 1)  # [B, L_ctx+pad]
@@ -50,9 +48,6 @@ assert all(p.grad is not None for p in model.parameters() if p.requires_grad)
 print("scenario 4 (backward): gradients flow to all parameters")
 
 
-# Scenario 5: direct self-context policies do what their names claim. A single
-# layer is used for the joint predictor so this tests its direct attention edge;
-# deeper joint layers can intentionally propagate information indirectly.
 for predictor_type in ("cross_attention", "mask_token_transformer"):
     policy_model = JEPAPredictor(
         latent_z_dim=z,
@@ -100,9 +95,6 @@ for predictor_type in ("cross_attention", "mask_token_transformer"):
     print(f"scenario 5 ({predictor_type}): direct context policies verified")
 
 
-# Scenario 6: the opt-in old-predictor relative-position mode has no absolute
-# embedding lookup, is translation invariant, distinguishes targets through
-# their i-j relations, and ignores padded context tokens.
 relative_model = JEPAPredictor(
     latent_z_dim=z,
     hidden_dim=32,

@@ -137,10 +137,6 @@ def run_forward(model: JEPAModel, batch, use_block_mask: bool):
         key_padding_mask=masked_latents["context_padding"],
     )  # [B, L_tgt, 8], raw, pre-normalization
 
-    # Raw encoder output on the FULL, unmasked protein -- no context/target split, no
-    # predictor involved. Isolates whether the collapse lives in the encoder itself
-    # (as opposed to being introduced/amplified by masking or the predictor). This is
-    # also literally the target pass (same online_encoder, no EMA), so one call covers both.
     online_mean_full = model._encode_mean(model.online_encoder, batch)  # [B, L, 8]
     target_masked_latents = apply_mask_to_latents(online_mean_full, context_mask, target_mask)
     target_latent = target_masked_latents["target_latents"]  # [B, L_tgt, 8], raw
@@ -165,7 +161,6 @@ def inspect_checkpoint(checkpoint_path, data_dir, n_proteins, use_block_mask, ou
         ckpt_id = "step" + ckpt_stem.split("step=")[1].lstrip("0").zfill(1)
     else:
         ckpt_id = ckpt_stem
-    # distinct label even when two checkpoints come from the same run (e.g. 10k vs last)
     label = f"{run_name}_{ckpt_id}"
     if seed is not None:
         label += f"_seed{seed}"
@@ -202,11 +197,6 @@ def inspect_checkpoint(checkpoint_path, data_dir, n_proteins, use_block_mask, ou
     pred_i = predicted_latent[i][real_i]  # [n_tgt_i, 8]
     targ_i = target_latent[i][real_i]  # [n_tgt_i, 8]
 
-    # ---- evenly-spaced target residues (front/~25%/middle/~75%/end) ----
-    # Deliberately NOT "first 5 in sequence order" -- those can land on adjacent
-    # residues, and real proteins have local structural correlation, so adjacent
-    # residues looking similar isn't itself a collapse signal. Spacing picks across
-    # the full target set removes that confound.
     target_idx_i = torch.where(target_mask[i])[0]  # sequence positions of target residues, sorted
     n_t = pred_i.shape[0]
     if n_t >= 2:
@@ -237,9 +227,6 @@ def inspect_checkpoint(checkpoint_path, data_dir, n_proteins, use_block_mask, ou
         mean_sim_far = sim_among_picked[off_diag_picked].mean().item()
         log_print(log_lines, f"Mean cosine sim AMONG these {k} widely-spaced predicted latents: {mean_sim_far:.4f}")
 
-    # ---- raw encoder output, no masking, no predictor ----
-    # Answers: is the target degenerate because the encoder itself is degenerate,
-    # independent of anything masking/predictor-related?
     log_print(log_lines, "\n--- Raw encoder output on FULL unmasked protein (no masking, no predictor) ---")
     log_print(log_lines, f"Raw encoder output [first 5 of {n_valid} residues]:")
     for row in online_mean_full[i, :5]:
@@ -279,8 +266,6 @@ def inspect_checkpoint(checkpoint_path, data_dir, n_proteins, use_block_mask, ou
     inter_protein_cos = sim_matrix[off_diag_mask].mean().item()
     log_print(log_lines, f"Mean cosine(predicted protein_i, predicted protein_j), i!=j: {inter_protein_cos:.4f}")
 
-    # same inter-protein check, but on raw ENCODER output (no masking, no predictor) --
-    # isolates whether the collapse is already present in the encoder alone.
     valid_mask = batch["mask_dict"]["coords"][..., 0, 0].bool()
     per_protein_mean_enc = []
     for b in range(online_mean_full.shape[0]):
@@ -303,12 +288,6 @@ def inspect_checkpoint(checkpoint_path, data_dir, n_proteins, use_block_mask, ou
     mean_norm, std_norm = pred_norms.mean().item(), pred_norms.std().item()
     log_print(log_lines, f"||predicted|| (raw norm): mean={mean_norm:.4f}  std={std_norm:.4f}")
 
-    # ---- PCA plot ----
-    # L2-normalize first: raw latent scale (mean_norm) differs wildly across
-    # checkpoints/runs, and PCA + matplotlib autoscaling would stretch each plot to
-    # fill the figure regardless of true spread, making a collapsed run look just as
-    # "spread out" as a healthy one. Normalizing puts every run on the same unit-ball
-    # scale, so a fixed axis range is meaningful and plots are comparable across runs.
     pca = PCA(n_components=2)
     normed_pred = F.normalize(all_pred, dim=-1)
     coords_2d = pca.fit_transform(normed_pred.numpy())

@@ -147,8 +147,6 @@ batch = {
 print("scenario 5 (block masking, B=1, all valid):")
 run_block(batch)
 
-# Scenario 6: padding incl. a small protein (tests edge-block clipping) and a
-# fully-padded protein (n_valid=0, must not crash)
 B, L = 3, 20
 valid = torch.ones(B, L, 37, 3).bool()
 valid[0, 12:] = False  # protein 0: 12 valid residues

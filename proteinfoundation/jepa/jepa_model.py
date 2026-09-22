@@ -155,8 +155,6 @@ def sample_mutation(valid_mask: torch.Tensor, residue_type: torch.Tensor):
 
     return mutation_positions, mutated_aa  # [B] long, [B] long
 
-#Note: we're only changing the residue_type in the batch, not the coordinates. The coordinates are still the wildtype coordinates. 
-#We want the model to learn the latent representation of the mutated residue, while being aware of the wildtype coordinates.
 def apply_mutation(batch: Dict, position: torch.Tensor, mutated_aa: torch.Tensor) -> Dict:
     """Returns a copy of `batch` with one residue's identity mutated per protein.
 
@@ -265,8 +263,6 @@ class JEPAModel(L.LightningModule):
 
         self.sigreg = SIGReg(num_proj=32)
 
-        # Predictor: context latents + positions -> predicted target latents.
-        # max_len must be >= the dataset's max crop length (256).
         predictor_cfg = self.cfg.get("predictor", {}) or {}
         max_len = predictor_cfg.get("max_len", 256)
         relative_position_max_distance = predictor_cfg.get(
@@ -309,8 +305,6 @@ class JEPAModel(L.LightningModule):
         if "lr_scheduler_state" in checkpoint:
             self._pending_lr_scheduler_state = checkpoint["lr_scheduler_state"]
         elif checkpoint.get("lr_schedulers"):
-            # checkpoints saved before the switch to manual stepping
-            # kept scheduler state under Lightning's own "lr_schedulers" key instead.
             self._pending_lr_scheduler_state = checkpoint["lr_schedulers"][0]
 
     def on_validation_end(self):
@@ -335,9 +329,6 @@ class JEPAModel(L.LightningModule):
         mask = batch["mask_dict"]["coords"][..., 0, 0]  # [B, L] boolean
         batch["mask"] = mask
 
-        # Split residues into context / target BEFORE encoding.
-        # `+block_mask=true` at the CLI switches to block masking.
-        # `+masked_pct=0.7` overrides random_residue_mask's default 0.5 (ignored for block masking).
         masking_mode = self.cfg.get("masking_mode", None)
         partial_observation_modes = {
             "chemmask_partial_coordinates",
@@ -346,8 +337,6 @@ class JEPAModel(L.LightningModule):
         }
         partial_observation_mode = masking_mode in partial_observation_modes
         if masking_mode == "chemmask_partial_coordinates":
-            # All valid residues contribute a partially observed context latent and
-            # are simultaneously targets for the full-structure encoder latent.
             context_mask = mask.bool()
             target_mask = mask.bool()
         elif masking_mode == "chemmask_sidechain_partial":
@@ -436,9 +425,6 @@ class JEPAModel(L.LightningModule):
             masked_batch = mask_batch_for_encoder(batch, context_mask)
         online_mean = self._encode_mean(self.online_encoder, masked_batch)  # [B, L, latent_z_dim], only context positions carry signal
 
-        # Representation collape monitoring
-        # Std of the online latents over real context residues, per latent dim,
-        # averaged over dims. If the representation is collapsing, this drops to 0
         latent_std = online_mean[context_mask.bool()].std(dim=0).mean()
 
         # Full latent stats (max/min/mean/median/std + histogram)
@@ -475,8 +461,6 @@ class JEPAModel(L.LightningModule):
             )  # [B, hidden_dim]
             action_z = action_z.unsqueeze(1)  # [B, 1, hidden_dim], broadcasts over target queries
 
-        # The context remains in the dataloader frame; only the full target view
-        # receives an additional independent uniform rotation.
         if self.jepa_independent_target_rotation:
             target_batch = independently_rotate_target_batch(target_batch)
 
@@ -496,8 +480,6 @@ class JEPAModel(L.LightningModule):
             ),
         )  # [B, L_tgt, latent_z_dim]
 
-        # Target pass: preserve the original online-encoder path by default;
-        # EMA is opt-in and changes only the target encoder.
         if self.baseline_run_ema:
             with torch.no_grad():
                 target_mean = self._encode_mean(self.ema_encoder, target_batch)
@@ -517,8 +499,6 @@ class JEPAModel(L.LightningModule):
         target_latent_flat = target_latent[real_target_residues]
 
         if partial_observation_mode:
-            # Gather the context latent at each target residue. This remains
-            # aligned when glycine is context-only in side-chain-only masking.
             context_latent_flat = online_mean[target_mask]
             if context_latent_flat.shape != target_latent_flat.shape:
                 raise RuntimeError("partial-coordinate context/target latents are not aligned")
@@ -563,11 +543,6 @@ class JEPAModel(L.LightningModule):
         jepa_loss = (predicted_latent_flat - target_latent_flat).square().mean()
         pred_vs_baseline_gap = baseline_loss - jepa_loss  # >0 means predictor beats trivial mean-prediction
 
-        # Counterfactual validation probes for overlapping partial-coordinate
-        # context/targets. These do not change training. They quantify whether the
-        # predictor uses its own partial residue, its neighbours, or merely copies
-        # the context encoder latent. For the joint mask-token predictor, exclusion
-        # is direct (later layers can still carry information indirectly).
         if (
             stage == "val"
             and partial_observation_mode
@@ -640,8 +615,6 @@ class JEPAModel(L.LightningModule):
         context_flat = online_mean[context_mask.bool()]   # n-k residues
         target_flat = target_latent[real_target_residues]  # k residues, no overlap
 
-        # Effective-rank monitoring complements scalar latent std: std can stay
-        # nonzero even if all embeddings occupy only one direction.
         with torch.no_grad():
             effective_ranks = {
                 "context": covariance_effective_rank(context_flat),

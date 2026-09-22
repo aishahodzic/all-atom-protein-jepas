@@ -2,7 +2,6 @@ import torch
 import torch.nn as nn
 from loguru import logger
 
-#block: q → norm(q) → MHA → q' = add_residual(q) → norm_q' → FF → p" = add_residual(q') -> output p"
 class CrossAttentionBlock(nn.Module):
     """One cross-attention layer: queries (targets) attend to keys/values (context),
     followed by a feedforward network, both with pre-LayerNorm and residual."""
@@ -19,11 +18,6 @@ class CrossAttentionBlock(nn.Module):
         )
 
     def forward(self, q, kv, key_padding_mask=None, attn_mask=None):
-        # q:  [B, L_tgt, hidden_dim]   (target queries)
-        # kv: [B, L_ctx, hidden_dim]   (context keys/values)
-        # key_padding_mask: [B, L_ctx] bool, True at padded context positions to ignore
-        # attn_mask: [B*num_heads, L_tgt, L_ctx], either bool exclusions or
-        #   floating-point additive attention-logit biases
         attn_out, _ = self.attn(
             self.norm_q(q), kv, kv, key_padding_mask=key_padding_mask, attn_mask=attn_mask
         )                                                # [B, L_tgt, hidden_dim]
@@ -50,8 +44,6 @@ class SelfAttentionBlock(nn.Module):
         )
 
     def forward(self, q, key_padding_mask=None):
-        # q: [B, L_tgt, hidden_dim] (target queries; both query and key/value side)
-        # key_padding_mask: [B, L_tgt] bool, True at padded target positions to ignore
         normed = self.norm_q(q)
         attn_out, _ = self.attn(
             normed, normed, normed, key_padding_mask=key_padding_mask
@@ -130,9 +122,6 @@ class JEPAPredictor(nn.Module):
         self.context_proj = nn.Linear(latent_z_dim, hidden_dim)
 
         if use_relative_positions:
-            # Every target starts from the same content-free query. Target identity
-            # enters only through the target-to-context relative-distance bias
-            # below; there is no absolute position lookup on either side.
             self.pos_emb = None
             self.target_query = nn.Parameter(torch.zeros(1, 1, hidden_dim))
             self.relative_position_bias = nn.Embedding(
@@ -150,15 +139,6 @@ class JEPAPredictor(nn.Module):
         self.layers = nn.ModuleList(
             [CrossAttentionBlock(hidden_dim, num_heads, ff_dim) for _ in range(num_layers)]
         ) if predictor_type == "cross_attention" else None
-        # Ablation: target queries self-attend before the cross-attention stack, so
-        # they can coordinate with each other before pulling from context. Keeping
-        # this separate from the cross-attention stack is essential when context and
-        # target overlap: after cross-attention, query j can contain context_j, and
-        # later query self-attention would leak it indirectly to query i.
-        # Opt-in and
-        # only constructed when requested -- default False means byte-identical
-        # architecture/param count/state_dict to before this was added, so existing
-        # checkpoints (jepa-rand-mask-50/70 etc.) still load unmodified.
         self.self_attn_layers = (
             nn.ModuleList(
                 [SelfAttentionBlock(hidden_dim, num_heads, ff_dim) for _ in range(num_layers)]
@@ -167,8 +147,6 @@ class JEPAPredictor(nn.Module):
             else None
         )
 
-        # I-JEPA predictor: append an unknown learned token at every target position,
-        # then jointly self-attend over context latents and target placeholders.
         self.mask_token = (
             nn.Parameter(torch.zeros(1, 1, hidden_dim))
             if predictor_type == "mask_token_transformer"
@@ -212,8 +190,6 @@ class JEPAPredictor(nn.Module):
             self.relative_position_max_distance,
         )
         buckets = relative + self.relative_position_max_distance
-        # Embedding returns [B, L_tgt, L_ctx, H]; MultiheadAttention expects
-        # [B*H, L_tgt, L_ctx].
         bias = self.relative_position_bias(buckets)
         bias = bias.permute(0, 3, 1, 2).reshape(
             -1, target_indices.shape[1], context_indices.shape[1]
@@ -237,22 +213,9 @@ class JEPAPredictor(nn.Module):
             bias = bias.masked_fill(blocked, float("-inf"))
         return bias
 
-#forwad: kv latent + kv pos. embedding -> [self-attn (q vs q), if enabled] -> cross-attention (q vs kv) -> feedforward -> output latent
     def forward(self, context_latents, context_indices, target_indices, key_padding_mask=None,
                 target_padding_mask=None, action_z=None, action_position=None,
                 self_exclude=False, context_access=None):
-        # context_latents: [B, L_ctx, latent_z_dim]  (encoder mean of visible residues)
-        # context_indices: [B, L_ctx]  (long)  residue indices of context residues
-        # target_indices:  [B, L_tgt]  (long)  residue indices of target residues
-        # key_padding_mask: [B, L_ctx] bool, True at padded context positions to ignore
-        # target_padding_mask: [B, L_tgt] bool, True at padded target positions to ignore
-        #   (only used when use_self_attn=True; unused otherwise, same as before)
-        # action_z: [B, 1, hidden_dim] or None
-        # action_position: [B] long or None
-        # self_exclude: backwards-compatible alias for context_access="exclude_self".
-        # context_access: "all", "exclude_self", or "self_only". The latter two
-        #   control direct target-query -> context-token attention and are useful
-        #   for partial-coordinate counterfactual diagnostics.
         if self.use_relative_positions:
             assert int(target_indices.min()) >= 0, "target indices must be non-negative"
             assert int(context_indices.min()) >= 0, "context indices must be non-negative"
@@ -271,9 +234,6 @@ class JEPAPredictor(nn.Module):
             same_residue = same_residue & ~key_padding_mask[:, None, :]
 
         if self.use_relative_positions:
-            # All targets begin identically. Their different i-j relationships
-            # produce target-specific attention patterns in the cross-attention
-            # stack; the query itself contains no absolute position identity.
             q = self.target_query.expand(
                 target_indices.shape[0], target_indices.shape[1], -1
             )
@@ -309,10 +269,6 @@ class JEPAPredictor(nn.Module):
                     )
                 all_padding = torch.cat((key_padding_mask, target_padding_mask), dim=1)
 
-            # Overlapping context/target masks are valid for partial-observation
-            # JEPA. If requested, stop target query i from directly reading the
-            # context token at the same residue i. This blocks direct copying while
-            # retaining the standard joint Transformer predictor.
             joint_attn_mask = None
             if context_access != "all":
                 blocked_context = (
@@ -366,13 +322,8 @@ class JEPAPredictor(nn.Module):
                 blocked_context,
                 dtype=q.dtype,
             )
-            # Padding is already represented as -inf in the additive mask. Do
-            # not also pass a differently typed key-padding mask to PyTorch MHA.
             cross_attn_key_padding = None
 
-        # Run all target-only self-attention before reading context. Cross-attention
-        # is then a separate stack; exclude_self prevents direct access to the
-        # same-position context token in this cross-attention architecture.
         if self.self_attn_layers is not None:
             for self_attn_layer in self.self_attn_layers:
                 q = self_attn_layer(q, key_padding_mask=target_padding_mask)

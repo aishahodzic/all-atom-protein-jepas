@@ -1,11 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Portable Jarvis launcher for the matched 10k old-vs-new predictor pilot.
-# Usage:
-#   bash jobs/run_le_jepa_chemmask_partial_coords_10k.sh old
-#   bash jobs/run_le_jepa_chemmask_partial_coords_10k.sh new
-#   SELF_EXCLUDE=true bash jobs/run_le_jepa_chemmask_partial_coords_10k.sh new
 
 predictor_variant="${1:-old}"
 case "$predictor_variant" in

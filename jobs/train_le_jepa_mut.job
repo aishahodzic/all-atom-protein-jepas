@@ -35,7 +35,5 @@ fi
 mkdir -p "$RAID_ROOT/runs/le_jepa_mut_v2"
 cd "$RAID_ROOT/runs/le_jepa_mut_v2"
 
-# flags: +single=true (1 GPU), dataset.datamodule.num_workers=16,
-# +use_action_conditioning=true (mutation conditioning)
 echo "scratch" | srun python /mnt/data/slurm-storage/aishod/projects/la-proteina/proteinfoundation/jepa/train.py \
     run_name_=le_jepa_mut_v2 +single=true opt.lr=1e-4 dataset.datamodule.num_workers=16 +use_action_conditioning=true

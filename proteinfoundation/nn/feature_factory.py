@@ -743,9 +743,6 @@ class Atom37NanometersCoorsSeqFeat(Feature):
         )  # Zero-out non-atoms
 
         if self.rel:
-            # Relative coordinates are defined only when CA itself is observed.
-            # Without this gate, a hidden CA is zeroed above and the feature
-            # silently becomes relative to the global origin.
             has_ca = coors_mask[:, :, 1]
             ca_coors = coors[:, :, 1, :]  # [b, n, 3]
             coors = coors - ca_coors[:, :, None, :]  # [b, n, 37, 3]
@@ -1506,8 +1503,6 @@ class RelativeResidueOrientationPairFeat(Feature):
         has_ca = atom_mask[:, :, 1]  # [b, n]
         has_n = atom_mask[:, :, 0]  # [b, n]
         has_cb = atom_mask[:, :, 3]  # [b, n] boolean, indicates if corresponding
-        # Every orientation uses N, CA and CB from both residues. Suppress the
-        # entire pair feature unless all six inputs are actually observed.
         has_frame = has_n & has_ca & has_cb
         pair_mask = has_frame[:, :, None] & has_frame[:, None, :]
 
@@ -1579,8 +1574,6 @@ class BackbonePairDistancesNanometerPairFeat(Feature):
         )  # Each shape [b, n, n]
         # CA_X[..., i, j] has distance (nm) between CA[..., i] and X[..., j]
 
-        # Channel-specific observation masks. All channels require source CA_i;
-        # the destination requirement is N_j, CA_j, C_j or CB_j respectively.
         ca_n_mask = has_ca[:, :, None] & has_n[:, None, :]
         ca_ca_mask = has_ca[:, :, None] & has_ca[:, None, :]
         ca_c_mask = has_ca[:, :, None] & has_c[:, None, :]

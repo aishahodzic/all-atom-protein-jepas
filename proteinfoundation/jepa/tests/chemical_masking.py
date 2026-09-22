@@ -44,8 +44,6 @@ torch.manual_seed(11)
 masked = mask_partial_atom_coordinates(batch, mask_pct=0.5)
 hidden = coord_mask & ~masked["coord_mask"]
 
-# Exactly round(50%) of each real residue's observed atoms is hidden, padding is
-# untouched, and the source/target-validity metadata remains intact.
 expected_hidden = (coord_mask.sum(dim=-1).float() * 0.5).round().long()
 assert torch.equal(hidden.sum(dim=-1), expected_hidden)
 assert torch.equal(batch["coords"], original_coords)
@@ -56,8 +54,6 @@ assert not masked["coords_nm"][hidden].any()
 assert not masked["ca_coors_nm"][~masked["coord_mask"][..., 1]].any()
 print("scenario 1: exact per-residue atom masking is non-mutating and zeroes hidden values")
 
-# Hidden coordinate values cannot change any masked batch tensor or configured
-# geometry feature when the random observation mask is held fixed.
 perturbed_batch = dict(batch)
 perturbed_batch["coords"] = batch["coords"].clone()
 perturbed_batch["coords_nm"] = batch["coords_nm"].clone()
@@ -78,16 +74,12 @@ for feature in features:
     assert torch.equal(feature(masked), feature(masked_perturbed))
 print("scenario 2: hidden coordinate perturbations do not affect encoder geometry features")
 
-# A missing CA makes the entire relative-coordinate value channel undefined and
-# therefore zero; atom-observation bits remain available in the last 37 channels.
 relative = Atom37NanometersCoorsSeqFeat(rel=True)(masked)
 relative_coords = relative[..., : A * 3]
 missing_ca = ~masked["coord_mask"][..., 1]
 assert not relative_coords[missing_ca].any()
 print("scenario 3: hidden CA never turns the global origin into a relative feature")
 
-# Pair channels are independently gated after one-hot binning. This specifically
-# catches zero-distance values becoming a nonzero first bin after an atom is hidden.
 pair_batch = {
     "coords": torch.randn(1, 2, A, 3),
     "coords_nm": torch.randn(1, 2, A, 3),
@@ -110,9 +102,6 @@ assert torch.allclose(covariance_effective_rank(one_dimensional), torch.tensor(1
 assert covariance_effective_rank(full_rank) > 6.9
 print("scenario 5: covariance effective rank detects dimensional collapse")
 
-# Side-chain-only masking uses the real atom37 backbone indices N/CA/C/O,
-# excludes GLY from the target when AA is visible, and masks exactly round(70%)
-# of each residue's observed side-chain atoms.
 chemical_mask = torch.zeros(1, 3, A, dtype=torch.bool)
 backbone = list(BACKBONE_ATOM37_INDICES)
 chemical_mask[0, 0, backbone + [3]] = True  # ALA: CB
@@ -144,8 +133,6 @@ assert torch.equal(context, torch.tensor([[True, True, True]]))
 assert torch.equal(target, torch.tensor([[True, False, True]]))
 print("scenario 6: SC70 preserves backbone and makes GLY context-only")
 
-# AA-hidden + SC50 clears both the explicit one-hot mask and the raw AA values,
-# while keeping every residue (including GLY) as a target.
 torch.manual_seed(23)
 noaa_sc50 = mask_partial_sidechain_coordinates(
     chemical_batch, mask_pct=0.5, mask_aa_identity=True
