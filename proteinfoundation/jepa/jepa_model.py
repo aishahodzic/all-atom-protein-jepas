@@ -69,14 +69,10 @@ class JEPAModel(L.LightningModule):
         # Online encoder: trained via backprop, reuses the existing encoder architecture
         self.online_encoder = EncoderTransformer(**self.cfg.nn_ae)
 
-        # EMA target encoder: exact copy of the online encoder, same initial weights,
-        # not trained via backprop (excluded from the optimizer)
         self.ema_encoder = copy.deepcopy(self.online_encoder)
         for p in self.ema_encoder.parameters():
             p.requires_grad = False
 
-        # Predictor: context latents + positions -> predicted target latents.
-        # max_len must be >= the dataset's max crop length (positional table size).
         predictor_cfg = self.cfg.get("predictor", {}) or {}
         max_len = predictor_cfg.get("max_len", 256)
         self.predictor = JEPAPredictor(latent_z_dim=self.latent_dim, max_len=max_len)
@@ -105,8 +101,6 @@ class JEPAModel(L.LightningModule):
         if "lr_scheduler_state" in checkpoint:
             self._pending_lr_scheduler_state = checkpoint["lr_scheduler_state"]
         elif checkpoint.get("lr_schedulers"):
-            # checkpoints saved before the switch to manual stepping
-            # kept scheduler state under Lightning's own "lr_schedulers" key instead.
             self._pending_lr_scheduler_state = checkpoint["lr_schedulers"][0]
 
     def on_validation_end(self):
@@ -134,8 +128,6 @@ class JEPAModel(L.LightningModule):
         masked_batch = mask_batch_for_encoder(batch, context_mask)
         online_mean = self._encode_mean(self.online_encoder, masked_batch)  # [B, L, latent_z_dim], only context positions carry signal
 
-        # Std of the online latents over real context residues, per latent dim,
-        # averaged over dims. If the representation is collapsing, this drops to 0 
         latent_std = online_mean[context_mask.bool()].std(dim=0).mean()
 
         # Full latent stats (max/min/mean/median/std + histogram)
@@ -166,9 +158,6 @@ class JEPAModel(L.LightningModule):
             key_padding_mask=masked_latents["context_padding_mask"], # [B, L_ctx]
         )  # [B, L_tgt, latent_z_dim]
 
-        # EMA target encoder mean latents.
-        # Reusing apply_mask_to_latents with the same masks gives target latents in the
-        # exact order/padding as `predicted_latent`
         with torch.no_grad():
             ema_mean = self._encode_mean(self.ema_encoder, batch)  # [B, L, latent_z_dim]
         ema_masked_latents = apply_mask_to_latents(ema_mean, context_mask, target_mask)
@@ -455,8 +444,6 @@ class JEPAModel(L.LightningModule):
                 ema_p.data = self.ema_decay * ema_p.data + (1 - self.ema_decay) * online_p.data
 
     def configure_optimizers(self):
-        # Only parameters with requires_grad=True are optimized, which excludes the
-        # EMA target encoder (online encoder + predictor are trained).
         optimizer = torch.optim.AdamW(
             [p for p in self.parameters() if p.requires_grad],
             lr=self.cfg.opt.lr,

@@ -17,9 +17,6 @@ class CrossAttentionBlock(nn.Module):
         )
 
     def forward(self, q, kv, key_padding_mask=None):
-        # q:  [B, L_tgt, hidden_dim]   (target queries)
-        # kv: [B, L_ctx, hidden_dim]   (context keys/values)
-        # key_padding_mask: [B, L_ctx] bool, True at padded context positions to ignore
         attn_out, _ = self.attn(
             self.norm_q(q), kv, kv, key_padding_mask=key_padding_mask
         )                                                # [B, L_tgt, hidden_dim]
@@ -58,10 +55,6 @@ class JEPAPredictor(nn.Module):
         self.out_proj = nn.Linear(hidden_dim, latent_z_dim)
 
     def forward(self, context_latents, context_indices, target_indices, key_padding_mask=None):
-        # context_latents: [B, L_ctx, latent_z_dim]  (encoder mean of visible residues)
-        # context_indices: [B, L_ctx]  (long)  residue indices of context residues
-        # target_indices:  [B, L_tgt]  (long)  residue indices of target residues
-        # key_padding_mask: [B, L_ctx] bool, True at padded context positions to ignore
         assert int(target_indices.max()) < self.max_len, "target index exceeds max_len positional table"
         assert int(context_indices.max()) < self.max_len, "context index exceeds max_len positional table"
 

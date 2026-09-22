@@ -296,9 +296,6 @@ def cluster_sequences(
             )
 
         mmseqs_exec = "mmseqs" if mmseqs_exec is None else mmseqs_exec
-        # Unique prefix/tmp dir per process: multiple DDP ranks call this concurrently
-        # with the same fasta_input_filepath, and mmseqs2's output naming is otherwise
-        # a fixed literal, so concurrent invocations clobber each other's output files.
         run_prefix = f"pdb_cluster_{os.getpid()}"
         tmp_dir = f"tmp_{os.getpid()}"
         if (
@@ -394,9 +391,6 @@ def expand_cluster_splits(
             columns=["cluster_id", "id"],
         )
         if df_data is not None and len(split_cluster_members_df) > 0:
-            # clusterid_to_seqid_mapping comes from the cluster TSV, which can be stale
-            # relative to df_data (e.g. an id excluded after the TSV was built) - drop
-            # any expanded member that df_data no longer includes.
             split_cluster_members_df = split_cluster_members_df[
                 split_cluster_members_df["id"].isin(df_data["id"])
             ]

@@ -22,8 +22,6 @@ with torch.no_grad():
 assert out_ref.shape == (B, L_tgt, z)
 print(f"scenario 1 (shape): out = {tuple(out_ref.shape)} == {(B, L_tgt, z)}")
 
-# Scenario 2: padded context positions masked by key_padding_mask must be ignored.
-# Append garbage context columns and mask them out -> predictions must not change.
 pad = 4
 ctx_padded = torch.cat([context_latents, torch.randn(B, pad, z)], dim=1)            # [B, L_ctx+pad, z]
 idx_padded = torch.cat([context_indices, torch.zeros(B, pad, dtype=torch.long)], 1)  # [B, L_ctx+pad]

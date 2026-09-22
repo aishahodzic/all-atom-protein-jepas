@@ -719,13 +719,6 @@ class PDBLightningDataModule(BaseLightningDataModule):
 
     def _download_structure_data(self, pdb_codes, chains=None) -> None:
         if pdb_codes is not None:
-            # A pdb entry only needs its raw structure re-downloaded if we're still going
-            # to (re)process at least one of its chains. If the processed .pt for every
-            # requested chain of this pdb already exists, _process_structure_data will
-            # skip all of them anyway, so downloading the raw file would be wasted
-            # bandwidth (this matters a lot once raw/ has been cleaned up but processed/
-            # still holds most of the dataset). A pdb with a mix of processed/unprocessed
-            # chains still needs its raw file, since the unprocessed chains need it.
             if chains is not None:
                 needs_processing = {
                     pdb
