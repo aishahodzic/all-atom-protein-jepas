@@ -10,13 +10,7 @@ seed: 42
 independent_view_rotations: false
 alignment_level: protein
 masked_kv_mode: visible_only
-# Execution-only optimization used when alignment_level=residue. Protein-mode
-# canonical training does not enter the checkpointed residue-view path.
 residue_view_checkpointing: true
-# Execution optimization for visible-only residue alignment. All crop residues
-# remain queries and outputs; only visible key/value rows are physically
-# gathered for attention.
-# Off by default so the dense, already-tested reference remains explicit.
 residue_compact_visible_kv: false
 
 views:
@@ -24,9 +18,6 @@ views:
   global_mask_pct: 0.20
   local_mask_pct: 0.80
   cropping: false
-  # When cropping=true, every view receives an independently shifted fixed-size
-  # window containing a shared anchor residue. Asymmetric sizes provide a
-  # stronger global target while hiding full chain length.
   global_crop_length: 96
   local_crop_length: 48
   global_crop_fraction_min: null
@@ -34,33 +25,21 @@ views:
   global_crop_min_length: 48
   global_crop_max_length: null
   locals_within_global: false
-  # Protein-level ablations may disable the shared residue anchor while still
-  # constraining every local crop to the sampled global crop.
   shared_crop_anchor: true
   rotation: false
   physical_token_drop: false
-  # Canonical production uses audited physical packing. The dense
-  # mask-in-place formulation remains available as the reference/fallback via
-  # an explicit views.packed_views=false override.
   packed_views: true
 
 readout:
   type: mean_visible_residues
 
 sigreg:
-  # Reference behavior is protein_mean. The residue-alignment ablation opts
-  # into protein_centered_residue explicitly at launch time.
   input: protein_mean
   weight: 0.02
   knots: 17
   num_proj: 1024
   normalize_by_n: false
-  # Experimental anti-collapse option: estimate one distribution jointly from
-  # every global/local whole-view embedding instead of five batch-size-N fits.
   joint_views: false
-  # Opt-in residue-mode ablation. When enabled, each protein/view supplies K
-  # distinct centred residue observations; SIGReg averages the resulting 5*K
-  # distributions without averaging residue vectors together.
   residue_samples_per_protein: 1
   independent_residue_samples: false
 
@@ -96,8 +75,6 @@ trainer:
   devices: 2
   num_nodes: 1
   strategy: ddp
-  # ClusterSampler already shards by rank/world size.  Lightning must not
-  # wrap it in another distributed sampler.
   use_distributed_sampler: false
   precision: bf16-mixed
   max_steps: 100000
@@ -113,8 +90,6 @@ checkpoint:
   dirpath: null
   filename: "step-{step:08d}"
   every_n_train_steps: 10000
-  # Optional second numbered cadence for a comparison checkpoint that does
-  # not lie on the main checkpoint interval (for example, exposure matching).
   additional_every_n_train_steps: null
   # Keep immutable numbered milestones every 10k, but refresh the rolling
   # full-state recovery checkpoint more frequently.

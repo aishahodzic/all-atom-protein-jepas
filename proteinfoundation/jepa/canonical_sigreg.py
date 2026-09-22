@@ -64,15 +64,11 @@ class CanonicalSIGReg(nn.Module):
         if embeddings.shape[1] < 1:
             raise ValueError("CanonicalSIGReg requires at least one protein")
 
-        # [LEVJEPA EXACT] One shared bank of random unit directions is used for
-        # all views in this invocation.
         directions = torch.randn(
             embeddings.size(-1), self.num_proj, device=embeddings.device
         )
         directions.div_(directions.norm(p=2, dim=0))
 
-        # Every rank samples and normalizes normally, then rank 0's bank is
-        # authoritative so the distributed ECF describes the same projections.
         if dist.is_available() and dist.is_initialized():
             dist.broadcast(directions, src=0)
 

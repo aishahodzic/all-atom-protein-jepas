@@ -70,8 +70,6 @@ class CanonicalResidueActivationCheckpointingTest(unittest.TestCase):
             residue_embeddings,
             real_mask,
         )
-        # Reset immediately before the random projection draw so this comparison
-        # is independent of the encoder's intentionally unused sampled z.
         torch.manual_seed(SIGREG_SEED)
         sigreg_loss = model.sigreg(embeddings.permute(1, 0, 2))
         total_loss = inv_loss + model.sigreg_weight * sigreg_loss

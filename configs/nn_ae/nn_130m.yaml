@@ -41,10 +41,6 @@ decoder:
 
   abs_coors: False  # Compute absolute coors or use relative to CA
 
-  # type: ff_local
-  # # This for 7m params
-  # nlayers: 12  # number of transformer layers
-  # token_dim: 384  # dimension of the tokens dim in the sequence
 
   nheads: 12  # number of attn heads
   parallel_mha_transition: False  # whether to compute mha and transition as parallel and add them up (AF3 style) or sequentially (normal transofrmers)

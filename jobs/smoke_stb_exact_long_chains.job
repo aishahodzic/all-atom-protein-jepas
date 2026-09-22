@@ -26,8 +26,6 @@ conda activate pstbench
 cd "$PROJECT_ROOT"
 export PYTHONPATH="$STB_ROOT/src:$PROJECT_ROOT${PYTHONPATH:+:$PYTHONPATH}"
 export MPLCONFIGDIR="/tmp/stb-long-smoke-${SLURM_JOB_ID}"
-# This script imports only WrappedLaProteinaTokenizer. Avoid initializing the
-# unrelated STB VQ-VAE/DeepSpeed extension stack before the encoder forward.
 export STB_LAPROTEINA_ONLY_IMPORT=1
 
 python script_utils/smoke_stb_exact_long_chains.py \

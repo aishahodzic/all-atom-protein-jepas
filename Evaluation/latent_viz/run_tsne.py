@@ -82,11 +82,6 @@ AA_THREE = [
     "LEU", "LYS", "MET", "PHE", "PRO", "SER", "THR", "TRP", "TYR", "VAL",
 ]
 
-# Operational biochemical groupings, kept explicit so the plotted claim is
-# reproducible rather than dependent on an undocumented library convention.
-# Histidine is shown with basic/positive residues; PHE/TYR/TRP matches the
-# aromatic set discussed in La-Proteina.  The small-side-chain set is the
-# common compact-residue grouping; "larger" is its explicit complement.
 VIEW_SPECS = {
     "charge": {
         "labels": ["Basic / positive (R,K,H)", "Acidic / negative (D,E)", "Neutral"],

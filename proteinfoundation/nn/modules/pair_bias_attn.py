@@ -143,16 +143,12 @@ class PairBiasAttention(nn.Module):
         source_rows = torch.arange(length, device=key_mask.device).expand(
             batch_size, -1
         )
-        # Sorting masked rows to the sentinel ``length`` preserves the original
-        # biological order of every retained key/value row.
         source_rows = source_rows.masked_fill(~key_mask, length)
         source_rows = source_rows.sort(dim=1).values[:, :compact_length]
         compact_mask = (
             torch.arange(compact_length, device=key_mask.device)[None]
             < key_counts[:, None]
         )
-        # Padding rows are never attended to; index zero merely makes the gather
-        # valid for proteins with fewer visible residues than the batch maximum.
         source_rows = source_rows.masked_fill(~compact_mask, 0)
         return source_rows, compact_mask
 

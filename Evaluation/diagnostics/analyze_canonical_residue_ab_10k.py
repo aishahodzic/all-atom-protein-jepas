@@ -414,8 +414,6 @@ def validate_training_config(spec: dict[str, object]) -> None:
         "sigreg.input": spec["sigreg_input"],
     }
     if external_profile:
-        # The LR sweep intentionally changes these two scheduler fields.  The
-        # scientific view/objective/batch recipe remains validated below.
         nested_values.pop("schedule.total_steps")
         nested_values.pop("schedule.peak_step")
     mismatches.update(
@@ -731,9 +729,6 @@ def main() -> None:
         for checkpoint_id, spec in RUNS.items()
     }
     if ANALYSIS_PROFILE == EXTERNAL_PROFILE:
-        # The historical loader normally reads a shared config shipped with
-        # StructTokenBench. Jarvis has the canonical run's complete saved
-        # config instead, which is the stricter source for this checkpoint.
         only_spec = next(iter(RUNS.values()))
         checkpoint_registry.JEPA_ENCODER_CFG = pathlib.Path(only_spec["config"])
     checkpoint_ids = list(RUNS)

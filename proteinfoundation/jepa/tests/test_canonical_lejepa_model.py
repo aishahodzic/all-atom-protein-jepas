@@ -114,8 +114,6 @@ class CanonicalModelTest(unittest.TestCase):
         self.assertGreater(float(embeddings.grad[:, 1:].abs().sum()), 0.0)
 
     def test_residue_invariance_hand_case_is_same_index_and_excludes_padding(self):
-        # The two real residues are deliberately far apart in value, so a
-        # cross-index comparison would not produce the hand-computed answer.
         embeddings = torch.tensor(
             [
                 [
@@ -128,9 +126,6 @@ class CanonicalModelTest(unittest.TestCase):
             ]
         )
         real_mask = torch.tensor([[True, True, False]])
-        # Sum of real, same-index squared errors is
-        # 0 + 2*(1 + 4 + 9 + 16) = 60. Divide by 5 views, 2 residues,
-        # and 1 latent dimension.
         expected = torch.tensor(6.0)
         actual = canonical_residue_invariance_loss(embeddings, real_mask)
         self.assertTrue(torch.equal(actual, expected))
@@ -272,8 +267,6 @@ class CanonicalModelTest(unittest.TestCase):
         batch = synthetic_encoder_batch(batch_size=2, length=7)
         real_mask = batch["mask_dict"]["coords"][..., 0, 0]
         scripted = torch.arange(2 * 5 * 7 * 8, dtype=torch.float32).reshape(2, 5, 7, 8)
-        # Make padding overwhelmingly different so its accidental inclusion is
-        # unambiguous. Row 1 has one padded residue in this fixture.
         scripted[1, :, ~real_mask[1]] = 1_000_000.0
 
         model = CanonicalLeJEPAModel(tiny_canonical_config(alignment_level="residue"))

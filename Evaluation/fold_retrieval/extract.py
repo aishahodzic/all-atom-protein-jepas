@@ -64,12 +64,9 @@ OUT_DIR = pathlib.Path(__file__).resolve().parent
 LATENTS_DIR = OUT_DIR / "latents_homo"
 PROCESSED_DIR = STB_ROOT / "struct_token_bench_release_data" / "data" / "structural" / "remote_homology"
 PDB_DATA_DIR = STB_ROOT / "pdb_data" / "mmcif_files"  # matches run_eval.sh's data.pdb_data_dir=$PDB_DATA_ROOT/mmcif_files/;
-# retrieve_pdb_path-style code then joins "mmcif_files/{pdb_id}.cif" onto this -- see dataset/base.py
 
 SPLITS = ["train", "valid", "test_fold_holdout", "test_family_holdout", "test_superfamily_holdout"]
 
-# Copied verbatim from StructTokenBench/src/dataset/base.py's
-# additional_label_filtering_for_TAPE_homo -- do not edit independently of that.
 LABELS_TO_FILTER = set([
     22, 36, 47, 51, 73, 77, 78, 84, 88, 90, 126, 153, 176, 295,
     0, 3, 21, 39, 45, 59, 70, 97, 179,

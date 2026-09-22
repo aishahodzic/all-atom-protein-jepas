@@ -68,9 +68,6 @@ coord_portion = atom_feat[0, :, : A * 3].reshape(L, A, 3)
 assert torch.equal(coord_portion[hidden[0]], torch.zeros_like(coord_portion[hidden[0]])), "a hidden atom leaked a nonzero coordinate feature"
 print("every hidden atom slot contributes zero to Atom37NanometersCoorsSeqFeat")
 
-# controlled case: force residue 5's N (slot 0) hidden, CA (slot 1) visible -- this is
-# exactly the leak scenario BackbonePairDistancesNanometerPairFeat used to miss (only
-# checked CA validity, never N's own bit)
 i, j = 2, 5
 ctrl_mask = coord_mask.clone()
 ctrl_mask[:, j, 0] = False  # hide only N of residue j; CA stays valid

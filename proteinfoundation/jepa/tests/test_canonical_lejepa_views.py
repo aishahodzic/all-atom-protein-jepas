@@ -36,8 +36,6 @@ class CanonicalViewTest(unittest.TestCase):
         historical_mask = batch["mask_dict"]["coords"][..., 0, 0]
         batch["mask"] = historical_mask.clone()
 
-        # EncoderTransformer samples the unused z output. Resetting RNG makes it
-        # possible to compare the complete output dictionary, not only ``mean``.
         torch.manual_seed(1907)
         with torch.no_grad():
             default_output = encoder(batch)
@@ -92,8 +90,6 @@ class CanonicalViewTest(unittest.TestCase):
                 torch.equal(masked[key][visible], original[key][visible]), key
             )
 
-        # Masking is functional: it must not mutate the full-protein source
-        # batch whose centred coordinates and chain metadata are reused.
         for key in (
             "coords",
             "coords_nm",
@@ -203,8 +199,6 @@ class CanonicalViewTest(unittest.TestCase):
                 "mean"
             ]
 
-        # The deliberately unsanitized slot is an active query, proving that
-        # the perturbation reached the model rather than being gated away.
         self.assertGreater(
             (clean_output[0, injected_index] - injected_output[0, injected_index])
             .abs()

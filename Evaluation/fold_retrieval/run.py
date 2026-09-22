@@ -33,10 +33,6 @@ CSV_PATH = RESULTS_DIR / "fold_retrieval_results.csv"
 CSV_FIELDS = ["encoder", "pool_mode", "test_split", "k", "purity", "chance_baseline",
               "random_control", "n_query", "n_database"]
 
-# STB's own trained-classifier AUROC per (encoder, split) -- from
-# StructTokenBench/struct_token_bench_logs/summary_results.csv (Part 1 + Part 2).
-# Filled in by run.py at runtime from that CSV; ENCODER_DISPLAY just maps this
-# script's checkpoint ids to the branch names used there where they differ.
 STB_SUMMARY_CSV = pathlib.Path(__file__).resolve().parents[2] / "StructTokenBench" / "struct_token_bench_logs" / "summary_results.csv"
 STB_BRANCH_NAME = {
     "ca-cond": "ca-cond-baseline",

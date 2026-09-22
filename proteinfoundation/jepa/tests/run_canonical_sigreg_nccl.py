@@ -72,9 +72,6 @@ def main() -> None:
         parameter = initial_weight.to(device).requires_grad_(True)
         local_embeddings = local_inputs @ parameter
 
-        # Deliberately start ranks from different CUDA RNG states. Capture both
-        # the independently sampled bank and the live tensor that broadcast()
-        # overwrites, without replacing production sampling behavior.
         torch.cuda.manual_seed(10_000 + rank)
         original_randn = torch.randn
         captured = {}

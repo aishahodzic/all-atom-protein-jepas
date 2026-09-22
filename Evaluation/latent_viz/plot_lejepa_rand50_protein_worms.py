@@ -105,8 +105,6 @@ def run() -> None:
     point_colors = palette[protein_index]
     stats = neighbour_statistics(embedding, residue_index, protein_index)
 
-    # Most represented proteins make it possible to trace individual chains;
-    # all remaining proteins are deliberately muted in the right panel.
     observed_proteins, observed_counts = np.unique(protein_index, return_counts=True)
     top_order = np.argsort(observed_counts)[::-1][:14]
     highlighted = observed_proteins[top_order]

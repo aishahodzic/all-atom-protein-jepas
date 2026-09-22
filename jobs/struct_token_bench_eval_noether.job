@@ -21,12 +21,6 @@ set -a
 source /mnt/data/slurm-storage/aishod/projects/la-proteina/.env
 set +a
 
-# hopper uses /mnt/raid locally, other nodes use /mnt/hopper-raid over NFS -- same
-# rewrite the other job scripts use. This job was noether-only originally (hence
-# the name); needed once it can also run on hopper (see run_eval.sh's own
-# PDB_DATA_ROOT hostname check, which already handles this for the mmCIF corpus --
-# DATA_PATH itself didn't, and WrappedLaProteinaTokenizer reads DATA_PATH directly
-# for the pdb_train pretrained-cache lookup).
 if [ "$(hostname -s)" = "hopper" ]; then
     export DATA_PATH="${DATA_PATH/\/mnt\/hopper-raid/\/mnt\/raid}"
 fi

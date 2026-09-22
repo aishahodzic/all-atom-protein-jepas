@@ -23,7 +23,4 @@ set +a
 cd /mnt/data/slurm-storage/aishod/projects/la-proteina/Evaluation/linear_probing
 export PYTHONPATH=/mnt/data/slurm-storage/aishod/projects/la-proteina
 
-# `conda activate` needs conda's shell hooks, which this non-interactive batch
-# shell doesn't have (`.bashrc` bails out early for non-interactive shells,
-# so `conda: command not found`) -- call the env's python directly instead.
 srun /data-gauss/$USER/envs/laproteina_env/bin/python3 run.py "$@"

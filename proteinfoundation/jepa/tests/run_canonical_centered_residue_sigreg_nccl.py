@@ -106,8 +106,6 @@ def main() -> None:
         if tuple(local_sigreg_input.shape) != (VIEWS, LOCAL_BATCH, LATENT_DIM):
             raise AssertionError(f"wrong local input shape: {local_sigreg_input.shape}")
 
-        # Start ranks from deliberately different RNG states. Capture the
-        # normalized live bank after production's rank-0 broadcast.
         torch.cuda.manual_seed(50_000 + rank)
         original_randn = torch.randn
         captured: dict[str, torch.Tensor] = {}

@@ -35,11 +35,6 @@ CANONICAL_ALIGNMENT_LEVELS = ("protein", "residue")
 CANONICAL_MASKED_KV_MODES = ("iterative", "visible_only")
 CANONICAL_SIGREG_INPUTS = ("protein_mean", "protein_centered_residue")
 
-# Physical packing is intentionally restricted to the one encoder feature
-# configuration whose visible-token semantics have been audited against the
-# dense mask-in-place reference path. Exact ordered allowlists make future
-# feature additions fail closed rather than silently treating packed row
-# adjacency as biological sequence adjacency.
 CANONICAL_PACKED_SAFE_SEQ_FEATURES = (
     "chain_break_per_res",
     "x1_aatype",
@@ -314,8 +309,6 @@ def pack_batch_for_canonical_view(
     }
     packed_batch["mask"] = packed_valid
 
-    # These two masks independently gate FeatureFactory and encoder attention.
-    # Assert their agreement rather than permitting a silent packed fallback.
     packed_attention_mask = packed_batch["mask_dict"]["coords"][..., 0, 0].bool()
     if row_valid_mask is None and not torch.equal(packed_attention_mask, packed_valid):
         raise ValueError(
@@ -475,10 +468,6 @@ def build_canonical_crop_masks(
     correspondence remains exact. The encoder receives only each crop's query
     and key masks, and no crop offset is added as an input feature.
     """
-    # Coordinate availability is not residue existence: experimentally
-    # resolved structures can contain real sequence rows with a missing N/CA
-    # atom. Use the independently padded residue-type mask for crop membership
-    # and retain Atom37 missingness as a feature mask inside the crop.
     valid = batch["mask_dict"]["residue_type"].bool()
     if global_crop_length is None and global_crop_fraction_min is None:
         global_crop_length = crop_length
@@ -611,9 +600,6 @@ def mask_batch_for_canonical_view(
 
     masked_batch["mask_dict"] = dict(batch["mask_dict"])
     masked_batch["mask_dict"]["coords"] = batch["mask_dict"]["coords"] & atom_keep
-    # Historical JEPA preprocessing supplies the full-protein padding mask to
-    # FeatureFactory, then EncoderTransformer applies the stricter view mask to
-    # tokens and attention.  Retain that exact two-stage gating behavior.
     masked_batch["mask"] = batch["mask_dict"]["coords"][..., 0, 0].bool()
     return masked_batch
 
@@ -681,9 +667,6 @@ def rotate_batch_for_canonical_view(
         coordinates = batch[key]
         if coordinates.device != rotations.device:
             raise ValueError(f"batch['{key}'] and rotations must be on the same device")
-        # Data coordinates are fp32 in production. Explicitly disable autocast so
-        # applying an otherwise exact rigid transform does not quantize them to
-        # bf16 before the encoder consumes them.
         with torch.autocast(device_type=coordinates.device.type, enabled=False):
             rotated_batch[key] = torch.einsum(
                 "blac,bcd->blad",
@@ -833,8 +816,6 @@ def protein_centered_residue_sigreg_input(
     if samples_per_protein != 1 and not independent_views:
         raise ValueError("samples_per_protein>1 requires independent_views=True")
 
-    # Preserve the historical K=1 shared-row implementation exactly, including
-    # its RNG draw shape and returned sampled-index shape.
     if not independent_views:
         shared_real = view_real.all(dim=1)
         real_counts = shared_real.sum(dim=1)
@@ -845,8 +826,6 @@ def protein_centered_residue_sigreg_input(
             )
 
         if sampled_indices is None:
-            # One draw per protein gives a uniform ordinal in that protein's real
-            # rows without allowing padded/non-contiguous rows to be selected.
             sampled_ordinals = torch.floor(
                 torch.rand(batch_size, device=residue_embeddings.device)
                 * real_counts.to(dtype=torch.float32)
@@ -889,8 +868,6 @@ def protein_centered_residue_sigreg_input(
             samples_per_protein,
         )
         if sampled_indices is None:
-            # Independent random rankings give a uniform sample without
-            # replacement for each protein/view, including non-contiguous masks.
             scores = torch.rand(
                 batch_size,
                 CANONICAL_NUM_VIEWS,

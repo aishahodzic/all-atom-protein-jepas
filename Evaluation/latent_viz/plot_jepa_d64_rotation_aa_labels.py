@@ -52,9 +52,6 @@ def main() -> None:
     aa = selection.aa[sampled]
     aa_labels, colors = view_labels_colors("aa20")
 
-    # Match the original rotation-pair figure exactly: same canvas, point
-    # styling, panel titles, legend, and layout.  The only visual addition is
-    # black amino-acid text placed on each class's representative point.
     fig, axes = plt.subplots(1, 2, figsize=(7.1, 3.65), squeeze=False)
     axes = axes.ravel()
     for ax, checkpoint_id in zip(axes, CHECKPOINTS):

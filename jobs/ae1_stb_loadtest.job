@@ -32,9 +32,6 @@ fi
 conda activate pstbench
 hash -r
 
-# Same minimal dependency set src/tokenizer.py + this load test need -- run_eval.sh
-# installs the fuller set (data/task deps) lazily per-task; we only need enough to
-# import tokenizer.py and run encode_structure once.
 python -c "import torch" 2>/dev/null || pip install -q torch
 python -c "import lightning" 2>/dev/null || pip install -q lightning
 python -c "import graphein" 2>/dev/null || pip install -q "graphein"

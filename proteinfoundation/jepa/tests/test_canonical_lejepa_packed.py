@@ -26,17 +26,10 @@ from proteinfoundation.jepa.tests.canonical_test_utils import tiny_canonical_con
 from proteinfoundation.partial_autoencoder.encoder import EncoderTransformer
 
 
-# On the deterministic fixture below, a one-layer fp32 encoder has observed
-# dense/packed discrepancies below 7e-7 for projected features and below 4e-7
-# for means.  These limits allow ordinary fp32 reduction-order noise while
-# remaining far below differences that could indicate changed semantics.
 FP32_ATOL = 1e-6
 FP32_RTOL = 1e-5
 GRAD_ATOL = 1e-6
 GRAD_RTOL = 1e-4
-# BF16 unit roundoff is 2^-7 ~= 0.0078125.  These limits are declared before
-# the CUDA parity run and allow a few bf16 rounding units for changed GEMM and
-# softmax shapes while remaining tight enough to expose structured divergence.
 BF16_ATOL = 2e-2
 BF16_RTOL = 2e-2
 BF16_GRAD_ATOL = 5e-3
@@ -60,8 +53,6 @@ def _composite_edge_case_batch() -> dict[str, torch.Tensor | dict[str, torch.Ten
     valid_lengths = torch.tensor([10, 8, 7, 5], dtype=torch.long)
     valid = torch.arange(length)[None, :] < valid_lengths[:, None]
 
-    # Keep the Angstrom representation uncentered, matching the canonical data
-    # transform ordering.  Center only coords_nm using the full valid protein.
     coords_nm = coords_angstrom / 10.0
     for row, n_valid in enumerate(valid_lengths.tolist()):
         centre = coords_nm[row, :n_valid, 1].mean(dim=0, keepdim=True)
@@ -72,9 +63,6 @@ def _composite_edge_case_batch() -> dict[str, torch.Tensor | dict[str, torch.Ten
     coords_nm = coords_nm.masked_fill(~valid[..., None, None], 0.0)
 
     coord_mask = valid[..., None].expand(-1, -1, 37).clone()
-    # Missing Atom37 entries on both retained and hidden residues.  In
-    # particular, cover N, C, CB, and a side-chain atom without invalidating the
-    # residue-level padding mask.
     coord_mask[0, 4, 3] = False
     coord_mask[1, 5, 0] = False
     coord_mask[2, 2, 2] = False
@@ -237,8 +225,6 @@ class CanonicalPackedParityTest(unittest.TestCase):
                     for mask in packed.batch["mask_dict"].values():
                         self.assertFalse(mask[row, count:].any())
 
-        # The full protein was centered, but this deliberately asymmetric
-        # visible subset is not. Packing must preserve that non-zero mean.
         valid_row = self.batch["mask_dict"]["coords"][0, :, 0, 0]
         full_ca_mean = self.batch["coords_nm"][0, valid_row, 1].mean(dim=0)
         self.assertClose(full_ca_mean, torch.zeros_like(full_ca_mean))
@@ -318,8 +304,6 @@ class CanonicalPackedParityTest(unittest.TestCase):
                 dense_batch = mask_batch_for_canonical_view(self.batch, visible)
                 packed = pack_batch_for_canonical_view(self.batch, visible)
 
-                # The production encoder samples an unused z after mean. Resetting
-                # here makes that incidental draw controlled without changing it.
                 torch.manual_seed(303)
                 dense_mean = encoder(dense_batch)["mean"]
                 torch.manual_seed(303)
@@ -363,9 +347,6 @@ class CanonicalPackedParityTest(unittest.TestCase):
         packed_inv = canonical_invariance_loss(packed_embeddings)
         self.assertClose(packed_inv, dense_inv, "invariance loss")
 
-        # Reset immediately before the SIGReg projection draw. Dense and packed
-        # encoders consume different amounts of RNG for their unused z samples;
-        # production RNG semantics remain untouched.
         torch.manual_seed(606)
         dense_sigreg = dense_model.sigreg(dense_embeddings.permute(1, 0, 2))
         torch.manual_seed(606)

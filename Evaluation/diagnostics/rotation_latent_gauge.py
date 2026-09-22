@@ -36,8 +36,6 @@ from proteinfoundation.utils.dense_padding_data_loader import dense_padded_from_
 DATA = pathlib.Path("/mnt/hopper-raid/aishod/data/pdb_train")
 CFG = REPO / "StructTokenBench/100k-checkpoints/shared/exp_config_jepa_nn130m.json"
 
-# Short chains keep the CPU diagnostic tractable.  The final three are the
-# chains used by the original fixed-rotation spot check and are test-only.
 TRAIN_IDS = [
     "2y0q_B", "6n6r_D", "2bq7_A", "5wsn_F", "6gsi_J", "6bmt_B",
     "2ybr_F", "9u6l_P", "7azy_j", "4nj6_F", "7tk8_8", "4dra_E",
@@ -117,9 +115,6 @@ def encode_all(encoder: EncoderTransformer, ids: list[str], batch_size: int = 4)
         base_angstrom = batch["coords"].clone()
         for rotation_name, rotation in ROTATIONS.items():
             batch["coords_nm"] = base_nm @ rotation
-            # Training rotates coords_nm only.  coords is used here only by the
-            # rigid-motion-invariant orientation feature; rotating it as well
-            # makes this a literal physical rotation and should not alter it.
             batch["coords"] = base_angstrom @ rotation
             latent = encoder(batch)["mean"]
             for i, protein_id in enumerate(chunk_ids):
@@ -214,8 +209,6 @@ def main(checkpoint_names: list[str] | None = None):
         values = encode_all(encoder, all_ids)
         results = {name: evaluate_rotation(values, name) for name in ROTATIONS if name != "identity"}
 
-        # With row-vector inputs and R_combined = Rz @ Rx, a representation
-        # should satisfy A(R_combined) = A(Rz) @ A(Rx).
         a_z = results["rz90"]["action"]
         a_x = results["rx90"]["action"]
         a_zx = results["rz90_rx90"]["action"]
