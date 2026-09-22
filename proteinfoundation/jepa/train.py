@@ -219,8 +219,6 @@ def main(cfg_exp) -> None:
             id=run_name,
             entity="aisha-hodzic-org",
         )
-        # Continuation jobs can explicitly require the existing W&B run. Keep
-        # the historical default unchanged for fresh experiments.
         if cfg_exp.get("wandb_resume", False):
             wandb_kwargs["resume"] = "must"
         wandb_logger = WandbLogger(**wandb_kwargs)  # Hardcoded entity for now

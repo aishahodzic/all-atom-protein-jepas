@@ -47,8 +47,6 @@ set +a
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 export PYTHONPATH=/mnt/data/slurm-storage/aishod/projects/la-proteina:$PYTHONPATH
 
-# DATA_PATH is already /mnt/hopper-raid/aishod/data from .env, and that path now
-# resolves identically on every node -- no per-host override needed.
 RAID_ROOT=/mnt/hopper-raid/aishod
 
 mkdir -p "$RAID_ROOT/runs/jepa_partial_coords_70"

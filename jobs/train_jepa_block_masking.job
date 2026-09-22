@@ -35,7 +35,5 @@ fi
 mkdir -p "$RAID_ROOT/runs/jepa_block_masking_v4"
 cd "$RAID_ROOT/runs/jepa_block_masking_v4"
 
-# "scratch" answers train.py's resume-from-checkpoint prompt
-# flags: +single=true (1 GPU), +block_mask=true, dataset.datamodule.num_workers=16
 echo "scratch" | srun python /mnt/data/slurm-storage/aishod/projects/la-proteina/proteinfoundation/jepa/train.py \
     run_name_=jepa_block_masking_v4 +single=true +block_mask=true dataset.datamodule.num_workers=16

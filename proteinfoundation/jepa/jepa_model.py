@@ -172,10 +172,6 @@ def mask_batch_for_encoder_chemmask_aa_only(batch: Dict, context_mask: torch.Ten
     key (coords, coords_nm, residue_type, mask_dict, ...) is the same reference as
     in the input batch, untouched. The input batch itself is not modified.
     """
-    # Target (non-context) residues lose geometry: coord_mask -> False on every
-    # atom slot. Context residues' coord_mask is untouched (real, per-atom values
-    # from the raw structure). AA identity is never touched here at all -- it
-    # flows through unchanged for every real residue, context and target alike.
     strip_geometry = (~context_mask)[..., None]  # [B, L, 1], True for target residues, broadcasts over 37 atom slots
 
     masked_batch = dict(batch)  # shallow copy: only "coord_mask" is overwritten
@@ -207,8 +203,6 @@ def mask_batch_for_encoder_chemmask_partial_coordinates(batch: Dict, mask_pct: f
     n_valid = coord_mask.sum(dim=-1, keepdim=True)  # [B, L, 1]
     n_hide = (n_valid * mask_pct).round().long()  # [B, L, 1]
 
-    # rank each atom slot's random score within its residue, restricted to valid slots
-    # (invalid slots pushed above any valid score so they're never among the n_hide lowest)
     scores = torch.rand_like(coord_mask, dtype=torch.float32).masked_fill(~coord_mask, 2.0)
     ranks = scores.argsort(dim=-1).argsort(dim=-1)  # [B, L, 37], 0 = lowest score in this residue
     hide = ranks < n_hide  # [B, L, 37], the mask_pct lowest-scored valid atoms per residue
@@ -366,14 +360,10 @@ class JEPAModel(L.LightningModule):
         # Online encoder: trained via backprop, reuses the existing encoder architecture
         self.online_encoder = EncoderTransformer(**self.cfg.nn_ae)
 
-        # EMA target encoder: exact copy of the online encoder, same initial weights,
-        # not trained via backprop (excluded from the optimizer)
         self.ema_encoder = copy.deepcopy(self.online_encoder)
         for p in self.ema_encoder.parameters():
             p.requires_grad = False
 
-        # Predictor: context latents + positions -> predicted target latents.
-        # max_len must be >= the dataset's max crop length (256).
         predictor_cfg = self.cfg.get("predictor", {}) or {}
         max_len = predictor_cfg.get("max_len", 256)
         use_self_attn = predictor_cfg.get("use_self_attn", False)
@@ -416,11 +406,7 @@ class JEPAModel(L.LightningModule):
         if "lr_scheduler_state" in checkpoint:
             self._pending_lr_scheduler_state = checkpoint["lr_scheduler_state"]
         elif checkpoint.get("lr_schedulers"):
-            # checkpoints saved before the switch to manual stepping
-            # kept scheduler state under Lightning's own "lr_schedulers" key instead.
             self._pending_lr_scheduler_state = checkpoint["lr_schedulers"][0]
-        # defaults False for checkpoints saved before this key existed, so the reseed
-        # below still fires once this (resumed) run crosses _lr_warmup_steps again
         self._lr_scheduler_seeded = checkpoint.get("lr_scheduler_seeded", False)
 
     def on_validation_end(self):
@@ -435,8 +421,6 @@ class JEPAModel(L.LightningModule):
             return  # grace period: don't step or seed the scheduler yet
 
         if not self._lr_scheduler_seeded:
-            # seed with val_loss AT grace-end, not the min seen during grace ( min
-            # can reflect an early not-yet-diverged online/EMA state, not real learning)
             self.lr_scheduler.best = float(val_loss)
             self.lr_scheduler.num_bad_epochs = 0
             self._lr_scheduler_seeded = True
@@ -464,12 +448,6 @@ class JEPAModel(L.LightningModule):
         mask = batch["mask_dict"]["coords"][..., 0, 0]  # [B, L] boolean
         batch["mask"] = mask
 
-        # Split residues into context / target BEFORE encoding.
-        # Partial-coordinate modes are overlapping: every valid
-        # residue is both context (contributes its partial-atom latent) and target
-        # (its full-atom latent is predicted) -- block_mask/masked_pct don't apply.
-        # `+block_mask=true` at the CLI switches to block masking.
-        # `+masked_pct=0.7` overrides random_residue_mask's default 0.5 (ignored for block masking).
         masking_mode = self.cfg.get("masking_mode", None)
         if masking_mode in {
             "chemmask_partial_coordinates",
@@ -484,12 +462,6 @@ class JEPAModel(L.LightningModule):
             masked_pct = self.cfg.get("masked_pct", 0.5)
             context_mask, target_mask = random_residue_mask(batch, masked_pct=masked_pct)
 
-        # Online encoder sees only the n-k context residues.
-        # `+masking_mode=chemmask_aa_only` switches context residues from "real
-        # coords, zeroed for target only" to "AA identity kept, all geometry hidden
-        # via coord_mask". Partial-coordinate modes hide
-        # `+atom_mask_pct=0.7` of EVERY residue's own atoms, identity always kept.
-        # Default (flag absent) is byte-identical to before.
         if masking_mode is None or masking_mode == "spatial_3d_block":
             masked_batch = mask_batch_for_encoder(batch, context_mask)
         elif masking_mode == "chemmask_aa_only":
@@ -507,9 +479,6 @@ class JEPAModel(L.LightningModule):
             raise ValueError(f"Unknown masking_mode: {masking_mode!r}")
         online_mean = self._encode_mean(self.online_encoder, masked_batch)  # [B, L, latent_z_dim], only context positions carry signal
 
-        # Representation collape monitoring
-        # Std of the online latents over real context residues, per latent dim,
-        # averaged over dims. If the representation is collapsing, this drops to 0 
         latent_std = online_mean[context_mask.bool()].std(dim=0).mean()
 
         # Full latent stats (max/min/mean/median/std + histogram)
@@ -546,15 +515,9 @@ class JEPAModel(L.LightningModule):
             )  # [B, hidden_dim]
             action_z = action_z.unsqueeze(1)  # [B, 1, hidden_dim], broadcasts over target queries
 
-        # The context keeps the dataloader's global rotation.  The target gets
-        # an additional independent uniform rotation and the predictor is not
-        # told either frame.  Default false preserves all historical runs.
         if self.jepa_independent_target_rotation:
             ema_batch = independently_rotate_target_batch(ema_batch)
 
-        # Context/target overlap under partial-coordinate modes (every residue is
-        # both) -- self_exclude blocks query i from attending to its own context
-        # entry, forcing it to reconstruct from neighbours instead of copying itself.
         self_exclude = (
             masking_mode in {
                 "chemmask_partial_coordinates",
@@ -609,8 +572,6 @@ class JEPAModel(L.LightningModule):
         predicted_for_loss = predicted_latent[real_target_residues]
         ema_target_for_loss = ema_target[real_target_residues]
         if self.baseline_run_layernorm:
-            # I-JEPA normalizes teacher features per token, then asks the predictor
-            # to match them in the original latent scale.
             ema_target_for_loss = F.layer_norm(
                 ema_target_for_loss, (ema_target_for_loss.shape[-1],)
             )
@@ -630,9 +591,6 @@ class JEPAModel(L.LightningModule):
         predictor_effective_rank = None
         suggested_sigreg_equal_weight = None
         if self.jepa_sigreg:
-            # Only trainable paths are regularized.  The EMA target is measured
-            # but not included in SIGReg: it is stop-gradient, so including its
-            # statistic would add a large constant without changing gradients.
             context_flat = online_mean[context_mask.bool()]
             predictor_flat = predicted_latent[real_target_residues]
             target_flat = ema_target[real_target_residues]
@@ -646,9 +604,6 @@ class JEPAModel(L.LightningModule):
                 context_effective_rank = covariance_effective_rank(context_flat)
                 target_effective_rank = covariance_effective_rank(target_flat)
                 predictor_effective_rank = covariance_effective_rank(predictor_flat)
-                # Weight making the two scalar loss contributions equal on this
-                # batch.  Calibration uses a robust median over many batches and
-                # then takes a conservative fraction of this value.
                 suggested_sigreg_equal_weight = (
                     jepa_loss.detach() / sigreg_loss.detach().clamp_min(1e-12)
                 )
@@ -673,8 +628,6 @@ class JEPAModel(L.LightningModule):
                 self_exclude=self_exclude,
             )  # [B, L_tgt, latent_z_dim]
 
-            # L2-normalize before the distance so neither side can inflate its raw
-            # output scale to game z_sensitivity (caps numerator/denominator to [0, 2] each).
             predicted_norm = F.normalize(predicted_latent[real_target_residues], dim=-1)
             predicted_norm_z2 = F.normalize(predicted_latent_z2[real_target_residues], dim=-1)
             numerator = (predicted_norm - predicted_norm_z2).norm(dim=-1).mean()
@@ -820,12 +773,6 @@ class JEPAModel(L.LightningModule):
                 add_dataloader_idx=False,
             )
 
-            # A weight-zero calibration run leaves the training objective and
-            # its gradients unchanged while collecting the coefficient that
-            # would make raw SIGReg and JEPA scalar losses equal.  (Sampling the
-            # diagnostic projections still consumes RNG, so this is not a
-            # bitwise reproduction of a baseline trajectory.)  Print robust
-            # summaries so calibration does not depend on W&B availability.
             equal_weight = float(out["suggested_sigreg_equal_weight"].detach().cpu())
             if torch.isfinite(torch.tensor(equal_weight)) and equal_weight > 0:
                 self._sigreg_equal_weight_samples.append(equal_weight)
@@ -1131,9 +1078,6 @@ class JEPAModel(L.LightningModule):
     def on_train_batch_end(self, outputs, batch, batch_idx):
         """EMA update of the target encoder after each training step."""
         if self.baseline_run_ema:
-            # With gradient accumulation this hook runs on every batch, while
-            # global_step advances only after an optimizer step. Update once per
-            # optimizer step and interpolate from 0.996 at step 1 to 1.0 at max_steps.
             if self.global_step == self._last_ema_update_step:
                 return
             self._last_ema_update_step = self.global_step
@@ -1150,8 +1094,6 @@ class JEPAModel(L.LightningModule):
                 ema_p.data = ema_decay * ema_p.data + (1 - ema_decay) * online_p.data
 
     def configure_optimizers(self):
-        # Only parameters with requires_grad=True are optimized, which excludes the
-        # EMA target encoder (online encoder + predictor are trained).
         optimizer = torch.optim.AdamW(
             [p for p in self.parameters() if p.requires_grad],
             lr=self.cfg.opt.lr,

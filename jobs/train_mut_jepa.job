@@ -35,7 +35,5 @@ fi
 mkdir -p "$RAID_ROOT/runs/mut-jepa_v1"
 cd "$RAID_ROOT/runs/mut-jepa_v1"
 
-# "scratch" answers train.py's resume-from-checkpoint prompt
-# flags: +single=true (1 GPU), +use_action_conditioning=true, dataset.datamodule.num_workers=16
 echo "scratch" | srun python /mnt/data/slurm-storage/aishod/projects/la-proteina/proteinfoundation/jepa/train.py \
     run_name_=mut-jepa_v1 +single=true +use_action_conditioning=true dataset.datamodule.num_workers=16

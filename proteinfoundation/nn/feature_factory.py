@@ -1508,8 +1508,6 @@ class RelativeResidueOrientationPairFeat(Feature):
             has_cb[:, :, None] * has_cb[:, :, None]
         )  # [b, n, n] boolean
         pair_mask = pair_mask * beta_carbon_pair_mask  # [b, n, n]
-        # gate on N's own mask bit too (theta_12/theta_21 use N_p1/N_p2), else a
-        # masked N leaks its real angle whenever CA/CB are still valid
         pair_mask = pair_mask * (has_n[:, :, None] * has_n[:, None, :])  # [b, n, n]
 
         N = coords[:, :, 0, :]  # [b, n, 3]
@@ -1581,8 +1579,6 @@ class BackbonePairDistancesNanometerPairFeat(Feature):
         )  # Each shape [b, n, n]
         # CA_X[..., i, j] has distance (nm) between CA[..., i] and X[..., j]
 
-        # Gate each column on its OWN atom's mask bit, not just CA's (else a masked
-        # N_j/C_j leaks its real distance whenever CA_j itself is still valid).
         CA_N = CA_N * has_n[:, None, :]  # [b, n, n]
         CA_C = CA_C * has_c[:, None, :]  # [b, n, n]
         CA_CB = CA_CB * has_cb[:, None, :]  # [b, n, n]
@@ -1599,9 +1595,6 @@ class BackbonePairDistancesNanometerPairFeat(Feature):
             (CA_N, CA_CA, CA_C, CA_CB),
         )  # Each [b, n, n, 21]
 
-        # bin_and_one_hot always emits a one-hot bin (a zeroed distance still lands
-        # in bin 0), so the has_n/has_c gate above doesn't survive binning -- zero
-        # the one-hot itself or a masked N/C still contributes a nonzero feature.
         CA_N_feat = CA_N_feat * has_n[:, None, :, None]
         CA_C_feat = CA_C_feat * has_c[:, None, :, None]
 

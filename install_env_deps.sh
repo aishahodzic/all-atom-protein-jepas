@@ -14,11 +14,7 @@ echo "== Installing lightning, wandb, python-dotenv, loguru =="
 pip install "lightning==2.5.0" wandb python-dotenv loguru
 
 echo "== Installing torch matching the system's CUDA toolkit (cu126) =="
-# NOTE: check `nvcc --version` first. If the box has a different CUDA toolkit,
-# swap cu126 below (and in the torch_geometric line) for the matching build.
 pip install --force-reinstall --no-deps torch==2.11.0+cu126 --index-url https://download.pytorch.org/whl/cu126
-# torchvision version must match the torch minor version (0.26.x <-> torch 2.11.x).
-# Check https://github.com/pytorch/vision#installation for the current pairing.
 pip install --force-reinstall --no-deps torchvision==0.26.0+cu126 --index-url https://download.pytorch.org/whl/cu126
 
 echo "== Installing PyG extensions (prebuilt wheels matching torch+cu126) =="
@@ -32,10 +28,6 @@ echo "== Installing mmseqs2 (needed for sequence-similarity dataset splitting) =
 conda install -y --override-channels -c conda-forge -c bioconda mmseqs2
 
 echo "== Working around dead ligand-expo.rcsb.org download (graphein PDBManager) =="
-# graphein's PDBManager tries to download a ligand map from ligand-expo.rcsb.org on
-# first run. That host/port is unreachable from this box and the data isn't needed
-# (has_ligands/remove_ligands are unused in our configs), so drop in an empty file
-# so PDBManager sees it as already downloaded and skips it.
 : "${DATA_PATH:?Set DATA_PATH before running this script, e.g. export DATA_PATH=/home/data}"
 mkdir -p "$DATA_PATH/pdb_train"
 touch "$DATA_PATH/pdb_train/cc-to-pdb.tdd"
