@@ -1,0 +1,59 @@
+#!/bin/bash
+# Fill in the 6 STB tasks missing from the block-6 layerwise panel
+# (BindBio, BindInt, CatBio, CatInt, Con, Homo) so it matches the full 12-task
+# coverage used everywhere else. Same staged EMA 100k checkpoint as the
+# existing block6 panel (slurm-258850) and the main canonical-lejepa-v1-ema row.
+#SBATCH --job-name=stb_canon_b6_gapfill
+#SBATCH --partition=normal
+#SBATCH --qos=medium
+#SBATCH --nodelist=noether
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=64G
+#SBATCH --time=1-00:00:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/stb/publication_upstream/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+STB_ROOT="$PROJECT_ROOT/StructTokenBench"
+PYTHON_BIN=/slurm-storage/aishod/.conda/envs/pstbench/bin/python
+CANONICAL_LEJEPA_V1_EMA_STEP100K_CKPT="$PROJECT_ROOT/store/canonical_lejepa_v1_100k/evaluation/canonical-lejepa-v1-step100000-ema-staged.ckpt"
+ENCODER_CONFIG="$STB_ROOT/100k-checkpoints/shared/exp_config_jepa_nn130m.json"
+
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+
+echo "49aaae3dccc3835005bb6470b0f483a57cee4e28bead2408994693974389e273  $CANONICAL_LEJEPA_V1_EMA_STEP100K_CKPT" | sha256sum -c -
+echo "98e0350d418e7d840fa245ddfd7150064e87a9ac74c72c9150a946f0f66ccd9d  $ENCODER_CONFIG" | sha256sum -c -
+
+cd "$STB_ROOT"
+export STB_SKIP_BOOTSTRAP=1
+export STB_SKIP_DATA_SETUP=1
+export STB_SMOKE=0
+export STB_SHARED_EMBEDDING_CACHE=1
+export STB_SHARED_EMBEDDING_CACHE_ROOT="$PROJECT_ROOT/store/canonical_lejepa_v1_100k/evaluation/stb_layerwise_shared_cache"
+export DS_IGNORE_CUDA_DETECTION=1
+export PYTHON_BIN
+export NUM_WORKERS=8
+export PDB_DATA_ROOT=/mnt/hopper-raid/aishod/data/struct_token_bench_pdb_data
+export STB_RELEASE_DATA_ROOT=/mnt/hopper-raid/aishod/data/struct_token_bench_release_data
+export CANONICAL_LEJEPA_V1_EMA_STEP100K_CKPT
+export TOKENIZER_READOUT_BLOCK=6
+export D_MODEL_OVERRIDE=768
+export EVALUATION_RUN_ID="slurm-${SLURM_JOB_ID}-canonical-lejepa-v1-ema-step100k-block6-gapfill"
+export STB_LOG_ROOT="$STB_ROOT/struct_token_bench_logs/upstream-l600-v1-full/runs/$EVALUATION_RUN_ID"
+export SUMMARY_FILE="$STB_LOG_ROOT/summary_results.csv"
+export TMPDIR="$HOME/tmp/stb-canon-b6-gapfill/${SLURM_JOB_ID}"
+export MPLCONFIGDIR="$TMPDIR/mpl"
+export TRITON_CACHE_DIR="$TMPDIR/triton"
+mkdir -p "$STB_LOG_ROOT" "$STB_SHARED_EMBEDDING_CACHE_ROOT" "$MPLCONFIGDIR" "$TRITON_CACHE_DIR"
+
+bash src/script/run_eval.sh \
+    --protocol=upstream-l600-v1 \
+    --checkpoint=100k \
+    --experiment=canonical-lejepa-v1-ema-step100k \
+    --tasks=BindBio,BindInt,CatBio,CatInt,Con,Homo

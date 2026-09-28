@@ -1,0 +1,25 @@
+#!/bin/bash
+#SBATCH --job-name=canon_csig_nccl
+#SBATCH --partition=normal
+#SBATCH --qos=short
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:2
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=16G
+#SBATCH --time=00:10:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/canonical_lejepa/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+PYTHON_BIN=/slurm-storage/aishod/envs/la-proteina/bin/python
+
+cd "$PROJECT_ROOT"
+export PYTHONPATH="$PROJECT_ROOT${PYTHONPATH:+:$PYTHONPATH}"
+mkdir -p "$PROJECT_ROOT/logs/canonical_lejepa"
+
+srun "$PYTHON_BIN" -m torch.distributed.run \
+    --standalone \
+    --nproc-per-node=2 \
+    -m proteinfoundation.jepa.tests.run_canonical_centered_residue_sigreg_nccl

@@ -1,0 +1,304 @@
+{
+  "protocol": "Frozen encoder and unchanged La Proteina decoder; true amino-acid identity/mask used only for coordinate scoring and idealization.",
+  "encoder": "jepa-rand-mask-70",
+  "encoder_source": "target",
+  "encoder_checkpoint": "/mnt/raid/aishod/runs/jepa_random_masking_70_v3/store/jepa_random_masking_70_v3/checkpoints/chk_epoch=00000019_step=000000100000.ckpt",
+  "decoder_checkpoint": "/mnt/data/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/checkpoints/jepa-rand-mask-70-target-80k-to-140k_final.pt",
+  "proteins": [
+    {
+      "protein_id": "1kfm_A",
+      "residues": 50,
+      "sequence_recovery": 0.68,
+      "native_sequence": "SNAKIDQLSSDVQTLNAKVDQLSNDVNAARSDAQAAKDDAARANQRLDNM",
+      "predicted_sequence": "SKARIDQLSSRRGALNAKVDILENSVKAARSDAIAAKEDAARANERLEIL",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.4857261846520173,
+        "atoms": 163
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 1.7722295621341024,
+        "atoms": 163
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.4731407578984916,
+        "atoms": 108
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.5101342228735002,
+        "atoms": 55
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.2980162518569241,
+        "atoms": 200
+      }
+    },
+    {
+      "protein_id": "1nkw_M",
+      "residues": 111,
+      "sequence_recovery": 0.6036036036036037,
+      "native_sequence": "ATTIRRKLRTRRKVRTTTAASGRLRLSVYRSSKHIYAQIIDDSRGQTLAAASSAALKSGNKTDTAAAVGKALAAAAAEKGIKQVVFDRGSYKYHGRVKALADAAREGGLDF",
+      "predicted_sequence": "ATTINRAENTNNQVKTTLAASGNCRLSVFRSSRHCVAKIIPPSKGQTTKFELLAKIKSGDYTDTAAAVGRKLYRKYATSGPKQVVFDKGSIKIHGRVKALFDAAIHGGLDF",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": null,
+        "atoms": 0
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": null,
+        "atoms": 0
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": null,
+        "atoms": 0
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": null,
+        "atoms": 0
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.0,
+        "atoms": 111
+      }
+    },
+    {
+      "protein_id": "3d3r_A",
+      "residues": 80,
+      "sequence_recovery": 0.5,
+      "native_sequence": "ENLYFQGCLSIPSQVVAVDNERQSVTVDTLGVRRDVSSHLTEPLAIGDYVLIHIGFVNKIDRNDALQSLELYQEIVSKLE",
+      "predicted_sequence": "ESLKLGGQKAVPAKVVAADLELQTIVVDLLGKRRLVPTNPGRPLKVGDYVLIYAGREEQVDRNDELQTLELFLEIVSRIE",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.8642312845392395,
+        "atoms": 311
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.1616594298490095,
+        "atoms": 311
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.5695944331998617,
+        "atoms": 151
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 2.1047993630953803,
+        "atoms": 160
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.5012820021004971,
+        "atoms": 320
+      }
+    },
+    {
+      "protein_id": "5a13_G",
+      "residues": 245,
+      "sequence_recovery": 0.6408163265306123,
+      "native_sequence": "APMMADRAKLLTTPGVFGNFSTYKVRADYMKLPAAERKAAAAEAQMVIDKHKDKVIVDTYLTRGLGAGSDYLLRVHSTDMAATQAFLVDWRATKLGMYSDVTENLVGITKALNYISKDKSPDLNAGLSSATYSDSAPRYVIVIPVKKDAAWWNMSDEQRLKEIEVHTQPTLQYLVNVKRKLYHSTGLADADFITYFETADLAAFNNLLIALAKVPENTHHVRWGNPTVLGTIQSADVLVKTLSGM",
+      "predicted_sequence": "SPMTADRANLYKSPGVLGIVSTLAVPADTMVLPAAERHSALAELGMVVDKLKDKVMVDTHLCSGDGPGADYYARVFSPDMAATQQFLVKWKATKIGMYTQVLEFVVARVKALNYISTDALPDWNIGLSSAKKSRSAPKYVIVIDGEKDAAWLNMEDEQRLKEIEAHTQPTLQYLSNMVVKQYNNRGLTSAWFIIYFQTPDLAALNNVLNTLAKTPANTHNTKWGNPFVLGKIQSTDELVKTLLGG",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.716700623869066,
+        "atoms": 926
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.2270509925259483,
+        "atoms": 925
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.6598523760110213,
+        "atoms": 573
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.8051706447227356,
+        "atoms": 353
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.39312063521254986,
+        "atoms": 980
+      }
+    },
+    {
+      "protein_id": "5fli_A",
+      "residues": 183,
+      "sequence_recovery": 0.5683060109289617,
+      "native_sequence": "IEYATRHRARSFIPPEPGKPYFIEKGLGDRAHLFGDLITIYAGGEQTENTFNFFTCEGPKGEVIPAHSHADTYEVFYITQGAVRLFVEDLEGEQHEKLLTPGDFGFVPKNCVHAYRMERHHSQVVGVAAGPGGTFERFFESLGTPAEELGLPVRPFVPEPEKFRTVPEQYDVRFRPDHQWHTG",
+      "predicted_sequence": "EKYSTPHDAWSPIARKPGAPYFSPKGLGDRARLRGLTITVLGGSEQTKNTFNFFRSKGKKGEVQPPHSHADTTEELKLFAGAVRLKVEDLEGESRRFLLTPGDDGTIPKNCEHTIRQESHRARVVGVAEGDGGHLSRFYIHLGTPTEEQGLPEDPRIPSPEKGNRVPGQSGVIQHPSNVWHDG",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.8711449495407144,
+        "atoms": 740
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.5616315684012267,
+        "atoms": 740
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.8000257144757605,
+        "atoms": 365
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.9378627852557484,
+        "atoms": 375
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.5103858656835711,
+        "atoms": 732
+      }
+    },
+    {
+      "protein_id": "5l0o_A",
+      "residues": 164,
+      "sequence_recovery": 0.5426829268292683,
+      "native_sequence": "AEEMDERRRQNVAYEYLCHLEEAKRWMEACLGEDLPPTTELEEGLRNGVYLAKLGNFFSPKVVSLKKIYDREQTRYKATGLHFRHTDNVIQWLNAMDEIGLPKIFYPETTDIYDRKNMPRCIYCIHALSLYLFCLGLAPQIQDLYGKVDFTEEEINNMKTELEK",
+      "predicted_sequence": "GEEMFEFRRQNVAYELLCHLEDAKEWLTRLTGKKLPKPEEAPKGLRPGVPLAKYGQFFAPEVVTLKKCEGPDEESRQKRGVSARHKDAVIQWQKAMREIGLPSIWIPETNELLNSKNMVDAILRVQALSLYLNCLGRAPPIKDNWDEVDITKEEINNMLTEIES",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.862243046217267,
+        "atoms": 703
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.5098425151145713,
+        "atoms": 702
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.691805725819486,
+        "atoms": 351
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 2.0179124988310484,
+        "atoms": 352
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.40549110398663485,
+        "atoms": 656
+      }
+    },
+    {
+      "protein_id": "5xr7_A",
+      "residues": 167,
+      "sequence_recovery": 0.5389221556886228,
+      "native_sequence": "YDYLFKLVLIGDSGVGKSNLLSRFTKNEFNLESKSTIGVEFATKTTKVEGKVVKAQIWDTAGKRAITSAYYRGAVGALLIYDVTRHATFENAARWLRELRGHTDPNIVVMLIGNKCDLRHLVAVKTEEAKAFAERESLYFMETSALDATNVENAFTEVLTQIHKIVS",
+      "predicted_sequence": "GSPTVKLVIVGPSGVGKSNLVSYFSLNEFLEDASPSIPVQLATANFKFDGETVFIDIWDLPAHGEITSAFYKGAVGALLIVDETRHAVFENVAQWLRWLRGHSDPNIVLMLIGNKLHDRKQKAVSTEELKAMAQRLEIDFELYSANDQAGVEQAASEVITQIHQRLA",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.7108038024406496,
+        "atoms": 642
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.3454050490771867,
+        "atoms": 642
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.6609641133512576,
+        "atoms": 331
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.7623008413508872,
+        "atoms": 311
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.43975242427540745,
+        "atoms": 668
+      }
+    },
+    {
+      "protein_id": "6o14_A",
+      "residues": 145,
+      "sequence_recovery": 0.5310344827586206,
+      "native_sequence": "MNFKAVIKEVRLKSEHGYTNNFPSGDTLFIELDVEAKEDLQDVVAGILIRDRFGQDIFGINTYLMEKKVELKKGKYLFTFKMPLNLAPGKYTLTVALHKGMDHAQECYHWIDNVCNFEVNGFKKEQFVGVCYLPTEFNYRKIPKL",
+      "predicted_sequence": "GSHKVVIKSITLYSNNSKTTKVPSGSTLFIELNIEITEDLQDVKLEIRIMDSKGQPIVGFNTEEMQTKVELTKGVYKFTIKGPLNLTPGKYALAYALTKGTKHGQESIGRWDNVFNFEVNGLKNSQKKDGTYLPHEFTLDKSLIL",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.9358221414462193,
+        "atoms": 607
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.5082682849798483,
+        "atoms": 607
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.7125511405300455,
+        "atoms": 306
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 2.1390451314032197,
+        "atoms": 301
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.5430481580329893,
+        "atoms": 580
+      }
+    },
+    {
+      "protein_id": "7cnw_A",
+      "residues": 253,
+      "sequence_recovery": 0.5019762845849802,
+      "native_sequence": "MLNSFKLSLQYILPKLWLTRLAGWGASKRAGWLTKLVIDLFVKYYKVDMKEAQKPDTASYRTFNEFFVRPLRDEVRPIDTDPNVLVMPADGVISQLGKIEEDKILQAKGHNYSLEALLAGNYLMADLFRNGTFVTTYLSPRDYHRVHMPCNGILREMIYVPGDLFSVNHLTAQNVPNLFARNERVICLFDTEFGPMAQILVGATIVGSIETVWAGTITPPREGIIKRWTWPAGENDGSVALLKGQEMGRFKLG",
+      "predicted_sequence": "MANSFYDALVKIMPKEGLTRQAGTGAVKSSGELRKLVIDAFVKQFKVDDGRLQKGATASYETLNEFFDAKLREAHRDIDEQPNALVMLTDGRISYEGEAEGSKAILSEGTEVSLQALLAGNYDMADAFVDGKIVVTVLAPRSPSRRAFLGNGILKEMIIVPGPLLPLTHLDAQNADEAFGDASVIISGLDTTFGPYAVVEPGATGDGSQATPWAGDPLGDKVGEIKRWTWPKESQDGSIKFEVGQVLGRLAFG",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.9233539483698177,
+        "atoms": 988
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.5953045764864497,
+        "atoms": 987
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.8798928119605254,
+        "atoms": 455
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.959692405976923,
+        "atoms": 533
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.5259541453270782,
+        "atoms": 1012
+      }
+    },
+    {
+      "protein_id": "8cbv_A",
+      "residues": 50,
+      "sequence_recovery": 0.44,
+      "native_sequence": "NFRVYYRDDPVWKGPAKLLEKGEGAVVIQDNSDIKVVPRRKAKIIRDYGK",
+      "predicted_sequence": "GPRVYGRDGDVEIGKARILEKSEGEYRLKVNGNWKVVPRKKCKEVEDEKE",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.965605067939671,
+        "atoms": 210
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.837067284468189,
+        "atoms": 210
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.6553000949819086,
+        "atoms": 91
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 2.1732039133837704,
+        "atoms": 119
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.5805606815450515,
+        "atoms": 200
+      }
+    }
+  ],
+  "aggregate": {
+    "proteins": 10,
+    "residues": 1448,
+    "sequence_recovery": 0.5573204419889503,
+    "oracle_sidechain_raw": {
+      "rmsd_angstrom": 1.835299309591191,
+      "atoms": 5290
+    },
+    "oracle_sidechain_idealized": {
+      "rmsd_angstrom": 2.4416675402782198,
+      "atoms": 5287
+    },
+    "correct_aa_sidechain_raw": {
+      "rmsd_angstrom": 1.7158286450875389,
+      "atoms": 2731
+    },
+    "incorrect_aa_sidechain_raw": {
+      "rmsd_angstrom": 1.9547620935509786,
+      "atoms": 2559
+    },
+    "backbone_raw": {
+      "rmsd_angstrom": 0.4680189572328343,
+      "atoms": 5459
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "batch_size": 2,
+  "max_residues": 102,
+  "visible_residues": 168,
+  "base_loss": 16.60849380493164,
+  "geometry": {
+    "total": 56.879302978515625,
+    "true_total": 57.380069732666016,
+    "predicted_total": 56.3785400390625,
+    "covalent": 12.066764831542969,
+    "virtual": 11.678285598754883,
+    "peptide_bond": 21.04053497314453,
+    "peptide_angles": 2.521268129348755,
+    "between_clash": 0.00026965653523802757,
+    "within_residue": 95.72425842285156
+  },
+  "base_gradient_norm": 108.15723419189453,
+  "geometry_gradient_norm_unweighted": 466.8782043457031,
+  "equal_gradient_weight": 0.2316604912912336,
+  "elapsed_seconds": 0.39029294066131115,
+  "peak_cuda_gib": 2.252579689025879,
+  "decoder_initialization": "fresh_seeded_initialization"
+}

@@ -1,0 +1,102 @@
+{
+  "design": {
+    "n_requested_queries": 250,
+    "n_selected_queries": 250,
+    "seed": 42,
+    "query_split": "probe_test",
+    "same_pdb_entries_excluded": true,
+    "control": "random different-PDB chain within max(5 residues, 10% query length)",
+    "latent_distance": "Euclidean distance between mean-pooled residue embeddings",
+    "structural_metric": "Biotite structural alignment; TM-score normalised by longer chain"
+  },
+  "models": {
+    "JEPA 64D": {
+      "n_valid": 248,
+      "n_failed": 2,
+      "mean_neighbour_tm": 0.4908500465503456,
+      "mean_control_tm": 0.27496675146334465,
+      "mean_paired_difference": 0.21588329508700094,
+      "paired_difference_95ci": [
+        0.16640981979308223,
+        0.26543898564583185
+      ],
+      "fraction_neighbour_higher": 0.6854838709677419,
+      "mean_neighbour_sequence_identity": 0.40366645178484845,
+      "mean_control_sequence_identity": 0.15133700972504271,
+      "n_neighbours_below_30pct_identity": 160,
+      "below_30pct_mean_neighbour_tm": 0.22682837950927395,
+      "below_30pct_mean_paired_difference": -0.021071360758935728,
+      "below_30pct_paired_difference_95ci": [
+        -0.05522593611325911,
+        0.011073739980322671
+      ],
+      "below_30pct_fraction_neighbour_higher": 0.525
+    },
+    "JEPA 64D + SO(3)": {
+      "n_valid": 248,
+      "n_failed": 2,
+      "mean_neighbour_tm": 0.7313662804499654,
+      "mean_control_tm": 0.27496675146334465,
+      "mean_paired_difference": 0.4563995289866209,
+      "paired_difference_95ci": [
+        0.4089589832873834,
+        0.5041898394779589
+      ],
+      "fraction_neighbour_higher": 0.8064516129032258,
+      "mean_neighbour_sequence_identity": 0.6892187909718119,
+      "mean_control_sequence_identity": 0.15133700972504271,
+      "n_neighbours_below_30pct_identity": 76,
+      "below_30pct_mean_neighbour_tm": 0.2146406908844055,
+      "below_30pct_mean_paired_difference": -0.017008697535448553,
+      "below_30pct_paired_difference_95ci": [
+        -0.05245327450219531,
+        0.016330466212710063
+      ],
+      "below_30pct_fraction_neighbour_higher": 0.40789473684210525
+    },
+    "Uncropped LeJEPA control": {
+      "n_valid": 248,
+      "n_failed": 2,
+      "mean_neighbour_tm": 0.6591462428232518,
+      "mean_control_tm": 0.27496675146334465,
+      "mean_paired_difference": 0.38417949135990714,
+      "paired_difference_95ci": [
+        0.33486961531862974,
+        0.4342355977709687
+      ],
+      "fraction_neighbour_higher": 0.782258064516129,
+      "mean_neighbour_sequence_identity": 0.5889055342982543,
+      "mean_control_sequence_identity": 0.15133700972504271,
+      "n_neighbours_below_30pct_identity": 105,
+      "below_30pct_mean_neighbour_tm": 0.2488918432711362,
+      "below_30pct_mean_paired_difference": 0.015249853912748306,
+      "below_30pct_paired_difference_95ci": [
+        -0.026675011828831884,
+        0.055018752840852794
+      ],
+      "below_30pct_fraction_neighbour_higher": 0.5238095238095238
+    },
+    "Cropped LeJEPA control": {
+      "n_valid": 248,
+      "n_failed": 2,
+      "mean_neighbour_tm": 0.5925740481252186,
+      "mean_control_tm": 0.27496675146334465,
+      "mean_paired_difference": 0.317607296661874,
+      "paired_difference_95ci": [
+        0.2661829107242937,
+        0.36850721582973645
+      ],
+      "fraction_neighbour_higher": 0.7379032258064516,
+      "mean_neighbour_sequence_identity": 0.5296590769022941,
+      "mean_control_sequence_identity": 0.15133700972504271,
+      "n_neighbours_below_30pct_identity": 121,
+      "below_30pct_mean_neighbour_tm": 0.20474485910465512,
+      "below_30pct_mean_paired_difference": -0.0277891947831589,
+      "below_30pct_paired_difference_95ci": [
+        -0.06255840327074992,
+        0.0043273606193347984
+      ],
+      "below_30pct_fraction_neighbour_higher": 0.49586776859504134
+    }
+  }
+}

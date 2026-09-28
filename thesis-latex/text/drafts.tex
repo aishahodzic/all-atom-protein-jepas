@@ -1,0 +1,245 @@
+\section{Methodology}
+\label{sec:methodology}
+
+\subsection{Research Overview}
+[ ] State the overall objective of this work.
+
+[ ] Present the overall research methodology and experimental pipeline.
+
+[ ] Introduce the progression from La Proteina to JEPA, LeJEPA and Mutation-JEPA.
+
+[ ] Summarise how the proposed models are evaluated and compared.
+
+\subsection{Dataset}
+\textbf{Research Question:} How are protein structures represented and prepared for training?
+
+[ ] Introduce the Protein Data Bank (PDB) and justify its selection.
+[ ] Describe the dataset preparation: downloaded structures, preprocessing pipeline, train/validation split and dataset statistics.
+[ ] Explain the protein representation: atom37 format, residue representation and batch representation.
+
+\subsection{Dataset}
+\textbf{Research Question:} How are protein structures represented and prepared for training?
+
+\subsubsection{The Protein Data Bank}
+
+\textbf{We train on the PDB rather than the AFDB used by the original La-Proteina model.}
+The Protein Data Bank (PDB) \citep{berman2000pdb} is a public archive of experimentally
+determined three-dimensional protein structures, currently containing 241{,}345 entries.
+La-Proteina's original paper trains on subsets of the AlphaFold Database (AFDB)
+\citep{la-proteina} - a database of AlphaFold-\emph{predicted}, rather than experimentally solved,
+structures, covering over 214 million entries \citep{afdb2024}. Its codebase
+also ships a PDB dataloader, which we use instead for two reasons: its
+structures are experimentally determined rather than model-predicted, and its smaller scale
+fits our compute budget.
+
+\subsubsection{Dataset preparation}
+
+\textbf{We follow La-Proteina's PDB filtering pipeline, which operates on individual
+polypeptide chains rather than full entries.} A single PDB entry can contain multiple chains
+(e.g., a multi-chain protein complex), and each chain becomes a separate training example, so
+the final chain count exceeds the entry count. Structures are downloaded in mmCIF format and
+filtered by chain length (50-256 residues), experimental method (X-ray diffraction or
+cryo-EM only), resolution (0.0-5.0\,\AA, the precision with which atomic positions were
+determined), standard-residue composition, and availability; 45 chain IDs that fail
+processing are excluded by ID.
+
+\textbf{Chains are split into train/validation/test by sequence-similarity clustering, not
+randomly.} Sequences are clustered such that all members of a cluster are pairwise at least
+50\% identical, and whole clusters are assigned to a split, in
+ratio 0.98/0.019/0.001; this prevents near-duplicate sequences from leaking across splits.
+The result is 344{,}065 chains in total: 338{,}787 train, 4{,}775 validation, 503 test.
+
+\subsubsection{Protein representation}
+
+\textbf{Each residue is one of 20 canonical amino acid types (plus an unknown-residue
+index), encoded as a one-hot vector.} Residues share a common backbone but differ in
+side-chain atoms, whose identity and count vary by residue type. \emph{Atom37} is a fixed
+dictionary mapping each of 37 possible heavy-atom names (all atoms except hydrogen) to a
+slot index, shared by every residue type. A residue's atoms are stored at their assigned
+slots, giving an $L$-residue protein a tensor of shape $[L, 37, 3]$. A boolean mask marks
+which of the 37 slots are populated for a given residue. No residue fills all 37
+slots: glycine (smallest) only has 4 atoms while tryptophan (largest) has 14. The atom mask
+therefore has several 1s per residue, each corresponding to a slot in the fixed atom37
+ordering. Thus, residue order within a chain and atom order within a residue are both
+fixed: residues follow the chain's N-to-C backbone direction, and atoms follow
+the fixed name-to-slot assignment defined by atom37.
+
+\textbf{Each processed structure is stored as a set of per-residue tensors, padded and masked
+to a common length for batching.} Fields include residue type, residue index, atom
+coordinates, the atom presence mask, chain ID, and B-factor (a per-atom measure of positional
+uncertainty from the structure determination). A batch has shape
+[batch\_size, max\_num\_residues, \dots], e.g., coordinates [B, L, 37, 3], residue type
+[B, L], and the atom mask [B, L, 37]; the batch itself is a dict-like PyTorch Geometric
+\texttt{Data}/\texttt{Batch} object keyed by field name.
+
+
+\subsection{Data Representation}
+\textbf{Research Question:} How are protein structures represented for learning?
+
+[ ] Describe the input features: residue features, pair representations, coordinate representations and conditioning features.
+[ ] Explain the feature generation pipeline and motivate the chosen representations.
+
+\textbf{The encoder and decoder share a transformer architecture with pair-biased
+attention.} Following pair-biased attention mechanisms
+\citep{jumper2021,abramson2024}, and closely matching the implementation of
+\citep{geffner2025}, three feature factories build the model's inputs: (1) a sequence
+representation of shape $[L, C_{\text{seq}}]$, encoding per-residue features; (2) a pair
+representation of shape $[L, L, C_{\text{pair}}]$, encoding features between residue pairs;
+and (3) a conditioning vector. Queries, keys, and values come only from the
+sequence representation; the pair representation only adds a bias to the attention logits.
+
+\textbf{The sequence representation carries residue identity and coordinates.}
+Per-residue features include residue type (a one-hot vector over the 20 canonical
+amino acids), atom37 coordinates in both absolute and C$\alpha$-relative form, a chain-break
+indicator, and a chain index.
+
+\textbf{The pair representation carries relative geometric relationships between residues.}
+Per-pair features include relative sequence separation $|i-j|$, pairwise backbone
+distances (C$\alpha$-N, C$\alpha$-C$\alpha$, C$\alpha$-C, C$\alpha$-C$\beta$) discretized
+into distance bins, relative residue orientation, and a same-chain indicator. Every pair of
+residues is featurized, regardless of distance, so the underlying attention graph is dense - every residue attends to every other residue.
+
+\textbf{Conditioning variables modulate the sequence representation via adaptive layer
+normalization.} A separate, smaller conditioning vector is computed per residue: it drives an
+adaptive layer norm before attention (scaling and shifting the sequence representation),
+and a simpler multiplicative gate afterward. This carries the C$\alpha$-coordinate signal
+only for the CA-conditioned variant; other variants have this vector set to zero.
+
+
+\subsection{La Proteina Autoencoder}
+\textbf{Research Question:} What latent representation serves as the basis for this work?
+
+[ ] Introduce La Proteina and motivate its use.
+
+[ ] Describe the architecture: encoder, latent bottleneck and decoder.
+
+[ ] Describe the training objective: reconstruction losses and latent representations.
+
+[ ] Explain why La Proteina provides the foundation for this work.
+
+\textbf{La-Proteina provides the latent protein representation on which our models are built.}
+
+La-Proteina uses $\beta=10^{-4}$ as KL weight.
+
+\textbf{We use La-Proteina as the foundation of this work because its encoder provides a compact, residue-level representation of protein sequence and structure.}
+We adopt its autoencoder architecture and eight-dimensional per-residue latent representation, and train all models from scratch. This gives us a consistent starting point for comparing the autoencoder baselines with the JEPA-based models developed later in this work. The main question is whether different training objectives can learn more useful protein representations from the same underlying architecture.
+
+
+\subsection{Baseline Models}
+\textbf{Research Question:} Which baseline models are used for comparison?
+
+[ ] Describe the baseline architectures: CA-conditioned autoencoder and fully latent autoencoder.
+
+[ ] Explain why these models were selected as baselines.
+
+\subsection{Joint Embedding Predictive Architecture (JEPA)}
+\textbf{Research Question:} How can JEPA be adapted to protein latent representations?
+
+[ ] Describe the architecture: context encoder, EMA target encoder and predictor.
+
+[ ] Describe the masking strategy: random masking, context-target partitioning and latent extraction.
+
+[ ] Describe the training objective: Smooth L1 loss, EMA updates and representation collapse monitoring.
+
+[ ] Include the JEPA architecture diagram.
+
+\subsection{Masking Strategies}
+\textbf{Research Question:} How does masking influence representation learning?
+
+[ ] Describe the investigated masking strategies: random masking, block masking and masking ratios.
+
+[ ] Explain the motivation behind each masking strategy and the hypotheses being tested.
+
+\subsection{LeJEPA}
+\textbf{Research Question:} Can action-conditioned prediction improve protein representations?
+
+[ ] Describe the architecture: action conditioning, predictor modifications and SIGReg.
+
+[ ] Explain the differences between JEPA and LeJEPA.
+
+[ ] Include the LeJEPA architecture diagram.
+
+\subsection{Mutation-Aware JEPA}
+\textbf{Research Question:} Can mutation information improve predictive representation learning?
+
+[ ] Describe the architecture: mutation embeddings, target conditioning, context conditioning and symmetric conditioning.
+
+[ ] Explain the final mutation-aware design and architectural decisions.
+
+[ ] Include the Mutation-JEPA architecture diagram.
+
+\subsection{Training Procedure}
+\textbf{Research Question:} How were experiments trained consistently?
+
+[ ] Describe the training setup: optimizer, learning rate, scheduler, EMA decay, checkpointing and convergence criteria.
+
+[ ] Describe the selected hyperparameters and justify the major design choices.
+
+[ ] Explain how fairness between experiments was maintained.
+
+\subsection{Evaluation Protocol}
+\textbf{Research Question:} How is representation quality evaluated?
+
+[ ] Describe the evaluation methodology: reconstruction evaluation, downstream evaluation and StructTokenBench.
+
+[ ] Describe the evaluation metrics: reconstruction metrics, downstream task metrics and representation quality measures.
+
+[ ] Describe the analysis techniques: PCA, t-SNE and representation collapse diagnostics.
+
+[ ] Explain why these evaluation protocols were selected.
+
+\subsection{Computational Resources}
+
+[ ] Describe the computational environment: computing cluster, GPUs, software libraries and training infrastructure.
+
+[ ] Discuss the practical constraints: training time, storage limitations and available computational resources.
+
+
+\subsection{La-Proteina Baselines}
+
+[ ] Explain why La-Proteina was selected and which encoder
+and preprocessing components are reused.
+
+[ ] Specify the C-alpha-conditioned and fully latent baselines,
+their latent dimensions, reconstruction objectives and
+modifications to the original model.
+
+\subsection{JEPA and LeJEPA Implementations}
+
+[ ] Distinguish EMA-JEPA, the predictor-based LeJEPA adaptation
+and canonical shared-encoder alignment.
+
+[ ] Specify the views, masking, pooling or residue selection,
+and which embeddings enter each loss.
+
+[ ] Identify the components taken from LeVJEPA and document
+the implemented loss weighting and averaging conventions.
+
+Our canonical LeJEPA adaptation follows the \href{https://github.com/MLO-lab/LeVJEPA}{LeVJEPA implementation}.
+LeVJEPA applies LeJEPA to video clips, aligning several cropped local views with one global view from the same temporal window \href{https://arxiv.org/abs/2608.27395}{(Kuhn et al., 2026)}.
+
+\subsection{Mutation-Conditioned Prediction}
+
+[ ] Define the mutation action, its encoding and where it
+enters the model.
+
+[ ] Explain how prediction targets are constructed,
+what changes in the input and what remains fixed.
+
+\subsection{Evaluation Protocol}
+
+[ ] Introduce StructTokenBench and its task families:
+functional-site classification, flexibility and remote homology.
+
+[ ] Explain the corresponding metrics: AUROC,
+Spearman correlation and Macro-F1.
+
+[ ] Specify splits, length restriction, label-validity masks,
+frozen-encoder evaluation and downstream probe training.
+
+[ ] State the evaluated checkpoints and whether each uses
+online or EMA weights.
+
+[ ] Distinguish published SLAE results from locally evaluated
+models, documenting differences in training data,
+latent dimensions and evaluation settings.

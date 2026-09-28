@@ -1,0 +1,28 @@
+#!/bin/bash
+#SBATCH --job-name=canon_pack_b32
+#SBATCH --partition=normal
+#SBATCH --qos=short
+#SBATCH --gres=gpu:1
+#SBATCH --array=0-2%3
+#SBATCH --cpus-per-task=8
+#SBATCH --mem=64G
+#SBATCH --time=00:45:00
+#SBATCH --output=logs/canonical_lejepa/canonical_packed_b32-%A_%a.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+PYTHON_BIN=/slurm-storage/aishod/envs/la-proteina/bin/python
+MODES=(global local full)
+MODE="${MODES[$SLURM_ARRAY_TASK_ID]}"
+
+cd "$PROJECT_ROOT"
+source "$PROJECT_ROOT/.env"
+export PYTHONPATH="$PROJECT_ROOT${PYTHONPATH:+:$PYTHONPATH}"
+export MPLCONFIGDIR="/tmp/canonical-packed-b32-${SLURM_ARRAY_JOB_ID}-${SLURM_ARRAY_TASK_ID}"
+mkdir -p "$MPLCONFIGDIR"
+mkdir -p "$PROJECT_ROOT/logs/canonical_lejepa"
+
+srun "$PYTHON_BIN" -m proteinfoundation.jepa.benchmark_canonical_packed_memory \
+    --mode "$MODE" \
+    --num-workers 0

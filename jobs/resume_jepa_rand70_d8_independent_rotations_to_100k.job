@@ -1,0 +1,57 @@
+#!/bin/bash
+# Continue JEPA rand70 D8 + independent target rotations from rolling full state.
+# Old predictor; no SIGReg. Numbered checkpoints every 10k; last.ckpt every 1.5k.
+#SBATCH --job-name=jepa_d8_rot_100k
+#SBATCH --partition=normal
+#SBATCH --qos=medium
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=24
+#SBATCH --mem=64G
+#SBATCH --time=20:00:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/jepa_interventions/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+WORKTREE="$PROJECT_ROOT/training_worktrees/jepa-latent"
+PYTHON=/slurm-storage/aishod/envs/la-proteina/bin/python
+RUN_NAME=jepa_rand70_d8_independent_rotations_100k
+RUN_DIR=/mnt/hopper-raid/aishod/runs/$RUN_NAME
+CHECKPOINT="$RUN_DIR/store/$RUN_NAME/checkpoints/last.ckpt"
+IMPORT_DIR="$HOME/tmp/jepa-d8-rotation-resume-import"
+
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+export PYTHONPATH="$WORKTREE"
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+export PATH="/slurm-storage/aishod/envs/la-proteina/bin:$PATH"
+export RESUME_CHOICE=last
+export WANDB_RUN_ID="$RUN_NAME"
+export WANDB_RESUME=must
+
+[[ "$(git -C "$WORKTREE" branch --show-current)" == "jepa-latent" ]] || { echo "ERROR: wrong worktree branch" >&2; exit 1; }
+[[ -s "$CHECKPOINT" ]] || { echo "ERROR: missing resume checkpoint: $CHECKPOINT" >&2; exit 1; }
+mkdir -p "$IMPORT_DIR"
+IMPORTED_FROM="$(cd "$IMPORT_DIR" && "$PYTHON" -c 'import proteinfoundation; print(proteinfoundation.__file__)')"
+[[ "$IMPORTED_FROM" == "$WORKTREE"/proteinfoundation/* ]] || { echo "ERROR: imported $IMPORTED_FROM" >&2; exit 1; }
+
+mkdir -p "$RUN_DIR" "$PROJECT_ROOT/logs/jepa_interventions"
+cd "$RUN_DIR"
+
+echo "Checkpoint: $CHECKPOINT"
+echo "Continuing JEPA rand70 D8 independent rotations to step 100000"
+echo "Old predictor; SIGReg disabled; effective batch size 4"
+
+printf 'last\n' | srun --ntasks=1 "$PYTHON" "$WORKTREE/proteinfoundation/jepa/train.py" \
+    run_name_="$RUN_NAME" +single=true +masked_pct=0.7 +opt.max_steps=100000 \
+    opt.lr=0.0001 baseline_run_layernorm=false baseline_run_ema=false baseline_run_predictor=false \
+    jepa_sigreg=false jepa_sigreg_weight=0.0 jepa_sigreg_num_proj=256 \
+    jepa_independent_target_rotation=true \
+    nn_ae.latent_z_dim=8 nn_ae.encoder.latent_z_dim=8 nn_ae.decoder.latent_z_dim=8 \
+    dataset.datamodule.batch_size=2 dataset.datamodule.num_workers=16 \
+    opt.accumulate_grad_batches=2 opt.val_check_interval=2500 \
+    log.checkpoint_every_n_steps=10000 log.last_ckpt_every_n_steps=1500 \
+    hardware.ngpus_per_node_=1 hardware.nnodes_=1 hardware.ncpus_per_task_train_=24

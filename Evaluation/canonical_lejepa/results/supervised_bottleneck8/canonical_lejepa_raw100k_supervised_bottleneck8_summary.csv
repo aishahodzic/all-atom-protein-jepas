@@ -1,0 +1,22 @@
+representation,block,task_family,score_x100
+768D block,4,Functional sites,78.63133333333332
+768D block,4,Remote homology,24.78333333333333
+768D block,4,Flexibility,52.12833333333334
+Task-supervised 8D,4,Functional sites,76.90466666666666
+Task-supervised 8D,4,Flexibility,52.9
+Task-supervised 8D,4,Remote homology,27.25
+768D block,8,Functional sites,77.784
+768D block,8,Remote homology,22.036666666666665
+768D block,8,Flexibility,47.42333333333334
+Task-supervised 8D,8,Functional sites,76.34400000000001
+Task-supervised 8D,8,Flexibility,50.105
+Task-supervised 8D,8,Remote homology,25.28333333333333
+768D block,12,Functional sites,72.56466666666667
+768D block,12,Remote homology,15.029999999999996
+768D block,12,Flexibility,36.31333333333333
+Task-supervised 8D,12,Functional sites,71.22733333333333
+Task-supervised 8D,12,Flexibility,32.181666666666665
+Task-supervised 8D,12,Remote homology,17.130000000000003
+Native final 8D,final,Functional sites,65.24666666666667
+Native final 8D,final,Flexibility,11.325000000000001
+Native final 8D,final,Remote homology,10.636666666666667

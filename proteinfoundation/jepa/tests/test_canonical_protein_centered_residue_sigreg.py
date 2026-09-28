@@ -307,6 +307,53 @@ class ProteinCenteredResidueSIGRegTest(unittest.TestCase):
         self.assertEqual(tuple(recorder.seen.shape), (20, 2, 8))
         self.assertTrue(torch.isfinite(output["loss"]))
 
+    def test_visible_only_objective_feeds_only_visible_rows_to_sigreg(self):
+        batch = synthetic_encoder_batch(batch_size=2, length=20)
+        real_mask = batch["mask_dict"]["coords"][..., 0, 0].bool()
+        values = torch.randn(2, 5, 20, 8)
+        view_masks = torch.zeros(2, 5, 20, dtype=torch.bool)
+        view_masks[:, 0] = real_mask
+        for view_index in range(1, 5):
+            start = (view_index - 1) * 4
+            view_masks[:, view_index, start : start + 4] = True
+        view_masks &= real_mask[:, None]
+
+        model = CanonicalLeJEPAModel(
+            tiny_canonical_config(
+                alignment_level="residue",
+                residue_visible_only_objective=True,
+                sigreg_input="protein_centered_residue",
+                residue_samples_per_protein=4,
+                independent_residue_samples=True,
+            )
+        )
+        model.encoder = _ScriptedResidueEncoder(values)
+        model.sigreg = _RecordingSIGReg()
+        production_helper = protein_centered_residue_sigreg_input
+        seen_masks = []
+
+        def capture_visible_mask(residue_embeddings, mask, **kwargs):
+            seen_masks.append(mask.detach().clone())
+            return production_helper(residue_embeddings, mask, **kwargs)
+
+        with (
+            mock.patch.object(
+                canonical_model_module,
+                "build_canonical_view_masks",
+                return_value=view_masks,
+            ),
+            mock.patch.object(
+                canonical_model_module,
+                "protein_centered_residue_sigreg_input",
+                side_effect=capture_visible_mask,
+            ),
+        ):
+            output = model.compute_loss(batch)
+
+        self.assertEqual(len(seen_masks), 1)
+        self.assertTrue(torch.equal(seen_masks[0], view_masks))
+        self.assertTrue(torch.isfinite(output["loss"]))
+
     def test_helper_validation_and_config_fail_fast(self):
         values = torch.zeros(2, 5, 4, 8)
         real_mask = torch.tensor(
@@ -365,6 +412,28 @@ class ProteinCenteredResidueSIGRegTest(unittest.TestCase):
         )
         self.assertEqual(independent_k4.residue_samples_per_protein, 4)
         self.assertTrue(independent_k4.independent_residue_samples)
+        visible_only = CanonicalLeJEPAModel(
+            tiny_canonical_config(
+                alignment_level="residue",
+                residue_visible_only_objective=True,
+                sigreg_input="protein_centered_residue",
+                residue_samples_per_protein=4,
+                independent_residue_samples=True,
+            )
+        )
+        self.assertTrue(visible_only.residue_visible_only_objective)
+        with self.assertRaisesRegex(ValueError, "requires alignment_level=residue"):
+            CanonicalLeJEPAModel(
+                tiny_canonical_config(residue_visible_only_objective=True)
+            )
+        with self.assertRaisesRegex(ValueError, "per-view visible SIGReg"):
+            CanonicalLeJEPAModel(
+                tiny_canonical_config(
+                    alignment_level="residue",
+                    residue_visible_only_objective=True,
+                    sigreg_input="protein_centered_residue",
+                )
+            )
         with self.assertRaisesRegex(ValueError, "independent_residue_samples=true"):
             CanonicalLeJEPAModel(
                 tiny_canonical_config(

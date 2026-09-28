@@ -1,0 +1,202 @@
+{
+  "protocol": "Same 9 all-atom proteins and identical atom intersection across native/raw/Fix2/full.",
+  "aggregate": {
+    "raw": {
+      "all_rmsd_angstrom": 1.081641400958971,
+      "backbone_rmsd_angstrom": 0.4728454033085944,
+      "sidechain_rmsd_angstrom": 1.5884583581620808,
+      "all_atoms": 9088,
+      "backbone_atoms": 5348,
+      "sidechain_atoms": 3740
+    },
+    "fix2_only": {
+      "all_rmsd_angstrom": 1.343452705116441,
+      "backbone_rmsd_angstrom": 0.4693229743213929,
+      "sidechain_rmsd_angstrom": 2.0176124577527625,
+      "all_atoms": 9088,
+      "backbone_atoms": 5348,
+      "sidechain_atoms": 3740
+    },
+    "full": {
+      "all_rmsd_angstrom": 1.3285263186543932,
+      "backbone_rmsd_angstrom": 0.42123371488754985,
+      "sidechain_rmsd_angstrom": 2.0087522708292074,
+      "all_atoms": 9088,
+      "backbone_atoms": 5348,
+      "sidechain_atoms": 3740
+    }
+  },
+  "proteins": [
+    {
+      "protein_id": "1kfm_A",
+      "atoms": 332,
+      "raw": {
+        "all": 0.9121538755994432,
+        "backbone": 0.2980040855424637,
+        "sidechain": 1.3993258956087435
+      },
+      "fix2_only": {
+        "all": 1.0410696711752598,
+        "backbone": 0.24837958853335762,
+        "sidechain": 1.6225022015206616
+      },
+      "full": {
+        "all": 1.0325000277137604,
+        "backbone": 0.19258997897086974,
+        "sidechain": 1.6202144311881381
+      }
+    },
+    {
+      "protein_id": "3d3r_A",
+      "atoms": 550,
+      "raw": {
+        "all": 1.0766041722176092,
+        "backbone": 0.5012642672533122,
+        "sidechain": 1.5563153558827727
+      },
+      "fix2_only": {
+        "all": 1.1720234763394926,
+        "backbone": 0.49267916474618645,
+        "sidechain": 1.716704354025595
+      },
+      "full": {
+        "all": 1.1535083969430748,
+        "backbone": 0.4577120000611738,
+        "sidechain": 1.7001020480880091
+      }
+    },
+    {
+      "protein_id": "5a13_G",
+      "atoms": 1699,
+      "raw": {
+        "all": 1.055783038045954,
+        "backbone": 0.3931531624999009,
+        "sidechain": 1.5566983002665775
+      },
+      "fix2_only": {
+        "all": 1.2971515048313238,
+        "backbone": 0.38219730586732936,
+        "sidechain": 1.943423544602023
+      },
+      "full": {
+        "all": 1.2848618728766075,
+        "backbone": 0.3404998711378581,
+        "sidechain": 1.9346797796512416
+      }
+    },
+    {
+      "protein_id": "5fli_A",
+      "atoms": 1237,
+      "raw": {
+        "all": 1.1228071149132959,
+        "backbone": 0.51039199148564,
+        "sidechain": 1.6463549519234217
+      },
+      "fix2_only": {
+        "all": 1.4787924075543053,
+        "backbone": 0.49744595774246364,
+        "sidechain": 2.2356117571512435
+      },
+      "full": {
+        "all": 1.461105276197639,
+        "backbone": 0.42815350140460995,
+        "sidechain": 2.2279041009810805
+      }
+    },
+    {
+      "protein_id": "5l0o_A",
+      "atoms": 1158,
+      "raw": {
+        "all": 1.0831950336858673,
+        "backbone": 0.40547571616859995,
+        "sidechain": 1.5785169864445627
+      },
+      "fix2_only": {
+        "all": 1.3471178076684602,
+        "backbone": 0.3916996539473057,
+        "sidechain": 1.9964131097498024
+      },
+      "full": {
+        "all": 1.347013750501995,
+        "backbone": 0.3512501388768062,
+        "sidechain": 2.006063234595365
+      }
+    },
+    {
+      "protein_id": "5xr7_A",
+      "atoms": 1125,
+      "raw": {
+        "all": 1.028571472804232,
+        "backbone": 0.4397283388366594,
+        "sidechain": 1.523728460104126
+      },
+      "fix2_only": {
+        "all": 1.3251827667659029,
+        "backbone": 0.43336264218402415,
+        "sidechain": 2.012091736318464
+      },
+      "full": {
+        "all": 1.318485987621998,
+        "backbone": 0.41460254937963875,
+        "sidechain": 2.007033539878429
+      }
+    },
+    {
+      "protein_id": "6o14_A",
+      "atoms": 986,
+      "raw": {
+        "all": 1.1038678141496918,
+        "backbone": 0.543029647695098,
+        "sidechain": 1.5931145858800748
+      },
+      "fix2_only": {
+        "all": 1.4007251175621769,
+        "backbone": 0.55617568701588,
+        "sidechain": 2.079189766169467
+      },
+      "full": {
+        "all": 1.3771445584572588,
+        "backbone": 0.5134904810587351,
+        "sidechain": 2.056496207204454
+      }
+    },
+    {
+      "protein_id": "7cnw_A",
+      "atoms": 1665,
+      "raw": {
+        "all": 1.1311617106389409,
+        "backbone": 0.525934957993406,
+        "sidechain": 1.683395750009054
+      },
+      "fix2_only": {
+        "all": 1.3963965943272165,
+        "backbone": 0.5359884343702354,
+        "sidechain": 2.127588608707518
+      },
+      "full": {
+        "all": 1.3717308590060768,
+        "backbone": 0.4713261733238236,
+        "sidechain": 2.11032817099148
+      }
+    },
+    {
+      "protein_id": "8cbv_A",
+      "atoms": 336,
+      "raw": {
+        "all": 1.069977236072939,
+        "backbone": 0.5805767046652837,
+        "sidechain": 1.5273395024952223
+      },
+      "fix2_only": {
+        "all": 1.176627512669761,
+        "backbone": 0.580628030670239,
+        "sidechain": 1.710156064429759
+      },
+      "full": {
+        "all": 1.1560480016603363,
+        "backbone": 0.5155858706365023,
+        "sidechain": 1.706131735828157
+      }
+    }
+  ]
+}

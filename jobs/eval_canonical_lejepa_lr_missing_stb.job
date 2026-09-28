@@ -1,0 +1,122 @@
+#!/bin/bash
+# Missing upstream-L600 STB tasks for canonical LeJEPA LR checkpoints.
+# 0/1: high/low 10k; 2/3: high/low 16,667; 4/5: high/low 30k;
+# 6/7: middle 20k/30k. Middle 10k is already complete.
+#SBATCH --job-name=stb_lr_missing
+#SBATCH --partition=normal
+#SBATCH --qos=medium
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=64G
+#SBATCH --time=16:00:00
+#SBATCH --array=0-7%4
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/stb/publication_upstream/%x-%A_%a.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+STB_ROOT="$PROJECT_ROOT/StructTokenBench"
+STB_PYTHON_BIN=/slurm-storage/aishod/.conda/envs/pstbench/bin/python
+ENCODER_CONFIG="$STB_ROOT/100k-checkpoints/shared/exp_config_jepa_nn130m.json"
+CKPT_ROOT="$STB_ROOT/100k-checkpoints/canonical-lejepa"
+
+EXPERIMENTS=(
+    canonical-lejepa-high-lr1e3-raw-step10k
+    canonical-lejepa-low-lr1e4-raw-step10k
+    canonical-lejepa-high-lr1e3-raw-step16667
+    canonical-lejepa-low-lr1e4-raw-step16667
+    canonical-lejepa-high-lr1e3-raw-step30k
+    canonical-lejepa-low-lr1e4-raw-step30k
+    canonical-lejepa-middle-lr4e4-raw-step20k
+    canonical-lejepa-middle-lr4e4-raw-step30k
+)
+CHECKPOINTS=(
+    "$CKPT_ROOT/lr-ablation/canonical_lejepa_high_lr1e3_raw10k_stb.ckpt"
+    "$CKPT_ROOT/lr-ablation/canonical_lejepa_low_lr1e4_raw10k_stb.ckpt"
+    "$CKPT_ROOT/lr-ablation/canonical_lejepa_high_lr1e3_raw16667_stb.ckpt"
+    "$CKPT_ROOT/lr-ablation/canonical_lejepa_low_lr1e4_raw16667_stb.ckpt"
+    "$CKPT_ROOT/lr-ablation/canonical_lejepa_high_lr1e3_raw30k_stb.ckpt"
+    "$CKPT_ROOT/lr-ablation/canonical_lejepa_low_lr1e4_raw30k_stb.ckpt"
+    "$CKPT_ROOT/jarvis/middle-lr/CLJP_step-00020000-raw-stb.ckpt"
+    "$CKPT_ROOT/jarvis/middle-lr/CLJP_step-00030000-raw-stb.ckpt"
+)
+CHECKPOINT_SHA256=(
+    d83b3d8dce59071604e27f36b45cfb5385463ff9b56b7d35250c49020afa515d
+    61d1450e77c9564def425c725f7d2b3efc5d694300ef56e141526431beb91371
+    91a3cd8d35f90d5b8c09cfed008332a7be421b835a19ae5bcccbbf753d514065
+    d8a5ab63e13144f9719d57b6000f40ef5dedf0503441f71b8d4ffe38cea664c1
+    52f23560dfc545a801b2da6494c107d2a75d76dd4b6d95c41e9a77a8142e3738
+    58b8d954ad753029d87696e6bf354fd2b3458a654c6bdd2263da7c0180e77371
+    a46249ce9000f7a2925bc7495fff103826a7a24c7c843a8e9f03d883877c6f23
+    9388da3b38be9a098c864f4872522af247028fa2ef2df83e5d4a7069fe7784c3
+)
+STEPS=(10000 10000 16667 16667 30000 30000 20000 30000)
+LABELS=(10k 10k 16667 16667 30k 30k 20k 30k)
+MISSING_TASKS=(
+    BindInt,BindBio,CatInt,Con,Rep,Ept,FlexBFactor,FlexNEQ
+    BindInt,BindBio,CatInt,Con,Rep,Ept,FlexBFactor,FlexNEQ
+    Con,Rep,Ept,FlexBFactor,FlexNEQ
+    Con,Rep,Ept,FlexBFactor,FlexNEQ
+    BindInt,BindBio,CatInt,Con,Rep,Ept,FlexBFactor,FlexNEQ
+    BindInt,BindBio,CatInt,Con,Rep,Ept,FlexBFactor,FlexNEQ
+    BindInt,BindBio,CatInt,Con,Rep,Ept,FlexBFactor,FlexNEQ
+    BindInt,BindBio,CatInt,Con,Rep,Ept,FlexBFactor,FlexNEQ
+)
+
+INDEX=$SLURM_ARRAY_TASK_ID
+EXPERIMENT="${EXPERIMENTS[$INDEX]}"
+CHECKPOINT="${CHECKPOINTS[$INDEX]}"
+EXPECTED_CHECKPOINT_SHA="${CHECKPOINT_SHA256[$INDEX]}"
+STEP="${STEPS[$INDEX]}"
+LABEL="${LABELS[$INDEX]}"
+TASKS="${MISSING_TASKS[$INDEX]}"
+
+test -f "$CHECKPOINT"
+test -f "$ENCODER_CONFIG"
+echo "$EXPECTED_CHECKPOINT_SHA  $CHECKPOINT" | sha256sum -c -
+
+"$STB_PYTHON_BIN" -c '
+import sys
+import torch
+
+checkpoint = torch.load(sys.argv[1], map_location="cpu", weights_only=False, mmap=True)
+provenance = checkpoint.get("canonical_lejepa_evaluation", {})
+assert provenance.get("source_global_step") == int(sys.argv[2]), provenance
+assert provenance.get("encoder_source") == "raw", provenance
+assert provenance.get("latent_dim") == 8, provenance
+state = checkpoint.get("state_dict", {})
+online = [key for key in state if key.startswith("online_encoder.")]
+assert len(online) == 381, len(online)
+print(f"Verified raw step-{sys.argv[2]} checkpoint with 381 encoder tensors")
+' "$CHECKPOINT" "$STEP"
+
+cd "$STB_ROOT"
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+export STB_SKIP_BOOTSTRAP=1
+export STB_SKIP_DATA_SETUP=1
+export STB_SMOKE=0
+export STB_SHARED_EMBEDDING_CACHE=1
+export STB_SHARED_EMBEDDING_CACHE_ROOT=/mnt/hopper-raid/aishod/data/struct_token_bench_release_data/shared_embedding_cache
+export DS_IGNORE_CUDA_DETECTION=1
+export PYTHON_BIN="$STB_PYTHON_BIN"
+export NUM_WORKERS=8
+export PDB_DATA_ROOT=/mnt/hopper-raid/aishod/data/struct_token_bench_pdb_data
+export STB_RELEASE_DATA_ROOT=/mnt/hopper-raid/aishod/data/struct_token_bench_release_data
+export EVALUATION_RUN_ID="slurm-${SLURM_ARRAY_JOB_ID}_${INDEX}-${EXPERIMENT}-missing-stb"
+export STB_LOG_ROOT="$STB_ROOT/struct_token_bench_logs/upstream-l600-v1-full/runs/$EVALUATION_RUN_ID"
+export SUMMARY_FILE="$STB_LOG_ROOT/summary_results.csv"
+export TMPDIR="$HOME/tmp/stb-runtime-cache/${SLURM_ARRAY_JOB_ID}_${INDEX}-lr-missing"
+export MPLCONFIGDIR="$TMPDIR/matplotlib"
+export TRITON_CACHE_DIR="$TMPDIR/triton"
+mkdir -p "$STB_LOG_ROOT" "$TMPDIR" "$MPLCONFIGDIR" "$TRITON_CACHE_DIR" "$STB_SHARED_EMBEDDING_CACHE_ROOT"
+
+echo "Running missing tasks for $EXPERIMENT: $TASKS"
+bash src/script/run_eval.sh \
+    --protocol=upstream-l600-v1 \
+    --checkpoint="$LABEL" \
+    --experiment="$EXPERIMENT" \
+    --tasks="$TASKS"

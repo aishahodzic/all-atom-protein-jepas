@@ -1,0 +1,43 @@
+#!/bin/bash
+# Export one held-out JEPA-rand50 target-decoder reconstruction for PyMOL.
+# Defaults to the first protein in the untouched pretraining test split.
+#SBATCH --job-name=export_jr50_pdb
+#SBATCH --partition=normal
+#SBATCH --nodelist=gauss
+#SBATCH --qos=short
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=48G
+#SBATCH --time=00:30:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/decoder/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+PYTHON_BIN=/data-gauss/$USER/envs/laproteina_env/bin/python3
+DECODER_CKPT=${DECODER_CKPT:-$PROJECT_ROOT/Evaluation/structure_rec/checkpoints/jepa-rand-mask-50-target-calib_step10000.pt}
+OUTPUT_DIR=${OUTPUT_DIR:-$PROJECT_ROOT/Evaluation/structure_rec/exports/jepa-rand50-target-step10k}
+SCRATCH_ROOT="$HOME/tmp/export-jr50-$SLURM_JOB_ID"
+
+[[ -s "$DECODER_CKPT" ]] || { echo "ERROR: missing decoder: $DECODER_CKPT" >&2; exit 1; }
+mkdir -p "$PROJECT_ROOT/logs/decoder" "$OUTPUT_DIR" "$SCRATCH_ROOT"
+export TMPDIR="$SCRATCH_ROOT"
+export MPLCONFIGDIR="$SCRATCH_ROOT/matplotlib"
+export TRITON_CACHE_DIR="$SCRATCH_ROOT/triton"
+export PYTHONPATH="$PROJECT_ROOT"
+mkdir -p "$MPLCONFIGDIR" "$TRITON_CACHE_DIR"
+
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+
+cd "$PROJECT_ROOT"
+srun "$PYTHON_BIN" Evaluation/structure_rec/export_reconstruction.py \
+  --decoder-checkpoint "$DECODER_CKPT" \
+  --encoder jepa-rand-mask-50 \
+  --encoder-source target \
+  --split test \
+  --device cuda \
+  --output-dir "$OUTPUT_DIR"

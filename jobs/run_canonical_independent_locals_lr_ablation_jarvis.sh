@@ -86,7 +86,7 @@ exec "$PYTHON_BIN" -m proteinfoundation.jepa.train_canonical_lejepa \
     trainer.use_distributed_sampler=false \
     trainer.precision=bf16-mixed trainer.accumulate_grad_batches=1 \
     trainer.max_steps=30000 optimizer.lr="$PEAK_LR" \
-    schedule.total_steps=30000 schedule.peak_step=3600 \
+    schedule.total_steps=30000 schedule.peak_step=1200 \
     schedule.start_lr="$START_LR" schedule.end_lr=1.0e-5 \
     ema.enabled=true checkpoint.every_n_train_steps=10000 \
     checkpoint.additional_every_n_train_steps=16667 \

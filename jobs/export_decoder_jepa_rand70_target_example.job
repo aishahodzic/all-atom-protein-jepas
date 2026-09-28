@@ -1,0 +1,49 @@
+#!/bin/bash
+# Export one held-out JEPA-rand70 target-decoder reconstruction for PyMOL.
+# Uses the calibration-selected final decoder (best step 56k).
+#SBATCH --job-name=export_jr70_pdb
+#SBATCH --partition=normal
+#SBATCH --nodelist=gauss
+#SBATCH --qos=short
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=48G
+#SBATCH --time=00:30:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/decoder/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+PYTHON_BIN=/data-gauss/$USER/envs/laproteina_env/bin/python3
+DECODER_CKPT="$PROJECT_ROOT/Evaluation/structure_rec/checkpoints/jepa-rand-mask-70-target-calib_final.pt"
+ENCODER_CKPT=/mnt/hopper-raid/aishod/runs/jepa_random_masking_70_v3/store/jepa_random_masking_70_v3/checkpoints/chk_epoch=00000019_step=000000100000.ckpt
+ENCODER_SHA256=63183c74a02386fdc9aaca3ff619e9f8e83705a79340610b1f4a064ba547098c
+PROTEIN_ID=${PROTEIN_ID:-9e02_F}
+OUTPUT_DIR=${OUTPUT_DIR:-$PROJECT_ROOT/Evaluation/structure_rec/exports/jepa-rand70-target-best56k}
+SCRATCH_ROOT="$HOME/tmp/export-jr70-$SLURM_JOB_ID"
+
+[[ -s "$DECODER_CKPT" ]] || { echo "ERROR: missing decoder: $DECODER_CKPT" >&2; exit 1; }
+[[ -s "$ENCODER_CKPT" ]] || { echo "ERROR: missing encoder: $ENCODER_CKPT" >&2; exit 1; }
+mkdir -p "$PROJECT_ROOT/logs/decoder" "$OUTPUT_DIR" "$SCRATCH_ROOT"
+export TMPDIR="$SCRATCH_ROOT"
+export MPLCONFIGDIR="$SCRATCH_ROOT/matplotlib"
+export TRITON_CACHE_DIR="$SCRATCH_ROOT/triton"
+export PYTHONPATH="$PROJECT_ROOT"
+mkdir -p "$MPLCONFIGDIR" "$TRITON_CACHE_DIR"
+
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+
+cd "$PROJECT_ROOT"
+srun "$PYTHON_BIN" Evaluation/structure_rec/export_reconstruction.py \
+  --decoder-checkpoint "$DECODER_CKPT" \
+  --encoder jepa-rand-mask-70 \
+  --encoder-source target \
+  --encoder-checkpoint "$ENCODER_CKPT" \
+  --expected-encoder-sha256 "$ENCODER_SHA256" \
+  --protein-id "$PROTEIN_ID" \
+  --device cuda \
+  --output-dir "$OUTPUT_DIR"

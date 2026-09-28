@@ -1,0 +1,23 @@
+{
+  "batch_size": 2,
+  "max_residues": 208,
+  "visible_residues": 310,
+  "base_loss": 2.569115161895752,
+  "geometry": {
+    "total": 1.5136032104492188,
+    "true_total": 1.5212159156799316,
+    "predicted_total": 1.5059903860092163,
+    "covalent": 0.2866690754890442,
+    "virtual": 0.4747494161128998,
+    "peptide_bond": 0.25480473041534424,
+    "peptide_angles": 0.33291006088256836,
+    "between_clash": 8.893191079550888e-06,
+    "within_residue": 1.6446900367736816
+  },
+  "base_gradient_norm": 4.3467206954956055,
+  "geometry_gradient_norm_unweighted": 27.795345306396484,
+  "equal_gradient_weight": 0.15638304354849314,
+  "elapsed_seconds": 0.49970025895163417,
+  "peak_cuda_gib": 4.232241153717041,
+  "decoder_checkpoint": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/checkpoints/jepa-rand-mask-70-target-80k-to-140k_final.pt"
+}

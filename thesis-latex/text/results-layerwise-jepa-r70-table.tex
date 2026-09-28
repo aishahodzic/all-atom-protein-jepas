@@ -1,0 +1,35 @@
+% !TeX root = ../Project.tex
+\begin{table}[p]
+\centering
+\resultstableformat
+\setlength{\tabcolsep}{2pt}
+\renewcommand{\arraystretch}{0.92}
+\caption{Completed shared-task layerwise STB for canonical LeJEPA v1 and JEPA with 70\% random masking, using raw/online weights at 100k and full-context evaluation. Hidden-block outputs are 768D and the final latent mean is 8D. Scores are multiplied by 100; bold marks the strongest readout within each model family and task/split.}
+\label{tab:results-layer-stb-jepa-r70}
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{@{}llrrrrrrrr@{}}
+\toprule
+\multirow{2}{*}{Task} & \multirow{2}{*}{Split}
+& \multicolumn{4}{c}{Canonical LeJEPA v1}
+& \multicolumn{4}{c}{JEPA, random 70\%} \\[1.8pt]
+& & Block 1 & Block 6 & Block 12 & Final 8D
+& Block 1 & Block 6 & Block 12 & Final 8D \\
+\midrule
+\multirow{2}{*}{BindInt}
+& Fold & 46.49 & \textbf{52.19} & 46.68 & 50.30 & 47.86 & \textbf{48.86} & 48.24 & 47.11 \\
+& SF   & 93.16 & \textbf{94.13} & 90.96 & 88.45 & 88.24 & \textbf{91.95} & 91.59 & 80.06 \\
+\multirow{2}{*}{BindBio}
+& Fold & \textbf{78.35} & 78.31 & 71.32 & 59.32 & 72.61 & \textbf{73.22} & 72.84 & 65.56 \\
+& SF   & 79.30 & \textbf{80.04} & 71.18 & 61.82 & 72.93 & \textbf{73.85} & 73.76 & 65.31 \\
+BindShake
+& Test & 79.61 & \textbf{83.11} & 80.38 & 58.45 & 78.23 & 78.13 & \textbf{78.38} & 71.85 \\
+\multirow{2}{*}{CatInt}
+& Fold & 67.23 & \textbf{69.36} & 57.25 & 51.71 & 65.69 & \textbf{65.72} & 65.05 & 56.84 \\
+& SF   & 94.48 & \textbf{95.78} & 88.98 & 80.74 & 88.00 & 91.79 & \textbf{92.00} & 76.71 \\
+\multirow{2}{*}{CatBio}
+& Fold & 83.27 & \textbf{85.05} & 80.17 & 53.67 & \textbf{80.72} & 80.13 & 78.23 & 71.50 \\
+& SF   & \textbf{94.40} & 94.04 & 82.98 & 60.61 & 89.81 & 89.62 & \textbf{90.39} & 75.36 \\
+\bottomrule
+\end{tabular}%
+}
+\end{table}

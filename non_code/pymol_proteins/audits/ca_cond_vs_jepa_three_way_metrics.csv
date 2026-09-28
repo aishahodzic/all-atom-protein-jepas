@@ -1,0 +1,7 @@
+comparison,model,protein_count,matched_heavy_atoms,mean_rmsd_angstrom,mean_lddt,mean_tm_score_ca,sequence_recovery_macro,sequence_recovery_micro
+predicted_sequence_common_heavy,ca_conditioned_baseline,9,9088,0.15492636958758035,0.9985439616640649,1.0,1.0,1.0
+predicted_sequence_common_heavy,jepa,9,9088,1.0649020671844482,0.8617618398494002,1.0,0.549304243035674,0.5534779356768885
+all_residue_backbone,ca_conditioned_baseline,9,5348,0.13322443183925417,0.9990447012561998,1.0,1.0,1.0
+all_residue_backbone,jepa,9,5348,0.4663955734835731,0.9618393589722584,1.0,0.549304243035674,0.5534779356768885
+true_sequence_heavy,ca_conditioned_baseline,9,10638,0.1644410557217068,0.9982320561453929,1.0,1.0,1.0
+true_sequence_heavy,jepa,9,10638,1.3210315571890936,0.8180269437782283,1.0,0.549304243035674,0.5534779356768885

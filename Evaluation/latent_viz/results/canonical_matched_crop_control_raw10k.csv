@@ -1,0 +1,3 @@
+checkpoint,label,cropping,proteins,sampled_residues,log_chain_length_knn10_spearman,log_chain_length_n,effective_rank,pca_pc1_fraction,pca_pc1_pc2_fraction,pca_first8_fraction,latent_dimension_std_min,latent_dimension_std_max,latent_isotropy_ratio
+canonical-lejepa-crop-control-uncropped-raw-step10k,Uncropped LeJEPA,False,5224,15000,0.88446986518272,15000,7.10225007846002,0.2695281746719439,0.41385766944763713,1.0,0.6132251198730692,0.9470893314539317,1.5444398814744718
+canonical-lejepa-crop-control-fixed96-raw-step10k,Cropped LeJEPA,True,5224,15000,0.19324693837691717,15000,1.6091333270063266,0.8230933461589443,0.9986606712795074,1.0,0.021775333126470994,0.39531358392530186,18.154192251816454

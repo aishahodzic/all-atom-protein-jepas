@@ -1,0 +1,84 @@
+#!/bin/bash
+# Resume the selected residue-level canonical LeJEPA variant from its full 2k
+# Lightning checkpoint. This preserves optimizer, scheduler, EMA, and step state.
+#SBATCH --job-name=canon_csig_A_100k
+#SBATCH --partition=normal
+#SBATCH --qos=long
+#SBATCH --nodes=1
+#SBATCH --ntasks=2
+#SBATCH --ntasks-per-node=2
+#SBATCH --gres=gpu:2
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=64G
+#SBATCH --time=4-00:00:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/canonical_lejepa/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+PYTHON_BIN=/slurm-storage/aishod/envs/la-proteina/bin/python
+RUN_NAME=canonical_lejepa_residue_iterative_protein_centered_sigreg_2k
+CHECKPOINT_DIR="$PROJECT_ROOT/store/$RUN_NAME/checkpoints"
+
+cd "$PROJECT_ROOT"
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+export PYTHONPATH="$PROJECT_ROOT${PYTHONPATH:+:$PYTHONPATH}"
+export PATH="/slurm-storage/aishod/envs/la-proteina/bin:$PATH"
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+export MASTER_ADDR=127.0.0.1
+export MASTER_PORT=$((20000 + SLURM_JOB_ID % 20000))
+export TORCH_NCCL_ASYNC_ERROR_HANDLING=1
+export HYDRA_FULL_ERROR=1
+export MPLCONFIGDIR="/tmp/${RUN_NAME}-resume-${SLURM_JOB_ID}"
+mkdir -p "$MPLCONFIGDIR" "$PROJECT_ROOT/logs/canonical_lejepa"
+
+RESUME_NAME=$("$PYTHON_BIN" -c \
+    'import sys; from proteinfoundation.utils.fetch_last_ckpt import fetch_last_ckpt; print(fetch_last_ckpt(sys.argv[1]) or "")' \
+    "$CHECKPOINT_DIR")
+RESUME_CKPT="$CHECKPOINT_DIR/$RESUME_NAME"
+
+[[ -n "$RESUME_NAME" && -f "$RESUME_CKPT" ]] || {
+    echo "No rolling last*.ckpt exists in $CHECKPOINT_DIR" >&2
+    exit 1
+}
+
+RESUME_STEP=$("$PYTHON_BIN" -c \
+    'import sys, torch; print(int(torch.load(sys.argv[1], map_location="cpu", weights_only=False, mmap=True)["global_step"]))' \
+    "$RESUME_CKPT")
+if (( RESUME_STEP >= 100000 )); then
+    echo "$RUN_NAME is already complete at step $RESUME_STEP; nothing to resume"
+    exit 0
+fi
+
+echo "Resuming selected A variant from $RESUME_CKPT (step $RESUME_STEP) to 100000 optimizer steps"
+echo "DDP rendezvous: ${MASTER_ADDR}:${MASTER_PORT}"
+
+srun --ntasks=2 --kill-on-bad-exit=1 --wait=30 --label "$PYTHON_BIN" \
+    -m proteinfoundation.jepa.train_canonical_lejepa \
+    run_name_="$RUN_NAME" \
+    seed=42 \
+    alignment_level=residue \
+    masked_kv_mode=iterative \
+    residue_view_checkpointing=true \
+    residue_compact_visible_kv=false \
+    independent_view_rotations=false \
+    views.packed_views=false \
+    sigreg.input=protein_centered_residue \
+    dataset.datamodule.batch_size=8 \
+    trainer.devices=2 \
+    trainer.num_nodes=1 \
+    trainer.strategy=ddp \
+    trainer.use_distributed_sampler=false \
+    trainer.precision=bf16-mixed \
+    trainer.accumulate_grad_batches=1 \
+    trainer.max_steps=100000 \
+    schedule.total_steps=100000 \
+    schedule.peak_step=12000 \
+    ema.enabled=true \
+    checkpoint.every_n_train_steps=10000 \
+    checkpoint.last_every_n_train_steps=1500 \
+    checkpoint.save_last=true \
+    checkpoint.save_weights_only=false \
+    resume.ckpt_path="$RESUME_CKPT"

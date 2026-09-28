@@ -1,0 +1,83 @@
+#!/bin/bash
+# Resume the middle-LR residue K=4 rotation run from its latest full recovery
+# checkpoint to exactly 17,000.
+# Preserve the original 30k LR schedule; save only the exact 17k milestone.
+#SBATCH --job-name=canon_res_rot_16667_17k
+#SBATCH --partition=normal
+#SBATCH --qos=short
+#SBATCH --nodes=1
+#SBATCH --ntasks=2
+#SBATCH --ntasks-per-node=2
+#SBATCH --gres=gpu:2
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=64G
+#SBATCH --time=00:30:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/canonical_lejepa/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+PYTHON_BIN=/slurm-storage/aishod/envs/la-proteina/bin/python
+RUN_NAME=canonical_lejepa_crop_fixed96_residue_perview_sigreg_b96_independent_locals_k4_rotations_lr4e4_cosine_30k
+CHECKPOINT_DIR="$PROJECT_ROOT/store/$RUN_NAME/checkpoints"
+RESUME_CHECKPOINT="$CHECKPOINT_DIR/last.ckpt"
+
+cd "$PROJECT_ROOT"
+test -f "$RESUME_CHECKPOINT"
+"$PYTHON_BIN" -c '
+import sys
+import torch
+
+checkpoint = torch.load(sys.argv[1], map_location="cpu", weights_only=False, mmap=True)
+global_step = int(checkpoint.get("global_step", -1))
+assert 16_667 <= global_step < 17_000, global_step
+assert "optimizer_states" in checkpoint
+assert "lr_schedulers" in checkpoint
+assert "state_dict" in checkpoint
+print(f"Verified full-state residue-rotation recovery checkpoint at step {global_step}")
+' "$RESUME_CHECKPOINT"
+
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+export PYTHONPATH="$PROJECT_ROOT${PYTHONPATH:+:$PYTHONPATH}"
+export PATH="/slurm-storage/aishod/envs/la-proteina/bin:$PATH"
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+export MASTER_ADDR=127.0.0.1
+export MASTER_PORT=$((20000 + SLURM_JOB_ID % 20000))
+export TORCH_NCCL_ASYNC_ERROR_HANDLING=1
+export HYDRA_FULL_ERROR=1
+export TMPDIR="$HOME/tmp/cljp-resrot-17k/$SLURM_JOB_ID"
+export MPLCONFIGDIR="$TMPDIR/matplotlib"
+export TRITON_CACHE_DIR="$TMPDIR/triton"
+mkdir -p "$TMPDIR" "$MPLCONFIGDIR" "$TRITON_CACHE_DIR" "$PROJECT_ROOT/logs/canonical_lejepa"
+
+echo "Resuming residue objective + rotations from latest recovery checkpoint to exact step 17,000"
+echo "K=4; global batch 96; middle LR; original 30k cosine schedule"
+srun --ntasks=2 --kill-on-bad-exit=1 --wait=30 --label "$PYTHON_BIN" \
+    -m proteinfoundation.jepa.train_canonical_lejepa \
+    run_name_="$RUN_NAME" seed=42 alignment_level=residue \
+    masked_kv_mode=visible_only residue_view_checkpointing=true \
+    residue_compact_visible_kv=true independent_view_rotations=true \
+    views.cropping=true views.packed_views=true \
+    views.global_crop_length=96 views.global_crop_fraction_min=null \
+    views.global_crop_fraction_max=null views.global_crop_min_length=96 \
+    views.global_crop_max_length=null views.local_crop_length=48 \
+    views.locals_within_global=true views.shared_crop_anchor=false \
+    views.global_mask_pct=0.20 views.local_mask_pct=0.50 \
+    sigreg.input=protein_centered_residue sigreg.joint_views=false \
+    sigreg.residue_samples_per_protein=4 \
+    sigreg.independent_residue_samples=true \
+    dataset.datamodule.dataselector.min_length=96 \
+    dataset.datamodule.batch_size=48 trainer.devices=2 trainer.num_nodes=1 \
+    trainer.strategy=ddp trainer.use_distributed_sampler=false \
+    trainer.precision=bf16-mixed trainer.accumulate_grad_batches=1 \
+    trainer.max_steps=17000 optimizer.lr=4.0e-4 \
+    schedule.total_steps=30000 schedule.peak_step=1200 \
+    schedule.start_lr=1.0e-4 schedule.end_lr=1.0e-5 \
+    ema.enabled=true checkpoint.every_n_train_steps=17000 \
+    checkpoint.additional_every_n_train_steps=null \
+    checkpoint.additional_train_steps=null \
+    checkpoint.last_every_n_train_steps=null checkpoint.save_last=false \
+    checkpoint.save_weights_only=false \
+    resume.ckpt_path="$RESUME_CHECKPOINT"

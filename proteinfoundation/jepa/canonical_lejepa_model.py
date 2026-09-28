@@ -9,6 +9,7 @@ to the native eight-dimensional loss space.
 
 from __future__ import annotations
 
+import copy
 from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import Any
@@ -16,6 +17,7 @@ from typing import Any
 import lightning as L
 import torch
 import torch.distributed as dist
+import torch.distributed.nn.functional as dist_nn
 import torch.nn.functional as F
 from omegaconf import DictConfig
 from torch.utils.checkpoint import checkpoint as activation_checkpoint
@@ -34,6 +36,10 @@ CANONICAL_NUM_VIEWS = 1 + CANONICAL_NUM_LOCAL_VIEWS
 CANONICAL_ALIGNMENT_LEVELS = ("protein", "residue")
 CANONICAL_MASKED_KV_MODES = ("iterative", "visible_only")
 CANONICAL_SIGREG_INPUTS = ("protein_mean", "protein_centered_residue")
+CANONICAL_EVOLVING_PAIR_UPDATE_INTERVAL = 3
+CANONICAL_EVOLVING_PAIR_MODE = "gated_multiplicative"
+CANONICAL_EVOLVING_PAIR_HIDDEN_DIM = 64
+CANONICAL_EVOLVING_PAIR_TRIANGLE_DIM = 32
 
 CANONICAL_PACKED_SAFE_SEQ_FEATURES = (
     "chain_break_per_res",
@@ -41,6 +47,10 @@ CANONICAL_PACKED_SAFE_SEQ_FEATURES = (
     "x1_a37coors_nm",
     "x1_a37coors_nm_rel",
     "chain_idx_seq",
+)
+CANONICAL_PAIR_ONLY_POSITION_SEQ_FEATURES = (
+    "x1_aatype",
+    "x1_a37coors_nm_rel",
 )
 CANONICAL_PACKED_SAFE_COND_FEATURES: tuple[str, ...] = ()
 CANONICAL_PACKED_SAFE_PAIR_FEATURES = (
@@ -86,16 +96,23 @@ def _feature_tuple(features: Any) -> tuple[str, ...]:
     return tuple(str(feature) for feature in features)
 
 
-def validate_canonical_packed_encoder_config(encoder_cfg: Any) -> None:
-    """Fail closed unless the exact audited encoder feature path is active."""
+def _validate_canonical_encoder_feature_config(
+    encoder_cfg: Any,
+    *,
+    expected_seq_features: tuple[str, ...],
+    context: str,
+    allow_lightweight_pair_updates: bool = False,
+    allow_evolving_pair_updates: bool = False,
+) -> None:
+    """Fail closed unless an exact canonical encoder feature path is active."""
     actual_seq = _feature_tuple(_config_get(encoder_cfg, "feats_seq"))
     actual_cond = _feature_tuple(_config_get(encoder_cfg, "feats_cond_seq"))
     actual_pair = _feature_tuple(_config_get(encoder_cfg, "feats_pair_repr"))
     errors = []
-    if actual_seq != CANONICAL_PACKED_SAFE_SEQ_FEATURES:
+    if actual_seq != expected_seq_features:
         errors.append(
             "feats_seq must exactly equal "
-            f"{CANONICAL_PACKED_SAFE_SEQ_FEATURES}, got {actual_seq}"
+            f"{expected_seq_features}, got {actual_seq}"
         )
     if actual_cond != CANONICAL_PACKED_SAFE_COND_FEATURES:
         errors.append(f"feats_cond_seq must be empty, got {actual_cond}")
@@ -104,13 +121,167 @@ def validate_canonical_packed_encoder_config(encoder_cfg: Any) -> None:
             "feats_pair_repr must exactly equal "
             f"{CANONICAL_PACKED_SAFE_PAIR_FEATURES}, got {actual_pair}"
         )
-    if bool(_config_get(encoder_cfg, "update_pair_repr", False)):
+    update_pair_repr = bool(_config_get(encoder_cfg, "update_pair_repr", False))
+    use_tri_mult = bool(_config_get(encoder_cfg, "use_tri_mult", False))
+    pair_update_mode = str(
+        _config_get(encoder_cfg, "pair_update_mode", "additive")
+    )
+    if update_pair_repr and not (
+        allow_lightweight_pair_updates or allow_evolving_pair_updates
+    ):
         errors.append("update_pair_repr must be false")
+    if update_pair_repr and (
+        allow_lightweight_pair_updates or allow_evolving_pair_updates
+    ):
+        update_every_n = int(
+            _config_get(encoder_cfg, "update_pair_repr_every_n", 0)
+        )
+        if update_every_n != CANONICAL_EVOLVING_PAIR_UPDATE_INTERVAL:
+            errors.append(
+                "canonical pair updates require "
+                "update_pair_repr_every_n="
+                f"{CANONICAL_EVOLVING_PAIR_UPDATE_INTERVAL}, got {update_every_n}"
+            )
+        if use_tri_mult:
+            if not allow_evolving_pair_updates:
+                errors.append(
+                    "triangle pair updates require "
+                    "pair_only_evolving_pair_repr=true"
+                )
+            if pair_update_mode != CANONICAL_EVOLVING_PAIR_MODE:
+                errors.append(
+                    "evolving pair updates require pair_update_mode="
+                    f"{CANONICAL_EVOLVING_PAIR_MODE!r}, got {pair_update_mode!r}"
+                )
+            pair_hidden_dim = int(
+                _config_get(encoder_cfg, "pair_update_hidden_dim", 0)
+            )
+            if pair_hidden_dim != CANONICAL_EVOLVING_PAIR_HIDDEN_DIM:
+                errors.append(
+                    "evolving pair updates require pair_update_hidden_dim="
+                    f"{CANONICAL_EVOLVING_PAIR_HIDDEN_DIM}, got {pair_hidden_dim}"
+                )
+            triangle_dim = int(_config_get(encoder_cfg, "tri_mult_c", 0))
+            if triangle_dim != CANONICAL_EVOLVING_PAIR_TRIANGLE_DIM:
+                errors.append(
+                    "evolving pair updates require tri_mult_c="
+                    f"{CANONICAL_EVOLVING_PAIR_TRIANGLE_DIM}, got {triangle_dim}"
+                )
+        else:
+            if pair_update_mode != "additive":
+                errors.append(
+                    "lightweight pair updates require pair_update_mode='additive', "
+                    f"got {pair_update_mode!r}"
+                )
+    if not update_pair_repr and use_tri_mult:
+        errors.append("use_tri_mult=true requires update_pair_repr=true")
     if errors:
         raise ValueError(
-            "canonical packed views are only valid for the exact audited "
-            "encoder configuration: " + "; ".join(errors)
+            f"{context} requires the exact audited encoder configuration: "
+            + "; ".join(errors)
         )
+
+
+def validate_canonical_packed_encoder_config(
+    encoder_cfg: Any,
+    *,
+    pair_only_position_information: bool = False,
+    pair_only_evolving_pair_repr: bool = False,
+) -> None:
+    """Fail closed unless the selected packed feature path has been audited."""
+    expected_seq_features = (
+        CANONICAL_PAIR_ONLY_POSITION_SEQ_FEATURES
+        if pair_only_position_information
+        else CANONICAL_PACKED_SAFE_SEQ_FEATURES
+    )
+    _validate_canonical_encoder_feature_config(
+        encoder_cfg,
+        expected_seq_features=expected_seq_features,
+        context="canonical packed views",
+        allow_lightweight_pair_updates=pair_only_position_information,
+        allow_evolving_pair_updates=pair_only_evolving_pair_repr,
+    )
+
+
+def resolve_canonical_position_information_config(cfg: Any) -> Any:
+    """Return a config with the pair-only single-stream ablation resolved.
+
+    The transformation is deliberately idempotent. Training resolves it before
+    writing the evaluation config, while direct model construction resolves it
+    again so tests and library callers cannot accidentally bypass the flag.
+    """
+    pair_only = bool(_config_get(cfg, "pair_only_position_information", False))
+    evolving_pair = bool(_config_get(cfg, "pair_only_evolving_pair_repr", False))
+    if evolving_pair and not pair_only:
+        raise ValueError(
+            "pair_only_evolving_pair_repr=true requires "
+            "pair_only_position_information=true"
+        )
+    if not pair_only:
+        return cfg
+
+    resolved = copy.deepcopy(cfg)
+    nn_ae = _config_get(resolved, "nn_ae")
+    encoder_cfg = _config_get(nn_ae, "encoder")
+    actual_seq = _feature_tuple(_config_get(encoder_cfg, "feats_seq"))
+    allowed_inputs = {
+        CANONICAL_PACKED_SAFE_SEQ_FEATURES,
+        CANONICAL_PAIR_ONLY_POSITION_SEQ_FEATURES,
+    }
+    if actual_seq not in allowed_inputs:
+        raise ValueError(
+            "pair_only_position_information requires the exact audited source "
+            "or resolved sequence feature list; got "
+            f"{actual_seq}"
+        )
+    if evolving_pair:
+        if bool(_config_get(encoder_cfg, "pair_context_to_sequence", False)):
+            raise ValueError(
+                "pair_only_evolving_pair_repr and pair_context_to_sequence are "
+                "mutually exclusive"
+            )
+        already_resolved = (
+            bool(_config_get(encoder_cfg, "update_pair_repr", False))
+            and int(_config_get(encoder_cfg, "update_pair_repr_every_n", 0))
+            == CANONICAL_EVOLVING_PAIR_UPDATE_INTERVAL
+            and bool(_config_get(encoder_cfg, "use_tri_mult", False))
+            and str(_config_get(encoder_cfg, "pair_update_mode", "additive"))
+            == CANONICAL_EVOLVING_PAIR_MODE
+            and int(_config_get(encoder_cfg, "pair_update_hidden_dim", 0))
+            == CANONICAL_EVOLVING_PAIR_HIDDEN_DIM
+            and int(_config_get(encoder_cfg, "tri_mult_c", 0))
+            == CANONICAL_EVOLVING_PAIR_TRIANGLE_DIM
+        )
+        disabled_source = (
+            not bool(_config_get(encoder_cfg, "update_pair_repr", False))
+            and not bool(_config_get(encoder_cfg, "use_tri_mult", False))
+            and str(_config_get(encoder_cfg, "pair_update_mode", "additive"))
+            == "additive"
+        )
+        if not (already_resolved or disabled_source):
+            raise ValueError(
+                "pair_only_evolving_pair_repr cannot override a conflicting "
+                "manual pair-update configuration"
+            )
+        encoder_cfg["update_pair_repr"] = True
+        encoder_cfg["update_pair_repr_every_n"] = (
+            CANONICAL_EVOLVING_PAIR_UPDATE_INTERVAL
+        )
+        encoder_cfg["use_tri_mult"] = True
+        encoder_cfg["pair_update_mode"] = CANONICAL_EVOLVING_PAIR_MODE
+        encoder_cfg["pair_update_hidden_dim"] = (
+            CANONICAL_EVOLVING_PAIR_HIDDEN_DIM
+        )
+        encoder_cfg["tri_mult_c"] = CANONICAL_EVOLVING_PAIR_TRIANGLE_DIM
+    _validate_canonical_encoder_feature_config(
+        encoder_cfg,
+        expected_seq_features=actual_seq,
+        context="pair_only_position_information",
+        allow_lightweight_pair_updates=True,
+        allow_evolving_pair_updates=evolving_pair,
+    )
+    encoder_cfg["feats_seq"] = list(CANONICAL_PAIR_ONLY_POSITION_SEQ_FEATURES)
+    return resolved
 
 
 def _validate_residue_tensor(
@@ -731,13 +902,19 @@ def canonical_invariance_loss(embeddings: torch.Tensor) -> torch.Tensor:
 
 
 def canonical_residue_invariance_loss(
-    residue_embeddings: torch.Tensor, real_mask: torch.Tensor
+    residue_embeddings: torch.Tensor,
+    real_mask: torch.Tensor,
+    *,
+    view_masks: torch.Tensor | None = None,
 ) -> torch.Tensor:
     """Align identical residue rows from the global view to all five views.
 
     Each protein contributes equally: the squared error is averaged over that
     protein's real residues and latent dimensions, then over batch and views.
-    Padding alone is excluded; visibility never gates this objective.
+    Padding alone is excluded by default, preserving the historical objective.
+    When ``view_masks`` is provided, a global/local pair contributes only where
+    the same physical residue is visible in both views. A rare protein/view pair
+    with no visible intersection contributes zero rather than dividing by zero.
     """
     if (
         residue_embeddings.ndim != 4
@@ -755,8 +932,17 @@ def canonical_residue_invariance_loss(
         alignment_mask = real_mask[:, :1] & real_mask
     else:
         raise ValueError("real_mask must be [B, L] or [B, 5, L]")
+    if view_masks is not None:
+        if view_masks.dtype != torch.bool:
+            raise ValueError("view_masks must be boolean")
+        if view_masks.shape != residue_embeddings.shape[:3]:
+            raise ValueError(
+                "view_masks must have shape "
+                f"{tuple(residue_embeddings.shape[:3])}"
+            )
+        alignment_mask = alignment_mask & view_masks[:, :1] & view_masks
     real_counts = alignment_mask.sum(dim=2)
-    if (real_counts == 0).any():
+    if view_masks is None and (real_counts == 0).any():
         rows = torch.where(real_counts == 0)[0].tolist()
         raise ValueError(f"residue invariance has no real residues: rows={rows}")
 
@@ -765,7 +951,8 @@ def canonical_residue_invariance_loss(
         squared_error * alignment_mask[..., None].to(squared_error.dtype)
     ).sum(dim=(2, 3))
     per_protein_view = masked_sum / (
-        real_counts.to(squared_error.dtype) * residue_embeddings.shape[-1]
+        real_counts.clamp_min(1).to(squared_error.dtype)
+        * residue_embeddings.shape[-1]
     )
     return per_protein_view.mean()
 
@@ -976,6 +1163,51 @@ def covariance_effective_rank(values: torch.Tensor) -> torch.Tensor:
     return (-(probabilities * probabilities.clamp_min(1e-12).log()).sum()).exp()
 
 
+def canonical_vicreg_rescue_loss(
+    embeddings: torch.Tensor,
+    *,
+    target_std: float = 1.0,
+    covariance_weight: float = 1.0,
+    eps: float = 1e-4,
+) -> torch.Tensor:
+    """Directly penalize protein-level variance and covariance collapse.
+
+    Five views of one protein are averaged before estimating statistics, so
+    view disagreement cannot satisfy the diversity term. Under DDP, an
+    autograd-aware gather produces the same global-protein objective on every
+    rank; DDP's gradient average then cancels the gather backward's rank sum.
+    """
+    if embeddings.ndim != 3:
+        raise ValueError(
+            "VICReg rescue expects [proteins, views, latent_dim], got "
+            f"{tuple(embeddings.shape)}"
+        )
+    if embeddings.shape[0] < 1 or embeddings.shape[1] != CANONICAL_NUM_VIEWS:
+        raise ValueError("VICReg rescue requires at least one protein and five views")
+    if target_std <= 0:
+        raise ValueError("VICReg rescue target_std must be positive")
+    if covariance_weight < 0:
+        raise ValueError("VICReg rescue covariance_weight cannot be negative")
+    if eps <= 0:
+        raise ValueError("VICReg rescue eps must be positive")
+
+    protein_embeddings = embeddings.mean(dim=1)
+    if dist.is_available() and dist.is_initialized():
+        protein_embeddings = torch.cat(
+            dist_nn.all_gather(protein_embeddings), dim=0
+        )
+    centered = protein_embeddings - protein_embeddings.mean(dim=0, keepdim=True)
+    std = torch.sqrt(centered.square().mean(dim=0) + eps)
+    variance_loss = F.relu(float(target_std) - std).mean()
+
+    denominator = max(protein_embeddings.shape[0] - 1, 1)
+    covariance = centered.T @ centered / denominator
+    diagonal = torch.diagonal(covariance)
+    off_diagonal = covariance - torch.diag_embed(diagonal)
+    covariance_loss = off_diagonal.square().sum() / embeddings.shape[-1]
+    return variance_loss + float(covariance_weight) * covariance_loss
+
+
 def build_adamw_parameter_groups(
     module: torch.nn.Module, weight_decay: float
 ) -> list[dict[str, Any]]:
@@ -1003,12 +1235,35 @@ class CanonicalLeJEPAModel(L.LightningModule):
 
     def __init__(self, cfg: DictConfig | Mapping[str, Any]) -> None:
         super().__init__()
+        cfg = resolve_canonical_position_information_config(cfg)
         self.cfg = cfg
         self.save_hyperparameters(ignore=["cfg"])
 
         nn_ae = _config_get(cfg, "nn_ae")
         latent_dim = int(_config_get(nn_ae, "latent_z_dim"))
         encoder_cfg = _config_get(nn_ae, "encoder")
+        self.pair_only_position_information = bool(
+            _config_get(cfg, "pair_only_position_information", False)
+        )
+        self.pair_only_evolving_pair_repr = bool(
+            _config_get(cfg, "pair_only_evolving_pair_repr", False)
+        )
+        self.pair_context_to_sequence = bool(
+            _config_get(encoder_cfg, "pair_context_to_sequence", False)
+        )
+        self.update_pair_repr = bool(
+            _config_get(encoder_cfg, "update_pair_repr", False)
+        )
+        if self.pair_context_to_sequence and not self.pair_only_position_information:
+            raise ValueError(
+                "encoder.pair_context_to_sequence is only supported with "
+                "pair_only_position_information=true"
+            )
+        if self.pair_context_to_sequence and self.update_pair_repr:
+            raise ValueError(
+                "pair_context_to_sequence and lightweight pair updates are "
+                "mutually exclusive"
+            )
         encoder_latent_dim = int(_config_get(encoder_cfg, "latent_z_dim"))
         if (
             latent_dim != CANONICAL_LATENT_DIM
@@ -1026,6 +1281,14 @@ class CanonicalLeJEPAModel(L.LightningModule):
             raise ValueError(
                 "canonical LeJEPA alignment_level must be one of "
                 f"{CANONICAL_ALIGNMENT_LEVELS}, got {self.alignment_level!r}"
+            )
+        self.residue_visible_only_objective = bool(
+            _config_get(cfg, "residue_visible_only_objective", False)
+        )
+        if self.residue_visible_only_objective and self.alignment_level != "residue":
+            raise ValueError(
+                "residue_visible_only_objective=true requires "
+                "alignment_level=residue"
             )
         self.masked_kv_mode = str(_config_get(cfg, "masked_kv_mode", "visible_only"))
         if self.masked_kv_mode not in CANONICAL_MASKED_KV_MODES:
@@ -1115,7 +1378,11 @@ class CanonicalLeJEPAModel(L.LightningModule):
                 "with views.cropping=true"
             )
         if self.packed_views:
-            validate_canonical_packed_encoder_config(encoder_cfg)
+            validate_canonical_packed_encoder_config(
+                encoder_cfg,
+                pair_only_position_information=self.pair_only_position_information,
+                pair_only_evolving_pair_repr=self.pair_only_evolving_pair_repr,
+            )
         self.independent_view_rotations = bool(
             _config_get(cfg, "independent_view_rotations", False)
         )
@@ -1126,6 +1393,25 @@ class CanonicalLeJEPAModel(L.LightningModule):
         self.sigreg_joint_views = bool(
             _config_get(sigreg_cfg, "joint_views", False)
         )
+        self.vicreg_rescue = bool(_config_get(sigreg_cfg, "vicreg_rescue", False))
+        self.vicreg_weight = float(_config_get(sigreg_cfg, "vicreg_weight", 1.0))
+        self.vicreg_target_std = float(
+            _config_get(sigreg_cfg, "vicreg_target_std", 1.0)
+        )
+        self.vicreg_covariance_weight = float(
+            _config_get(sigreg_cfg, "vicreg_covariance_weight", 1.0)
+        )
+        if self.vicreg_rescue and not (
+            self.pair_only_position_information
+            and self.pair_only_evolving_pair_repr
+            and self.alignment_level == "protein"
+        ):
+            raise ValueError(
+                "sigreg.vicreg_rescue=true is supported only for protein-level "
+                "pair-only evolving-pair experiments"
+            )
+        if self.vicreg_rescue and self.vicreg_weight <= 0:
+            raise ValueError("sigreg.vicreg_weight must be positive")
         self.residue_samples_per_protein = int(
             _config_get(sigreg_cfg, "residue_samples_per_protein", 1)
         )
@@ -1171,6 +1457,15 @@ class CanonicalLeJEPAModel(L.LightningModule):
             raise ValueError(
                 "independent local crop starts with protein-centred residue "
                 "SIGReg require sigreg.independent_residue_samples=true"
+            )
+        if self.residue_visible_only_objective and not (
+            self.sigreg_input == "protein_centered_residue"
+            and self.independent_residue_samples
+        ):
+            raise ValueError(
+                "residue_visible_only_objective=true requires per-view visible "
+                "SIGReg: sigreg.input=protein_centered_residue and "
+                "sigreg.independent_residue_samples=true"
             )
         self.encoder = EncoderTransformer(**nn_ae)
         self.sigreg = CanonicalSIGReg(
@@ -1406,7 +1701,11 @@ class CanonicalLeJEPAModel(L.LightningModule):
                 real_mask,
             ) = self.encode_residue_views(batch)
             inv_loss = canonical_residue_invariance_loss(
-                residue_embeddings, real_mask
+                residue_embeddings,
+                real_mask,
+                view_masks=(
+                    view_masks if self.residue_visible_only_objective else None
+                ),
             )
         if self.sigreg_input == "protein_mean":
             sigreg_input = embeddings.permute(1, 0, 2)
@@ -1415,6 +1714,13 @@ class CanonicalLeJEPAModel(L.LightningModule):
                 raise RuntimeError(
                     "protein-centred residue SIGReg requires residue embeddings"
                 )
+            sigreg_mask = real_mask
+            if self.residue_visible_only_objective:
+                sigreg_mask = (
+                    real_mask[:, None].expand_as(view_masks)
+                    if real_mask.ndim == 2
+                    else real_mask
+                ) & view_masks
             if (
                 self.residue_samples_per_protein == 1
                 and not self.independent_residue_samples
@@ -1422,12 +1728,12 @@ class CanonicalLeJEPAModel(L.LightningModule):
                 # Keep the historical default call and RNG path unchanged.
                 sigreg_input, _ = protein_centered_residue_sigreg_input(
                     residue_embeddings,
-                    real_mask,
+                    sigreg_mask,
                 )
             else:
                 sigreg_input, _ = protein_centered_residue_sigreg_input(
                     residue_embeddings,
-                    real_mask,
+                    sigreg_mask,
                     samples_per_protein=self.residue_samples_per_protein,
                     independent_views=self.independent_residue_samples,
                 )
@@ -1437,6 +1743,14 @@ class CanonicalLeJEPAModel(L.LightningModule):
             )
         sigreg_loss = self.sigreg(sigreg_input)
         total_loss = inv_loss + self.sigreg_weight * sigreg_loss
+        vicreg_loss = None
+        if self.vicreg_rescue:
+            vicreg_loss = canonical_vicreg_rescue_loss(
+                embeddings,
+                target_std=self.vicreg_target_std,
+                covariance_weight=self.vicreg_covariance_weight,
+            )
+            total_loss = total_loss + self.vicreg_weight * vicreg_loss
         output = {
             "loss": total_loss,
             "inv_loss": inv_loss,
@@ -1444,6 +1758,8 @@ class CanonicalLeJEPAModel(L.LightningModule):
             "embeddings": embeddings,
             "view_masks": view_masks,
         }
+        if vicreg_loss is not None:
+            output["vicreg_loss"] = vicreg_loss
         if real_mask is not None:
             output["alignment_masks"] = real_mask
         if residue_embeddings is not None:
@@ -1477,12 +1793,24 @@ class CanonicalLeJEPAModel(L.LightningModule):
             print(
                 "Canonical LeJEPA first-batch sanity:\n"
                 f"  packed_views={str(self.packed_views).lower()}, "
+                "pair_only_position_information="
+                f"{str(self.pair_only_position_information).lower()}, "
+                "pair_only_evolving_pair_repr="
+                f"{str(self.pair_only_evolving_pair_repr).lower()}, "
+                "pair_context_to_sequence="
+                f"{str(self.pair_context_to_sequence).lower()}, "
+                "update_pair_repr="
+                f"{str(self.update_pair_repr).lower()}, "
+                "vicreg_rescue="
+                f"{str(self.vicreg_rescue).lower()}, "
                 "independent_view_rotations="
                 f"{str(self.independent_view_rotations).lower()}, "
                 f"cropping={str(self.cropping).lower()}, "
                 f"shared_crop_anchor={str(self.shared_crop_anchor).lower()}, "
                 "independent_residue_samples="
                 f"{str(self.independent_residue_samples).lower()}, "
+                "residue_visible_only_objective="
+                f"{str(self.residue_visible_only_objective).lower()}, "
                 f"residue_samples_per_protein={self.residue_samples_per_protein}, "
                 f"actual_batch_size={full_valid.shape[0]}, num_views={view_masks.shape[1]}\n"
                 "  valid_residue_count: "
@@ -1520,6 +1848,8 @@ class CanonicalLeJEPAModel(L.LightningModule):
             "train/effective_rank": ranks.mean(),
             "train/global_local_cosine": local_cosine,
         }
+        if "vicreg_loss" in output:
+            metrics["train/vicreg_loss"] = output["vicreg_loss"].detach()
         if self.alignment_level == "residue":
             residue_embeddings = output["residue_embeddings"].detach()
             residue_mask = (
@@ -1543,6 +1873,30 @@ class CanonicalLeJEPAModel(L.LightningModule):
                     "train/inv_masked_masked": visibility_metrics["masked_masked"],
                 }
             )
+            if self.residue_visible_only_objective:
+                paired_real = (
+                    valid[:, :1] & valid[:, 1:]
+                    if valid.ndim == 3
+                    else valid[:, None, :].expand(-1, 4, -1)
+                )
+                visible_overlap = (
+                    paired_real & view_masks[:, :1] & view_masks[:, 1:]
+                )
+                metrics.update(
+                    {
+                        "train/residue_visible_overlap_count": visible_overlap.sum(
+                            dim=2
+                        ).float().mean(),
+                        "train/residue_visible_overlap_fraction": (
+                            visible_overlap.sum(dim=2)
+                            / paired_real.sum(dim=2).clamp_min(1)
+                        ).float().mean(),
+                        "train/residue_visible_unique_fraction": (
+                            visible_overlap.any(dim=1).sum(dim=1)
+                            / paired_real.any(dim=1).sum(dim=1).clamp_min(1)
+                        ).float().mean(),
+                    }
+                )
         self.log_dict(metrics, on_step=True, on_epoch=False, sync_dist=True)
         return output["loss"]
 

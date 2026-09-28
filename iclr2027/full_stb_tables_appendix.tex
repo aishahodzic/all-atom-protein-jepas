@@ -1,0 +1,132 @@
+\begin{table}[!ht]
+\centering
+\setlength{\tabcolsep}{1.65pt}
+\renewcommand{\arraystretch}{0.97}
+\fontsize{7.8}{9.6}\selectfont
+\caption{Complete StructTokenBench results for the 18 evaluated 100k configurations. Models are rows and tasks and holdout splits are columns. Scores are multiplied by 100 and higher is better.}
+\label{tab:stb-all-100k}
+
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{@{}l*{4}{r}c*{10}{r}@{}}
+\toprule
+ & \multicolumn{15}{c}{Functional-site prediction: AUROC $\times100$} \\
+Model & \multicolumn{2}{c}{BindInt} & \multicolumn{2}{c}{BindBio} & BindShake & \multicolumn{2}{c}{CatInt} & \multicolumn{2}{c}{CatBio} & \multicolumn{2}{c}{Con} & \multicolumn{2}{c}{Rep} & \multicolumn{2}{c}{Ept} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-6}\cmidrule(lr){7-8}\cmidrule(lr){9-10}\cmidrule(lr){11-12}\cmidrule(lr){13-14}\cmidrule(lr){15-16}
+ & Fold & SF & Fold & SF & Org. & Fold & SF & Fold & SF & Fold & SF & Fold & SF & Fold & SF \\
+\midrule
+\multicolumn{16}{@{}l}{\textbf{Autoencoders}} \\
+$C_\alpha$ AE (EMA) & 44.60 & 80.01 & 63.12 & 63.77 & 59.21 & 54.53 & 77.70 & 67.22 & 73.66 & 56.53 & 70.58 & 75.12 & 79.58 & 47.08 & 53.60 \\
+Fully latent AE (EMA) & 44.82 & 81.48 & 69.61 & 69.65 & 76.06 & 59.86 & 80.08 & 77.30 & 83.56 & 61.62 & 74.96 & 73.60 & 80.44 & 47.74 & 52.38 \\
+\midrule
+\multicolumn{16}{@{}l}{\textbf{JEPA}} \\
+Rand 50\% & 44.46 & 81.67 & 60.59 & 61.80 & 62.32 & 56.86 & 72.55 & 59.31 & 65.61 & 57.55 & 71.05 & 75.12 & 81.34 & 46.92 & 49.75 \\
+Rand 70\% & 47.11 & 80.06 & 65.56 & 65.31 & 71.85 & 56.84 & 76.71 & 71.50 & 75.36 & 60.44 & 72.08 & 73.77 & 78.46 & 47.87 & 49.29 \\
+Mutation & 45.46 & 81.84 & 63.96 & 64.56 & 68.75 & 56.68 & 77.13 & 68.03 & 72.36 & 60.33 & 72.10 & 73.55 & 79.92 & 51.38 & 53.11 \\
+\midrule
+\multicolumn{16}{@{}l}{\textbf{JEPA+SIGReg}} \\
+Rand 50\% (abs. pos.) & 45.32 & 82.51 & 58.82 & 60.82 & 59.73 & 55.36 & 76.86 & 52.75 & 58.09 & 58.05 & 72.96 & 75.93 & 81.37 & 53.67 & 56.80 \\
+Rand 70\% (abs. pos.) & 43.13 & 82.54 & 59.02 & 61.05 & 59.72 & 54.49 & 77.38 & 52.92 & 58.43 & 58.49 & 73.08 & 75.65 & 80.58 & 53.99 & 55.83 \\
+Mutation & 43.97 & 83.01 & 58.57 & 60.60 & 59.82 & 55.81 & 77.48 & 52.85 & 58.14 & 57.54 & 72.51 & 75.14 & 80.75 & 51.80 & 53.99 \\
+Rand 50\% (rel. pos.) & 46.43 & 81.26 & 66.98 & 67.20 & 74.66 & 62.28 & 79.76 & 74.04 & 78.70 & 60.68 & 74.25 & 75.17 & 79.68 & 51.75 & 58.90 \\
+Rand 70\% (rel. pos.) & 47.39 & 82.62 & 66.09 & 66.25 & 73.05 & 60.24 & 79.81 & 73.28 & 78.20 & 62.35 & 74.12 & 74.48 & 81.18 & 52.43 & 56.61 \\
+Chem: 50\% atoms & 45.24 & 78.97 & 59.11 & 59.94 & 62.84 & 54.03 & 76.44 & 60.61 & 65.97 & 56.62 & 70.10 & 74.89 & 78.25 & 52.51 & 53.21 \\
+Chem: no AA+50\% SC & 45.54 & 80.10 & 65.15 & 65.08 & 70.85 & 57.76 & 74.59 & 72.62 & 76.39 & 58.18 & 71.76 & 74.54 & 78.62 & 55.99 & 59.98 \\
+Spatial (rel. pos.) & 49.46 & 82.85 & 65.56 & 65.96 & 71.87 & 63.10 & 80.96 & 71.60 & 76.70 & 62.16 & 76.23 & 74.11 & 79.92 & 51.55 & 59.31 \\
+Rand 70\% (rel. pos.)+SO(3) & 48.79 & 89.37 & 65.01 & 65.38 & 68.55 & 63.18 & 84.28 & 67.25 & 73.30 & 56.04 & 78.28 & 72.98 & 85.63 & 53.52 & 57.93 \\
+\midrule
+\multicolumn{16}{@{}l}{\textbf{LeJEPA}} \\
+Uncropped & 50.30 & 88.45 & 59.32 & 61.82 & 58.45 & 51.71 & 80.74 & 53.67 & 60.61 & 60.10 & 77.27 & 71.05 & 83.49 & 62.00 & 59.72 \\
+Uncropped (EMA) & 49.87 & 88.49 & 59.31 & 61.73 & 58.24 & 53.43 & 80.50 & 53.68 & 60.52 & 60.30 & 77.32 & 72.85 & 84.43 & 63.05 & 61.62 \\
+Uncropped+SO(3) & 46.27 & 91.65 & 59.72 & 62.66 & 61.24 & 59.94 & 83.53 & 53.21 & 62.57 & 55.79 & 83.10 & 71.50 & 82.87 & 53.14 & 60.30 \\
+Uncropped+SO(3) (EMA) & 45.36 & 91.71 & 59.69 & 62.93 & 60.80 & 56.07 & 83.77 & 53.95 & 62.68 & 56.07 & 83.06 & 68.95 & 85.14 & 54.35 & 59.25 \\
+\bottomrule
+\end{tabular}%
+}
+
+\medskip
+\begin{tabular}{@{}l@{\hspace{6pt}}*{3}{r}@{\hspace{5pt}}*{6}{r}@{}}
+\toprule
+ & \multicolumn{3}{c}{Homo: macro-F1 $\times100$} & \multicolumn{6}{c}{Flexibility: Spearman's $\rho\times100$} \\
+Model & Fold & Fam. & SF & \multicolumn{2}{c}{FlexRMSF} & \multicolumn{2}{c}{FlexBFactor} & \multicolumn{2}{c}{FlexNEQ} \\
+\cmidrule(lr){5-6}\cmidrule(lr){7-8}\cmidrule(lr){9-10}
+ & & & & Fold & SF & Fold & SF & Fold & SF \\
+\midrule
+\multicolumn{10}{@{}l}{\textbf{Autoencoders}} \\
+$C_\alpha$ AE (EMA) & 6.67 & 20.15 & 4.23 & 16.01 & 12.15 & 11.32 & 10.75 & 14.35 & 12.65 \\
+Fully latent AE (EMA) & 8.23 & 14.36 & 5.13 & 42.83 & 41.04 & 28.81 & 24.27 & 20.13 & 19.57 \\
+\midrule
+\multicolumn{10}{@{}l}{\textbf{JEPA}} \\
+Rand 50\% & 7.79 & 16.67 & 4.18 & 29.45 & 34.39 & 12.90 & 12.20 & 9.10 & 12.43 \\
+Rand 70\% & 9.86 & 13.30 & 6.00 & 33.98 & 34.26 & 23.29 & 21.69 & 25.11 & 25.19 \\
+Mutation & 8.01 & 11.82 & 4.61 & 35.08 & 35.61 & 22.09 & 17.76 & 10.07 & 10.60 \\
+\midrule
+\multicolumn{10}{@{}l}{\textbf{JEPA+SIGReg}} \\
+Rand 50\% (abs. pos.) & 6.94 & 13.23 & 3.23 & 6.95 & 3.21 & 3.67 & 2.10 & 3.58 & 5.41 \\
+Rand 70\% (abs. pos.) & 8.03 & 13.60 & 4.06 & 10.83 & 2.16 & 3.28 & 1.75 & 4.47 & 3.92 \\
+Mutation & 6.44 & 12.88 & 3.41 & 9.84 & 3.22 & 4.53 & 2.34 & 4.65 & 3.04 \\
+Rand 50\% (rel. pos.) & 6.26 & 12.10 & 3.65 & 31.56 & 25.92 & 21.04 & 19.42 & 16.82 & 14.08 \\
+Rand 70\% (rel. pos.) & 6.67 & 11.06 & 3.64 & 28.97 & 24.78 & 19.82 & 18.23 & 15.10 & 11.36 \\
+Chem: 50\% atoms & 8.41 & 18.24 & 4.24 & 14.57 & 12.33 & 5.25 & 6.17 & 8.73 & 9.99 \\
+Chem: no AA+50\% SC & 7.24 & 12.15 & 4.04 & 27.65 & 22.49 & 17.42 & 17.38 & 16.58 & 17.41 \\
+Spatial (rel. pos.) & 8.62 & 11.95 & 4.81 & 27.99 & 24.92 & 18.55 & 17.04 & 12.22 & 10.48 \\
+Rand 70\% (rel. pos.)+SO(3) & 6.71 & 16.01 & 4.36 & 18.45 & 15.34 & 12.46 & 12.32 & 12.08 & 12.22 \\
+\midrule
+\multicolumn{10}{@{}l}{\textbf{LeJEPA}} \\
+Uncropped & 6.73 & 19.64 & 5.54 & 22.48 & 30.96 & 5.01 & 3.50 & 2.46 & 3.54 \\
+Uncropped (EMA) & 7.59 & 21.70 & 5.40 & 22.62 & 33.21 & 3.14 & 7.72 & 7.86 & 6.15 \\
+Uncropped+SO(3) & 9.96 & 27.60 & 12.67 & 35.51 & 43.51 & 22.44 & 18.08 & 6.56 & 7.37 \\
+Uncropped+SO(3) (EMA) & 11.68 & 33.63 & 12.90 & 35.15 & 42.82 & 22.18 & 19.27 & 5.98 & 7.42 \\
+\bottomrule
+\end{tabular}
+
+\par\smallskip
+\fontsize{7.2}{8.4}\selectfont
+Fam. = family; SF = superfamily; Org. = original benchmark split. Homo is the mean of batch-level macro-F1. AA denotes amino-acid identity and SC denotes side-chain coordinates.
+\end{table}
+\clearpage
+
+The complete table includes additional masking ablations that are not part of the main comparison. Spatial masking selects separated C$\alpha$ seed residues and masks local neighbourhoods extending up to a 30\,\AA{} radius, hiding approximately 75\% of the protein. Chemical masks retain partial information at target positions: coordinate masking retains amino-acid identity and hides 50\% of observed atom coordinates, while side-chain masking hides amino-acid identity and 50\% of observed side-chain coordinates but retains the backbone.
+
+\begin{table}[!ht]
+\centering
+\setlength{\tabcolsep}{1.65pt}
+\renewcommand{\arraystretch}{0.97}
+\fontsize{7.8}{9.6}\selectfont
+\caption{Complete StructTokenBench results for the four cropped LeJEPA configurations at raw 10k checkpoints. Models are rows and tasks and holdout splits are columns. Scores are multiplied by 100 and higher is better. These runs use batch size 96 and are not compute-matched to the 100k configurations.}
+\label{tab:stb-all-crops}
+
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{@{}l*{4}{r}c*{10}{r}@{}}
+\toprule
+ & \multicolumn{15}{c}{Functional-site prediction: AUROC $\times100$} \\
+Model & \multicolumn{2}{c}{BindInt} & \multicolumn{2}{c}{BindBio} & BindShake & \multicolumn{2}{c}{CatInt} & \multicolumn{2}{c}{CatBio} & \multicolumn{2}{c}{Con} & \multicolumn{2}{c}{Rep} & \multicolumn{2}{c}{Ept} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-6}\cmidrule(lr){7-8}\cmidrule(lr){9-10}\cmidrule(lr){11-12}\cmidrule(lr){13-14}\cmidrule(lr){15-16}
+ & Fold & SF & Fold & SF & Org. & Fold & SF & Fold & SF & Fold & SF & Fold & SF & Fold & SF \\
+\midrule
+Per protein & 48.32 & 86.59 & 57.66 & 58.95 & 58.81 & 56.47 & 81.00 & 56.67 & 62.18 & 55.04 & 73.63 & 74.30 & 81.89 & 47.04 & 58.22 \\
+Per protein+SO(3) & 53.11 & 89.54 & 60.79 & 63.73 & 61.77 & 53.33 & 83.94 & 65.06 & 70.55 & 56.07 & 77.51 & 74.78 & 87.43 & 56.42 & 55.24 \\
+Per residue & 44.14 & 82.87 & 57.85 & 59.03 & 60.67 & 55.28 & 77.44 & 57.82 & 61.57 & 55.67 & 71.23 & 74.41 & 79.69 & 50.56 & 52.64 \\
+Per residue+SO(3) & 48.06 & 89.59 & 65.28 & 67.27 & 66.65 & 55.63 & 84.13 & 70.78 & 71.26 & 57.00 & 76.32 & 73.34 & 83.82 & 50.65 & 54.79 \\
+\bottomrule
+\end{tabular}%
+}
+
+\medskip
+\begin{tabular}{@{}l@{\hspace{7pt}}*{3}{r}@{\hspace{7pt}}*{6}{r}@{}}
+\toprule
+ & \multicolumn{3}{c}{Homo: macro-F1 $\times100$} & \multicolumn{6}{c}{Flexibility: Spearman's $\rho\times100$} \\
+Model & Fold & Fam. & SF & \multicolumn{2}{c}{FlexRMSF} & \multicolumn{2}{c}{FlexBFactor} & \multicolumn{2}{c}{FlexNEQ} \\
+\cmidrule(lr){5-6}\cmidrule(lr){7-8}\cmidrule(lr){9-10}
+ & & & & Fold & SF & Fold & SF & Fold & SF \\
+\midrule
+Per protein & 19.36 & 29.30 & 13.51 & 19.01 & 25.46 & 9.73 & 10.18 & 20.00 & 19.16 \\
+Per protein+SO(3) & 27.72 & 58.03 & 28.64 & 29.77 & 30.13 & 16.07 & 14.77 & 21.75 & 21.40 \\
+Per residue & 9.44 & 17.32 & 5.55 & 16.55 & 16.06 & 9.58 & 10.07 & 49.33 & 49.72 \\
+Per residue+SO(3) & 21.96 & 30.07 & 11.83 & 36.06 & 30.70 & 18.41 & 16.88 & 59.37 & 58.58 \\
+\bottomrule
+\end{tabular}
+
+\par\smallskip
+\fontsize{7.2}{8.4}\selectfont
+Fam. = family; SF = superfamily; Org. = original benchmark split. Homo is the mean of batch-level macro-F1.
+\end{table}

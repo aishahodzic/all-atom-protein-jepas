@@ -1,0 +1,77 @@
+#!/bin/bash
+# Complement the four short tasks with the remaining eight STB tasks.
+# Together with job 258633 this gives full 12-task raw-10k coverage.
+#SBATCH --job-name=stb_resrot_mid10_r8
+#SBATCH --partition=normal
+#SBATCH --qos=medium
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=64G
+#SBATCH --time=08:00:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/stb/publication_upstream/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+STB_ROOT="$PROJECT_ROOT/StructTokenBench"
+STB_PYTHON_BIN=/slurm-storage/aishod/.conda/envs/pstbench/bin/python
+RUN_NAME=canonical_lejepa_crop_fixed96_residue_perview_sigreg_b96_independent_locals_k4_rotations_lr4e4_cosine_30k
+SOURCE_CHECKPOINT="$PROJECT_ROOT/store/$RUN_NAME/checkpoints/step-00010000.ckpt"
+CHECKPOINT="$PROJECT_ROOT/store/$RUN_NAME/evaluation/canonical-lejepa-residue-perview-rot-middle-lr-step10000-raw-staged.ckpt"
+ENCODER_CONFIG="$STB_ROOT/100k-checkpoints/shared/exp_config_jepa_nn130m.json"
+EXPERIMENT=canonical-lejepa-residue-perview-rot-middle-lr-raw-step10k
+
+test -s "$SOURCE_CHECKPOINT"
+test -s "$CHECKPOINT"
+test -s "$ENCODER_CONFIG"
+
+"$STB_PYTHON_BIN" -c '
+import hashlib
+import sys
+import torch
+
+source_path, staged_path = sys.argv[1:]
+digest = hashlib.sha256()
+with open(source_path, "rb") as handle:
+    for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+        digest.update(chunk)
+checkpoint = torch.load(staged_path, map_location="cpu", weights_only=False, mmap=True)
+provenance = checkpoint.get("canonical_lejepa_evaluation", {})
+assert provenance.get("source_global_step") == 10_000, provenance
+assert provenance.get("encoder_source") == "raw", provenance
+assert provenance.get("source_checkpoint_sha256") == digest.hexdigest(), provenance
+assert provenance.get("latent_dim") == 8, provenance
+assert sum(str(k).startswith("online_encoder.") for k in checkpoint.get("state_dict", {})) == 381
+print("Verified per-residue + rotations raw-10k staged checkpoint")
+' "$SOURCE_CHECKPOINT" "$CHECKPOINT"
+
+cd "$STB_ROOT"
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+export STB_SKIP_BOOTSTRAP=1
+export STB_SKIP_DATA_SETUP=1
+export STB_SMOKE=0
+export STB_SHARED_EMBEDDING_CACHE=1
+export STB_SHARED_EMBEDDING_CACHE_ROOT=/mnt/hopper-raid/aishod/data/struct_token_bench_release_data/shared_embedding_cache
+export DS_IGNORE_CUDA_DETECTION=1
+export PYTHON_BIN="$STB_PYTHON_BIN"
+export NUM_WORKERS=8
+export PDB_DATA_ROOT=/mnt/hopper-raid/aishod/data/struct_token_bench_pdb_data
+export STB_RELEASE_DATA_ROOT=/mnt/hopper-raid/aishod/data/struct_token_bench_release_data
+export CANONICAL_LEJEPA_RESIDUE_PERVIEW_ROT_MIDDLE_LR_RAW_STEP10K_CKPT="$CHECKPOINT"
+export EVALUATION_RUN_ID="slurm-${SLURM_JOB_ID}-${EXPERIMENT}-remaining-eight"
+export STB_LOG_ROOT="$STB_ROOT/struct_token_bench_logs/upstream-l600-v1-full/runs/$EVALUATION_RUN_ID"
+export SUMMARY_FILE="$STB_LOG_ROOT/summary_results.csv"
+export TMPDIR="$HOME/tmp/stb-resrot-mid10-r8/$SLURM_JOB_ID"
+export MPLCONFIGDIR="$TMPDIR/matplotlib"
+export TRITON_CACHE_DIR="$TMPDIR/triton"
+mkdir -p "$STB_LOG_ROOT" "$TMPDIR" "$MPLCONFIGDIR" "$TRITON_CACHE_DIR" "$STB_SHARED_EMBEDDING_CACHE_ROOT"
+
+bash src/script/run_eval.sh \
+    --protocol=upstream-l600-v1 \
+    --checkpoint=10k \
+    --experiment="$EXPERIMENT" \
+    --tasks=BindInt,BindBio,BindShake,CatInt,CatBio,Con,Rep,Homo

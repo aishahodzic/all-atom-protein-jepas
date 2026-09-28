@@ -1,0 +1,45 @@
+#!/bin/bash
+# Fresh decoder probe for the frozen raw step-100k canonical LeJEPA V1
+# rotation encoder.  The decoder receives the reference C-alpha scaffold,
+# matching the historical reconstruction protocol; only decoder weights train.
+#SBATCH --job-name=dec_canon_rot_raw100
+#SBATCH --partition=normal
+#SBATCH --nodelist=noether
+#SBATCH --qos=medium
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=100G
+#SBATCH --time=24:00:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/decoder/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+PYTHON_BIN=/data-gauss/$USER/envs/laproteina_env/bin/python3
+RUN_ID=canonical-lejepa-v1-rotations-raw-step100k-calib
+SCRATCH_ROOT="$HOME/tmp/dcr-$SLURM_JOB_ID"
+
+mkdir -p "$PROJECT_ROOT/logs/decoder" "$SCRATCH_ROOT"
+export TMPDIR="$SCRATCH_ROOT"
+export MPLCONFIGDIR="$SCRATCH_ROOT/matplotlib"
+export TRITON_CACHE_DIR="$SCRATCH_ROOT/triton"
+export PYTHONPATH="$PROJECT_ROOT"
+mkdir -p "$MPLCONFIGDIR" "$TRITON_CACHE_DIR"
+
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+
+cd "$PROJECT_ROOT/Evaluation/structure_rec"
+srun "$PYTHON_BIN" train_decoder.py \
+  --encoder canonical-lejepa-v1-rotations-raw-step100k \
+  --encoder-source online \
+  --run-id "$RUN_ID" \
+  --max-steps 150000 \
+  --eval-every 2000 \
+  --calibration \
+  --patience-evals 5 \
+  --patience-threshold 0.01 \
+  --batch-size 8

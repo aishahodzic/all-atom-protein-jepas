@@ -1,0 +1,75 @@
+#!/bin/bash
+# Fresh decoder fit for the best-ranked final 8D downstream encoder:
+# cropped canonical LeJEPA, per-residue K=4, independent local crops,
+# independent SO(3) rotations, middle LR (4e-4), frozen raw step-10k encoder.
+# The reference C-alpha scaffold anchors decoder outputs, matching the existing
+# reconstruction protocol. Only decoder parameters are optimized.
+#SBATCH --job-name=dec_resrot_mid10
+#SBATCH --partition=normal
+#SBATCH --nodelist=noether
+#SBATCH --qos=medium
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=100G
+#SBATCH --time=06:00:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/decoder/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+PYTHON_BIN=/data-gauss/$USER/envs/laproteina_env/bin/python3
+ENCODER_ID=canonical-lejepa-residue-perview-rot-middle-lr-raw-step10k
+RUN_ID=${ENCODER_ID}-calib
+RUN_NAME=canonical_lejepa_crop_fixed96_residue_perview_sigreg_b96_independent_locals_k4_rotations_lr4e4_cosine_30k
+STAGED_CHECKPOINT="$PROJECT_ROOT/store/$RUN_NAME/evaluation/canonical-lejepa-residue-perview-rot-middle-lr-step10000-raw-staged.ckpt"
+ENCODER_CONFIG="$PROJECT_ROOT/StructTokenBench/100k-checkpoints/shared/exp_config_jepa_nn130m.json"
+SCRATCH_ROOT="$HOME/tmp/decoder-resrot-mid10-$SLURM_JOB_ID"
+
+mkdir -p "$PROJECT_ROOT/logs/decoder" "$SCRATCH_ROOT"
+export TMPDIR="$SCRATCH_ROOT"
+export MPLCONFIGDIR="$SCRATCH_ROOT/matplotlib"
+export TRITON_CACHE_DIR="$SCRATCH_ROOT/triton"
+export PYTHONPATH="$PROJECT_ROOT"
+export PYTHONUNBUFFERED=1
+mkdir -p "$MPLCONFIGDIR" "$TRITON_CACHE_DIR"
+
+if [[ -e "$PROJECT_ROOT/Evaluation/structure_rec/curves/${RUN_ID}_curve.csv" ]]; then
+    echo "ERROR: curve already exists for $RUN_ID; refusing to overwrite it." >&2
+    exit 1
+fi
+
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+
+echo "a2937cdadc379deaec2be2fafe463440a7cc606cf3e1080580a2cddad5268733  $STAGED_CHECKPOINT" | sha256sum -c -
+echo "98e0350d418e7d840fa245ddfd7150064e87a9ac74c72c9150a946f0f66ccd9d  $ENCODER_CONFIG" | sha256sum -c -
+"$PYTHON_BIN" -B - "$STAGED_CHECKPOINT" <<'PY'
+import sys
+import torch
+
+checkpoint = torch.load(sys.argv[1], map_location="cpu", weights_only=False, mmap=True)
+provenance = checkpoint["canonical_lejepa_evaluation"]
+assert provenance["encoder_source"] == "raw", provenance
+assert provenance["source_global_step"] == 10_000, provenance
+assert provenance["source_checkpoint_sha256"] == "999a3773bb2a6c00be8c16d5daf86dcf30c1577399434a6fe7a1bc70ea35f004", provenance
+assert provenance["latent_dim"] == 8 and provenance["projector"] is None, provenance
+assert checkpoint["state_dict"]["online_encoder.latent_decoder_mean_n_log_scale.1.weight"].shape == (16, 768)
+print(f"Verified cropped per-residue + SO(3) raw-10k encoder: {provenance}", flush=True)
+PY
+
+cd "$PROJECT_ROOT/Evaluation/structure_rec"
+srun "$PYTHON_BIN" -B train_decoder.py \
+  --encoder "$ENCODER_ID" \
+  --encoder-source online \
+  --run-id "$RUN_ID" \
+  --max-steps 20000 \
+  --eval-every 2000 \
+  --calibration \
+  --patience-evals 5 \
+  --patience-threshold 0.01 \
+  --batch-size 8 \
+  --lr 0.0001 \
+  --seed 42

@@ -1,0 +1,35 @@
+#!/bin/bash
+# Calibrate geometry-loss strength at the fresh decoder initialization.
+#SBATCH --job-name=dec_geom_init
+#SBATCH --partition=normal
+#SBATCH --qos=short
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=8
+#SBATCH --mem=64G
+#SBATCH --time=00:15:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/decoder/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+PYTHON_BIN=/data-gauss/$USER/envs/laproteina_env/bin/python3
+SCRATCH_ROOT="$HOME/tmp/dgi-$SLURM_JOB_ID"
+
+mkdir -p "$PROJECT_ROOT/logs/decoder" "$SCRATCH_ROOT"
+export TMPDIR="$SCRATCH_ROOT"
+export MPLCONFIGDIR="$SCRATCH_ROOT/matplotlib"
+export TRITON_CACHE_DIR="$SCRATCH_ROOT/triton"
+export PYTHONPATH="$PROJECT_ROOT"
+mkdir -p "$MPLCONFIGDIR" "$TRITON_CACHE_DIR"
+
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+
+cd "$PROJECT_ROOT/Evaluation/structure_rec"
+srun "$PYTHON_BIN" -B preflight_geometry_regularizer.py \
+  --batch-size 2 \
+  --num-workers 4 \
+  --output "$PROJECT_ROOT/Evaluation/structure_rec/geometry_preflight_fresh.json"

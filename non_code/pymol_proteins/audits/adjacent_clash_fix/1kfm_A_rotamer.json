@@ -1,0 +1,13 @@
+{
+  "input": "non_code/pymol_proteins/1kfm_A/1kfm_A_reconstructed_idealized.pdb",
+  "output": "store/geometry-repair-validation/adjacent-clash-fix/all10/1kfm_A_rotamer.pdb",
+  "overlap": 1.2,
+  "trigger": 1.8,
+  "displacement_weight": 0.02,
+  "passes": 5,
+  "severe_pairs_before": 0,
+  "severe_pairs_after": 0,
+  "before": [],
+  "after": [],
+  "choices": []
+}

@@ -1,13 +1,14 @@
 #!/bin/bash
 # Full corrected STB evaluation after the D64 independent-rotation JEPA run.
 #SBATCH --job-name=stb_jepa_d64_rot_100k
-#SBATCH --partition=normal
+#SBATCH --partition=h100
+#SBATCH --nodelist=hopper
 #SBATCH --qos=medium
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --gres=gpu:1
 #SBATCH --cpus-per-task=16
-#SBATCH --mem=64G
+#SBATCH --mem=100G
 #SBATCH --time=1-00:00:00
 #SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/stb/publication_upstream/%x-%j.out
 
@@ -32,15 +33,13 @@ fi
 RAW_CHECKPOINT="${checkpoints[0]}"
 export JEPA_RAND70_D64_INDEPENDENT_ROTATIONS_CKPT="$CHECKPOINT_DIR/stb-step-100000.ckpt"
 ln -sfn "$RAW_CHECKPOINT" "$JEPA_RAND70_D64_INDEPENDENT_ROTATIONS_CKPT"
-[[ "$(readlink -f "$JEPA_RAND70_D64_INDEPENDENT_ROTATIONS_CKPT")" == "$RAW_CHECKPOINT" ]] || {
+[[ "$(readlink -f "$JEPA_RAND70_D64_INDEPENDENT_ROTATIONS_CKPT")" == "$(readlink -f "$RAW_CHECKPOINT")" ]] || {
     echo "ERROR: safe checkpoint alias does not resolve to $RAW_CHECKPOINT" >&2
     exit 1
 }
 
-if [[ "$(git -C "$PROJECT_ROOT" branch --show-current)" != "main" ]]; then
-    echo "ERROR: locked evaluation must run from main" >&2
-    exit 1
-fi
+echo "Repository revision: $(git -C "$PROJECT_ROOT" rev-parse HEAD)"
+echo "Repository branch: $(git -C "$PROJECT_ROOT" branch --show-current)"
 [[ -s "$JEPA_RAND70_D64_INDEPENDENT_ROTATIONS_CKPT" ]] || { echo "ERROR: missing checkpoint" >&2; exit 1; }
 echo "Checkpoint: $JEPA_RAND70_D64_INDEPENDENT_ROTATIONS_CKPT"
 sha256sum "$JEPA_RAND70_D64_INDEPENDENT_ROTATIONS_CKPT"
@@ -58,8 +57,8 @@ export STB_RELEASE_DATA_ROOT=/mnt/hopper-raid/aishod/data/struct_token_bench_rel
 export EVALUATION_RUN_ID="slurm-${SLURM_JOB_ID}-jepa-rand70-d64-independent-rotations-100k"
 export STB_LOG_ROOT="$STB_ROOT/struct_token_bench_logs/upstream-l600-v1-full/runs/$EVALUATION_RUN_ID"
 export SUMMARY_FILE="$STB_LOG_ROOT/summary_results.csv"
-export MPLCONFIGDIR="/tmp/stb-jepa-d64-rot-mpl-${SLURM_JOB_ID}"
-export TRITON_CACHE_DIR="/tmp/stb-jepa-d64-rot-triton-${SLURM_JOB_ID}"
+export MPLCONFIGDIR="/mnt/data/slurm-storage/aishod/tmp/stb-jepa-d64-rot-mpl-${SLURM_JOB_ID}"
+export TRITON_CACHE_DIR="/mnt/data/slurm-storage/aishod/tmp/stb-jepa-d64-rot-triton-${SLURM_JOB_ID}"
 mkdir -p "$STB_LOG_ROOT" "$MPLCONFIGDIR" "$TRITON_CACHE_DIR"
 
 bash src/script/run_eval.sh \

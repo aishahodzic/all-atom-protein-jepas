@@ -10,6 +10,7 @@ SRC = Path(__file__).resolve().parents[1] / "src"
 sys.path.insert(0, str(SRC))
 
 from evaluation_manifest import (  # noqa: E402
+    atomic_write_json,
     artifact_identity,
     canonical_json_sha256,
     file_identity,
@@ -18,6 +19,16 @@ from evaluation_manifest import (  # noqa: E402
 
 
 class EvaluationManifestTest(unittest.TestCase):
+    def test_atomic_writer_supports_long_final_filename(self):
+        with tempfile.TemporaryDirectory() as directory:
+            # The final component fits under NAME_MAX, while the historical
+            # ".<full-name>.tmp-<pid>" temporary component did not.
+            destination = Path(directory) / ("x" * 230 + ".metadata.json")
+            atomic_write_json(destination, {"cache": "valid"})
+
+            self.assertEqual(json.loads(destination.read_text()), {"cache": "valid"})
+            self.assertEqual(list(Path(directory).iterdir()), [destination])
+
     def test_file_identity_follows_bytes_not_staging_path(self):
         with tempfile.TemporaryDirectory() as directory:
             first = Path(directory) / "first.ckpt"

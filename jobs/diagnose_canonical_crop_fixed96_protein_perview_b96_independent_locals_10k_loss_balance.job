@@ -1,0 +1,40 @@
+#!/bin/bash
+# Exact global-batch-96 raw-gradient decomposition at the independent-local
+# protein per-view run's 10k checkpoint.
+#SBATCH --job-name=diag_indlocal_loss_10k
+#SBATCH --partition=normal
+#SBATCH --qos=short
+#SBATCH --nodes=1
+#SBATCH --ntasks=2
+#SBATCH --ntasks-per-node=2
+#SBATCH --gres=gpu:2
+#SBATCH --cpus-per-task=8
+#SBATCH --mem=64G
+#SBATCH --time=00:15:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/canonical_lejepa/%x-%j.out
+
+set -euo pipefail
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+PYTHON_BIN=/slurm-storage/aishod/envs/la-proteina/bin/python
+RUN_NAME=canonical_lejepa_crop_fixed96_protein_perview_sigreg_b96_independent_locals_30k
+CHECKPOINT="$PROJECT_ROOT/store/$RUN_NAME/checkpoints/step-00010000.ckpt"
+CONFIG="$PROJECT_ROOT/store/$RUN_NAME/checkpoints/exp_config_${RUN_NAME}.json"
+OUTPUT="$PROJECT_ROOT/Evaluation/diagnostics/results/${RUN_NAME}_raw_10k_loss_balance.json"
+cd "$PROJECT_ROOT"
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+export PYTHONPATH="$PROJECT_ROOT${PYTHONPATH:+:$PYTHONPATH}"
+export PATH="/slurm-storage/aishod/envs/la-proteina/bin:$PATH"
+export MASTER_ADDR=127.0.0.1
+export MASTER_PORT=$((20000 + SLURM_JOB_ID % 20000))
+export TORCH_NCCL_ASYNC_ERROR_HANDLING=1
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+export MPLCONFIGDIR="/tmp/${SLURM_JOB_NAME}-${SLURM_JOB_ID}"
+mkdir -p "$MPLCONFIGDIR" "$(dirname "$OUTPUT")" "$PROJECT_ROOT/logs/canonical_lejepa"
+test -f "$CHECKPOINT"
+test -f "$CONFIG"
+
+srun --ntasks=2 --kill-on-bad-exit=1 --wait=30 --label "$PYTHON_BIN" \
+    Evaluation/diagnostics/diagnose_canonical_loss_balance.py \
+    --checkpoint "$CHECKPOINT" --config "$CONFIG" --output "$OUTPUT"

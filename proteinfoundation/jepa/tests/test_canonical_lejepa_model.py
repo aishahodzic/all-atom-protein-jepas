@@ -168,6 +168,52 @@ class CanonicalModelTest(unittest.TestCase):
             0.0,
         )
 
+    def test_visible_only_residue_invariance_uses_pairwise_intersections(self):
+        values = torch.zeros(1, 5, 4, 1, requires_grad=True)
+        with torch.no_grad():
+            values[0, 1, :, 0] = torch.tensor([2.0, 100.0, 100.0, 100.0])
+            values[0, 2, :, 0] = torch.tensor([100.0, 3.0, 100.0, 100.0])
+            values[0, 3, :, 0] = torch.tensor([100.0, 100.0, 4.0, 100.0])
+            values[0, 4, :, 0] = 100.0
+        real_mask = torch.ones(1, 4, dtype=torch.bool)
+        view_masks = torch.tensor(
+            [
+                [
+                    [True, True, True, False],
+                    [True, False, False, True],
+                    [False, True, False, True],
+                    [False, False, True, True],
+                    [False, False, False, True],
+                ]
+            ]
+        )
+
+        loss = canonical_residue_invariance_loss(
+            values, real_mask, view_masks=view_masks
+        )
+        # Global self-error is zero; the four local contributions are 4, 9,
+        # 16, and zero (the last pair has no visible intersection).
+        self.assertAlmostEqual(float(loss), (4.0 + 9.0 + 16.0) / 5.0, places=6)
+        loss.backward()
+        self.assertGreater(float(values.grad[0, 1, 0].abs().sum()), 0.0)
+        self.assertEqual(float(values.grad[0, 1, 1:].abs().sum()), 0.0)
+        self.assertGreater(float(values.grad[0, 2, 1].abs().sum()), 0.0)
+        self.assertEqual(float(values.grad[0, 4].abs().sum()), 0.0)
+
+    def test_visible_only_residue_invariance_validates_view_masks(self):
+        values = torch.zeros(2, 5, 4, 8)
+        real_mask = torch.ones(2, 4, dtype=torch.bool)
+        with self.assertRaisesRegex(ValueError, "boolean"):
+            canonical_residue_invariance_loss(
+                values, real_mask, view_masks=torch.ones(2, 5, 4)
+            )
+        with self.assertRaisesRegex(ValueError, "shape"):
+            canonical_residue_invariance_loss(
+                values,
+                real_mask,
+                view_masks=torch.ones(2, 4, 4, dtype=torch.bool),
+            )
+
     def test_residue_invariance_gradients_reach_every_view_and_masked_outputs(self):
         values = torch.zeros(1, 5, 4, 2)
         for view_index in range(1, 5):

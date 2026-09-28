@@ -1,0 +1,226 @@
+{
+  "checkpoint": "/slurm-storage/aishod/projects/la-proteina/store/canonical_lejepa_v1_residue_k4_nocrop_pair_only_position_minvalid4_10k/evaluation/snapshots/raw-step00001500-full-state.ckpt",
+  "global_step": 1500,
+  "protocol": {
+    "protein_pool": "frozen 5224-protein held-out val+test pool",
+    "seed": 42,
+    "proteins": 64,
+    "protein_ids": [
+      "4gqh_B",
+      "6djl_G",
+      "9c59_c",
+      "9uh9_E",
+      "4ioa_Q",
+      "1hh7_A",
+      "8vtw_1s",
+      "1pub_A",
+      "6zkp_f",
+      "7by3_B",
+      "3uxa_A",
+      "8abk_Q",
+      "6wu9_2",
+      "1jgq_V",
+      "2b9u_E",
+      "1v8o_C",
+      "8vk5_E",
+      "1sq3_E",
+      "9z5n_J",
+      "1k4k_C",
+      "6kh2_A",
+      "7n00_B",
+      "5yn4_B",
+      "1vh8_E",
+      "2qoj_Z",
+      "4wve_B",
+      "2q2g_B",
+      "8jcc_H",
+      "3eh8_G",
+      "5fli_B",
+      "8ed3_Q",
+      "5t20_M",
+      "2jd8_F",
+      "4x64_S",
+      "5wsy_B",
+      "9rif_D",
+      "3kcm_B",
+      "3vyh_B",
+      "9e04_D",
+      "5k7j_B",
+      "2x17_8",
+      "5oid_B",
+      "8szz_l",
+      "2h16_D",
+      "2y9p_B",
+      "9dbi_A",
+      "4iji_G",
+      "6z96_B",
+      "6oqt_Y",
+      "3n2e_C",
+      "2jd7_8",
+      "9gyp_B",
+      "5c67_C",
+      "5v50_C",
+      "7z3g_A",
+      "4rrg_B",
+      "8ed3_g",
+      "3n2e_B",
+      "8s5e_D",
+      "9gcl_l",
+      "7ope_X",
+      "3p94_C",
+      "1jcc_B",
+      "3f9k_E"
+    ],
+    "physical_residues": 2000,
+    "view_points": 10000,
+    "views": [
+      "global",
+      "local 1",
+      "local 2",
+      "local 3",
+      "local 4"
+    ],
+    "same_physical_residue_repeated_across_views": true,
+    "global_visible_fraction": 0.793,
+    "local_visible_fraction_by_view": [
+      0.1985,
+      0.2055,
+      0.212,
+      0.2025
+    ]
+  },
+  "same_residue_global_local_mse_by_local": [
+    3.5972298064734787e-06,
+    3.5415143884165445e-06,
+    3.640972181528923e-06,
+    3.7043057545815827e-06
+  ],
+  "same_residue_global_local_mse_mean": 3.6210055327501323e-06,
+  "same_residue_global_local_cosine_by_local": [
+    0.9999992869324486,
+    0.9999992976342826,
+    0.9999992771552154,
+    0.9999992646505673
+  ],
+  "same_residue_global_local_cosine_mean": 0.9999992815931285,
+  "different_residue_global_mse": 5.226828307058895e-06,
+  "same_view_mse_to_different_residue_mse_ratio": 0.6927730011448665,
+  "variance_decomposition": {
+    "total_sum_squares": 0.11973045043349267,
+    "physical_residue_fraction": 0.28243167549815795,
+    "view_identity_fraction": 0.04212297278312189,
+    "residue_by_view_interaction_fraction": 0.6754453517187152,
+    "fraction_sum": 0.999999999999995
+  },
+  "per_view_health": {
+    "global": {
+      "effective_rank": 4.723911800626624,
+      "dimension_std_min": 0.0,
+      "dimension_std_max": 0.002931194924689144,
+      "rms_spread": 0.0045651416446984335,
+      "mean_norm": 4.359222286036825,
+      "relative_rms_spread": 0.0010472376367044176
+    },
+    "local 1": {
+      "effective_rank": 5.837179954646137,
+      "dimension_std_min": 0.0,
+      "dimension_std_max": 0.0015759915576069913,
+      "rms_spread": 0.002976324427337789,
+      "mean_norm": 4.35970438446697,
+      "relative_rms_spread": 0.0006826895048072584
+    },
+    "local 2": {
+      "effective_rank": 5.675917733218171,
+      "dimension_std_min": 0.0,
+      "dimension_std_max": 0.001686468868996336,
+      "rms_spread": 0.003001341956722627,
+      "mean_norm": 4.359700222086516,
+      "relative_rms_spread": 0.0006884285166025039
+    },
+    "local 3": {
+      "effective_rank": 5.656312864221926,
+      "dimension_std_min": 0.0,
+      "dimension_std_max": 0.0017187322442264639,
+      "rms_spread": 0.003060516756514501,
+      "mean_norm": 4.359638920844374,
+      "relative_rms_spread": 0.0007020115225326368
+    },
+    "local 4": {
+      "effective_rank": 5.897689485099183,
+      "dimension_std_min": 0.0,
+      "dimension_std_max": 0.001575991557606995,
+      "rms_spread": 0.0030446152915054488,
+      "mean_norm": 4.359685835645241,
+      "relative_rms_spread": 0.000698356580332546
+    }
+  },
+  "classifiers_grouped_by_held_out_protein": {
+    "five_way_view_identity_chance_0.20": {
+      "fold_accuracy": [
+        0.3217391304347826,
+        0.29441860465116276,
+        0.3017721518987342,
+        0.3071794871794872,
+        0.29644670050761424
+      ],
+      "mean_accuracy": 0.30431121493435614,
+      "std_accuracy": 0.010932982105132959
+    },
+    "global_vs_local_balanced_chance_0.50": {
+      "fold_accuracy": [
+        0.7142412935323383,
+        0.7388676844783715,
+        0.7294776119402986,
+        0.7481296758104738,
+        0.7291666666666667
+      ],
+      "mean_accuracy": 0.7319765864856299,
+      "std_accuracy": 0.0126203275075198,
+      "fold_auroc": [
+        0.7606224165243435,
+        0.7730067854113656,
+        0.7624687507734957,
+        0.7712288791736369,
+        0.7604406450335387
+      ],
+      "mean_auroc": 0.765553495383276
+    },
+    "four_local_identity_chance_0.25": {
+      "fold_accuracy": [
+        0.2966751918158568,
+        0.2436046511627907,
+        0.2670886075949367,
+        0.27982233502538073,
+        0.2846153846153846
+      ],
+      "mean_accuracy": 0.27436123404286994,
+      "std_accuracy": 0.02019741583291031
+    },
+    "residue_visible_vs_masked_balanced_chance_0.50": {
+      "fold_accuracy": [
+        0.899528672427337,
+        0.8997117262536453,
+        0.9074808028657744,
+        0.8900921029680429,
+        0.9162750725738753
+      ],
+      "mean_accuracy": 0.902617675417735,
+      "std_accuracy": 0.009811357587865598,
+      "fold_auroc": [
+        0.9496465043205028,
+        0.9572494270196998,
+        0.9581468569076947,
+        0.9559934635122606,
+        0.9588538955405171
+      ],
+      "mean_auroc": 0.955978029460135
+    }
+  },
+  "joint_tsne": {
+    "figure": "/slurm-storage/aishod/projects/la-proteina/Evaluation/latent_viz/figures/canonical_lejepa/tsne_canonical_residue_k4_pair_only_raw_1500_five-views.png",
+    "metric": "cosine",
+    "perplexity": 30.0,
+    "seed": 42,
+    "max_iter": 1000
+  }
+}

@@ -18,7 +18,10 @@ from loguru import logger
 from omegaconf import DictConfig, OmegaConf
 
 from proteinfoundation.jepa.canonical_lejepa_ema import CanonicalEncoderEMA
-from proteinfoundation.jepa.canonical_lejepa_model import CanonicalLeJEPAModel
+from proteinfoundation.jepa.canonical_lejepa_model import (
+    CanonicalLeJEPAModel,
+    resolve_canonical_position_information_config,
+)
 
 
 def get_run_directories(run_name: str) -> tuple[Path, Path]:
@@ -66,6 +69,7 @@ def build_callbacks(cfg: DictConfig, checkpoint_dir: Path) -> list[Any]:
     additional_every_n_train_steps = checkpoint_cfg.pop(
         "additional_every_n_train_steps", None
     )
+    additional_train_steps = checkpoint_cfg.pop("additional_train_steps", None)
     last_every_n_train_steps = checkpoint_cfg.pop(
         "last_every_n_train_steps", None
     )
@@ -93,6 +97,27 @@ def build_callbacks(cfg: DictConfig, checkpoint_dir: Path) -> list[Any]:
                 ),
             )
         )
+    if additional_train_steps is not None:
+        milestone_steps = [int(step) for step in additional_train_steps]
+        if any(step < 1 for step in milestone_steps):
+            raise ValueError("checkpoint.additional_train_steps must be positive")
+        if len(set(milestone_steps)) != len(milestone_steps):
+            raise ValueError("checkpoint.additional_train_steps must be unique")
+        for milestone_step in milestone_steps:
+            callbacks.append(
+                ModelCheckpoint(
+                    dirpath=str(checkpoint_dir),
+                    filename=str(checkpoint_cfg["filename"]),
+                    every_n_train_steps=milestone_step,
+                    every_n_epochs=0,
+                    save_top_k=-1,
+                    save_last=False,
+                    save_weights_only=bool(checkpoint_cfg["save_weights_only"]),
+                    auto_insert_metric_name=bool(
+                        checkpoint_cfg["auto_insert_metric_name"]
+                    ),
+                )
+            )
     if last_every_n_train_steps is not None and save_last:
         callbacks.append(
             ModelCheckpoint(
@@ -211,6 +236,7 @@ def store_resolved_config(cfg: DictConfig, checkpoint_dir: Path) -> Path:
     config_name="training_canonical_lejepa",
 )
 def main(cfg: DictConfig) -> None:
+    cfg = resolve_canonical_position_information_config(cfg)
     load_dotenv()
     L.seed_everything(int(cfg.seed), workers=True)
     torch.set_float32_matmul_precision("high")

@@ -1,0 +1,52 @@
+{
+  "protocol": "Targeted constrained relaxation of the existing full-pipeline structures. C-alpha coordinates are fixed. The audit covers the nine proteins with all-atom native references; 1nkw_M is excluded because its native reference is C-alpha-only.",
+  "proteins": [
+    "1kfm_A",
+    "3d3r_A",
+    "5a13_G",
+    "5fli_A",
+    "5l0o_A",
+    "5xr7_A",
+    "6o14_A",
+    "7cnw_A",
+    "8cbv_A"
+  ],
+  "defects_before": {
+    "ca_chirality_inversions": 7,
+    "nonproline_cis_like_peptides": 3
+  },
+  "defects_after": {
+    "ca_chirality_inversions": 0,
+    "nonproline_cis_like_peptides": 0,
+    "covalent_bond_deviations_over_0.2_angstrom": 0,
+    "virtual_bond_deviations_over_0.2_angstrom": 0,
+    "peptide_bond_deviations_over_0.2_angstrom": 0,
+    "severe_non_peptide_interresidue_contacts_under_1.8_angstrom": 0,
+    "adjacent_oxygen_nitrogen_contacts_under_1.9_angstrom": 0,
+    "maximum_ca_shift_angstrom": 0.0
+  },
+  "maximum_deviations_after_angstrom": {
+    "covalent_bond": 0.13173476652177785,
+    "virtual_bond": 0.18570025561429881,
+    "peptide_bond": 0.11296340515591297
+  },
+  "pooled_rmsd_angstrom": {
+    "previous_full": {
+      "all": 1.3285263186543932,
+      "backbone": 0.42123371488754985,
+      "sidechain": 2.0087522708292074
+    },
+    "chirality_omega_guarded": {
+      "all": 1.3262997487549846,
+      "backbone": 0.4201946157982619,
+      "sidechain": 2.0054855109154937
+    },
+    "atom_counts": {
+      "all": 9088,
+      "backbone": 5348,
+      "sidechain": 3740
+    }
+  },
+  "backup_directory": "store/geometry-repair-validation/pre_chirality_omega_fix",
+  "result_directory": "store/geometry-repair-validation/chirality-omega-fix/from-full-allatom9"
+}

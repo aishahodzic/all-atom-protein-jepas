@@ -1,0 +1,117 @@
+#!/bin/bash
+# Full locked upstream-L600 StructTokenBench evaluation of canonical LeJEPA V1's
+# true step-100k EMA encoder trained with independent SO(3) rotations per view.
+# The job stages a loader-compatible artifact and verifies provenance before
+# running all twelve tasks.
+#SBATCH --job-name=stb_canon_rot_100k_all
+#SBATCH --partition=normal
+#SBATCH --qos=medium
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=64G
+#SBATCH --time=1-00:00:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/stb/publication_upstream/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+STB_ROOT="$PROJECT_ROOT/StructTokenBench"
+TRAIN_PYTHON_BIN=/slurm-storage/aishod/envs/la-proteina/bin/python
+STB_PYTHON_BIN=/slurm-storage/aishod/.conda/envs/pstbench/bin/python
+RAW_CHECKPOINT="$PROJECT_ROOT/store/canonical_lejepa_rotations_100k/checkpoints/step-00100000.ckpt"
+STAGED_CHECKPOINT="$PROJECT_ROOT/store/canonical_lejepa_rotations_100k/evaluation/canonical-lejepa-v1-rotations-step100000-ema-staged.ckpt"
+ROTATION_CONFIG="$PROJECT_ROOT/store/canonical_lejepa_rotations_100k/checkpoints/exp_config_canonical_lejepa_rotations_100k.json"
+ENCODER_CONFIG="$STB_ROOT/100k-checkpoints/shared/exp_config_jepa_nn130m.json"
+EXPECTED_RAW_SHA256=aa31110b2fafae5e414840286c05cbfa78170fac51c8ff8018d9a038a621b82c
+
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+
+if [[ "$(git -C "$PROJECT_ROOT" branch --show-current)" != "canonical-lejepa" ]]; then
+    echo "ERROR: expected canonical-lejepa branch" >&2
+    exit 1
+fi
+
+echo "$EXPECTED_RAW_SHA256  $RAW_CHECKPOINT" | sha256sum -c -
+echo "98e0350d418e7d840fa245ddfd7150064e87a9ac74c72c9150a946f0f66ccd9d  $ENCODER_CONFIG" | sha256sum -c -
+
+"$TRAIN_PYTHON_BIN" -c '
+import json
+import sys
+import torch
+
+checkpoint_path, config_path = sys.argv[1:]
+with open(config_path, encoding="utf-8") as handle:
+    config = json.load(handle)
+assert config.get("independent_view_rotations") is True, config.get("independent_view_rotations")
+checkpoint = torch.load(checkpoint_path, map_location="cpu", weights_only=False, mmap=True)
+assert checkpoint.get("global_step") == 100_000, checkpoint.get("global_step")
+ema = checkpoint.get("state_dict_ema")
+assert isinstance(ema, dict) and len(ema) == 381, len(ema or {})
+ema_meta = checkpoint.get("state_dict_ema_meta", {})
+assert ema_meta.get("num_updates") == 3_125, ema_meta
+assert ema_meta.get("last_ema_step") == 100_000, ema_meta
+print(f"Verified independent-rotation step-100k source: {ema_meta}")
+' "$RAW_CHECKPOINT" "$ROTATION_CONFIG"
+
+mkdir -p "$(dirname "$STAGED_CHECKPOINT")"
+if [[ ! -s "$STAGED_CHECKPOINT" ]]; then
+    staged_tmp="${STAGED_CHECKPOINT}.tmp-${SLURM_JOB_ID}"
+    "$TRAIN_PYTHON_BIN" -m Evaluation.canonical_lejepa.stage_for_structtokenbench \
+        "$RAW_CHECKPOINT" "$staged_tmp" --encoder-source=ema
+    mv "$staged_tmp" "$STAGED_CHECKPOINT"
+fi
+
+"$TRAIN_PYTHON_BIN" -c '
+import hashlib
+import sys
+import torch
+
+def sha256(path):
+    digest = hashlib.sha256()
+    with open(path, "rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+raw_path, staged_path, expected_sha = sys.argv[1:]
+raw_sha = sha256(raw_path)
+assert raw_sha == expected_sha, raw_sha
+staged = torch.load(staged_path, map_location="cpu", weights_only=False, mmap=True)
+provenance = staged.get("canonical_lejepa_evaluation", {})
+assert provenance.get("encoder_source") == "ema", provenance
+assert provenance.get("source_global_step") == 100_000, provenance
+assert provenance.get("source_checkpoint_sha256") == raw_sha, provenance
+assert provenance.get("latent_dim") == 8, provenance
+assert provenance.get("projector") is None, provenance
+print(f"Verified independent-rotation step-100k EMA staging: {provenance}")
+' "$RAW_CHECKPOINT" "$STAGED_CHECKPOINT" "$EXPECTED_RAW_SHA256"
+
+sha256sum "$STAGED_CHECKPOINT"
+
+cd "$STB_ROOT"
+export STB_SKIP_BOOTSTRAP=1
+export STB_SKIP_DATA_SETUP=1
+export STB_SMOKE=0
+export STB_SHARED_EMBEDDING_CACHE=1
+export DS_IGNORE_CUDA_DETECTION=1
+export PYTHON_BIN="$STB_PYTHON_BIN"
+export NUM_WORKERS=8
+export PDB_DATA_ROOT=/mnt/hopper-raid/aishod/data/struct_token_bench_pdb_data
+export STB_RELEASE_DATA_ROOT=/mnt/hopper-raid/aishod/data/struct_token_bench_release_data
+export CANONICAL_LEJEPA_V1_ROTATIONS_EMA_STEP100K_CKPT="$STAGED_CHECKPOINT"
+export EVALUATION_RUN_ID="slurm-${SLURM_JOB_ID}-canonical-lejepa-v1-rotations-ema-step100k-all"
+export STB_LOG_ROOT="$STB_ROOT/struct_token_bench_logs/upstream-l600-v1-full/runs/$EVALUATION_RUN_ID"
+export SUMMARY_FILE="$STB_LOG_ROOT/summary_results.csv"
+export MPLCONFIGDIR="/tmp/stb-canonical-lejepa-v1-rotations-ema-100k-all-mpl-${SLURM_JOB_ID}"
+export TRITON_CACHE_DIR="/tmp/stb-canonical-lejepa-v1-rotations-ema-100k-all-triton-${SLURM_JOB_ID}"
+mkdir -p "$STB_LOG_ROOT" "$MPLCONFIGDIR" "$TRITON_CACHE_DIR"
+
+bash src/script/run_eval.sh \
+    --protocol=upstream-l600-v1 \
+    --checkpoint=100k \
+    --experiment=canonical-lejepa-v1-rotations-ema-step100k \
+    --tasks=all

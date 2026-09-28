@@ -1,0 +1,104 @@
+#!/bin/bash
+# Six checkpoint-selection tasks for cropped per-residue K=4 LeJEPA with
+# independent rotations. The three ATLAS flexibility targets share structures,
+# so one array element runs them sequentially and reuses their embeddings. The
+# three unrelated quick tasks occupy the other elements in parallel.
+#SBATCH --job-name=stb_resrot17_q6
+#SBATCH --partition=normal
+#SBATCH --qos=short
+#SBATCH --nodelist=noether
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=64G
+#SBATCH --time=02:00:00
+#SBATCH --array=0-3
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/stb/publication_upstream/%x-%A_%a.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+STB_ROOT="$PROJECT_ROOT/StructTokenBench"
+STB_PYTHON_BIN=/slurm-storage/aishod/.conda/envs/pstbench/bin/python
+RUN_NAME=canonical_lejepa_crop_fixed96_residue_perview_sigreg_b96_independent_locals_k4_rotations_lr4e4_cosine_30k
+SOURCE_CHECKPOINT="$PROJECT_ROOT/store/$RUN_NAME/checkpoints/step-00017000.ckpt"
+STAGED_CHECKPOINT="$PROJECT_ROOT/store/$RUN_NAME/evaluation/canonical-lejepa-residue-perview-rot-middle-lr-step17000-raw-staged.ckpt"
+ENCODER_CONFIG="$STB_ROOT/100k-checkpoints/shared/exp_config_jepa_nn130m.json"
+EXPECTED_STAGED_SHA256=d758dfe22446b2cc28b9872c03e17be3e563047aa9e882c7561e8260890098dc
+EXPECTED_SOURCE_SHA256=fa03fc6460b47f9b90ba7a09b4dbd80cf389c5261431a004ff8ceff68950a616
+EXPECTED_ENCODER_CONFIG_SHA256=98e0350d418e7d840fa245ddfd7150064e87a9ac74c72c9150a946f0f66ccd9d
+EXPERIMENT=canonical-lejepa-residue-perview-rot-middle-lr-raw-step17k
+TASK_GROUPS=("FlexRMSF,FlexBFactor,FlexNEQ" "Ept" "BindInt" "BindShake")
+TASK_TAGS=(Flex3 Ept BindInt BindShake)
+TASKS="${TASK_GROUPS[$SLURM_ARRAY_TASK_ID]}"
+TASK_TAG="${TASK_TAGS[$SLURM_ARRAY_TASK_ID]}"
+
+test -s "$SOURCE_CHECKPOINT"
+test -s "$STAGED_CHECKPOINT"
+test -s "$ENCODER_CONFIG"
+echo "$EXPECTED_STAGED_SHA256  $STAGED_CHECKPOINT" | sha256sum -c -
+echo "$EXPECTED_ENCODER_CONFIG_SHA256  $ENCODER_CONFIG" | sha256sum -c -
+
+"$STB_PYTHON_BIN" -c '
+import sys
+import torch
+
+staged_path, expected_source_sha, task_group = sys.argv[1:]
+staged = torch.load(staged_path, map_location="cpu", weights_only=False, mmap=True)
+provenance = staged.get("canonical_lejepa_evaluation", {})
+assert provenance.get("encoder_source") == "raw", provenance
+assert provenance.get("source_global_step") == 17_000, provenance
+assert provenance.get("source_checkpoint_sha256") == expected_source_sha, provenance
+assert provenance.get("latent_dim") == 8, provenance
+assert sum(str(key).startswith("online_encoder.") for key in staged.get("state_dict", {})) == 381
+print(f"Verified staged raw step-17k checkpoint for tasks {task_group}: {provenance}")
+' "$STAGED_CHECKPOINT" "$EXPECTED_SOURCE_SHA256" "$TASKS"
+
+RAID_DATA_ROOT=/mnt/hopper-raid/aishod/data
+SHARED_CACHE_ROOT="$RAID_DATA_ROOT/struct_token_bench_release_data/shared_embedding_cache"
+if [[ ! -d "$SHARED_CACHE_ROOT/v1" || ! -w "$SHARED_CACHE_ROOT" ]]; then
+    echo "Hopper STB cache root is unavailable or not writable: $SHARED_CACHE_ROOT" >&2
+    exit 1
+fi
+
+cd "$STB_ROOT"
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+export STB_SKIP_BOOTSTRAP=1
+export STB_SKIP_DATA_SETUP=1
+export STB_SMOKE=0
+export STB_SHARED_EMBEDDING_CACHE=1
+export STB_SHARED_EMBEDDING_CACHE_ROOT="$SHARED_CACHE_ROOT"
+export DS_IGNORE_CUDA_DETECTION=1
+export PYTHON_BIN="$STB_PYTHON_BIN"
+export NUM_WORKERS=0
+export PREFETCH_FACTOR=null
+export STB_SERIAL_STRUCTURE_PREPROCESS=1
+export NCCL_SHM_DISABLE=1
+export TORCHINDUCTOR_COMPILE_THREADS=1
+export DATA_PATH="$RAID_DATA_ROOT"
+export PDB_DATA_ROOT="$RAID_DATA_ROOT/struct_token_bench_pdb_data"
+export STB_RELEASE_DATA_ROOT="$RAID_DATA_ROOT/struct_token_bench_release_data"
+export CANONICAL_LEJEPA_RESIDUE_PERVIEW_ROT_MIDDLE_LR_RAW_STEP17K_CKPT="$STAGED_CHECKPOINT"
+export WANDB_MODE=disabled
+export HF_HUB_OFFLINE=1
+export PYTHONDONTWRITEBYTECODE=1
+export OMP_NUM_THREADS=4
+export OPENBLAS_NUM_THREADS=4
+export MKL_NUM_THREADS=4
+export EVALUATION_RUN_ID="slurm-${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}-${EXPERIMENT}-${TASK_TAG}"
+export STB_LOG_ROOT="$STB_ROOT/struct_token_bench_logs/upstream-l600-v1-full/runs/$EVALUATION_RUN_ID"
+export SUMMARY_FILE="$STB_LOG_ROOT/summary_results.csv"
+export TMPDIR="$HOME/tmp/stb-runtime-cache/${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}-resrot17-${TASK_TAG}"
+export MPLCONFIGDIR="$TMPDIR/matplotlib"
+export TRITON_CACHE_DIR="$TMPDIR/triton"
+export TORCH_EXTENSIONS_DIR="$TMPDIR/torch-extensions"
+mkdir -p "$STB_LOG_ROOT" "$MPLCONFIGDIR" "$TRITON_CACHE_DIR" "$TORCH_EXTENSIONS_DIR"
+
+bash src/script/run_eval.sh \
+    --protocol=upstream-l600-v1 \
+    --checkpoint=17k \
+    --experiment="$EXPERIMENT" \
+    --tasks="$TASKS"

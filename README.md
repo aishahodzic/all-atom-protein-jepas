@@ -69,6 +69,33 @@ https://wandb.ai/aisha-hodzic-org/protein_ae?nw=nwuseraishahodzic
 Hugging face: 
 https://huggingface.co/aishahodzic/datasets
 
+### Archival handoff
+
+The repository keeps source code, experiment configurations, compact result
+tables/manifests, and the figures used by the thesis and paper. Large model
+weights remain outside Git:
+
+- Published encoder checkpoints are in the
+  [`msc-thesis-org/checkpoints`](https://huggingface.co/datasets/msc-thesis-org/checkpoints)
+  dataset. The logical run-to-file mapping starts in
+  `proteinfoundation/utils/ckpt_registry.yaml`; historical evaluation jobs also
+  record the exact staged checkpoint paths they used.
+- The ten selected 300k-decoder reconstruction examples are in
+  [`msc-thesis-org/ckpts/pymol_reconstruction`](https://huggingface.co/datasets/msc-thesis-org/ckpts/tree/main/pymol_reconstruction)
+  at revision `c69e3079daf2377633f2beeafb0e2c099f6454d6`. They cover `1kfm_A`,
+  `1nkw_M`, `3d3r_A`, `5a13_G`, `5fli_A`, `5l0o_A`, `5xr7_A`, `6o14_A`,
+  `7cnw_A`, and `8cbv_A` and include the structures, PyMOL sessions/scripts,
+  audit metadata, and summary tables needed for inspection.
+- Numerical evaluation outputs live under `Evaluation/**/results/`,
+  `Evaluation/structure_rec/curves/`, and
+  `StructTokenBench/struct_token_bench_logs/results/`. Final manuscript assets
+  live under `thesis-latex/figures/` and `iclr2027/figures/`.
+
+Bulk embedding caches, intermediate decoder weights, individual diagnostic
+frames, and LaTeX build products are intentionally not part of the archival
+handoff because they can be regenerated from the retained code, configurations,
+and published checkpoints.
+
 
 ## Experiment Branches
 
@@ -142,4 +169,3 @@ Evaluated on 4 protein structures. Total data size: 664.
 Total structures: 344,065. Training: 338,787, val: 4,775, test: 503.
 
 <img width="747" height="602" alt="Screenshot 2026-07-09 at 14 10 46" src="https://github.com/user-attachments/assets/de4d1d5d-b272-409c-840a-2e417f3881ff" />
-

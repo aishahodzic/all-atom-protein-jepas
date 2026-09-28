@@ -1,0 +1,60 @@
+#!/bin/bash
+# Export raw 1KFM_A reconstruction from the rotation-trained JEPA decoder,
+# then apply ideal-geometry Fix 2 without overwriting the raw prediction.
+#SBATCH --job-name=exp_jr70_d8rot
+#SBATCH --partition=h100
+#SBATCH --nodelist=hopper
+#SBATCH --qos=short
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=8
+#SBATCH --mem=64G
+#SBATCH --time=01:00:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/decoder/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+PYTHON_BIN=/data-gauss/$USER/envs/laproteina_env/bin/python3
+RUN_ID=jepa-rand70-d8-independent-rotations-target-step100k-decoder-140k
+DECODER_CKPT="$PROJECT_ROOT/Evaluation/structure_rec/checkpoints/${RUN_ID}_final.pt"
+ENCODER_CKPT=/mnt/hopper-raid/aishod/runs/jepa_rand70_d8_independent_rotations_100k/store/jepa_rand70_d8_independent_rotations_100k/checkpoints/chk_epoch=00000019_step=000000100000.ckpt
+ENCODER_SHA256=36be2530bc8ad562320ed4fc33784285ce651bbd4781030dd66e76240f725588
+OUTPUT_DIR="$PROJECT_ROOT/non_code/pymol_proteins/jepa_rand70_d8_rotations_decoder/1kfm_A"
+SCRATCH_ROOT="$HOME/tmp/export-jr70-d8rot-$SLURM_JOB_ID"
+
+[[ -s "$DECODER_CKPT" ]] || { echo "ERROR: missing decoder: $DECODER_CKPT" >&2; exit 1; }
+[[ -s "$ENCODER_CKPT" ]] || { echo "ERROR: missing encoder: $ENCODER_CKPT" >&2; exit 1; }
+mkdir -p "$PROJECT_ROOT/logs/decoder" "$OUTPUT_DIR" "$SCRATCH_ROOT"
+export TMPDIR="$SCRATCH_ROOT"
+export MPLCONFIGDIR="$SCRATCH_ROOT/matplotlib"
+export TRITON_CACHE_DIR="$SCRATCH_ROOT/triton"
+export PYTHONPATH="$PROJECT_ROOT"
+mkdir -p "$MPLCONFIGDIR" "$TRITON_CACHE_DIR"
+
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+
+cd "$PROJECT_ROOT"
+srun "$PYTHON_BIN" Evaluation/structure_rec/export_reconstruction.py \
+  --decoder-checkpoint "$DECODER_CKPT" \
+  --encoder jepa-rand70-d8-independent-rotations-step100k \
+  --encoder-source target \
+  --encoder-checkpoint "$ENCODER_CKPT" \
+  --expected-encoder-sha256 "$ENCODER_SHA256" \
+  --protein-id 1kfm_A \
+  --device cuda \
+  --output-dir "$OUTPUT_DIR"
+
+"$PYTHON_BIN" Evaluation/structure_rec/project_pdb_ideal_geometry.py \
+  --input "$OUTPUT_DIR/1kfm_A_reconstructed_predicted_sequence.pdb" \
+  --output "$OUTPUT_DIR/1kfm_A_reconstructed_predicted_sequence_idealized.pdb" \
+  --native "$OUTPUT_DIR/1kfm_A_native.pdb" \
+  --pml "$OUTPUT_DIR/1kfm_A_idealized_view.pml"
+
+"$PYTHON_BIN" Evaluation/structure_rec/audit_pdb_geometry.py \
+  "$OUTPUT_DIR/1kfm_A_reconstructed_predicted_sequence.pdb" \
+  "$OUTPUT_DIR/1kfm_A_reconstructed_predicted_sequence_idealized.pdb" \
+  --output "$OUTPUT_DIR/1kfm_A_geometry_audit.json"

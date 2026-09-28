@@ -1,0 +1,145 @@
+#!/bin/bash
+# Retry only the layerwise/random-control tasks left incomplete by jobs
+# 258989/258991/258993/258995.  The earlier task manifests remain authoritative;
+# this array deliberately does not recompute them.
+#
+# Array map:
+#   0: canonical raw block 1 — Homo and the three flexibility tasks
+#   1: canonical raw block 6 — Con and Homo
+#   2: canonical raw block 12 — Con and Homo
+#   3: random-init block 6 — Con and Homo
+#
+# Homo previously exceeded a 64-GiB host-memory cgroup, and the first retry
+# filled node-wide /dev/shm while using eight multiprocessing workers.  Use
+# zero workers and disable prefetching, request 128 GiB, and allow at most two
+# elements together on noether.
+#SBATCH --job-name=stb_layer_retry
+#SBATCH --partition=normal
+#SBATCH --nodelist=noether
+#SBATCH --qos=medium
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=128G
+#SBATCH --time=08:00:00
+#SBATCH --array=0-3%2
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/stb/publication_upstream/%x-%A_%a.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+STB_ROOT="$PROJECT_ROOT/StructTokenBench"
+TRAIN_PYTHON_BIN=/slurm-storage/aishod/envs/la-proteina/bin/python
+STB_PYTHON_BIN=/slurm-storage/aishod/.conda/envs/pstbench/bin/python
+CANONICAL_CHECKPOINT="$PROJECT_ROOT/store/canonical_lejepa_v1_100k/evaluation/canonical-lejepa-v1-step100000-raw-staged.ckpt"
+RANDOM_CHECKPOINT="$STB_ROOT/100k-checkpoints/random-init/100k.ckpt"
+ENCODER_CONFIG="$STB_ROOT/100k-checkpoints/shared/exp_config_jepa_nn130m.json"
+CANONICAL_SHA256=28f93a4224323b7366243265abd7721f2dffaaf6f8c9fd4aa4767788fd5d2bac
+CANONICAL_SOURCE_SHA256=4f09dff610adaa75c8ac51b4cf01acb001c236c72dd91ac31568ffa191484527
+RANDOM_SHA256=45789496235b18267c7ebdfbb9039188ecdf438f0f3061a19a91f7e02b76128c
+ENCODER_CONFIG_SHA256=98e0350d418e7d840fa245ddfd7150064e87a9ac74c72c9150a946f0f66ccd9d
+
+case "$SLURM_ARRAY_TASK_ID" in
+    0)
+        CHECKPOINT="$CANONICAL_CHECKPOINT"
+        CHECKPOINT_SHA256="$CANONICAL_SHA256"
+        EXPERIMENT=canonical-lejepa-v1-raw-step100k
+        READOUT_BLOCK=1
+        TASKS=Homo,FlexRMSF,FlexBFactor,FlexNEQ
+        RUN_LABEL=canonical-raw-block1
+        ;;
+    1)
+        CHECKPOINT="$CANONICAL_CHECKPOINT"
+        CHECKPOINT_SHA256="$CANONICAL_SHA256"
+        EXPERIMENT=canonical-lejepa-v1-raw-step100k
+        READOUT_BLOCK=6
+        TASKS=Con,Homo
+        RUN_LABEL=canonical-raw-block6
+        ;;
+    2)
+        CHECKPOINT="$CANONICAL_CHECKPOINT"
+        CHECKPOINT_SHA256="$CANONICAL_SHA256"
+        EXPERIMENT=canonical-lejepa-v1-raw-step100k
+        READOUT_BLOCK=12
+        TASKS=Con,Homo
+        RUN_LABEL=canonical-raw-block12
+        ;;
+    3)
+        CHECKPOINT="$RANDOM_CHECKPOINT"
+        CHECKPOINT_SHA256="$RANDOM_SHA256"
+        EXPERIMENT=random-init
+        READOUT_BLOCK=6
+        TASKS=Con,Homo
+        RUN_LABEL=random-init-block6
+        ;;
+    *)
+        echo "Unexpected array index: $SLURM_ARRAY_TASK_ID" >&2
+        exit 2
+        ;;
+esac
+
+cd "$PROJECT_ROOT"
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+
+echo "$CHECKPOINT_SHA256  $CHECKPOINT" | sha256sum -c -
+echo "$ENCODER_CONFIG_SHA256  $ENCODER_CONFIG" | sha256sum -c -
+
+if [[ "$EXPERIMENT" == canonical-lejepa-v1-raw-step100k ]]; then
+    "$TRAIN_PYTHON_BIN" -c '
+import sys
+import torch
+checkpoint_path, expected_source_sha = sys.argv[1:]
+saved = torch.load(checkpoint_path, map_location="cpu", weights_only=False, mmap=True)
+provenance = saved.get("canonical_lejepa_evaluation", {})
+assert provenance.get("encoder_source") == "raw", provenance
+assert provenance.get("source_global_step") == 100_000, provenance
+assert provenance.get("source_checkpoint_sha256") == expected_source_sha, provenance
+assert provenance.get("latent_dim") == 8, provenance
+assert provenance.get("projector") is None, provenance
+print(f"Verified raw canonical encoder: {provenance}")
+' "$CHECKPOINT" "$CANONICAL_SOURCE_SHA256"
+fi
+
+cd "$STB_ROOT"
+export STB_SKIP_BOOTSTRAP=1
+export STB_SKIP_DATA_SETUP=1
+export STB_SMOKE=0
+export STB_SHARED_EMBEDDING_CACHE=1
+export STB_SHARED_EMBEDDING_CACHE_ROOT=/mnt/hopper-raid/aishod/data/struct_token_bench_release_data/shared_embedding_cache
+export DS_IGNORE_CUDA_DETECTION=1
+export PYTHON_BIN="$STB_PYTHON_BIN"
+export NUM_WORKERS=0
+export PREFETCH_FACTOR=null
+export DATA_PATH=/mnt/hopper-raid/aishod/data
+export PDB_DATA_ROOT=/mnt/hopper-raid/aishod/data/struct_token_bench_pdb_data
+export STB_RELEASE_DATA_ROOT=/mnt/hopper-raid/aishod/data/struct_token_bench_release_data
+export CANONICAL_LEJEPA_V1_RAW_STEP100K_CKPT="$CANONICAL_CHECKPOINT"
+export TOKENIZER_READOUT_BLOCK="$READOUT_BLOCK"
+export ENCODER_SOURCE=online
+export D_MODEL_OVERRIDE=768
+export WANDB_MODE=disabled
+export EVALUATION_RUN_ID="slurm-${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}-${RUN_LABEL}-missing-retry"
+export STB_LOG_ROOT="$STB_ROOT/struct_token_bench_logs/upstream-l600-v1-full/runs/$EVALUATION_RUN_ID"
+export SUMMARY_FILE="$STB_LOG_ROOT/summary_results.csv"
+export TMPDIR="$HOME/tmp/stb-layer-retry/${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}"
+export MPLCONFIGDIR="$TMPDIR/matplotlib"
+export TRITON_CACHE_DIR="$TMPDIR/triton"
+export TORCH_EXTENSIONS_DIR="$TMPDIR/torch-extensions"
+
+if [[ ! -d "$STB_SHARED_EMBEDDING_CACHE_ROOT/v1" \
+      || ! -r "$STB_SHARED_EMBEDDING_CACHE_ROOT/v1" \
+      || ! -w "$STB_SHARED_EMBEDDING_CACHE_ROOT" ]]; then
+    echo "STB shared cache is unavailable or not writable: $STB_SHARED_EMBEDDING_CACHE_ROOT" >&2
+    exit 1
+fi
+mkdir -p "$STB_LOG_ROOT" "$MPLCONFIGDIR" "$TRITON_CACHE_DIR" "$TORCH_EXTENSIONS_DIR"
+
+echo "Retrying $RUN_LABEL tasks=$TASKS with readout block $READOUT_BLOCK"
+bash src/script/run_eval.sh \
+    --protocol=upstream-l600-v1 \
+    --checkpoint=100k \
+    --experiment="$EXPERIMENT" \
+    --tasks="$TASKS"

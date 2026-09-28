@@ -1,0 +1,86 @@
+#!/bin/bash
+# Instrumented peak-VRAM sweep for the heavier packed residue path.
+#SBATCH --job-name=canon_crop_96_res_mem
+#SBATCH --partition=normal
+#SBATCH --qos=short
+#SBATCH --nodes=1
+#SBATCH --ntasks=2
+#SBATCH --ntasks-per-node=2
+#SBATCH --gres=gpu:2
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=128G
+#SBATCH --time=00:30:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/canonical_lejepa/%x-%j.out
+
+set -uo pipefail
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+PYTHON_BIN=/slurm-storage/aishod/envs/la-proteina/bin/python
+cd "$PROJECT_ROOT"
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+export PYTHONPATH="$PROJECT_ROOT${PYTHONPATH:+:$PYTHONPATH}"
+export PATH="/slurm-storage/aishod/envs/la-proteina/bin:$PATH"
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+export TORCH_NCCL_ASYNC_ERROR_HANDLING=1
+export HYDRA_FULL_ERROR=1
+mkdir -p "$PROJECT_ROOT/logs/canonical_lejepa"
+
+run_probe() {
+    local local_batch=$1
+    local global_batch=$((2 * local_batch))
+    local run_name="canonical_lejepa_crop_fixed96_residue_perview_sigreg_b${global_batch}_memory_probe"
+    local samples="/tmp/${run_name}-${SLURM_JOB_ID}.gpu-memory.csv"
+    export MASTER_ADDR=127.0.0.1
+    export MASTER_PORT=$((20000 + SLURM_JOB_ID % 18000 + local_batch))
+    export MPLCONFIGDIR="/tmp/${run_name}-${SLURM_JOB_ID}"
+    mkdir -p "$MPLCONFIGDIR"
+    : > "$samples"
+    (
+        while true; do
+            nvidia-smi --query-gpu=index,memory.used,memory.total \
+                --format=csv,noheader,nounits >> "$samples"
+            sleep 0.2
+        done
+    ) &
+    local monitor_pid=$!
+
+    srun --ntasks=2 --kill-on-bad-exit=1 --wait=30 --label "$PYTHON_BIN" \
+        -m proteinfoundation.jepa.train_canonical_lejepa \
+        run_name_="$run_name" seed=42 alignment_level=residue \
+        masked_kv_mode=visible_only residue_view_checkpointing=true \
+        residue_compact_visible_kv=true independent_view_rotations=false \
+        views.cropping=true views.packed_views=true \
+        views.global_crop_length=96 views.global_crop_fraction_min=null \
+        views.global_crop_fraction_max=null views.global_crop_min_length=96 \
+        views.global_crop_max_length=null views.local_crop_length=48 \
+        views.locals_within_global=true views.global_mask_pct=0.20 \
+        views.local_mask_pct=0.50 sigreg.input=protein_centered_residue \
+        sigreg.joint_views=false dataset.datamodule.dataselector.min_length=96 \
+        dataset.datamodule.batch_size="$local_batch" \
+        trainer.devices=2 trainer.num_nodes=1 trainer.strategy=ddp \
+        trainer.use_distributed_sampler=false trainer.precision=bf16-mixed \
+        trainer.accumulate_grad_batches=1 trainer.max_steps=8 \
+        schedule.total_steps=100000 schedule.peak_step=12000 \
+        schedule.start_lr=1.0e-4 schedule.end_lr=4.0e-4 ema.enabled=true \
+        checkpoint.every_n_train_steps=10000 \
+        checkpoint.last_every_n_train_steps=1500 checkpoint.save_last=true \
+        checkpoint.save_weights_only=false wandb.enabled=false
+    local train_status=$?
+
+    kill "$monitor_pid" 2>/dev/null || true
+    wait "$monitor_pid" 2>/dev/null || true
+    awk -F',' -v batch="$global_batch" '
+        {gpu=$1+0; used=$2+0; total=$3+0; if (used>peak[gpu]) peak[gpu]=used; capacity[gpu]=total}
+        END {for (gpu in peak) printf "B%d GPU%d peak MiB: %d / %d\n", batch, gpu, peak[gpu], capacity[gpu]}
+    ' "$samples" | sort
+    echo "B${global_batch} residue probe exit status: $train_status"
+    return "$train_status"
+}
+
+for local_batch in 32 48 64 96; do
+    if ! run_probe "$local_batch"; then
+        echo "Stopping sweep after failed global batch $((2 * local_batch))"
+        exit 1
+    fi
+done

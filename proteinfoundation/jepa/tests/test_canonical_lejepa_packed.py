@@ -520,6 +520,247 @@ class CanonicalPackedParityTest(unittest.TestCase):
         self.assertTrue(torch.equal(masks, self.view_masks))
 
 
+class CanonicalPairOnlyPositionPackedParityTest(CanonicalPackedParityTest):
+    """Repeat the full dense/packed falsification suite for the new feature path."""
+
+    def setUp(self) -> None:
+        self.batch = _composite_edge_case_batch()
+        self.view_masks = _fixed_view_masks(self.batch)
+        self.cfg_dense = tiny_canonical_config(
+            num_proj=16,
+            packed_views=False,
+            pair_only_position_information=True,
+        )
+        self.cfg_packed = tiny_canonical_config(
+            num_proj=16,
+            packed_views=True,
+            pair_only_position_information=True,
+        )
+
+
+class CanonicalLightweightPairUpdatePackedParityTest(CanonicalPackedParityTest):
+    """Falsify dense/packed parity after a learned pair update."""
+
+    def setUp(self) -> None:
+        self.batch = _composite_edge_case_batch()
+        self.view_masks = _fixed_view_masks(self.batch)
+        self.cfg_dense = tiny_canonical_config(
+            num_proj=16,
+            packed_views=False,
+            pair_only_position_information=True,
+            lightweight_pair_updates=True,
+        )
+        self.cfg_packed = tiny_canonical_config(
+            num_proj=16,
+            packed_views=True,
+            pair_only_position_information=True,
+            lightweight_pair_updates=True,
+        )
+        # Four layers exercise exactly one update after layer zero and then
+        # consume the learned pair representation in the remaining layers.
+        self.cfg_dense.nn_ae.encoder.nlayers = 4
+        self.cfg_packed.nn_ae.encoder.nlayers = 4
+
+    def test_pair_update_parameters_receive_nonzero_gradients(self):
+        torch.manual_seed(2601)
+        model = CanonicalLeJEPAModel(self.cfg_packed).train()
+        patch_target = (
+            "proteinfoundation.jepa.canonical_lejepa_model."
+            "build_canonical_view_masks"
+        )
+        torch.manual_seed(2602)
+        with mock.patch(patch_target, return_value=self.view_masks.clone()):
+            embeddings, _ = model.encode_views(self.batch)
+        loss = canonical_invariance_loss(embeddings)
+        loss.backward()
+
+        update_parameters = {
+            name: parameter
+            for name, parameter in model.encoder.named_parameters()
+            if name.startswith("pair_update_layers.0")
+        }
+        self.assertTrue(update_parameters)
+        for name, parameter in update_parameters.items():
+            self.assertIsNotNone(parameter.grad, name)
+            self.assertTrue(torch.isfinite(parameter.grad).all(), name)
+        total_gradient = sum(
+            float(parameter.grad.abs().sum())
+            for parameter in update_parameters.values()
+        )
+        self.assertGreater(total_gradient, 0.0)
+
+    def test_one_adamw_step_and_state_match_dense_vs_packed(self):
+        torch.manual_seed(2701)
+        dense = CanonicalLeJEPAModel(self.cfg_dense).train()
+        packed = CanonicalLeJEPAModel(self.cfg_packed).train()
+        packed.load_state_dict(dense.state_dict())
+        dense_optimizer = dense.configure_optimizers()["optimizer"]
+        packed_optimizer = packed.configure_optimizers()["optimizer"]
+        patch_target = (
+            "proteinfoundation.jepa.canonical_lejepa_model."
+            "build_canonical_view_masks"
+        )
+
+        torch.manual_seed(2702)
+        with mock.patch(patch_target, return_value=self.view_masks.clone()):
+            dense_embeddings, _ = dense.encode_views(self.batch)
+        torch.manual_seed(2702)
+        with mock.patch(patch_target, return_value=self.view_masks.clone()):
+            packed_embeddings, _ = packed.encode_views(self.batch)
+
+        dense_inv = canonical_invariance_loss(dense_embeddings)
+        packed_inv = canonical_invariance_loss(packed_embeddings)
+        torch.manual_seed(2703)
+        dense_sigreg = dense.sigreg(dense_embeddings.permute(1, 0, 2))
+        torch.manual_seed(2703)
+        packed_sigreg = packed.sigreg(packed_embeddings.permute(1, 0, 2))
+        dense_loss = dense_inv + dense.sigreg_weight * dense_sigreg
+        packed_loss = packed_inv + packed.sigreg_weight * packed_sigreg
+        self.assertClose(packed_loss, dense_loss, "optimizer-step loss")
+
+        dense_loss.backward()
+        packed_loss.backward()
+        dense_optimizer.step()
+        packed_optimizer.step()
+
+        dense_parameters = dict(dense.encoder.named_parameters())
+        packed_parameters = dict(packed.encoder.named_parameters())
+        self.assertEqual(dense_parameters.keys(), packed_parameters.keys())
+        for name, dense_parameter in dense_parameters.items():
+            packed_parameter = packed_parameters[name]
+            self.assertClose(
+                packed_parameter,
+                dense_parameter,
+                f"optimizer-step parameter {name}",
+            )
+            dense_state = dense_optimizer.state[dense_parameter]
+            packed_state = packed_optimizer.state[packed_parameter]
+            self.assertEqual(dense_state.keys(), packed_state.keys(), name)
+            for state_name, dense_value in dense_state.items():
+                packed_value = packed_state[state_name]
+                if isinstance(dense_value, torch.Tensor):
+                    self.assertClose(
+                        packed_value,
+                        dense_value,
+                        f"optimizer state {name} {state_name}",
+                    )
+                else:
+                    self.assertEqual(packed_value, dense_value)
+
+
+class CanonicalEvolvingPairPackedParityTest(CanonicalPackedParityTest):
+    """Repeat dense/packed falsification for the gated triangle-update flag."""
+
+    def setUp(self) -> None:
+        self.batch = _composite_edge_case_batch()
+        self.view_masks = _fixed_view_masks(self.batch)
+        self.cfg_dense = tiny_canonical_config(
+            num_proj=16,
+            packed_views=False,
+            pair_only_position_information=True,
+            evolving_pair_repr=True,
+        )
+        self.cfg_packed = tiny_canonical_config(
+            num_proj=16,
+            packed_views=True,
+            pair_only_position_information=True,
+            evolving_pair_repr=True,
+        )
+        # Exercise a pair update after layer zero and consume its result in
+        # three subsequent attention blocks without making CPU tests excessive.
+        self.cfg_dense.nn_ae.encoder.nlayers = 4
+        self.cfg_packed.nn_ae.encoder.nlayers = 4
+
+    def test_stable_residual_outputs_receive_gradients(self):
+        torch.manual_seed(2801)
+        model = CanonicalLeJEPAModel(self.cfg_packed).train()
+        patch_target = (
+            "proteinfoundation.jepa.canonical_lejepa_model."
+            "build_canonical_view_masks"
+        )
+        torch.manual_seed(2802)
+        with mock.patch(patch_target, return_value=self.view_masks.clone()):
+            embeddings, _ = model.encode_views(self.batch)
+        canonical_invariance_loss(embeddings).backward()
+
+        update = model.encoder.pair_update_layers[0]
+        stable_outputs = (
+            update.sequence_to_pair_out.weight,
+            update.tri_mult_out.linear_z.weight,
+            update.tri_mult_in.linear_z.weight,
+            update.transition_out.linear_2.weight,
+        )
+        for parameter in stable_outputs:
+            self.assertIsNotNone(parameter.grad)
+            self.assertTrue(torch.isfinite(parameter.grad).all())
+        self.assertGreater(
+            sum(float(parameter.grad.abs().sum()) for parameter in stable_outputs),
+            0.0,
+        )
+
+    def test_one_adamw_step_matches_dense_vs_packed(self):
+        torch.manual_seed(2901)
+        dense = CanonicalLeJEPAModel(self.cfg_dense).train()
+        packed = CanonicalLeJEPAModel(self.cfg_packed).train()
+        packed.load_state_dict(dense.state_dict())
+        dense_optimizer = dense.configure_optimizers()["optimizer"]
+        packed_optimizer = packed.configure_optimizers()["optimizer"]
+        patch_target = (
+            "proteinfoundation.jepa.canonical_lejepa_model."
+            "build_canonical_view_masks"
+        )
+
+        torch.manual_seed(2902)
+        with mock.patch(patch_target, return_value=self.view_masks.clone()):
+            dense_embeddings, _ = dense.encode_views(self.batch)
+        torch.manual_seed(2902)
+        with mock.patch(patch_target, return_value=self.view_masks.clone()):
+            packed_embeddings, _ = packed.encode_views(self.batch)
+        dense_loss = canonical_invariance_loss(dense_embeddings)
+        packed_loss = canonical_invariance_loss(packed_embeddings)
+        self.assertClose(packed_loss, dense_loss, "optimizer-step loss")
+        dense_loss.backward()
+        packed_loss.backward()
+        dense_optimizer.step()
+        packed_optimizer.step()
+
+        dense_parameters = dict(dense.encoder.named_parameters())
+        packed_parameters = dict(packed.encoder.named_parameters())
+        self.assertEqual(dense_parameters.keys(), packed_parameters.keys())
+        maximum_parameter_error = 0.0
+        maximum_parameter_name = ""
+        for name, dense_parameter in dense_parameters.items():
+            packed_parameter = packed_parameters[name]
+            error = float((packed_parameter - dense_parameter).abs().max())
+            if error > maximum_parameter_error:
+                maximum_parameter_error = error
+                maximum_parameter_name = name
+            dense_state = dense_optimizer.state[dense_parameter]
+            packed_state = packed_optimizer.state[packed_parameter]
+            self.assertEqual(dense_state.keys(), packed_state.keys(), name)
+            for state_name, dense_value in dense_state.items():
+                packed_value = packed_state[state_name]
+                if isinstance(dense_value, torch.Tensor):
+                    self.assertClose(
+                        packed_value,
+                        dense_value,
+                        f"{name} optimizer state {state_name}",
+                    )
+                else:
+                    self.assertEqual(packed_value, dense_value)
+        self.assertLessEqual(
+            maximum_parameter_error,
+            2e-5,
+            f"maximum optimizer-step parameter error for {maximum_parameter_name}",
+        )
+        print(
+            "evolving_pair_optimizer_parity "
+            f"max_parameter_error={maximum_parameter_error:.9g} "
+            f"parameter={maximum_parameter_name}",
+            flush=True,
+        )
+
+
 class CanonicalPackedFailureTest(unittest.TestCase):
     def setUp(self) -> None:
         self.batch = _composite_edge_case_batch()

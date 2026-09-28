@@ -1,0 +1,165 @@
+% !TeX root = ../Project.tex
+\begingroup
+\newsavebox{\stbworkshopbox}
+\providecommand{\stbworkshopfit}{\ifdim\wd\stbworkshopbox>\linewidth\resizebox{\linewidth}{!}{\usebox{\stbworkshopbox}}\else\usebox{\stbworkshopbox}\fi}
+%what does it mean the scores do not indicate statistical significance?
+\noindent Tables: Higher is better. Bold labels the highest value within each task across all models. 100k models and 10k cropped-LeJEPA models are highlighted separately. The scores do not indicate statistical significance. Homo uses the mean of batch-level macro-F1. Random-init encoder is not trained. 
+\par
+
+\begin{table}[p]
+\centering
+\resultstableformat
+\setlength{\tabcolsep}{2pt}
+\renewcommand{\arraystretch}{0.88}
+\caption{Full L600 StructTokenBench: Baselines and JEPA. Scores are $100\times$ AUROC, macro-F1 or Spearman's $\rho$, as indicated. All trained encoders use 100k checkpoints; random init.\ uses the fixed untrained encoder.}
+\label{tab:results-stb-baselines-jepa}
+\label{tab:results-stb-fold}
+\sbox{\stbworkshopbox}{%
+\begin{tabular}{@{}lllr@{\hspace{6pt}}rr@{\hspace{6pt}}rrr@{}}
+\toprule
+\multirow{2}{*}{Task type} & \multirow{2}{*}{Task} & \multirow{2}{*}{Split} & \multicolumn{1}{c}{Reference} & \multicolumn{2}{c}{Autoencoders} & \multicolumn{3}{c}{JEPA} \\[1.8pt]
+ &  &  & \shortstack{Random\\init.} & $C_\alpha$ AE & Full AE & 50\% & 70\% & Mut. \\
+\midrule
+\multicolumn{9}{c}{\textbf{Functional-site prediction: AUROC $\times100$}} \\
+\midrule
+\multirow{5}{*}{Binding site} & \multirow{2}{*}{BindInt} & Fold & 43.64 & 44.60 & 44.82 & 44.46 & \textbf{47.11} & 45.46 \\
+ &  & SF & 80.03 & 80.01 & 81.48 & 81.67 & 80.06 & \textbf{81.84} \\
+ & \multirow{2}{*}{BindBio} & Fold & 61.08 & 63.12 & \textbf{69.61} & 60.59 & 65.56 & 63.96 \\
+ &  & SF & 62.76 & 63.77 & \textbf{69.65} & 61.80 & 65.31 & 64.56 \\
+ & BindShake & Test & 64.70 & 59.21 & \textbf{76.06} & 62.32 & 71.85 & 68.75 \\
+\multirow{4}{*}{Catalytic site} & \multirow{2}{*}{CatInt} & Fold & 54.01 & 54.53 & \textbf{59.86} & 56.86 & 56.84 & 56.68 \\
+ &  & SF & 77.61 & 77.70 & \textbf{80.08} & 72.55 & 76.71 & 77.13 \\
+ & \multirow{2}{*}{CatBio} & Fold & 64.34 & 67.22 & \textbf{77.30} & 59.31 & 71.50 & 68.03 \\
+ &  & SF & 70.43 & 73.66 & \textbf{83.56} & 65.61 & 75.36 & 72.36 \\
+\multirow{2}{*}{Conserved site} & \multirow{2}{*}{Con} & Fold & 57.76 & 56.53 & \textbf{61.62} & 57.55 & 60.44 & 60.33 \\
+ &  & SF & 72.05 & 70.58 & \textbf{74.96} & 71.05 & 72.08 & 72.10 \\
+\multirow{2}{*}{Repeat motif} & \multirow{2}{*}{Rep} & Fold & \textbf{75.60} & 75.12 & 73.60 & 75.12 & 73.77 & 73.55 \\
+ &  & SF & 79.28 & 79.58 & 80.44 & \textbf{81.34} & 78.46 & 79.92 \\
+\multirow{2}{*}{Epitope region} & \multirow{2}{*}{Ept} & Fold & \textbf{54.02} & 47.08 & 47.74 & 46.92 & 47.87 & 51.38 \\
+ &  & SF & \textbf{55.32} & 53.60 & 52.38 & 49.75 & 49.29 & 53.11 \\
+\midrule
+\multicolumn{9}{c}{\textbf{Remote homology: macro-F1 $\times100$}} \\
+\midrule
+\multirow{3}{*}{Remote homology} & \multirow{3}{*}{Homo} & Fold & 7.51 & 6.67 & 8.23 & 7.79 & \textbf{9.86} & 8.01 \\
+ &  & Family & 13.99 & \textbf{20.15} & 14.36 & 16.67 & 13.30 & 11.82 \\
+ &  & SF & 4.03 & 4.23 & 5.13 & 4.18 & \textbf{6.00} & 4.61 \\
+\midrule
+\multicolumn{9}{c}{\textbf{Structural flexibility: Spearman's $\rho\times100$}} \\
+\midrule
+\multirow{6}{*}{Flexibility} & \multirow{2}{*}{FlexRMSF} & Fold & 20.60 & 16.01 & \textbf{42.83} & 29.45 & 33.98 & 35.08 \\
+ &  & SF & 17.78 & 12.15 & \textbf{41.04} & 34.39 & 34.26 & 35.61 \\
+ & \multirow{2}{*}{FlexBFactor} & Fold & 13.94 & 11.32 & \textbf{28.81} & 12.90 & 23.29 & 22.09 \\
+ &  & SF & 11.42 & 10.75 & \textbf{24.27} & 12.20 & 21.69 & 17.76 \\
+ & \multirow{2}{*}{FlexNEQ} & Fold & 6.96 & 14.35 & 20.13 & 9.10 & \textbf{25.11} & 10.07 \\
+ &  & SF & 6.55 & 12.65 & 19.57 & 12.43 & \textbf{25.19} & 10.60 \\
+\bottomrule
+\end{tabular}%
+}
+\stbworkshopfit
+\end{table}
+
+\begin{table}[p]
+\centering
+\resultstableformat
+\setlength{\tabcolsep}{2pt}
+\renewcommand{\arraystretch}{0.88}
+\caption{Full L600 StructTokenBench: JEPA+SIGReg. Scores are $100\times$ AUROC, macro-F1 or Spearman's $\rho$, as indicated. All encoders use 100k checkpoints. SO(3) variants use 70\% random masking; spatial masking has approximately 75\% variable coverage.}
+\label{tab:results-stb-sigreg}
+\label{tab:results-stb-sf}
+\sbox{\stbworkshopbox}{%
+\begin{tabular}{@{}lllrr@{\hspace{6pt}}rrrrr@{}}
+\toprule
+\multirow{2}{*}{Task type} & \multirow{2}{*}{Task} & \multirow{2}{*}{Split} & \multicolumn{2}{c}{Absolute positions} & \multicolumn{5}{c}{Relative positions} \\[1.8pt]
+ &  &  & 50\% & 70\% & 50\% & 70\% & Spatial & \shortstack{SO(3)\\$\lambda=.02$} & \shortstack{SO(3)\\$\lambda=.01$} \\
+\midrule
+\multicolumn{10}{c}{\textbf{Functional-site prediction: AUROC $\times100$}} \\
+\midrule
+\multirow{5}{*}{Binding site} & \multirow{2}{*}{BindInt} & Fold & 45.32 & 43.13 & 46.43 & 47.39 & \textbf{49.46} & 48.79 & 44.27 \\
+ &  & SF & 82.51 & 82.54 & 81.26 & 82.62 & 82.85 & \textbf{89.37} & 88.69 \\
+ & \multirow{2}{*}{BindBio} & Fold & 58.82 & 59.02 & \textbf{66.98} & 66.09 & 65.56 & 65.01 & 57.63 \\
+ &  & SF & 60.82 & 61.05 & \textbf{67.20} & 66.25 & 65.96 & 65.38 & 60.00 \\
+ & BindShake & Test & 59.73 & 59.72 & \textbf{74.66} & 73.05 & 71.87 & 68.55 & 57.52 \\
+\multirow{4}{*}{Catalytic site} & \multirow{2}{*}{CatInt} & Fold & 55.36 & 54.49 & 62.28 & 60.24 & 63.10 & \textbf{63.18} & 50.29 \\
+ &  & SF & 76.86 & 77.38 & 79.76 & 79.81 & 80.96 & 84.28 & \textbf{84.90} \\
+ & \multirow{2}{*}{CatBio} & Fold & 52.75 & 52.92 & \textbf{74.04} & 73.28 & 71.60 & 67.25 & 55.41 \\
+ &  & SF & 58.09 & 58.43 & \textbf{78.70} & 78.20 & 76.70 & 73.30 & 62.39 \\
+\multirow{2}{*}{Conserved site} & \multirow{2}{*}{Con} & Fold & 58.05 & 58.49 & 60.68 & \textbf{62.35} & 62.16 & 56.04 & 57.23 \\
+ &  & SF & 72.96 & 73.08 & 74.25 & 74.12 & 76.23 & 78.28 & \textbf{79.74} \\
+\multirow{2}{*}{Repeat motif} & \multirow{2}{*}{Rep} & Fold & \textbf{75.93} & 75.65 & 75.17 & 74.48 & 74.11 & 72.98 & 73.86 \\
+ &  & SF & 81.37 & 80.58 & 79.68 & 81.18 & 79.92 & \textbf{85.63} & 85.58 \\
+\multirow{2}{*}{Epitope region} & \multirow{2}{*}{Ept} & Fold & 53.67 & \textbf{53.99} & 51.75 & 52.43 & 51.55 & 53.52 & 50.71 \\
+ &  & SF & 56.80 & 55.83 & 58.90 & 56.61 & \textbf{59.31} & 57.93 & 51.21 \\
+\midrule
+\multicolumn{10}{c}{\textbf{Remote homology: macro-F1 $\times100$}} \\
+\midrule
+\multirow{3}{*}{Remote homology} & \multirow{3}{*}{Homo} & Fold & 6.94 & 8.03 & 6.26 & 6.67 & 8.62 & 6.71 & \textbf{10.05} \\
+ &  & Family & 13.23 & 13.60 & 12.10 & 11.06 & 11.95 & \textbf{16.01} & 15.74 \\
+ &  & SF & 3.23 & 4.06 & 3.65 & 3.64 & \textbf{4.81} & 4.36 & 3.96 \\
+\midrule
+\multicolumn{10}{c}{\textbf{Structural flexibility: Spearman's $\rho\times100$}} \\
+\midrule
+\multirow{6}{*}{Flexibility} & \multirow{2}{*}{FlexRMSF} & Fold & 6.95 & 10.83 & \textbf{31.56} & 28.97 & 27.99 & 18.45 & 11.23 \\
+ &  & SF & 3.21 & 2.16 & \textbf{25.92} & 24.78 & 24.92 & 15.34 & 9.94 \\
+ & \multirow{2}{*}{FlexBFactor} & Fold & 3.67 & 3.28 & \textbf{21.04} & 19.82 & 18.55 & 12.46 & 3.95 \\
+ &  & SF & 2.10 & 1.75 & \textbf{19.42} & 18.23 & 17.04 & 12.32 & 5.76 \\
+ & \multirow{2}{*}{FlexNEQ} & Fold & 3.58 & 4.47 & \textbf{16.82} & 15.10 & 12.22 & 12.08 & 5.67 \\
+ &  & SF & 5.41 & 3.92 & \textbf{14.08} & 11.36 & 10.48 & 12.22 & 3.36 \\
+\bottomrule
+\end{tabular}%
+}
+\stbworkshopfit
+\end{table}
+
+\begin{table}[p]
+\centering
+\resultstableformat
+\setlength{\tabcolsep}{2pt}
+\renewcommand{\arraystretch}{0.88}
+\caption{Full L600 StructTokenBench: LeJEPA. Scores are $100\times$ AUROC, macro-F1 or Spearman's $\rho$, as indicated. Cropped models use batch 96 and different data filtering, so the two groups are not compute-matched. Bold maxima are determined separately within the 100k and 10k groups. P/R = protein/residue objective; per-view/joint = SIGReg view aggregation. $^\dagger$The joint-view 10k score is an early EMA-sensitive observation.}
+\label{tab:results-stb-canonical}
+\label{tab:results-stb-flex-homo}
+\sbox{\stbworkshopbox}{%
+\begin{tabular}{@{}lllrr@{\hspace{6pt}}rrr@{}}
+\toprule
+\multirow{2}{*}{Task type} & \multirow{2}{*}{Task} & \multirow{2}{*}{Split} & \multicolumn{2}{c}{Uncropped, 100k EMA} & \multicolumn{3}{c}{Cropped, 10k EMA} \\[1.8pt]
+ &  &  & v1 & v1, SO(3) & P/per-view & R/per-view & P/joint$^\dagger$ \\
+\midrule
+\multicolumn{8}{c}{\textbf{Functional-site prediction: AUROC $\times100$}} \\
+\midrule
+\multirow{5}{*}{Binding site} & \multirow{2}{*}{BindInt} & Fold & \textbf{49.87} & 45.36 & 46.86 & 43.62 & \textbf{47.57} \\
+ &  & SF & 88.49 & \textbf{91.71} & \textbf{84.37} & 78.87 & 82.33 \\
+ & \multirow{2}{*}{BindBio} & Fold & 59.31 & \textbf{59.69} & 59.14 & 57.18 & \textbf{64.13} \\
+ &  & SF & 61.73 & \textbf{62.93} & 60.75 & 58.57 & \textbf{63.60} \\
+ & BindShake & Test & 58.24 & \textbf{60.80} & 59.80 & 62.59 & \textbf{67.04} \\
+\multirow{4}{*}{Catalytic site} & \multirow{2}{*}{CatInt} & Fold & 53.43 & \textbf{56.07} & 53.83 & 53.50 & \textbf{56.21} \\
+ &  & SF & 80.50 & \textbf{83.77} & \textbf{77.86} & 72.21 & 73.61 \\
+ & \multirow{2}{*}{CatBio} & Fold & 53.68 & \textbf{53.95} & 54.53 & 56.26 & \textbf{70.98} \\
+ &  & SF & 60.52 & \textbf{62.68} & 62.48 & 61.13 & \textbf{74.70} \\
+\multirow{2}{*}{Conserved site} & \multirow{2}{*}{Con} & Fold & \textbf{60.30} & 56.07 & 56.12 & 56.40 & \textbf{56.94} \\
+ &  & SF & 77.32 & \textbf{83.06} & \textbf{73.79} & 71.55 & 72.67 \\
+\multirow{2}{*}{Repeat motif} & \multirow{2}{*}{Rep} & Fold & \textbf{72.85} & 68.95 & 76.02 & \textbf{76.05} & 74.93 \\
+ &  & SF & 84.43 & \textbf{85.14} & \textbf{81.24} & 79.18 & 81.01 \\
+\multirow{2}{*}{Epitope region} & \multirow{2}{*}{Ept} & Fold & \textbf{63.05} & 54.35 & 49.93 & 47.67 & \textbf{50.20} \\
+ &  & SF & \textbf{61.62} & 59.25 & 49.98 & \textbf{56.49} & 51.42 \\
+\midrule
+\multicolumn{8}{c}{\textbf{Remote homology: macro-F1 $\times100$}} \\
+\midrule
+\multirow{3}{*}{Remote homology} & \multirow{3}{*}{Homo} & Fold & 7.59 & \textbf{11.68} & 7.69 & 8.21 & \textbf{10.83} \\
+ &  & Family & 21.70 & \textbf{33.63} & 16.87 & \textbf{16.89} & 14.91 \\
+ &  & SF & 5.40 & \textbf{12.90} & 6.22 & 4.73 & \textbf{8.31} \\
+\midrule
+\multicolumn{8}{c}{\textbf{Structural flexibility: Spearman's $\rho\times100$}} \\
+\midrule
+\multirow{6}{*}{Flexibility} & \multirow{2}{*}{FlexRMSF} & Fold & 22.62 & \textbf{35.15} & 17.82 & 20.66 & \textbf{35.81} \\
+ &  & SF & 33.21 & \textbf{42.82} & 24.74 & 15.88 & \textbf{35.83} \\
+ & \multirow{2}{*}{FlexBFactor} & Fold & 3.14 & \textbf{22.18} & 9.10 & 10.78 & \textbf{20.94} \\
+ &  & SF & 7.72 & \textbf{19.27} & 13.75 & 10.45 & \textbf{24.38} \\
+ & \multirow{2}{*}{FlexNEQ} & Fold & \textbf{7.86} & 5.98 & 7.63 & \textbf{25.70} & 12.95 \\
+ &  & SF & 6.15 & \textbf{7.42} & 5.34 & \textbf{22.58} & 11.72 \\
+\bottomrule
+\end{tabular}%
+}
+\stbworkshopfit
+\end{table}
+\clearpage
+\endgroup

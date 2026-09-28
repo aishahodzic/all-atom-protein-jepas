@@ -1,0 +1,177 @@
+{
+  "input": "non_code/pymol_proteins/5xr7_A/5xr7_A_reconstructed_idealized.pdb",
+  "output": "store/geometry-repair-validation/adjacent-clash-fix/all10/5xr7_A_rotamer.pdb",
+  "overlap": 1.2,
+  "trigger": 1.8,
+  "displacement_weight": 0.02,
+  "passes": 5,
+  "severe_pairs_before": 9,
+  "severe_pairs_after": 8,
+  "before": [
+    {
+      "left_residue": 1,
+      "right_residue": 2,
+      "distance": 1.5164831024445995,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 2,
+      "right_residue": 3,
+      "distance": 0.771254173408481,
+      "atoms": [
+        "O",
+        "CD"
+      ]
+    },
+    {
+      "left_residue": 37,
+      "right_residue": 38,
+      "distance": 1.4748593153246845,
+      "atoms": [
+        "C",
+        "CD"
+      ]
+    },
+    {
+      "left_residue": 38,
+      "right_residue": 39,
+      "distance": 1.7995541114398304,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 59,
+      "right_residue": 60,
+      "distance": 1.4883252332739647,
+      "atoms": [
+        "C",
+        "CD2"
+      ]
+    },
+    {
+      "left_residue": 60,
+      "right_residue": 61,
+      "distance": 1.6582234469455548,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 64,
+      "right_residue": 65,
+      "distance": 0.28545227271822404,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 83,
+      "right_residue": 84,
+      "distance": 0.9083088681720549,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 149,
+      "right_residue": 150,
+      "distance": 1.7173357272240048,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    }
+  ],
+  "after": [
+    {
+      "left_residue": 1,
+      "right_residue": 2,
+      "distance": 1.5164831024445995,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 2,
+      "right_residue": 3,
+      "distance": 0.771254173408481,
+      "atoms": [
+        "O",
+        "CD"
+      ]
+    },
+    {
+      "left_residue": 37,
+      "right_residue": 38,
+      "distance": 1.4748593153246845,
+      "atoms": [
+        "C",
+        "CD"
+      ]
+    },
+    {
+      "left_residue": 38,
+      "right_residue": 39,
+      "distance": 1.7995541114398304,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 60,
+      "right_residue": 61,
+      "distance": 1.6582234469455548,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 64,
+      "right_residue": 65,
+      "distance": 0.28545227271822404,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 83,
+      "right_residue": 84,
+      "distance": 0.9083088681720549,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 149,
+      "right_residue": 150,
+      "distance": 1.7173357272240048,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    }
+  ],
+  "choices": [
+    {
+      "pass": 1,
+      "residue_number": 60,
+      "resname": "LEU",
+      "candidate": 6,
+      "score_before": 0.7218410929017735,
+      "score_after": 0.0971057446142043
+    }
+  ]
+}

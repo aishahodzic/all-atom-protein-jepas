@@ -8,7 +8,22 @@ defaults:
 run_name_: canonical_lejepa_v1_100k
 seed: 42
 independent_view_rotations: false
+# AlphaFold-style positional-information ablation. When enabled, residue-index,
+# chain-boundary/identity, and absolute-coordinate signals are removed from the
+# single-residue stream. Relative sequence/chain and structural information is
+# retained only in the pair representation.
+pair_only_position_information: false
+# One-switch, lightweight evolving-pair experiment. Requires
+# pair_only_position_information=true. It enables stable multiplicative
+# residue-to-pair updates, narrow triangle multiplication, and a pair
+# transition every third encoder layer; pair information reaches residues only
+# through attention logits.
+pair_only_evolving_pair_repr: false
 alignment_level: protein
+# Opt-in residue objective: align a physical residue only when it is visible in
+# both the global and local view. The same switch restricts protein-centred
+# residue SIGReg centring and sampling to visible rows in each individual view.
+residue_visible_only_objective: false
 masked_kv_mode: visible_only
 residue_view_checkpointing: true
 residue_compact_visible_kv: false
@@ -42,6 +57,13 @@ sigreg:
   joint_views: false
   residue_samples_per_protein: 1
   independent_residue_samples: false
+  # Experimental loss-side rescue for the pair-only evolving-pair ablation.
+  # When enabled, a deterministic variance floor and covariance decorrelation
+  # are applied across proteins after averaging their five view embeddings.
+  vicreg_rescue: false
+  vicreg_weight: 1.0
+  vicreg_target_std: 1.0
+  vicreg_covariance_weight: 1.0
 
 optimizer:
   type: AdamW
@@ -91,6 +113,10 @@ checkpoint:
   filename: "step-{step:08d}"
   every_n_train_steps: 10000
   additional_every_n_train_steps: null
+  # Optional exact numbered milestones. Each value installs a checkpoint
+  # cadence at that step; when max_steps is capped at the largest milestone,
+  # this produces exactly one checkpoint per requested value.
+  additional_train_steps: null
   # Keep immutable numbered milestones every 10k, but refresh the rolling
   # full-state recovery checkpoint more frequently.
   last_every_n_train_steps: 1500

@@ -1,0 +1,39 @@
+#!/bin/bash
+# Quantify side-chain reconstruction with true amino-acid identities at scoring.
+#SBATCH --job-name=oracle_aa_sc
+#SBATCH --partition=normal
+#SBATCH --qos=short
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=48G
+#SBATCH --time=00:15:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/decoder/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+PYTHON_BIN=/slurm-storage/aishod/envs/la-proteina/bin/python
+ENCODER_CKPT=/mnt/hopper-raid/aishod/runs/jepa_random_masking_70_v3/store/jepa_random_masking_70_v3/checkpoints/chk_epoch=00000019_step=000000100000.ckpt
+DECODER_CKPT="$PROJECT_ROOT/Evaluation/structure_rec/checkpoints/jepa-rand-mask-70-target-80k-to-140k_final.pt"
+OUTPUT="$PROJECT_ROOT/non_code/pymol_proteins/audits/oracle_aa_sidechains.json"
+SCRATCH_ROOT="$HOME/tmp/oracle-aa-sidechains-$SLURM_JOB_ID"
+
+mkdir -p "$PROJECT_ROOT/logs/decoder" "$SCRATCH_ROOT"
+export TMPDIR="$SCRATCH_ROOT"
+export MPLCONFIGDIR="$SCRATCH_ROOT/matplotlib"
+export TRITON_CACHE_DIR="$SCRATCH_ROOT/triton"
+export PYTHONPATH="$PROJECT_ROOT"
+mkdir -p "$MPLCONFIGDIR" "$TRITON_CACHE_DIR"
+
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+
+cd "$PROJECT_ROOT"
+srun "$PYTHON_BIN" Evaluation/structure_rec/evaluate_oracle_aa_sidechains.py \
+  --encoder-checkpoint "$ENCODER_CKPT" \
+  --decoder-checkpoint "$DECODER_CKPT" \
+  --output "$OUTPUT" \
+  --device cuda

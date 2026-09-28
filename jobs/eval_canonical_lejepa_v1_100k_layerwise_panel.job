@@ -1,0 +1,65 @@
+#!/bin/bash
+# Submit block 6 first, then dependent block 1 and block 12 jobs.
+# Six task heads = BindShake, Ept, three Flex labels, Rep (four topic groups).
+#SBATCH --job-name=stb_canon_layer
+#SBATCH --partition=normal
+#SBATCH --qos=short
+#SBATCH --nodelist=noether
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=64G
+#SBATCH --time=03:00:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/stb/publication_upstream/%x-%j.out
+
+set -euo pipefail
+READOUT_BLOCK="${1:?Pass the one-based block number: 6, 1 or 12}"
+case "$READOUT_BLOCK" in 6|1|12) ;; *) echo "Unsupported block: $READOUT_BLOCK" >&2; exit 1 ;; esac
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+STB_ROOT="$PROJECT_ROOT/StructTokenBench"
+STB_PYTHON_BIN=/slurm-storage/aishod/.conda/envs/pstbench/bin/python
+CHECKPOINT="$PROJECT_ROOT/store/canonical_lejepa_v1_100k/evaluation/canonical-lejepa-v1-step100000-ema-staged.ckpt"
+ENCODER_CONFIG="$STB_ROOT/100k-checkpoints/shared/exp_config_jepa_nn130m.json"
+
+export TMPDIR="$HOME/tmp/stb-canonical-layerwise/${SLURM_JOB_ID}"
+export MPLCONFIGDIR="$TMPDIR/matplotlib"
+export TRITON_CACHE_DIR="$TMPDIR/triton"
+export TORCH_EXTENSIONS_DIR="$TMPDIR/torch-extensions"
+export PYTHONDONTWRITEBYTECODE=1
+export OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4 MKL_NUM_THREADS=4
+export WANDB_MODE=disabled
+export HF_HUB_OFFLINE=1
+export DATA_PATH=/mnt/hopper-raid/aishod/data
+mkdir -p "$TMPDIR" "$MPLCONFIGDIR" "$TRITON_CACHE_DIR" "$TORCH_EXTENSIONS_DIR"
+cd "$PROJECT_ROOT"
+export PYTHONPATH="$STB_ROOT/src:$PROJECT_ROOT${PYTHONPATH:+:$PYTHONPATH}"
+sha256sum -c jobs/canonical_layerwise_source_guard.sha256
+echo "49aaae3dccc3835005bb6470b0f483a57cee4e28bead2408994693974389e273  $CHECKPOINT" | sha256sum -c -
+echo "98e0350d418e7d840fa245ddfd7150064e87a9ac74c72c9150a946f0f66ccd9d  $ENCODER_CONFIG" | sha256sum -c -
+
+"$STB_PYTHON_BIN" -m Evaluation.canonical_lejepa.preflight_layerwise_stb \
+    --block "$READOUT_BLOCK" --device cuda
+
+cd "$STB_ROOT"
+export STB_SKIP_BOOTSTRAP=1 STB_SKIP_DATA_SETUP=1 STB_SMOKE=0
+export STB_SHARED_EMBEDDING_CACHE=1
+export STB_SHARED_EMBEDDING_CACHE_ROOT="$PROJECT_ROOT/store/canonical_lejepa_v1_100k/evaluation/stb_layerwise_shared_cache"
+export DS_IGNORE_CUDA_DETECTION=1
+export PYTHON_BIN="$STB_PYTHON_BIN"
+export NUM_WORKERS=8
+export DATA_PATH=/mnt/hopper-raid/aishod/data
+export PDB_DATA_ROOT=/mnt/hopper-raid/aishod/data/struct_token_bench_pdb_data
+export STB_RELEASE_DATA_ROOT=/mnt/hopper-raid/aishod/data/struct_token_bench_release_data
+export CANONICAL_LEJEPA_V1_EMA_STEP100K_CKPT="$CHECKPOINT"
+export TOKENIZER_READOUT_BLOCK="$READOUT_BLOCK"
+export D_MODEL_OVERRIDE=768
+export EVALUATION_RUN_ID="slurm-${SLURM_JOB_ID}-canonical-lejepa-v1-ema-step100k-block${READOUT_BLOCK}-panel"
+export STB_LOG_ROOT="$STB_ROOT/struct_token_bench_logs/upstream-l600-v1-full/runs/$EVALUATION_RUN_ID"
+export SUMMARY_FILE="$STB_LOG_ROOT/summary_results.csv"
+mkdir -p "$STB_LOG_ROOT" "$STB_SHARED_EMBEDDING_CACHE_ROOT"
+
+bash src/script/run_eval.sh \
+    --protocol=upstream-l600-v1 --checkpoint=100k \
+    --experiment=canonical-lejepa-v1-ema-step100k \
+    --tasks=BindShake,Ept,FlexRMSF,FlexBFactor,FlexNEQ,Rep

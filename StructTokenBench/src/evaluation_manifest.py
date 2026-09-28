@@ -85,8 +85,17 @@ def atomic_write_json(path, payload):
 
     destination = Path(path)
     destination.parent.mkdir(parents=True, exist_ok=True)
+    # Some locked-protocol cache names legitimately approach NAME_MAX because
+    # they encode checkpoint, readout block, target, and split identities. A
+    # temporary name formed by appending to the full destination can therefore
+    # exceed the filesystem's 255-byte component limit even though the final
+    # sidecar fits. Keep the temporary name short and content-addressed while
+    # retaining the same-directory atomic replace.
+    destination_name_sha256 = hashlib.sha256(
+        destination.name.encode("utf-8")
+    ).hexdigest()[:16]
     temporary = destination.with_name(
-        f".{destination.name}.tmp-{os.getpid()}"
+        f".atomic-json-{destination_name_sha256}.tmp-{os.getpid()}"
     )
     try:
         with open(temporary, "w", encoding="utf-8") as handle:

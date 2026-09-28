@@ -1,0 +1,50 @@
+#!/bin/bash
+# Short fully latent reconstruction probe for the frozen JEPA rand70 target
+# encoder.  The decoder is initialized from scratch and uses the original
+# fully-latent La Proteina implementation: no native C-alpha coordinates are
+# supplied as anchors or decoder features.
+#SBATCH --job-name=dec_jr70_noca
+#SBATCH --partition=normal
+#SBATCH --qos=short
+#SBATCH --gres=gpu:1
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=100G
+#SBATCH --time=03:00:00
+#SBATCH --output=logs/decoder/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+FULLY_LATENT_TREE="$PROJECT_ROOT/training_worktrees/fully-latent"
+TASK_TMP=/slurm-storage/aishod/tmp/decoder-jepa-rand70-no-ca-${SLURM_JOB_ID}
+
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+
+mkdir -p "$PROJECT_ROOT/logs/decoder" "$TASK_TMP/mpl" "$TASK_TMP/triton"
+cd "$PROJECT_ROOT/Evaluation/structure_rec"
+
+# Put the original fully-latent implementation first; it predicts absolute
+# coordinates and does not add native C-alpha anchors to decoder outputs.
+export PYTHONPATH="$FULLY_LATENT_TREE:$PROJECT_ROOT"
+export TMPDIR="$TASK_TMP"
+export MPLCONFIGDIR="$TASK_TMP/mpl"
+export TRITON_CACHE_DIR="$TASK_TMP/triton"
+
+srun /data-gauss/$USER/envs/laproteina_env/bin/python3 -B train_decoder.py \
+  --encoder jepa-rand-mask-70 \
+  --encoder-source target \
+  --decoder-style fully-latent \
+  --group latent-only-no-ca \
+  --coordinate-mode fully-latent \
+  --run-id jepa-rand70-target-no-ca-10k \
+  --max-steps 10000 \
+  --eval-every 1000 \
+  --calibration \
+  --patience-evals 10 \
+  --patience-threshold 0.01 \
+  --batch-size 8 \
+  --lr 1e-4 \
+  --save-every 2000

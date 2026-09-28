@@ -1,0 +1,79 @@
+#!/bin/bash
+# Apply identical geometry postprocessing to the rotation decoder's ten PDBs,
+# then compare them with the already postprocessed non-rotation reconstructions.
+#SBATCH --job-name=post_rot_cmp
+#SBATCH --partition=h100
+#SBATCH --nodelist=hopper
+#SBATCH --qos=short
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=8
+#SBATCH --mem=64G
+#SBATCH --time=03:00:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/decoder/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+PYTHON_BIN=/slurm-storage/aishod/envs/la-proteina/bin/python
+ENCODER_CKPT=/mnt/hopper-raid/aishod/runs/jepa_rand70_d8_independent_rotations_100k/store/jepa_rand70_d8_independent_rotations_100k/checkpoints/chk_epoch=00000019_step=000000100000.ckpt
+DECODER_CKPT="$PROJECT_ROOT/Evaluation/structure_rec/checkpoints/jepa-rand70-d8-independent-rotations-target-step100k-decoder-140k_step40000.pt"
+ROTATION_ROOT="$PROJECT_ROOT/non_code/pymol_proteins/jepa_rand70_d8_rotations_decoder_step40k"
+NONROTATION_ROOT="$PROJECT_ROOT/non_code/pymol_proteins"
+RESULT="$PROJECT_ROOT/non_code/pymol_proteins/audits/rotation_vs_nonrotation/postprocessed_step40k_vs_finished.json"
+SCRATCH_ROOT="$HOME/tmp/postprocessed-rotation-comparison-$SLURM_JOB_ID"
+PROTEINS=(1kfm_A 1nkw_M 3d3r_A 5a13_G 5fli_A 5l0o_A 5xr7_A 6o14_A 7cnw_A 8cbv_A)
+
+mkdir -p "$PROJECT_ROOT/logs/decoder" "$ROTATION_ROOT" "$SCRATCH_ROOT"
+export TMPDIR="$SCRATCH_ROOT"
+export MPLCONFIGDIR="$SCRATCH_ROOT/matplotlib"
+export TRITON_CACHE_DIR="$SCRATCH_ROOT/triton"
+export PYTHONPATH="$PROJECT_ROOT"
+mkdir -p "$MPLCONFIGDIR" "$TRITON_CACHE_DIR"
+
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+
+cd "$PROJECT_ROOT"
+for protein in "${PROTEINS[@]}"
+do
+  output_dir="$ROTATION_ROOT/$protein"
+  final_pdb="$output_dir/${protein}_reconstructed_idealized.pdb"
+  if [[ -s "$final_pdb" ]]; then
+    echo "Reusing completed postprocessed structure: $final_pdb"
+    continue
+  fi
+  mkdir -p "$output_dir"
+  srun "$PYTHON_BIN" Evaluation/structure_rec/export_reconstruction.py \
+    --decoder-checkpoint "$DECODER_CKPT" \
+    --encoder jepa-rand70-d8-independent-rotations-step100k \
+    --encoder-source target \
+    --encoder-checkpoint "$ENCODER_CKPT" \
+    --protein-id "$protein" \
+    --device cuda \
+    --output-dir "$output_dir"
+
+  "$PYTHON_BIN" Evaluation/structure_rec/project_pdb_ideal_geometry.py \
+    --input "$output_dir/${protein}_reconstructed_predicted_sequence.pdb" \
+    --output "$output_dir/${protein}_projected.pdb"
+
+  "$PYTHON_BIN" Evaluation/structure_rec/rotamer_clash_repair.py \
+    --input "$output_dir/${protein}_projected.pdb" \
+    --output "$output_dir/${protein}_rotamer_repaired.pdb" \
+    --metadata "$output_dir/${protein}_rotamer_repair.json"
+
+  "$PYTHON_BIN" Evaluation/structure_rec/restrained_geometry_repair.py \
+    --input "$output_dir/${protein}_rotamer_repaired.pdb" \
+    --output "$final_pdb" \
+    --metadata "$output_dir/${protein}_geometry_repair.json" \
+    --strength 500 --steps 2000 --backbone-steps 500 --clash-strength 300 \
+    --peptide-tolerance 0.03 --peptide-angle-tolerance 0.01
+done
+
+"$PYTHON_BIN" Evaluation/structure_rec/compare_postprocessed_reconstructions.py \
+  --nonrotation-root "$NONROTATION_ROOT" \
+  --rotation-root "$ROTATION_ROOT" \
+  --protein-ids "${PROTEINS[@]}" \
+  --output "$RESULT"

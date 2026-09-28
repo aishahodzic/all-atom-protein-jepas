@@ -26,9 +26,19 @@ encoder:
   seq_sep_dim: 127  # should be odd >= 5
   pair_repr_dim: 256
 
+  # Optional pair-to-token bridge for the pair-only-position ablation. Disabled
+  # by default to preserve all historical encoder behavior and checkpoints.
+  pair_context_to_sequence: false
+
   update_pair_repr: False  # whether to update pair representation
   update_pair_repr_every_n: 3  # Update the pair representation every n layers
   use_tri_mult: False  # whether to use triangular multiplication layers in pair update, ignored if not updating pair representation
+  # Historical pair-update behavior. The canonical evolving-pair flag resolves
+  # these controls to a gated multiplicative residue-to-pair update plus narrow
+  # incoming/outgoing triangle multiplication.
+  pair_update_mode: additive
+  pair_update_hidden_dim: 64
+  tri_mult_c: 196
 
   use_qkln: True
 
@@ -66,4 +76,3 @@ decoder:
 
   use_qkln: True
   latent_z_dim: *latent_z_dim
-

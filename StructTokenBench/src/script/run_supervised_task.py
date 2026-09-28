@@ -219,6 +219,7 @@ def _source_file_identities(repository_dir):
         "metric_aggregation": _SRC_DIR / "metric_aggregation.py",
         "run_supervised_task": Path(__file__).resolve(),
         "shared_embedding_cache": _SRC_DIR / "shared_embedding_cache.py",
+        "laproteina_readout": _SRC_DIR / "laproteina_readout.py",
     }
     return {
         name: file_identity(path)
@@ -377,6 +378,7 @@ def write_locked_result_manifest(trainer, cfg, datamodule, metrics):
             "checkpoint_type": tokenizer.checkpoint_type,
             "state_prefix": tokenizer.encoder_state_prefix,
             "latent_z_dim": tokenizer.latent_z_dim,
+            "readout": tokenizer.readout,
             "encoder_config": (
                 encoder_config
             ),
@@ -540,11 +542,52 @@ for name in all_baseline_names:
 sys.path.append(exc_dir_baseline)
 
 import data_module
+import dataset.base as dataset_base
 from shared_embedding_cache import (
     install_shared_embedding_cache,
     shared_embedding_cache_manifest_record,
 )
 from util import setup_loggings
+
+
+class _SerialPool:
+    """Drop-in subset of multiprocessing.Pool used by BaseDataset precompute."""
+
+    def __init__(self, processes=None, initializer=None, initargs=()):
+        if initializer is not None:
+            initializer(*initargs)
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        return False
+
+    def imap(self, function, iterable, chunksize=1):
+        del chunksize
+        return map(function, iterable)
+
+
+class _SerialMultiprocessingContext:
+    Pool = _SerialPool
+
+
+class _SerialMultiprocessingFacade:
+    @staticmethod
+    def get_context(method=None):
+        del method
+        return _SerialMultiprocessingContext()
+
+
+if os.environ.get("STB_SERIAL_STRUCTURE_PREPROCESS", "0") == "1":
+    # BaseDataset's structure resolver normally uses a spawn Pool independent
+    # of data.num_workers. On constrained Slurm nodes that Pool exchanges torch
+    # tensors through node-wide /dev/shm. Replace only that module-local
+    # multiprocessing handle with a serial Pool; feature construction and cache
+    # identity remain unchanged.
+    dataset_base.mp = _SerialMultiprocessingFacade()
+    print("[stb-runtime] serial structure preprocessing enabled")
+
 
 install_shared_embedding_cache()
 
@@ -634,6 +677,10 @@ def main(cfg):
             "evaluation_max_length": getattr(cfg, "tokenizer_eval_max_length", None),
             "evaluation_cache_tag": getattr(cfg, "tokenizer_cache_tag", None),
             "evaluation_protocol": getattr(cfg, "tokenizer_eval_protocol", None),
+            "readout_block": getattr(cfg, "tokenizer_readout_block", None),
+            "readout_post_layernorm": getattr(
+                cfg, "tokenizer_readout_post_layernorm", False
+            ),
         }
     else:
         pretrained_model_cfg = {}
@@ -650,6 +697,12 @@ def main(cfg):
         tokenizer_kwargs=pretrained_model_cfg
     )
     datamodule.setup()
+    if cfg.tokenizer == "WrappedLaProteinaTokenizer":
+        actual_width = datamodule.get_tokenizer().latent_z_dim
+        if int(cfg.model.d_model) != actual_width:
+            raise ValueError(
+                f"Probe d_model={cfg.model.d_model} does not match encoder readout width={actual_width}"
+            )
     
     if not cfg.data.use_continuous:
         # num_tokens is needed only when using single MLP classifier w/ LMs

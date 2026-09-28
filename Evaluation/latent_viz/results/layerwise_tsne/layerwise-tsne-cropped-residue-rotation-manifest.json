@@ -1,0 +1,57 @@
+{
+  "artifact": "layerwise_768d_residue_tsne",
+  "blocks": [
+    4,
+    6,
+    8,
+    12
+  ],
+  "checkpoint": "/slurm-storage/aishod/projects/la-proteina/store/canonical_lejepa_crop_fixed96_residue_perview_sigreg_b96_independent_locals_k4_rotations_lr4e4_cosine_30k/evaluation/canonical-lejepa-residue-perview-rot-middle-lr-step10000-raw-staged.ckpt",
+  "checkpoint_sha256": "a2937cdadc379deaec2be2fafe463440a7cc606cf3e1080580a2cddad5268733",
+  "context": "full unmasked protein; no evaluation rotation",
+  "coordinates": [
+    {
+      "block": 4,
+      "input_sha256": "94d884d553d1708724a289c6fe91b4ffb0b6bf65068abf72238bb922de674259",
+      "path": "/slurm-storage/aishod/projects/la-proteina/Evaluation/latent_viz/results/layerwise_tsne/layerwise-tsne-cropped-residue-rotation-block4-n15000-cosine-tsne.npz"
+    },
+    {
+      "block": 6,
+      "input_sha256": "969bd3eb888513f2bf576dc137f0631d464412a5868e00033896c1365bad67f7",
+      "path": "/slurm-storage/aishod/projects/la-proteina/Evaluation/latent_viz/results/layerwise_tsne/layerwise-tsne-cropped-residue-rotation-block6-n15000-cosine-tsne.npz"
+    },
+    {
+      "block": 8,
+      "input_sha256": "6973cd49b575ce678784b3d38030efa5fa0dc2fd53521a9c3066954af6ef964a",
+      "path": "/slurm-storage/aishod/projects/la-proteina/Evaluation/latent_viz/results/layerwise_tsne/layerwise-tsne-cropped-residue-rotation-block8-n15000-cosine-tsne.npz"
+    },
+    {
+      "block": 12,
+      "input_sha256": "c1e3abb6525ca37b74b23248afae7c3997d1eac89f18ff5b614a48aa98275d9d",
+      "path": "/slurm-storage/aishod/projects/la-proteina/Evaluation/latent_viz/results/layerwise_tsne/layerwise-tsne-cropped-residue-rotation-block12-n15000-cosine-tsne.npz"
+    }
+  ],
+  "encoder_source": "online",
+  "figure": "/slurm-storage/aishod/projects/la-proteina/iclr2027/figures/all-tsne-per-block-cropped-per-residue-rotation.png",
+  "model": "Cropped LeJEPA, per-residue + rotation",
+  "representation": "post-transformer-block, pre-final-LayerNorm, 768D",
+  "sample_cache": "/slurm-storage/aishod/projects/la-proteina/Evaluation/latent_viz/results/layerwise_tsne/layerwise-tsne-cropped-residue-rotation-sampled-768d.pt",
+  "schema_version": 1,
+  "selection": {
+    "labels_path": "/slurm-storage/aishod/projects/la-proteina/Evaluation/linear_probing/latents/labels.pt",
+    "pool_residues": 748402,
+    "sampled_proteins": 4738,
+    "sampled_residues": 15000,
+    "seed": 42,
+    "sha256": "8b97dc03ef9d2cb2caa10d956a79e7b24b79b40dc821166975edf9847dbc006f",
+    "validity": "AA-valid AND secondary-structure-valid"
+  },
+  "tsne": {
+    "init": "random",
+    "max_iter": 1000,
+    "method": "barnes_hut",
+    "metric": "cosine",
+    "perplexity": 30.0,
+    "seed": 42
+  }
+}

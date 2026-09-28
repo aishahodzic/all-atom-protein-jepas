@@ -1,0 +1,55 @@
+{
+  "encoder_source": "raw",
+  "source_step": 10000,
+  "config_differences": [
+    {
+      "field": "run_name_",
+      "values": [
+        "canonical_lejepa_crop_control_uncropped_local80_min96_b16_nw0_10k",
+        "canonical_lejepa_crop_control_fixed96_local80_min96_b16_nw0_10k"
+      ]
+    },
+    {
+      "field": "views.cropping",
+      "values": [
+        false,
+        true
+      ]
+    }
+  ],
+  "rows": [
+    {
+      "checkpoint": "canonical-lejepa-crop-control-uncropped-raw-step10k",
+      "label": "Uncropped LeJEPA",
+      "cropping": false,
+      "proteins": 5224,
+      "sampled_residues": 15000,
+      "log_chain_length_knn10_spearman": 0.88446986518272,
+      "log_chain_length_n": 15000,
+      "effective_rank": 7.10225007846002,
+      "pca_pc1_fraction": 0.2695281746719439,
+      "pca_pc1_pc2_fraction": 0.41385766944763713,
+      "pca_first8_fraction": 1.0,
+      "latent_dimension_std_min": 0.6132251198730692,
+      "latent_dimension_std_max": 0.9470893314539317,
+      "latent_isotropy_ratio": 1.5444398814744718
+    },
+    {
+      "checkpoint": "canonical-lejepa-crop-control-fixed96-raw-step10k",
+      "label": "Cropped LeJEPA",
+      "cropping": true,
+      "proteins": 5224,
+      "sampled_residues": 15000,
+      "log_chain_length_knn10_spearman": 0.19324693837691717,
+      "log_chain_length_n": 15000,
+      "effective_rank": 1.6091333270063266,
+      "pca_pc1_fraction": 0.8230933461589443,
+      "pca_pc1_pc2_fraction": 0.9986606712795074,
+      "pca_first8_fraction": 1.0,
+      "latent_dimension_std_min": 0.021775333126470994,
+      "latent_dimension_std_max": 0.39531358392530186,
+      "latent_isotropy_ratio": 18.154192251816454
+    }
+  ],
+  "figure": "/mnt/data/slurm-storage/aishod/projects/la-proteina/Evaluation/latent_viz/figures/canonical_lejepa/tsne_canonical_matched_crop_control_raw10k_chain-length.png"
+}

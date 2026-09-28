@@ -99,6 +99,35 @@ class SharedEmbeddingCacheTest(unittest.TestCase):
         self.assertTrue(np.array_equal(first[1], second[1]))
         self.assertEqual(first[2], second[2])
 
+    def test_equal_width_blocks_have_distinct_cache_identities(self):
+        first = DummyTokenizer()
+        first.latent_z_dim = 768
+        first.readout_block = 1
+        first.readout = {"block_number": 1, "module_index": 0, "dimension": 768}
+        second = DummyTokenizer()
+        second.latent_z_dim = 768
+        second.readout_block = 6
+        second.readout = {"block_number": 6, "module_index": 5, "dimension": 768}
+        first_id = shared._tokenizer_identity(first, use_sequence=False)
+        second_id = shared._tokenizer_identity(second, use_sequence=False)
+        self.assertNotEqual(first_id["identity_sha256"], second_id["identity_sha256"])
+        self.assertNotEqual(first_id["identity_sha256"], shared._tokenizer_identity(DummyTokenizer(), use_sequence=False)["identity_sha256"])
+
+    def test_post_layernorm_has_distinct_cache_identity(self):
+        final = DummyTokenizer()
+        final.readout = {"kind": "latent_mean", "dimension": 8}
+        post_ln = DummyTokenizer()
+        post_ln.latent_z_dim = 768
+        post_ln.readout = {
+            "kind": "post_latent_layernorm",
+            "dimension": 768,
+            "extra_projection": "final_layernorm_only",
+        }
+        self.assertNotEqual(
+            shared._tokenizer_identity(final, use_sequence=False)["identity_sha256"],
+            shared._tokenizer_identity(post_ln, use_sequence=False)["identity_sha256"],
+        )
+
     def test_structure_content_and_checkpoint_invalidate_independently(self):
         calls = []
 

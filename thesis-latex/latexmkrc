@@ -1,0 +1,14 @@
+# Refresh the title-page word count before latexmk evaluates dependencies.
+use File::Basename qw(dirname);
+use File::Spec;
+
+my @wordcount_candidates = (
+  File::Spec->catfile(dirname(__FILE__), 'update-wordcount.sh'),
+  File::Spec->catfile('thesis-latex', 'update-wordcount.sh'),
+);
+my ($wordcount_script) = grep { -f $_ } @wordcount_candidates;
+if (defined $wordcount_script) {
+  my $wordcount_status = system('bash', $wordcount_script);
+  warn "Word-count generation skipped with status $wordcount_status; using the existing thesis-wordcount.tex\n"
+    if $wordcount_status != 0;
+}

@@ -1,0 +1,16 @@
+#!/bin/bash
+set -euo pipefail
+
+REAL_PYTHON=/slurm-storage/aishod/.conda/envs/pstbench/bin/python
+EXPECTED_ENTRYPOINT=./src/script/run_supervised_task.py
+
+if [[ "${1:-}" == "$EXPECTED_ENTRYPOINT" ]]; then
+    shift
+    : "${STB_SUPERVISED_BOTTLENECK_DIM:?Set STB_SUPERVISED_BOTTLENECK_DIM}"
+    exec "$REAL_PYTHON" ./src/script/run_supervised_bottleneck_task.py \
+        "$@" \
+        "++model.supervised_bottleneck_dim=$STB_SUPERVISED_BOTTLENECK_DIM"
+fi
+
+exec "$REAL_PYTHON" "$@"
+

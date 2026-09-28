@@ -100,6 +100,7 @@ except ModuleNotFoundError:
 
 
 from openfold.np.residue_constants import resname_to_idx
+from laproteina_readout import encode_readout, readout_metadata, validate_readout_block
 from proteinfoundation.utils.dense_padding_data_loader import dense_padded_from_data_list
 from graphein.ml.datasets.pdb_data import PDBManager
 # LaProteina's own training-time data pipeline, called directly (see _parse_graph)
@@ -607,12 +608,18 @@ class WrappedLaProteinaTokenizer():
                  encoder_source: Literal["online", "target"] = "online",
                  evaluation_max_length: int = None,
                  evaluation_cache_tag: str = None,
-                 evaluation_protocol: str = None):
+                 evaluation_protocol: str = None,
+                 readout_block: int = None,
+                 readout_post_layernorm: bool = False):
         self.device = device
         self.pad_token_id = 0 # for pipeline compatibility
         self.pretrained_ckpt_path = pretrained_ckpt_path
         self.checkpoint_type = checkpoint_type
         self.encoder_cfg_path = encoder_cfg_path
+        self.readout_block = validate_readout_block(readout_block)
+        self.readout_post_layernorm = bool(readout_post_layernorm)
+        if self.readout_block is not None and self.readout_post_layernorm:
+            raise ValueError("readout_block and readout_post_layernorm are mutually exclusive")
         self.evaluation_policy = resolve_laproteina_evaluation_policy(
             evaluation_protocol,
             encoder_source=encoder_source,
@@ -697,6 +704,12 @@ class WrappedLaProteinaTokenizer():
         self.latent_z_dim = int(
             self.encoder.latent_decoder_mean_n_log_scale[1].weight.shape[0] // 2
         )
+        self.readout = readout_metadata(
+            self.encoder, self.readout_block, self.readout_post_layernorm
+        )
+        self.latent_z_dim = self.readout["dimension"]
+        if self.readout["kind"] != "latent_mean":
+            print(f"[tokenizer] frozen encoder readout: {self.readout}")
 
         # Read the checkpoint's selector for the historical/default integration.
         # The locked publication protocol records these values but deliberately
@@ -1078,7 +1091,12 @@ class WrappedLaProteinaTokenizer():
         batch = batch.to(self.device)
 
         self.encoder.eval()
-        z_latent = self.encoder(batch)["mean"] # deterministic latent, comparable across AE and JEPA checkpoints
+        z_latent = encode_readout(
+            self.encoder,
+            batch,
+            self.readout_block,
+            self.readout_post_layernorm,
+        )
 
         residue_index = graph.residue_pdb_idx
         seqs = graph.residue_type

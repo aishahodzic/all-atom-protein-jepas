@@ -1,0 +1,90 @@
+#!/bin/bash
+# Missing RAW canonical LeJEPA V1 Homo evaluations for blocks 1, 6, and 12.
+# The earlier block-1 attempt exceeded its 64 GiB host-memory cgroup. Preserve
+# the locked protocol's probe micro-batch of 64, reduce loader workers 8 -> 2,
+# and request 128 GiB host RAM. The encoder/checkpoint, optimizer, and probe
+# definition remain unchanged.
+#SBATCH --job-name=stb_canon_raw_homo
+#SBATCH --partition=normal
+#SBATCH --nodelist=noether
+#SBATCH --qos=medium
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=8
+#SBATCH --mem=128G
+#SBATCH --time=08:00:00
+#SBATCH --array=1,6,12
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/stb/publication_upstream/%x-%A_%a.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+STB_ROOT="$PROJECT_ROOT/StructTokenBench"
+TRAIN_PYTHON_BIN=/slurm-storage/aishod/envs/la-proteina/bin/python
+STB_PYTHON_BIN=/slurm-storage/aishod/.conda/envs/pstbench/bin/python
+CHECKPOINT="$PROJECT_ROOT/store/canonical_lejepa_v1_100k/evaluation/canonical-lejepa-v1-step100000-raw-staged.ckpt"
+ENCODER_CONFIG="$STB_ROOT/100k-checkpoints/shared/exp_config_jepa_nn130m.json"
+EXPECTED_CHECKPOINT_SHA256=28f93a4224323b7366243265abd7721f2dffaaf6f8c9fd4aa4767788fd5d2bac
+EXPECTED_SOURCE_SHA256=4f09dff610adaa75c8ac51b4cf01acb001c236c72dd91ac31568ffa191484527
+EXPECTED_ENCODER_CONFIG_SHA256=98e0350d418e7d840fa245ddfd7150064e87a9ac74c72c9150a946f0f66ccd9d
+READOUT_BLOCK="$SLURM_ARRAY_TASK_ID"
+
+case "$READOUT_BLOCK" in
+    1|6|12) ;;
+    *) echo "Unsupported block: $READOUT_BLOCK" >&2; exit 1 ;;
+esac
+
+cd "$PROJECT_ROOT"
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+
+echo "$EXPECTED_CHECKPOINT_SHA256  $CHECKPOINT" | sha256sum -c -
+echo "$EXPECTED_ENCODER_CONFIG_SHA256  $ENCODER_CONFIG" | sha256sum -c -
+
+"$TRAIN_PYTHON_BIN" -c '
+import sys
+import torch
+checkpoint_path, expected_source_sha = sys.argv[1:]
+saved = torch.load(checkpoint_path, map_location="cpu", weights_only=False, mmap=True)
+provenance = saved.get("canonical_lejepa_evaluation", {})
+assert provenance.get("encoder_source") == "raw", provenance
+assert provenance.get("source_global_step") == 100_000, provenance
+assert provenance.get("source_checkpoint_sha256") == expected_source_sha, provenance
+assert provenance.get("latent_dim") == 8, provenance
+assert provenance.get("projector") is None, provenance
+' "$CHECKPOINT" "$EXPECTED_SOURCE_SHA256"
+
+cd "$STB_ROOT"
+export STB_SKIP_BOOTSTRAP=1
+export STB_SKIP_DATA_SETUP=1
+export STB_SMOKE=0
+export STB_SHARED_EMBEDDING_CACHE=1
+export STB_SHARED_EMBEDDING_CACHE_ROOT=/mnt/hopper-raid/aishod/data/struct_token_bench_release_data/shared_embedding_cache
+export DS_IGNORE_CUDA_DETECTION=1
+export PYTHON_BIN="$STB_PYTHON_BIN"
+export NUM_WORKERS=2
+export DATA_PATH=/mnt/hopper-raid/aishod/data
+export PDB_DATA_ROOT=/mnt/hopper-raid/aishod/data/struct_token_bench_pdb_data
+export STB_RELEASE_DATA_ROOT=/mnt/hopper-raid/aishod/data/struct_token_bench_release_data
+export CANONICAL_LEJEPA_V1_RAW_STEP100K_CKPT="$CHECKPOINT"
+export TOKENIZER_READOUT_BLOCK="$READOUT_BLOCK"
+export ENCODER_SOURCE=online
+export D_MODEL_OVERRIDE=768
+export WANDB_MODE=disabled
+export EVALUATION_RUN_ID="slurm-${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}-canonical-lejepa-v1-raw-step100k-block${READOUT_BLOCK}-homo"
+export STB_LOG_ROOT="$STB_ROOT/struct_token_bench_logs/upstream-l600-v1-full/runs/$EVALUATION_RUN_ID"
+export SUMMARY_FILE="$STB_LOG_ROOT/summary_results.csv"
+export TMPDIR="$HOME/tmp/stb-canon-raw-homo/${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}"
+export MPLCONFIGDIR="$TMPDIR/matplotlib"
+export TRITON_CACHE_DIR="$TMPDIR/triton"
+export TORCH_EXTENSIONS_DIR="$TMPDIR/torch-extensions"
+[[ -d "$STB_SHARED_EMBEDDING_CACHE_ROOT/v1" && -r "$STB_SHARED_EMBEDDING_CACHE_ROOT/v1" ]]
+mkdir -p "$STB_LOG_ROOT" "$MPLCONFIGDIR" "$TRITON_CACHE_DIR" "$TORCH_EXTENSIONS_DIR"
+
+bash src/script/run_eval.sh \
+    --protocol=upstream-l600-v1 \
+    --checkpoint=100k \
+    --experiment=canonical-lejepa-v1-raw-step100k \
+    --tasks=Homo

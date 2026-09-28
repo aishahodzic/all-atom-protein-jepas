@@ -1,0 +1,252 @@
+{
+  "protocol": "Direct C-alpha-anchored RMSD after identical geometry postprocessing, using only Atom37 names present in native and both predicted-sequence PDBs.",
+  "aggregate": {
+    "nonrotation": {
+      "all_rmsd_angstrom": 0.9654491655016014,
+      "backbone_rmsd_angstrom": 0.41692916535631264,
+      "sidechain_rmsd_angstrom": 1.5839787015162619,
+      "all_atoms": 8084,
+      "backbone_atoms": 5459,
+      "sidechain_atoms": 2625
+    },
+    "rotation": {
+      "all_rmsd_angstrom": 1.9129743495273348,
+      "backbone_rmsd_angstrom": 1.2106508653862245,
+      "sidechain_rmsd_angstrom": 2.8673558283016147,
+      "all_atoms": 8084,
+      "backbone_atoms": 5459,
+      "sidechain_atoms": 2625
+    }
+  },
+  "aggregate_all_atom_proteins": {
+    "nonrotation": {
+      "all_rmsd_angstrom": 0.972146421517321,
+      "backbone_rmsd_angstrom": 0.4212337148875498,
+      "sidechain_rmsd_angstrom": 1.5839787015162619,
+      "all_atoms": 7973,
+      "backbone_atoms": 5348,
+      "sidechain_atoms": 2625
+    },
+    "rotation": {
+      "all_rmsd_angstrom": 1.926244524103158,
+      "backbone_rmsd_angstrom": 1.223150126767079,
+      "sidechain_rmsd_angstrom": 2.8673558283016147,
+      "all_atoms": 7973,
+      "backbone_atoms": 5348,
+      "sidechain_atoms": 2625
+    }
+  },
+  "all_atom_proteins": [
+    "1kfm_A",
+    "3d3r_A",
+    "5a13_G",
+    "5fli_A",
+    "5l0o_A",
+    "5xr7_A",
+    "6o14_A",
+    "7cnw_A",
+    "8cbv_A"
+  ],
+  "proteins": [
+    {
+      "protein_id": "1kfm_A",
+      "shared_atoms": 307,
+      "nonrotation": {
+        "all_common_atoms": 307,
+        "all_common_rmsd_angstrom": 0.8664472838929511,
+        "backbone_atoms": 200,
+        "backbone_rmsd_angstrom": 0.19258997897086974,
+        "sidechain_atoms": 107,
+        "sidechain_rmsd_angstrom": 1.443827354605301
+      },
+      "rotation": {
+        "all_common_atoms": 307,
+        "all_common_rmsd_angstrom": 1.4853773152736787,
+        "backbone_atoms": 200,
+        "backbone_rmsd_angstrom": 0.8708832671489333,
+        "sidechain_atoms": 107,
+        "sidechain_rmsd_angstrom": 2.2164647653582867
+      }
+    },
+    {
+      "protein_id": "1nkw_M",
+      "shared_atoms": 111,
+      "nonrotation": {
+        "all_common_atoms": 111,
+        "all_common_rmsd_angstrom": 0.0,
+        "backbone_atoms": 111,
+        "backbone_rmsd_angstrom": 0.0,
+        "sidechain_atoms": 0,
+        "sidechain_rmsd_angstrom": null
+      },
+      "rotation": {
+        "all_common_atoms": 111,
+        "all_common_rmsd_angstrom": 0.0,
+        "backbone_atoms": 111,
+        "backbone_rmsd_angstrom": 0.0,
+        "sidechain_atoms": 0,
+        "sidechain_rmsd_angstrom": null
+      }
+    },
+    {
+      "protein_id": "3d3r_A",
+      "shared_atoms": 477,
+      "nonrotation": {
+        "all_common_atoms": 477,
+        "all_common_rmsd_angstrom": 0.8192963194836754,
+        "backbone_atoms": 320,
+        "backbone_rmsd_angstrom": 0.4577120000611738,
+        "sidechain_atoms": 157,
+        "sidechain_rmsd_angstrom": 1.269797298132245
+      },
+      "rotation": {
+        "all_common_atoms": 477,
+        "all_common_rmsd_angstrom": 1.9997442598546953,
+        "backbone_atoms": 320,
+        "backbone_rmsd_angstrom": 1.4605511951828323,
+        "sidechain_atoms": 157,
+        "sidechain_rmsd_angstrom": 2.7931729155757132
+      }
+    },
+    {
+      "protein_id": "5a13_G",
+      "shared_atoms": 1505,
+      "nonrotation": {
+        "all_common_atoms": 1505,
+        "all_common_rmsd_angstrom": 0.9662824910406347,
+        "backbone_atoms": 980,
+        "backbone_rmsd_angstrom": 0.34049987113785807,
+        "sidechain_atoms": 525,
+        "sidechain_rmsd_angstrom": 1.568499391441508
+      },
+      "rotation": {
+        "all_common_atoms": 1505,
+        "all_common_rmsd_angstrom": 1.9419513024608954,
+        "backbone_atoms": 980,
+        "backbone_rmsd_angstrom": 1.1675890854444382,
+        "sidechain_atoms": 525,
+        "sidechain_rmsd_angstrom": 2.8750550070100114
+      }
+    },
+    {
+      "protein_id": "5fli_A",
+      "shared_atoms": 1075,
+      "nonrotation": {
+        "all_common_atoms": 1075,
+        "all_common_rmsd_angstrom": 0.9436257067389615,
+        "backbone_atoms": 732,
+        "backbone_rmsd_angstrom": 0.42815350140460995,
+        "sidechain_atoms": 343,
+        "sidechain_rmsd_angstrom": 1.5490284710364859
+      },
+      "rotation": {
+        "all_common_atoms": 1075,
+        "all_common_rmsd_angstrom": 1.9664256971280611,
+        "backbone_atoms": 732,
+        "backbone_rmsd_angstrom": 1.2925406674643474,
+        "sidechain_atoms": 343,
+        "sidechain_rmsd_angstrom": 2.924670446162933
+      }
+    },
+    {
+      "protein_id": "5l0o_A",
+      "shared_atoms": 983,
+      "nonrotation": {
+        "all_common_atoms": 983,
+        "all_common_rmsd_angstrom": 0.9335971551029258,
+        "backbone_atoms": 656,
+        "backbone_rmsd_angstrom": 0.3512501388768062,
+        "sidechain_atoms": 327,
+        "sidechain_rmsd_angstrom": 1.5403356568552895
+      },
+      "rotation": {
+        "all_common_atoms": 983,
+        "all_common_rmsd_angstrom": 1.838191805535246,
+        "backbone_atoms": 656,
+        "backbone_rmsd_angstrom": 1.1531476653532957,
+        "sidechain_atoms": 327,
+        "sidechain_rmsd_angstrom": 2.7367648047156474
+      }
+    },
+    {
+      "protein_id": "5xr7_A",
+      "shared_atoms": 1035,
+      "nonrotation": {
+        "all_common_atoms": 1035,
+        "all_common_rmsd_angstrom": 1.0815179304183657,
+        "backbone_atoms": 668,
+        "backbone_rmsd_angstrom": 0.41460254937963875,
+        "sidechain_atoms": 367,
+        "sidechain_rmsd_angstrom": 1.72795087965683
+      },
+      "rotation": {
+        "all_common_atoms": 1035,
+        "all_common_rmsd_angstrom": 2.0658414023145406,
+        "backbone_atoms": 668,
+        "backbone_rmsd_angstrom": 1.161251449146012,
+        "sidechain_atoms": 367,
+        "sidechain_rmsd_angstrom": 3.0953375027823364
+      }
+    },
+    {
+      "protein_id": "6o14_A",
+      "shared_atoms": 856,
+      "nonrotation": {
+        "all_common_atoms": 856,
+        "all_common_rmsd_angstrom": 1.0299259063949948,
+        "backbone_atoms": 580,
+        "backbone_rmsd_angstrom": 0.5134904810587351,
+        "sidechain_atoms": 276,
+        "sidechain_rmsd_angstrom": 1.6540132528428273
+      },
+      "rotation": {
+        "all_common_atoms": 856,
+        "all_common_rmsd_angstrom": 2.012621821645243,
+        "backbone_atoms": 580,
+        "backbone_rmsd_angstrom": 1.2344393771514537,
+        "sidechain_atoms": 276,
+        "sidechain_rmsd_angstrom": 3.0595099736698863
+      }
+    },
+    {
+      "protein_id": "7cnw_A",
+      "shared_atoms": 1460,
+      "nonrotation": {
+        "all_common_atoms": 1460,
+        "all_common_rmsd_angstrom": 1.0063056556547518,
+        "backbone_atoms": 1012,
+        "backbone_rmsd_angstrom": 0.4713261733238236,
+        "sidechain_atoms": 448,
+        "sidechain_rmsd_angstrom": 1.6728240290427612
+      },
+      "rotation": {
+        "all_common_atoms": 1460,
+        "all_common_rmsd_angstrom": 1.8817259515799092,
+        "backbone_atoms": 1012,
+        "backbone_rmsd_angstrom": 1.2613508189000873,
+        "sidechain_atoms": 448,
+        "sidechain_rmsd_angstrom": 2.818784713913579
+      }
+    },
+    {
+      "protein_id": "8cbv_A",
+      "shared_atoms": 275,
+      "nonrotation": {
+        "all_common_atoms": 275,
+        "all_common_rmsd_angstrom": 0.7817555372365456,
+        "backbone_atoms": 200,
+        "backbone_rmsd_angstrom": 0.5155858706365023,
+        "sidechain_atoms": 75,
+        "sidechain_rmsd_angstrom": 1.2377302614059333
+      },
+      "rotation": {
+        "all_common_atoms": 275,
+        "all_common_rmsd_angstrom": 1.6951352372973882,
+        "backbone_atoms": 200,
+        "backbone_rmsd_angstrom": 1.305454687072669,
+        "sidechain_atoms": 75,
+        "sidechain_rmsd_angstrom": 2.4477624258357538
+      }
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "checkpoint": "canonical-lejepa-residue-k4-pair-only-raw-step1500",
+  "same_coordinates_as_chain_length_figure": true,
+  "sampled_residues": 15000,
+  "sampled_source_proteins": 4738,
+  "pca_explained_variance_ratio": [
+    0.3525320821534896,
+    0.17270649579120914,
+    0.15448059865679778,
+    0.10540305266144688,
+    0.06509561405668263,
+    0.05922699704461452,
+    0.052629850047474086,
+    0.037925309588285425
+  ],
+  "effective_rank_float64_covariance": 6.176958936862813,
+  "latent_dimension_std_min": 0.00023791696963147634,
+  "latent_dimension_std_max": 0.00035814267119131703,
+  "latent_mean_norm": 4.357618477554848,
+  "latent_rms_spread": 0.0008766901224236196,
+  "latent_relative_rms_spread": 0.00020118560790469869,
+  "tsne_neighbour_same_protein_fraction_at_10": 0.014026666666666666,
+  "tsne_neighbour_exact_aa_purity_at_10": 0.06516666666666666,
+  "tsne_neighbour_ss_purity_at_10": 0.39652,
+  "tsne_neighbour_raw_index_spearman": 0.047483671149922066,
+  "tsne_neighbour_normalized_position_spearman": 0.014867686961685798,
+  "tsne_neighbour_log_chain_length_spearman": 0.14617950663442936,
+  "grid_figure": "/mnt/data/slurm-storage/aishod/projects/la-proteina/Evaluation/latent_viz/figures/canonical_lejepa/tsne_canonical_residue_k4_pair_only_raw_1500_recolored-grid.png",
+  "source_protein_figure": "/mnt/data/slurm-storage/aishod/projects/la-proteina/Evaluation/latent_viz/figures/canonical_lejepa/tsne_canonical_residue_k4_pair_only_raw_1500_source-proteins.png"
+}

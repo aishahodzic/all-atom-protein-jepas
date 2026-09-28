@@ -1,0 +1,25 @@
+{
+  "artifact": "matched_block12_organization_audit",
+  "artifacts": [
+    {
+      "checkpoint_sha256": "28f93a4224323b7366243265abd7721f2dffaaf6f8c9fd4aa4767788fd5d2bac",
+      "coordinate_cache": "/slurm-storage/aishod/projects/la-proteina/Evaluation/latent_viz/results/layerwise_tsne/layerwise-tsne-uncropped-le-jepa-block12-n15000-cosine-tsne.npz",
+      "model": "uncropped-le-jepa",
+      "sample_cache": "/slurm-storage/aishod/projects/la-proteina/Evaluation/latent_viz/results/layerwise_tsne/layerwise-tsne-uncropped-le-jepa-sampled-768d.pt"
+    },
+    {
+      "checkpoint_sha256": "63183c74a02386fdc9aaca3ff619e9f8e83705a79340610b1f4a064ba547098c",
+      "coordinate_cache": "/slurm-storage/aishod/projects/la-proteina/Evaluation/latent_viz/results/layerwise_tsne/layerwise-tsne-jepa-rand70-block12-n15000-cosine-tsne.npz",
+      "model": "jepa-rand70",
+      "sample_cache": "/slurm-storage/aishod/projects/la-proteina/Evaluation/latent_viz/results/layerwise_tsne/layerwise-tsne-jepa-rand70-sampled-768d.pt"
+    }
+  ],
+  "figure": "/slurm-storage/aishod/projects/la-proteina/iclr2027/figures/block12-organization-uncropped-lejepa-vs-jepa-rand70.png",
+  "k": 10,
+  "latent_neighbours": "exact cosine kNN; same-protein candidates excluded",
+  "result": "/slurm-storage/aishod/projects/la-proteina/Evaluation/latent_viz/results/layerwise_tsne/block12-organization-metrics.csv",
+  "sample_sha256": "8b97dc03ef9d2cb2caa10d956a79e7b24b79b40dc821166975edf9847dbc006f",
+  "sampled_residues": 15000,
+  "schema_version": 1,
+  "tsne_neighbours": "exact Euclidean kNN in plotted coordinates; same-protein candidates excluded"
+}

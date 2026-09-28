@@ -1,0 +1,73 @@
+#!/bin/bash
+# Continue the uncropped canonical LeJEPA + SO(3), step-100k EMA decoder
+# from the calibration run's restored best step-6k weights to decoder step
+# 100k. Decoder checkpoints contain weights only, so AdamW restarts here.
+# The original calibration outputs are preserved, and patience-based early
+# stopping is disabled for this fixed-length continuation.
+#SBATCH --job-name=dec_canon_so3ema_100k
+#SBATCH --partition=normal
+#SBATCH --nodelist=noether
+#SBATCH --qos=medium
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=100G
+#SBATCH --time=18:00:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/decoder/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+PYTHON_BIN=/data-gauss/$USER/envs/laproteina_env/bin/python3
+ENCODER_ID=canonical-lejepa-v1-rotations-ema-step100k
+SOURCE_RUN_ID=${ENCODER_ID}-calib
+RUN_ID=${ENCODER_ID}-6k-to-100k
+RESUME_STEP=6000
+RESUME_CKPT="$PROJECT_ROOT/Evaluation/structure_rec/checkpoints/${SOURCE_RUN_ID}_final.pt"
+CURVE_PATH="$PROJECT_ROOT/Evaluation/structure_rec/curves/${RUN_ID}_curve.csv"
+FINAL_PATH="$PROJECT_ROOT/Evaluation/structure_rec/checkpoints/${RUN_ID}_final.pt"
+STAGED_CHECKPOINT="$PROJECT_ROOT/store/canonical_lejepa_rotations_100k/evaluation/canonical-lejepa-v1-rotations-step100000-ema-staged.ckpt"
+ENCODER_CONFIG="$PROJECT_ROOT/StructTokenBench/100k-checkpoints/shared/exp_config_jepa_nn130m.json"
+SCRATCH_ROOT="$HOME/tmp/decoder-canon-so3ema-100k-$SLURM_JOB_ID"
+
+if [[ ! -s "$RESUME_CKPT" ]]; then
+    echo "ERROR: missing restored best-step-6k decoder checkpoint: $RESUME_CKPT" >&2
+    exit 1
+fi
+
+# final.pt was written after restoring the calibration run's best step-6k
+# decoder weights. Pin it and the exact frozen EMA encoder used in that run.
+echo "93f48a2479ea1527cff1edf6be59443a681d4d6396f3c3b3546e2e213726f36a  $RESUME_CKPT" | sha256sum -c -
+echo "104dcefd97d4d782f9c56ec9f404f6b8d64961766fd3c9eb3f47923b1409897d  $STAGED_CHECKPOINT" | sha256sum -c -
+echo "98e0350d418e7d840fa245ddfd7150064e87a9ac74c72c9150a946f0f66ccd9d  $ENCODER_CONFIG" | sha256sum -c -
+
+if [[ -e "$CURVE_PATH" || -e "$FINAL_PATH" ]]; then
+    echo "ERROR: continuation outputs already exist for $RUN_ID; refusing to overwrite them." >&2
+    exit 1
+fi
+
+mkdir -p "$PROJECT_ROOT/logs/decoder" "$SCRATCH_ROOT"
+export TMPDIR="$SCRATCH_ROOT"
+export MPLCONFIGDIR="$SCRATCH_ROOT/matplotlib"
+export TRITON_CACHE_DIR="$SCRATCH_ROOT/triton"
+export PYTHONPATH="$PROJECT_ROOT"
+export PYTHONUNBUFFERED=1
+mkdir -p "$MPLCONFIGDIR" "$TRITON_CACHE_DIR"
+
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+
+cd "$PROJECT_ROOT/Evaluation/structure_rec"
+srun "$PYTHON_BIN" -B train_decoder.py \
+  --encoder "$ENCODER_ID" \
+  --encoder-source online \
+  --run-id "$RUN_ID" \
+  --resume-from "$RESUME_CKPT" \
+  --resume-step "$RESUME_STEP" \
+  --max-steps 100000 \
+  --eval-every 2000 \
+  --batch-size 8 \
+  --lr 0.0001 \
+  --seed 42

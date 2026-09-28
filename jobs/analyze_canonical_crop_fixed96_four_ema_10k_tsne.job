@@ -1,0 +1,29 @@
+#!/bin/bash
+# Matched EMA-10k t-SNE comparison for residue/per-view B96 and protein
+# per-view B96, joint-view B96, and joint-view B32 fixed-96/48 runs.
+#SBATCH --job-name=tsne_crop96_four_10k
+#SBATCH --partition=normal
+#SBATCH --qos=short
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=64G
+#SBATCH --time=02:00:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/canonical_lejepa/%x-%j.out
+
+set -euo pipefail
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+PYTHON_BIN=/slurm-storage/aishod/envs/la-proteina/bin/python
+cd "$PROJECT_ROOT"
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+export PYTHONPATH="$PROJECT_ROOT${PYTHONPATH:+:$PYTHONPATH}"
+export PATH="/slurm-storage/aishod/envs/la-proteina/bin:$PATH"
+export MPLCONFIGDIR="/tmp/canonical-crop96-four-tsne-${SLURM_JOB_ID}"
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+mkdir -p "$MPLCONFIGDIR" "$PROJECT_ROOT/logs/canonical_lejepa"
+
+srun --ntasks=1 "$PYTHON_BIN" \
+    Evaluation/latent_viz/analyze_canonical_crop_fixed96_four_ema_10k.py

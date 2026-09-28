@@ -1,0 +1,76 @@
+#!/bin/bash
+# Fresh decoder fit: uncropped LeJEPA + SO(3), frozen step-100k EMA encoder.
+# Uses the exact EMA export evaluated in STB. Reference C-alpha coordinates
+# anchor the decoder outputs, as in the existing reconstruction protocol.
+# The 20k decoder-step cap is distinct from the encoder's 100k checkpoint.
+#SBATCH --job-name=dec_canon_rot_ema100
+#SBATCH --partition=normal
+#SBATCH --nodelist=noether
+#SBATCH --qos=medium
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=100G
+#SBATCH --time=06:00:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/decoder/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+PYTHON_BIN=/data-gauss/$USER/envs/laproteina_env/bin/python3
+RUN_ID=canonical-lejepa-v1-rotations-ema-step100k-calib
+STAGED_CHECKPOINT="$PROJECT_ROOT/store/canonical_lejepa_rotations_100k/evaluation/canonical-lejepa-v1-rotations-step100000-ema-staged.ckpt"
+ENCODER_CONFIG="$PROJECT_ROOT/StructTokenBench/100k-checkpoints/shared/exp_config_jepa_nn130m.json"
+SCRATCH_ROOT="$HOME/tmp/dce-$SLURM_JOB_ID"
+
+mkdir -p "$PROJECT_ROOT/logs/decoder" "$SCRATCH_ROOT"
+export TMPDIR="$SCRATCH_ROOT"
+export MPLCONFIGDIR="$SCRATCH_ROOT/matplotlib"
+export TRITON_CACHE_DIR="$SCRATCH_ROOT/triton"
+export PYTHONPATH="$PROJECT_ROOT"
+export PYTHONUNBUFFERED=1
+mkdir -p "$MPLCONFIGDIR" "$TRITON_CACHE_DIR"
+
+# Do not overwrite an existing fit if this job is accidentally resubmitted.
+if [[ -e "$PROJECT_ROOT/Evaluation/structure_rec/curves/${RUN_ID}_curve.csv" ]]; then
+    echo "ERROR: curve already exists for $RUN_ID; choose a new run ID." >&2
+    exit 1
+fi
+
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+
+# Pin the staged checkpoint and config to the published upstream-L600 EMA
+# evaluation manifest. The compatibility prefix is online_encoder, but its
+# tensors come from the original checkpoint's state_dict_ema, never raw.
+echo "104dcefd97d4d782f9c56ec9f404f6b8d64961766fd3c9eb3f47923b1409897d  $STAGED_CHECKPOINT" | sha256sum -c -
+echo "98e0350d418e7d840fa245ddfd7150064e87a9ac74c72c9150a946f0f66ccd9d  $ENCODER_CONFIG" | sha256sum -c -
+"$PYTHON_BIN" -B - "$STAGED_CHECKPOINT" <<'PY'
+import sys
+import torch
+
+checkpoint = torch.load(sys.argv[1], map_location="cpu", weights_only=False, mmap=True)
+provenance = checkpoint["canonical_lejepa_evaluation"]
+assert provenance["encoder_source"] == "ema", provenance
+assert provenance["source_global_step"] == 100_000, provenance
+assert provenance["source_checkpoint_sha256"] == "aa31110b2fafae5e414840286c05cbfa78170fac51c8ff8018d9a038a621b82c", provenance
+assert provenance["latent_dim"] == 8 and provenance["projector"] is None, provenance
+assert checkpoint["state_dict"]["online_encoder.latent_decoder_mean_n_log_scale.1.weight"].shape == (16, 768)
+print(f"Verified uncropped LeJEPA + SO(3) EMA encoder: {provenance}", flush=True)
+PY
+
+cd "$PROJECT_ROOT/Evaluation/structure_rec"
+srun "$PYTHON_BIN" -B train_decoder.py \
+  --encoder canonical-lejepa-v1-rotations-ema-step100k \
+  --encoder-source online \
+  --run-id "$RUN_ID" \
+  --max-steps 20000 \
+  --eval-every 2000 \
+  --calibration \
+  --patience-evals 5 \
+  --patience-threshold 0.01 \
+  --batch-size 8 \
+  --lr 0.0001 \
+  --seed 42

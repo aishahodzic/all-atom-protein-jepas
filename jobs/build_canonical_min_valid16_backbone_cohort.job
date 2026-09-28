@@ -1,0 +1,40 @@
+#!/bin/bash
+# Build a reusable canonical-PDB cohort whose 20%-visible local views always
+# contain at least four coordinate-valid rows for visible-only K=4 SIGReg.
+# The shared source dataset is never modified.
+#SBATCH --job-name=canon_minvalid16
+#SBATCH --partition=normal
+#SBATCH --qos=short
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=48
+#SBATCH --mem=128G
+#SBATCH --time=01:00:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/canonical_lejepa/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+PYTHON_BIN=/slurm-storage/aishod/envs/la-proteina/bin/python
+OUTPUT_DIR="$PROJECT_ROOT/store/canonical_lejepa_cohorts/pdb_train_min_valid_n16"
+
+cd "$PROJECT_ROOT"
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+export PYTHONPATH="$PROJECT_ROOT${PYTHONPATH:+:$PYTHONPATH}"
+export TMPDIR="$HOME/tmp/canonical-min-valid16-cohort/$SLURM_JOB_ID"
+export MPLCONFIGDIR="$TMPDIR/matplotlib"
+mkdir -p "$TMPDIR" "$MPLCONFIGDIR" "$PROJECT_ROOT/logs/canonical_lejepa"
+
+if [[ -f "$OUTPUT_DIR/SUMMARY.txt" ]]; then
+    grep -q '^min_valid_backbone_n=16$' "$OUTPUT_DIR/SUMMARY.txt"
+    echo "Verified existing cohort: $OUTPUT_DIR"
+    exit 0
+fi
+
+"$PYTHON_BIN" Evaluation/diagnostics/build_min_valid_backbone_cohort.py \
+    --source "$DATA_PATH/pdb_train" \
+    --output "$OUTPUT_DIR" \
+    --min-valid 16 \
+    --workers 48

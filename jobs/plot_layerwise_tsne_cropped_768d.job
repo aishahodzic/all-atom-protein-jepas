@@ -1,0 +1,46 @@
+#!/bin/bash
+# Matched-residue cosine t-SNE panels for three cropped raw-step10k encoders.
+# Every panel uses the identical residue sample and blocks 4, 6, 8, and 12.
+#SBATCH --job-name=tsne_crop_blocks
+#SBATCH --partition=normal
+#SBATCH --qos=short
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=2
+#SBATCH --mem=64G
+#SBATCH --time=00:15:00
+#SBATCH --array=0-2%3
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/latent_viz/%x-%A_%a.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+PYTHON_BIN=/slurm-storage/aishod/envs/la-proteina/bin/python
+
+case "$SLURM_ARRAY_TASK_ID" in
+    0) MODEL=cropped-protein-no-rotation ;;
+    1) MODEL=cropped-residue-no-rotation ;;
+    2) MODEL=cropped-residue-rotation ;;
+    *) echo "Unexpected array index: $SLURM_ARRAY_TASK_ID" >&2; exit 1 ;;
+esac
+
+cd "$PROJECT_ROOT"
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+
+export PYTHONPATH="$PROJECT_ROOT"
+export PYTHONDONTWRITEBYTECODE=1
+export MPLBACKEND=Agg
+export OMP_NUM_THREADS=2
+export OPENBLAS_NUM_THREADS=2
+export MKL_NUM_THREADS=2
+export TMPDIR="$HOME/tmp/layerwise-tsne-cropped-768d/${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}"
+export MPLCONFIGDIR="$TMPDIR/matplotlib"
+export TORCH_EXTENSIONS_DIR="$TMPDIR/torch-extensions"
+mkdir -p "$TMPDIR" "$MPLCONFIGDIR" "$TORCH_EXTENSIONS_DIR" "$PROJECT_ROOT/logs/latent_viz"
+
+"$PYTHON_BIN" Evaluation/latent_viz/run_layerwise_tsne.py \
+    --model "$MODEL" \
+    --device cuda

@@ -1,0 +1,54 @@
+\usepackage{tikz}
+\usepackage{float}
+
+\colorlet{researchquestiontitle}{red!30}
+\colorlet{researchquestionbody}{red!10}
+\colorlet{researchfindingtitle}{blue!30}
+\colorlet{researchfindingbody}{blue!10}
+\colorlet{contributiontitle}{yellow!40}
+\colorlet{contributionbody}{yellow!20}
+
+\newsavebox{\highlightboxbody}
+\newcommand{\mybox}[4]{%
+  \begin{figure}[H]
+    \centering
+    \sbox{\highlightboxbody}{%
+      \parbox{\dimexpr\linewidth-1.2cm\relax}{#4}}%
+    \begin{tikzpicture}
+      \node[
+        anchor=north,
+        draw=#2!70!black,
+        rounded corners=3pt,
+        line width=0.8pt,
+        fill=#3,
+        inner sep=5mm
+      ] (big) {\raisebox{-4pt}[\ht\highlightboxbody][\dp\highlightboxbody]{%
+        \usebox{\highlightboxbody}}};
+      \node[
+        draw=#2!70!black,
+        rounded corners=3pt,
+        line width=0.5pt,
+        fill=#2,
+        anchor=west,
+        xshift=5mm,
+        inner xsep=3mm,
+        inner ysep=1.5mm
+      ] at (big.north west) {\textbf{#1}};
+    \end{tikzpicture}
+  \end{figure}%
+}
+
+\newcommand{\researchquestionbox}[1]{%
+  \mybox{Research Question}{researchquestiontitle}{researchquestionbody}{#1}}
+\newcommand{\researchfindingbox}[1]{%
+  \mybox{Research Finding}{researchfindingtitle}{researchfindingbody}{#1}}
+\newcommand{\contributionbox}[1]{%
+  \mybox{Contribution}{contributiontitle}{contributionbody}{#1}}
+
+\newenvironment{explanation}{%
+  \singlespacing
+  \section*{Reading Guide}
+  \thispagestyle{empty}
+}{%
+  \doublespacing
+}

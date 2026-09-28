@@ -13,6 +13,8 @@
 #   STB_SKIP_BOOTSTRAP=1 STB_SKIP_DATA_SETUP=1 PYTHON_BIN=python bash ...  # portable/Jarvis mode
 #   STB_SMOKE=1 bash ... --protocol=upstream-l600-v1  # full cohort cache, tiny probe
 #   STB_SHARED_EMBEDDING_CACHE=0 bash ...  # disable cross-task frozen-embedding reuse
+#   TOKENIZER_READOUT_BLOCK=6 D_MODEL_OVERRIDE=768 bash ...  # post-block 6 (index 5)
+#   TOKENIZER_READOUT_POST_LAYERNORM=1 D_MODEL_OVERRIDE=768 bash ...  # final LayerNorm, before latent projection
 #
 #   Skip the interactive prompts by passing checkpoint/experiment/tasks up front,
 #   as flags or equivalently as env vars (CHECKPOINT_LABEL / EXPERIMENT / TASKS):
@@ -48,6 +50,8 @@ STB_SKIP_BOOTSTRAP="${STB_SKIP_BOOTSTRAP:-0}"
 STB_SKIP_DATA_SETUP="${STB_SKIP_DATA_SETUP:-0}"
 STB_SMOKE="${STB_SMOKE:-${SMOKE:-0}}"
 STB_SHARED_EMBEDDING_CACHE="${STB_SHARED_EMBEDDING_CACHE:-1}"
+TOKENIZER_READOUT_BLOCK="${TOKENIZER_READOUT_BLOCK:-}" # one-based; empty = final latent mean
+TOKENIZER_READOUT_POST_LAYERNORM="${TOKENIZER_READOUT_POST_LAYERNORM:-0}"
 
 # ---------------------------------------------------------------------------
 # CLI args (optional): --checkpoint=, --experiment=, --tasks=,
@@ -100,6 +104,30 @@ fi
 if [ "$STB_SHARED_EMBEDDING_CACHE" != "0" ] && [ "$STB_SHARED_EMBEDDING_CACHE" != "1" ]; then
     echo "[Error] STB_SHARED_EMBEDDING_CACHE must be 0 or 1" >&2
     exit 1
+fi
+if [ -n "$TOKENIZER_READOUT_BLOCK" ]; then
+    if ! [[ "$TOKENIZER_READOUT_BLOCK" =~ ^[1-9][0-9]*$ ]]; then
+        echo "[Error] TOKENIZER_READOUT_BLOCK must be a positive one-based block number" >&2
+        exit 1
+    fi
+    if [ -z "${D_MODEL_OVERRIDE:-}" ]; then
+        echo "[Error] hidden-block evaluation requires D_MODEL_OVERRIDE matching the hidden width" >&2
+        exit 1
+    fi
+fi
+if [ "$TOKENIZER_READOUT_POST_LAYERNORM" != "0" ] && [ "$TOKENIZER_READOUT_POST_LAYERNORM" != "1" ]; then
+    echo "[Error] TOKENIZER_READOUT_POST_LAYERNORM must be 0 or 1" >&2
+    exit 1
+fi
+if [ "$TOKENIZER_READOUT_POST_LAYERNORM" = "1" ]; then
+    if [ -n "$TOKENIZER_READOUT_BLOCK" ]; then
+        echo "[Error] post-LayerNorm and post-block readouts are mutually exclusive" >&2
+        exit 1
+    fi
+    if [ -z "${D_MODEL_OVERRIDE:-}" ]; then
+        echo "[Error] post-LayerNorm evaluation requires D_MODEL_OVERRIDE=768" >&2
+        exit 1
+    fi
 fi
 
 if [ "$TOKENIZER_EVAL_PROTOCOL" = "upstream-l600-v1" ]; then
@@ -185,7 +213,12 @@ JEPA_ENCODER_CFG="${JEPA_ENCODER_CFG:-$CKPT_ROOT/shared/exp_config_jepa_nn130m.j
 # since WrappedLaProteinaTokenizer reads each checkpoint's own saved config).
 AE1_CKPT="${AE1_CKPT:-$(dirname "$REPO_DIR")/checkpoints_laproteina/AE1_ucond_512.ckpt}"
 
-EXPERIMENT_NAMES=(ca-cond-baseline fully-latent jepa-rand-mask-50 jepa-new-predictor le-jepa-new-predictor le-jepa-new-predictor-30k le-jepa-new-predictor-40k le-jepa-new-predictor-60k le-jepa-new-predictor-80k le-jepa-spatial3d-block-30k le-jepa-spatial3d-block-60k le-jepa-spatial3d-block-100k le-jepa-chemmask-exp1-30k le-jepa-chemmask-exp1-100k le-jepa-chemmask-exp3-30k le-jepa-chemmask-exp3-100k jepa-rand-mask-70 jepa-mutation le-jepa-rand-mask-50 le-jepa-rand-mask-70 le-jepa-mutation le-jepa-rand50-relative-pos-100k le-jepa-rand70-relative-pos-100k le-jepa-rand70-relative-pos-rotation-100k le-jepa-rand70-relative-pos-rotation-sigreg-0p01-100k le-jepa-spatial3d-relative-pos-d8-100k jepa-rand70-d64-independent-rotations-100k jepa-rand-mask-70-dim64 le-jepa-rand-mask-70-dim64 jepa-rand-mask-50-selfattn jepa-rand-mask-70-selfattn le-jepa-rand-mask-50-200k ae1-external random-init random-init-64 jepa-rand50-control-30k jepa-rand50-ema-30k jepa-rand50-layernorm-30k jepa-rand50-predictor-30k canonical-lejepa-v1-ema-step10k canonical-lejepa-residue-iterative-ema-step10k canonical-lejepa-residue-visible-only-ema-step10k canonical-lejepa-residue-iterative-protein-centered-sigreg-ema-step2k canonical-lejepa-residue-visible-only-protein-centered-sigreg-ema-step2k canonical-lejepa-v1-ema-step30k canonical-lejepa-v1-ema-step40k canonical-lejepa-v1-ema-step50k canonical-lejepa-v1-ema-step60k canonical-lejepa-v1-ema-step70k canonical-lejepa-v1-ema-step100k canonical-lejepa-v1-rotations-ema-step10k canonical-lejepa-v1-rotations-seed43-ema-step10k canonical-lejepa-v1-rotations-raw-step10k canonical-lejepa-v1-rotations-raw-step30k canonical-lejepa-v1-rotations-raw-step50k canonical-lejepa-v1-rotations-ema-step30k canonical-lejepa-v1-rotations-ema-step50k canonical-lejepa-v1-rotations-ema-step70k canonical-lejepa-v1-rotations-ema-step100k)
+EXPERIMENT_NAMES=(ca-cond-baseline fully-latent jepa-rand-mask-50 jepa-new-predictor le-jepa-new-predictor le-jepa-new-predictor-30k le-jepa-new-predictor-40k le-jepa-new-predictor-60k le-jepa-new-predictor-80k le-jepa-spatial3d-block-30k le-jepa-spatial3d-block-60k le-jepa-spatial3d-block-100k le-jepa-chemmask-exp1-30k le-jepa-chemmask-exp1-100k le-jepa-chemmask-exp3-30k le-jepa-chemmask-exp3-100k jepa-rand-mask-70 jepa-mutation le-jepa-rand-mask-50 le-jepa-rand-mask-70 le-jepa-mutation le-jepa-rand50-relative-pos-100k le-jepa-rand70-relative-pos-100k le-jepa-rand70-relative-pos-rotation-100k le-jepa-rand70-relative-pos-rotation-sigreg-0p01-100k le-jepa-spatial3d-relative-pos-d8-100k jepa-rand70-d8-independent-rotations-100k jepa-rand70-d64-independent-rotations-100k jepa-rand-mask-70-dim64 le-jepa-rand-mask-70-dim64 jepa-rand-mask-50-selfattn jepa-rand-mask-70-selfattn le-jepa-rand-mask-50-200k ae1-external random-init random-init-64 jepa-rand50-control-30k jepa-rand50-ema-30k jepa-rand50-layernorm-30k jepa-rand50-predictor-30k canonical-lejepa-v1-ema-step10k canonical-lejepa-protein-perview-b96-ema-step10k canonical-lejepa-residue-perview-b96-ema-step10k canonical-lejepa-protein-joint-b96-ema-step10k canonical-lejepa-protein-joint-b96-ema-step30k canonical-lejepa-protein-joint-b32-ema-step10k canonical-lejepa-residue-iterative-ema-step10k canonical-lejepa-residue-visible-only-ema-step10k canonical-lejepa-residue-iterative-protein-centered-sigreg-ema-step2k canonical-lejepa-residue-visible-only-protein-centered-sigreg-ema-step2k canonical-lejepa-v1-ema-step30k canonical-lejepa-v1-ema-step40k canonical-lejepa-v1-ema-step50k canonical-lejepa-v1-ema-step60k canonical-lejepa-v1-ema-step70k canonical-lejepa-v1-ema-step100k canonical-lejepa-v1-rotations-ema-step10k canonical-lejepa-v1-rotations-seed43-ema-step10k canonical-lejepa-v1-rotations-raw-step10k canonical-lejepa-protein-perview-rot-high-lr-raw-step15k canonical-lejepa-residue-perview-rot-middle-lr-raw-step10k canonical-lejepa-residue-perview-b96-relaunch-raw-step10k canonical-lejepa-v1-rotations-raw-step30k canonical-lejepa-v1-rotations-raw-step50k canonical-lejepa-v1-rotations-ema-step30k canonical-lejepa-v1-rotations-ema-step50k canonical-lejepa-v1-rotations-ema-step70k canonical-lejepa-v1-rotations-ema-step100k canonical-lejepa-high-lr1e3-raw-step10k canonical-lejepa-low-lr1e4-raw-step10k canonical-lejepa-high-lr1e3-raw-step16667 canonical-lejepa-low-lr1e4-raw-step16667 canonical-lejepa-high-lr1e3-raw-step20k canonical-lejepa-low-lr1e4-raw-step20k canonical-lejepa-high-lr1e3-raw-step30k canonical-lejepa-low-lr1e4-raw-step30k canonical-lejepa-middle-lr4e4-raw-step10k canonical-lejepa-middle-lr4e4-raw-step16667 canonical-lejepa-middle-lr4e4-raw-step20k canonical-lejepa-middle-lr4e4-raw-step30k canonical-lejepa-jarvis-rotation-raw-step10k canonical-lejepa-jarvis-per-residue-raw-step10k)
+EXPERIMENT_NAMES+=(canonical-lejepa-protein-perview-rot-middle-lr-raw-step15980)
+EXPERIMENT_NAMES+=(canonical-lejepa-residue-perview-rot-middle-lr-raw-step17k)
+EXPERIMENT_NAMES+=(canonical-lejepa-v1-raw-step100k canonical-lejepa-v1-rotations-raw-step100k)
+EXPERIMENT_NAMES+=(canonical-lejepa-v1-6block-raw-step100k)
+EXPERIMENT_NAMES+=(jepa-sigreg-chemmask-geometry-relpos-100k jepa-sigreg-chemmask-sidechain-noaa-relpos-100k)
 
 experiment_model_args () {
     # sets TOKENIZERNAME and EXTRA_MODEL_ARGS for experiment name $1
@@ -235,6 +268,16 @@ experiment_model_args () {
             checkpoint_step="${1##*-}"
             TOKENIZERNAME="laproteina_le_jepa_chemmask_exp3_${checkpoint_step}"
             EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CKPT_ROOT/le-jepa/chem_masking/exp3_noaa_sc50/${checkpoint_step}.ckpt tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        jepa-sigreg-chemmask-geometry-relpos-100k)
+            : "${CHEMMASK_GEOMETRY_RELPOS_CKPT:?CHEMMASK_GEOMETRY_RELPOS_CKPT must name the step-100k checkpoint}"
+            TOKENIZERNAME="laproteina_jepa_sigreg_chemmask_geometry_relpos_100k"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CHEMMASK_GEOMETRY_RELPOS_CKPT tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        jepa-sigreg-chemmask-sidechain-noaa-relpos-100k)
+            : "${CHEMMASK_SIDECHAIN_NOAA_RELPOS_CKPT:?CHEMMASK_SIDECHAIN_NOAA_RELPOS_CKPT must name the step-100k checkpoint}"
+            TOKENIZERNAME="laproteina_jepa_sigreg_chemmask_sidechain_noaa_relpos_100k"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CHEMMASK_SIDECHAIN_NOAA_RELPOS_CKPT tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
             ;;
         jepa-rand-mask-70)
             TOKENIZERNAME="laproteina_jepa_rand_mask_70"
@@ -286,6 +329,31 @@ experiment_model_args () {
             : "${CANONICAL_LEJEPA_V1_EMA_STEP10K_CKPT:?Set CANONICAL_LEJEPA_V1_EMA_STEP10K_CKPT to the staged EMA step-10k checkpoint}"
             EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CANONICAL_LEJEPA_V1_EMA_STEP10K_CKPT tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
             ;;
+        canonical-lejepa-protein-perview-b96-ema-step10k)
+            TOKENIZERNAME="laproteina_canonical_lejepa_protein_perview_b96_ema_step10k"
+            : "${CANONICAL_LEJEPA_PROTEIN_PERVIEW_B96_EMA_STEP10K_CKPT:?Set CANONICAL_LEJEPA_PROTEIN_PERVIEW_B96_EMA_STEP10K_CKPT to the staged EMA step-10k checkpoint}"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CANONICAL_LEJEPA_PROTEIN_PERVIEW_B96_EMA_STEP10K_CKPT tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        canonical-lejepa-residue-perview-b96-ema-step10k)
+            TOKENIZERNAME="laproteina_canonical_lejepa_residue_perview_b96_ema_step10k"
+            : "${CANONICAL_LEJEPA_RESIDUE_PERVIEW_B96_EMA_STEP10K_CKPT:?Set CANONICAL_LEJEPA_RESIDUE_PERVIEW_B96_EMA_STEP10K_CKPT to the staged EMA step-10k checkpoint}"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CANONICAL_LEJEPA_RESIDUE_PERVIEW_B96_EMA_STEP10K_CKPT tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        canonical-lejepa-protein-joint-b96-ema-step10k)
+            TOKENIZERNAME="laproteina_canonical_lejepa_protein_joint_b96_ema_step10k"
+            : "${CANONICAL_LEJEPA_PROTEIN_JOINT_B96_EMA_STEP10K_CKPT:?Set CANONICAL_LEJEPA_PROTEIN_JOINT_B96_EMA_STEP10K_CKPT to the staged EMA step-10k checkpoint}"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CANONICAL_LEJEPA_PROTEIN_JOINT_B96_EMA_STEP10K_CKPT tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        canonical-lejepa-protein-joint-b96-ema-step30k)
+            TOKENIZERNAME="laproteina_canonical_lejepa_protein_joint_b96_ema_step30k"
+            : "${CANONICAL_LEJEPA_PROTEIN_JOINT_B96_EMA_STEP30K_CKPT:?Set CANONICAL_LEJEPA_PROTEIN_JOINT_B96_EMA_STEP30K_CKPT to the staged EMA step-30k checkpoint}"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CANONICAL_LEJEPA_PROTEIN_JOINT_B96_EMA_STEP30K_CKPT tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        canonical-lejepa-protein-joint-b32-ema-step10k)
+            TOKENIZERNAME="laproteina_canonical_lejepa_protein_joint_b32_ema_step10k"
+            : "${CANONICAL_LEJEPA_PROTEIN_JOINT_B32_EMA_STEP10K_CKPT:?Set CANONICAL_LEJEPA_PROTEIN_JOINT_B32_EMA_STEP10K_CKPT to the staged EMA step-10k checkpoint}"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CANONICAL_LEJEPA_PROTEIN_JOINT_B32_EMA_STEP10K_CKPT tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
         canonical-lejepa-residue-iterative-ema-step10k)
             TOKENIZERNAME="laproteina_canonical_lejepa_residue_iterative_ema_step10k"
             : "${CANONICAL_LEJEPA_RESIDUE_ITERATIVE_EMA_STEP10K_CKPT:?Set CANONICAL_LEJEPA_RESIDUE_ITERATIVE_EMA_STEP10K_CKPT to the staged iterative-residue EMA step-10k checkpoint}"
@@ -336,6 +404,17 @@ experiment_model_args () {
             : "${CANONICAL_LEJEPA_V1_EMA_STEP100K_CKPT:?Set CANONICAL_LEJEPA_V1_EMA_STEP100K_CKPT to the staged EMA step-100k checkpoint}"
             EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CANONICAL_LEJEPA_V1_EMA_STEP100K_CKPT tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
             ;;
+        canonical-lejepa-v1-raw-step100k)
+            TOKENIZERNAME="laproteina_canonical_lejepa_v1_raw_step100k"
+            : "${CANONICAL_LEJEPA_V1_RAW_STEP100K_CKPT:?Set CANONICAL_LEJEPA_V1_RAW_STEP100K_CKPT to the staged raw step-100k checkpoint}"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CANONICAL_LEJEPA_V1_RAW_STEP100K_CKPT tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        canonical-lejepa-v1-6block-raw-step100k)
+            TOKENIZERNAME="laproteina_canonical_lejepa_v1_6block_raw_step100k"
+            : "${CANONICAL_LEJEPA_V1_6BLOCK_RAW_STEP100K_CKPT:?Set CANONICAL_LEJEPA_V1_6BLOCK_RAW_STEP100K_CKPT to the staged raw step-100k checkpoint}"
+            : "${CANONICAL_LEJEPA_V1_6BLOCK_ENCODER_CFG:?Set CANONICAL_LEJEPA_V1_6BLOCK_ENCODER_CFG to the six-block encoder config}"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CANONICAL_LEJEPA_V1_6BLOCK_RAW_STEP100K_CKPT tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$CANONICAL_LEJEPA_V1_6BLOCK_ENCODER_CFG"
+            ;;
         canonical-lejepa-v1-rotations-ema-step10k)
             TOKENIZERNAME="laproteina_canonical_lejepa_v1_rotations_ema_step10k"
             : "${CANONICAL_LEJEPA_V1_ROTATIONS_EMA_STEP10K_CKPT:?Set CANONICAL_LEJEPA_V1_ROTATIONS_EMA_STEP10K_CKPT to the staged EMA step-10k checkpoint}"
@@ -350,6 +429,87 @@ experiment_model_args () {
             TOKENIZERNAME="laproteina_canonical_lejepa_v1_rotations_raw_step10k"
             : "${CANONICAL_LEJEPA_V1_ROTATIONS_RAW_STEP10K_CKPT:?Set CANONICAL_LEJEPA_V1_ROTATIONS_RAW_STEP10K_CKPT to the staged raw step-10k checkpoint}"
             EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CANONICAL_LEJEPA_V1_ROTATIONS_RAW_STEP10K_CKPT tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        canonical-lejepa-protein-perview-rot-high-lr-raw-step15k)
+            TOKENIZERNAME="laproteina_canonical_lejepa_protein_perview_rot_high_lr_raw_step15k"
+            : "${CANONICAL_LEJEPA_PROTEIN_PERVIEW_ROT_HIGH_LR_RAW_STEP15K_CKPT:?Set CANONICAL_LEJEPA_PROTEIN_PERVIEW_ROT_HIGH_LR_RAW_STEP15K_CKPT to the staged raw step-15k checkpoint}"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CANONICAL_LEJEPA_PROTEIN_PERVIEW_ROT_HIGH_LR_RAW_STEP15K_CKPT tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        canonical-lejepa-protein-perview-rot-middle-lr-raw-step15980)
+            TOKENIZERNAME="laproteina_canonical_lejepa_protein_perview_rot_middle_lr_raw_step15980"
+            : "${CANONICAL_LEJEPA_PROTEIN_PERVIEW_ROT_MIDDLE_LR_RAW_STEP15980_CKPT:?Set CANONICAL_LEJEPA_PROTEIN_PERVIEW_ROT_MIDDLE_LR_RAW_STEP15980_CKPT to the staged raw step-15,980 checkpoint}"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CANONICAL_LEJEPA_PROTEIN_PERVIEW_ROT_MIDDLE_LR_RAW_STEP15980_CKPT tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        canonical-lejepa-residue-perview-rot-middle-lr-raw-step10k)
+            TOKENIZERNAME="laproteina_canonical_lejepa_residue_perview_rot_middle_lr_raw_step10k"
+            : "${CANONICAL_LEJEPA_RESIDUE_PERVIEW_ROT_MIDDLE_LR_RAW_STEP10K_CKPT:?Set CANONICAL_LEJEPA_RESIDUE_PERVIEW_ROT_MIDDLE_LR_RAW_STEP10K_CKPT to the staged raw step-10k checkpoint}"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CANONICAL_LEJEPA_RESIDUE_PERVIEW_ROT_MIDDLE_LR_RAW_STEP10K_CKPT tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        canonical-lejepa-residue-perview-b96-relaunch-raw-step10k)
+            TOKENIZERNAME="laproteina_canonical_lejepa_residue_perview_b96_relaunch_raw_step10k"
+            : "${CANONICAL_LEJEPA_RESIDUE_PERVIEW_B96_RELAUNCH_RAW_STEP10K_CKPT:?Set CANONICAL_LEJEPA_RESIDUE_PERVIEW_B96_RELAUNCH_RAW_STEP10K_CKPT to the staged raw step-10k checkpoint}"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CANONICAL_LEJEPA_RESIDUE_PERVIEW_B96_RELAUNCH_RAW_STEP10K_CKPT tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        canonical-lejepa-residue-perview-rot-middle-lr-raw-step17k)
+            TOKENIZERNAME="laproteina_canonical_lejepa_residue_perview_rot_middle_lr_raw_step17k"
+            : "${CANONICAL_LEJEPA_RESIDUE_PERVIEW_ROT_MIDDLE_LR_RAW_STEP17K_CKPT:?Set CANONICAL_LEJEPA_RESIDUE_PERVIEW_ROT_MIDDLE_LR_RAW_STEP17K_CKPT to the staged raw step-17k checkpoint}"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CANONICAL_LEJEPA_RESIDUE_PERVIEW_ROT_MIDDLE_LR_RAW_STEP17K_CKPT tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        canonical-lejepa-high-lr1e3-raw-step10k)
+            TOKENIZERNAME="laproteina_canonical_lejepa_high_lr1e3_raw_step10k"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CKPT_ROOT/canonical-lejepa/lr-ablation/canonical_lejepa_high_lr1e3_raw10k_stb.ckpt tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        canonical-lejepa-low-lr1e4-raw-step10k)
+            TOKENIZERNAME="laproteina_canonical_lejepa_low_lr1e4_raw_step10k"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CKPT_ROOT/canonical-lejepa/lr-ablation/canonical_lejepa_low_lr1e4_raw10k_stb.ckpt tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        canonical-lejepa-high-lr1e3-raw-step16667)
+            TOKENIZERNAME="laproteina_canonical_lejepa_high_lr1e3_raw_step16667"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CKPT_ROOT/canonical-lejepa/lr-ablation/canonical_lejepa_high_lr1e3_raw16667_stb.ckpt tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        canonical-lejepa-low-lr1e4-raw-step16667)
+            TOKENIZERNAME="laproteina_canonical_lejepa_low_lr1e4_raw_step16667"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CKPT_ROOT/canonical-lejepa/lr-ablation/canonical_lejepa_low_lr1e4_raw16667_stb.ckpt tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        canonical-lejepa-high-lr1e3-raw-step30k)
+            TOKENIZERNAME="laproteina_canonical_lejepa_high_lr1e3_raw_step30k"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CKPT_ROOT/canonical-lejepa/lr-ablation/canonical_lejepa_high_lr1e3_raw30k_stb.ckpt tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        canonical-lejepa-low-lr1e4-raw-step30k)
+            TOKENIZERNAME="laproteina_canonical_lejepa_low_lr1e4_raw_step30k"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CKPT_ROOT/canonical-lejepa/lr-ablation/canonical_lejepa_low_lr1e4_raw30k_stb.ckpt tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        canonical-lejepa-middle-lr4e4-raw-step10k)
+            TOKENIZERNAME="laproteina_canonical_lejepa_middle_lr4e4_raw_step10k"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CKPT_ROOT/canonical-lejepa/lr-ablation/canonical_lejepa_protein_middle_lr4e4_raw10k_stb.ckpt tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        canonical-lejepa-middle-lr4e4-raw-step16667)
+            TOKENIZERNAME="laproteina_canonical_lejepa_middle_lr4e4_raw_step16667"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CKPT_ROOT/canonical-lejepa/jarvis/middle-lr/CLJP_step-00016667-raw-stb.ckpt tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        canonical-lejepa-high-lr1e3-raw-step20k)
+            TOKENIZERNAME="laproteina_canonical_lejepa_high_lr1e3_raw_step20k"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CKPT_ROOT/canonical-lejepa/jarvis/high-lr/CLJP_step-00020000-raw-stb.ckpt tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        canonical-lejepa-low-lr1e4-raw-step20k)
+            TOKENIZERNAME="laproteina_canonical_lejepa_low_lr1e4_raw_step20k"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CKPT_ROOT/canonical-lejepa/jarvis/low-lr/CLJP_step-00020000-raw-stb.ckpt tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        canonical-lejepa-middle-lr4e4-raw-step20k)
+            TOKENIZERNAME="laproteina_canonical_lejepa_middle_lr4e4_raw_step20k"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CKPT_ROOT/canonical-lejepa/jarvis/middle-lr/CLJP_step-00020000-raw-stb.ckpt tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        canonical-lejepa-middle-lr4e4-raw-step30k)
+            TOKENIZERNAME="laproteina_canonical_lejepa_middle_lr4e4_raw_step30k"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CKPT_ROOT/canonical-lejepa/jarvis/middle-lr/CLJP_step-00030000-raw-stb.ckpt tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        canonical-lejepa-jarvis-rotation-raw-step10k)
+            TOKENIZERNAME="laproteina_canonical_lejepa_jarvis_rotation_raw_step10k"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CKPT_ROOT/canonical-lejepa/jarvis/rotation/CLJP_step-00010000-raw-stb.ckpt tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        canonical-lejepa-jarvis-per-residue-raw-step10k)
+            TOKENIZERNAME="laproteina_canonical_lejepa_jarvis_per_residue_raw_step10k"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CKPT_ROOT/canonical-lejepa/jarvis/per-residue/CLJP_step-00010000-raw-stb.ckpt tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
             ;;
         canonical-lejepa-v1-rotations-raw-step30k)
             TOKENIZERNAME="laproteina_canonical_lejepa_v1_rotations_raw_step30k"
@@ -380,6 +540,16 @@ experiment_model_args () {
             TOKENIZERNAME="laproteina_canonical_lejepa_v1_rotations_ema_step100k"
             : "${CANONICAL_LEJEPA_V1_ROTATIONS_EMA_STEP100K_CKPT:?Set CANONICAL_LEJEPA_V1_ROTATIONS_EMA_STEP100K_CKPT to the staged EMA step-100k checkpoint}"
             EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CANONICAL_LEJEPA_V1_ROTATIONS_EMA_STEP100K_CKPT tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        canonical-lejepa-v1-rotations-raw-step100k)
+            TOKENIZERNAME="laproteina_canonical_lejepa_v1_rotations_raw_step100k"
+            : "${CANONICAL_LEJEPA_V1_ROTATIONS_RAW_STEP100K_CKPT:?Set CANONICAL_LEJEPA_V1_ROTATIONS_RAW_STEP100K_CKPT to the staged raw step-100k checkpoint}"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$CANONICAL_LEJEPA_V1_ROTATIONS_RAW_STEP100K_CKPT tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
+            ;;
+        jepa-rand70-d8-independent-rotations-100k)
+            TOKENIZERNAME="laproteina_jepa_rand70_d8_independent_rotations_100k"
+            : "${JEPA_RAND70_D8_INDEPENDENT_ROTATIONS_CKPT:?Set JEPA_RAND70_D8_INDEPENDENT_ROTATIONS_CKPT to the final 100k checkpoint}"
+            EXTRA_MODEL_ARGS="tokenizer_pretrained_ckpt_path=$JEPA_RAND70_D8_INDEPENDENT_ROTATIONS_CKPT tokenizer_checkpoint_type=jepa tokenizer_encoder_cfg_path=$JEPA_ENCODER_CFG"
             ;;
         jepa-rand70-d64-independent-rotations-100k)
             TOKENIZERNAME="laproteina_jepa_rand70_d64_independent_rotations_100k"
@@ -757,6 +927,13 @@ lr=0.001
 for experiment in "${SELECTED_EXPERIMENTS[@]}"; do
     experiment_model_args "$experiment"
     eval_variant=""
+    if [ -n "$TOKENIZER_READOUT_BLOCK" ]; then
+        EXTRA_MODEL_ARGS="$EXTRA_MODEL_ARGS ++tokenizer_readout_block=$TOKENIZER_READOUT_BLOCK"
+        eval_variant="${eval_variant}-block${TOKENIZER_READOUT_BLOCK}"
+    elif [ "$TOKENIZER_READOUT_POST_LAYERNORM" = "1" ]; then
+        EXTRA_MODEL_ARGS="$EXTRA_MODEL_ARGS ++tokenizer_readout_post_layernorm=true"
+        eval_variant="${eval_variant}-post-latent-layernorm"
+    fi
     if [[ "$EXTRA_MODEL_ARGS" == *"tokenizer_checkpoint_type=jepa"* ]]; then
         EXTRA_MODEL_ARGS="$EXTRA_MODEL_ARGS tokenizer_encoder_source=$ENCODER_SOURCE"
         if [ "$ENCODER_SOURCE" = "target" ]; then
@@ -825,7 +1002,7 @@ print(w.shape[0] // 2)
             safe_task="${TASK_NAMES[$idx]//[^A-Za-z0-9_.-]/_}"
             resolved_run_name="${EVALUATION_RUN_ID}_${safe_experiment}_${safe_task}"
         fi
-        SHARED_ARGS="tokenizer=$tokenizer model.d_model=$d_model trainer.devices=[0] optimization.optimizer.lr=$lr data.target_field=$target_field data.num_workers=$NUM_WORKERS data.prefetch_factor=2 $protocol_data_args experiment_name=${experiment_prefix}_${TOKENIZERNAME}_lr${lr} run_name=$resolved_run_name default_data_dir=$STB_RELEASE_DATA_ROOT/ data.pdb_data_dir=$PDB_DATA_ROOT/mmcif_files/ trainer.default_root_dir=$STB_LOG_ROOT/ ${extra_task_args} ${EXTRA_MODEL_ARGS}"
+        SHARED_ARGS="tokenizer=$tokenizer model.d_model=$d_model trainer.devices=[0] optimization.optimizer.lr=$lr data.target_field=$target_field data.num_workers=$NUM_WORKERS data.prefetch_factor=${PREFETCH_FACTOR:-2} $protocol_data_args experiment_name=${experiment_prefix}_${TOKENIZERNAME}_lr${lr} run_name=$resolved_run_name default_data_dir=$STB_RELEASE_DATA_ROOT/ data.pdb_data_dir=$PDB_DATA_ROOT/mmcif_files/ trainer.default_root_dir=$STB_LOG_ROOT/ ${extra_task_args} ${EXTRA_MODEL_ARGS}"
         if [ -n "$PRECISION" ]; then
             SHARED_ARGS="$SHARED_ARGS trainer.precision=$PRECISION"
         fi

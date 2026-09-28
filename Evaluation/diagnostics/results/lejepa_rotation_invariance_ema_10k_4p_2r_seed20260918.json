@@ -1,0 +1,156 @@
+{
+  "description": "Matched full-context SO(3) rotation-invariance evaluation of uncropped LeJEPA 10k EMA encoders",
+  "seed": 20260918,
+  "n_proteins_requested": 4,
+  "n_rotations": 2,
+  "selected_proteins": [
+    "8wi9_t",
+    "5z1g_A",
+    "3q08_S",
+    "9lbn_J"
+  ],
+  "origin_counts": {
+    "val": 3,
+    "test": 1
+  },
+  "rotation_matrices": [
+    [
+      [
+        -0.3785041570663452,
+        0.9238389134407043,
+        -0.0570671409368515
+      ],
+      [
+        -0.923618495464325,
+        -0.3729435205459595,
+        0.08855728060007095
+      ],
+      [
+        0.06052984297275543,
+        0.08622754365205765,
+        0.9944350123405457
+      ]
+    ],
+    [
+      [
+        -0.7334791421890259,
+        0.6064404249191284,
+        -0.3069828748703003
+      ],
+      [
+        0.101461261510849,
+        0.5442612171173096,
+        0.8327577114105225
+      ],
+      [
+        0.6720967888832092,
+        0.5796635150909424,
+        -0.460734486579895
+      ]
+    ]
+  ],
+  "checkpoint_provenance": {
+    "uncropped_lejepa_ema_10k": {
+      "schema_version": 1,
+      "encoder_source": "ema",
+      "source_checkpoint_sha256": "911c9cdc870a372ce18f2881bb19104f81506c8131787815c5fcbb3fc87e77d2",
+      "source_global_step": 10000,
+      "latent_dim": 8,
+      "projector": null
+    },
+    "uncropped_lejepa_so3_ema_10k": {
+      "schema_version": 1,
+      "encoder_source": "ema",
+      "source_checkpoint_sha256": "16e2d7f9bb7ca95939a2b11982c8b2910a9c590a426fdbf95bd66052ecd75f7b",
+      "source_global_step": 10000,
+      "latent_dim": 8,
+      "projector": null
+    }
+  },
+  "summary": {
+    "uncropped_lejepa_ema_10k": {
+      "n_proteins": 4,
+      "n_residues": 545,
+      "n_protein_rotation_pairs": 8,
+      "equal_protein_weighted": {
+        "raw_cosine": {
+          "mean": 0.27327303495258093,
+          "ci95_low": 0.12940880749374628,
+          "ci95_high": 0.45971266366541386
+        },
+        "raw_relative_l2": {
+          "mean": 1.184286653995514,
+          "ci95_low": 1.0172740370035172,
+          "ci95_high": 1.3210391253232956
+        },
+        "centered_cosine": {
+          "mean": 0.2457839408889413,
+          "ci95_low": 0.18374989368021488,
+          "ci95_high": 0.3078179880976677
+        },
+        "centered_relative_l2": {
+          "mean": 1.2200302332639694,
+          "ci95_low": 1.1207667589187622,
+          "ci95_high": 1.3305615931749344
+        },
+        "shuffled_centered_cosine": {
+          "mean": 0.0034258345840498805,
+          "ci95_low": -0.01723636663518846,
+          "ci95_high": 0.02408803580328822
+        },
+        "shuffled_centered_relative_l2": {
+          "mean": 1.4133062809705734,
+          "ci95_low": 1.3805947750806808,
+          "ci95_high": 1.4402481317520142
+        },
+        "residue_signal_to_total_norm": {
+          "mean": 0.2214912734925747,
+          "ci95_low": 0.1778108850121498,
+          "ci95_high": 0.2651716619729996
+        }
+      }
+    },
+    "uncropped_lejepa_so3_ema_10k": {
+      "n_proteins": 4,
+      "n_residues": 545,
+      "n_protein_rotation_pairs": 8,
+      "equal_protein_weighted": {
+        "raw_cosine": {
+          "mean": 0.9951411187648773,
+          "ci95_low": 0.9932450354099274,
+          "ci95_high": 0.9970372021198273
+        },
+        "raw_relative_l2": {
+          "mean": 0.10252691712230444,
+          "ci95_low": 0.08536092191934586,
+          "ci95_high": 0.11969291232526302
+        },
+        "centered_cosine": {
+          "mean": 0.7748021557927132,
+          "ci95_low": 0.7276364117860794,
+          "ci95_high": 0.8219678997993469
+        },
+        "centered_relative_l2": {
+          "mean": 0.5714043118059635,
+          "ci95_low": 0.538834922015667,
+          "ci95_high": 0.6206106916069984
+        },
+        "shuffled_centered_cosine": {
+          "mean": 0.014274556306190789,
+          "ci95_low": -0.022813446586951613,
+          "ci95_high": 0.04356857284437865
+        },
+        "shuffled_centered_relative_l2": {
+          "mean": 1.4559982866048813,
+          "ci95_low": 1.400867149233818,
+          "ci95_high": 1.5093302130699158
+        },
+        "residue_signal_to_total_norm": {
+          "mean": 0.17392632365226746,
+          "ci95_low": 0.13779287040233612,
+          "ci95_high": 0.2100597769021988
+        }
+      }
+    }
+  }
+}

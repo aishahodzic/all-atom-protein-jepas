@@ -161,6 +161,7 @@ def laproteina_cache_source_identities():
         src_dir / "protein_chain.py",
         src_dir / "laproteina_checkpoint.py",
         src_dir / "laproteina_eval_policy.py",
+        src_dir / "laproteina_readout.py",
     }
     # The encoder, feature construction, graph transforms, dense padding, and
     # OpenFold geometry utilities all participate in the emitted embeddings.
@@ -951,6 +952,10 @@ class BaseDataset(Dataset):
                     self.tokenizer.max_length,
                 )
                 tokenizer_name += self.tokenizer.evaluation_cache_tag_suffix
+                if getattr(self.tokenizer, "readout_block", None) is not None:
+                    tokenizer_name += f"_block-{self.tokenizer.readout_block}"
+                elif getattr(self.tokenizer, "readout", {}).get("kind") == "post_latent_layernorm":
+                    tokenizer_name += "_post-latent-layernorm"
                 if locked_protocol:
                     # Atlas uses the same structured source filename for its
                     # three different regression targets.
@@ -1000,6 +1005,10 @@ class BaseDataset(Dataset):
                     "scientific_runtime_versions": scientific_runtime_versions(),
                     "unknown_residue_adapter": "zero-aa-identity-v1",
                 }
+                if getattr(self.tokenizer, "readout_block", None) is not None:
+                    expected_cache_identity["encoder_readout"] = self.tokenizer.readout
+                elif getattr(self.tokenizer, "readout", {}).get("kind") == "post_latent_layernorm":
+                    expected_cache_identity["encoder_readout"] = self.tokenizer.readout
                 expected_cache_identity["identity_sha256"] = canonical_json_sha256(
                     expected_cache_identity
                 )

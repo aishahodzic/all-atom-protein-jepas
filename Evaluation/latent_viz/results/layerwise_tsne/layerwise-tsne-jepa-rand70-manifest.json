@@ -1,0 +1,51 @@
+{
+  "artifact": "layerwise_768d_residue_tsne",
+  "blocks": [
+    1,
+    6,
+    12
+  ],
+  "checkpoint": "/mnt/hopper-raid/aishod/runs/jepa_random_masking_70_v3/store/jepa_random_masking_70_v3/checkpoints/chk_epoch=00000019_step=000000100000.ckpt",
+  "checkpoint_sha256": "63183c74a02386fdc9aaca3ff619e9f8e83705a79340610b1f4a064ba547098c",
+  "context": "full unmasked protein; no evaluation rotation",
+  "coordinates": [
+    {
+      "block": 1,
+      "input_sha256": "5b4cd8f2b591ec9608db06267946724b14127f58a6f1d9f88adc3bb4c36d36b6",
+      "path": "/slurm-storage/aishod/projects/la-proteina/Evaluation/latent_viz/results/layerwise_tsne/layerwise-tsne-jepa-rand70-block1-n15000-cosine-tsne.npz"
+    },
+    {
+      "block": 6,
+      "input_sha256": "61d6b7e0ad4f32d67419c9d578843eacd1d6d79e5217efc0d0a7a4208fd7c465",
+      "path": "/slurm-storage/aishod/projects/la-proteina/Evaluation/latent_viz/results/layerwise_tsne/layerwise-tsne-jepa-rand70-block6-n15000-cosine-tsne.npz"
+    },
+    {
+      "block": 12,
+      "input_sha256": "80a7a9ef43d343f34fd5b94511224e14e2a383b14d325a95063c7188f66ca501",
+      "path": "/slurm-storage/aishod/projects/la-proteina/Evaluation/latent_viz/results/layerwise_tsne/layerwise-tsne-jepa-rand70-block12-n15000-cosine-tsne.npz"
+    }
+  ],
+  "encoder_source": "online",
+  "figure": "/slurm-storage/aishod/projects/la-proteina/iclr2027/figures/all-tsne-per-block-jepa-rand70.png",
+  "model": "JEPA random-mask 70%",
+  "representation": "post-transformer-block, pre-final-LayerNorm, 768D",
+  "sample_cache": "/slurm-storage/aishod/projects/la-proteina/Evaluation/latent_viz/results/layerwise_tsne/layerwise-tsne-jepa-rand70-sampled-768d.pt",
+  "schema_version": 1,
+  "selection": {
+    "labels_path": "/slurm-storage/aishod/projects/la-proteina/Evaluation/linear_probing/latents/labels.pt",
+    "pool_residues": 748402,
+    "sampled_proteins": 4738,
+    "sampled_residues": 15000,
+    "seed": 42,
+    "sha256": "8b97dc03ef9d2cb2caa10d956a79e7b24b79b40dc821166975edf9847dbc006f",
+    "validity": "AA-valid AND secondary-structure-valid"
+  },
+  "tsne": {
+    "init": "random",
+    "max_iter": 1000,
+    "method": "barnes_hut",
+    "metric": "cosine",
+    "perplexity": 30.0,
+    "seed": 42
+  }
+}

@@ -1,0 +1,73 @@
+#!/bin/bash
+# Export 5FLI_A from the interim 40k rotation decoder and apply the same
+# visualization-only geometry repairs as the non-rotation reconstruction.
+#SBATCH --job-name=exp_rot40_5fli
+#SBATCH --partition=h100
+#SBATCH --nodelist=hopper
+#SBATCH --qos=short
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=8
+#SBATCH --mem=64G
+#SBATCH --time=00:30:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/decoder/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+PYTHON_BIN=/slurm-storage/aishod/envs/la-proteina/bin/python
+ENCODER_CKPT=/mnt/hopper-raid/aishod/runs/jepa_rand70_d8_independent_rotations_100k/store/jepa_rand70_d8_independent_rotations_100k/checkpoints/chk_epoch=00000019_step=000000100000.ckpt
+DECODER_CKPT="$PROJECT_ROOT/Evaluation/structure_rec/checkpoints/jepa-rand70-d8-independent-rotations-target-step100k-decoder-140k_step40000.pt"
+OUTPUT_DIR="$PROJECT_ROOT/non_code/pymol_proteins/jepa_rand70_d8_rotations_decoder_step40k/5fli_A"
+SCRATCH_ROOT="$HOME/tmp/export-rotation-step40k-5fli-$SLURM_JOB_ID"
+
+mkdir -p "$PROJECT_ROOT/logs/decoder" "$OUTPUT_DIR" "$SCRATCH_ROOT"
+export TMPDIR="$SCRATCH_ROOT"
+export MPLCONFIGDIR="$SCRATCH_ROOT/matplotlib"
+export TRITON_CACHE_DIR="$SCRATCH_ROOT/triton"
+export PYTHONPATH="$PROJECT_ROOT"
+mkdir -p "$MPLCONFIGDIR" "$TRITON_CACHE_DIR"
+
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+
+cd "$PROJECT_ROOT"
+srun "$PYTHON_BIN" Evaluation/structure_rec/export_reconstruction.py \
+  --decoder-checkpoint "$DECODER_CKPT" \
+  --encoder jepa-rand70-d8-independent-rotations-step100k \
+  --encoder-source target \
+  --encoder-checkpoint "$ENCODER_CKPT" \
+  --protein-id 5fli_A \
+  --device cuda \
+  --output-dir "$OUTPUT_DIR"
+
+"$PYTHON_BIN" Evaluation/structure_rec/project_pdb_ideal_geometry.py \
+  --input "$OUTPUT_DIR/5fli_A_reconstructed_predicted_sequence.pdb" \
+  --output "$OUTPUT_DIR/5fli_A_projected.pdb" \
+  --native "$OUTPUT_DIR/5fli_A_native.pdb"
+
+"$PYTHON_BIN" Evaluation/structure_rec/rotamer_clash_repair.py \
+  --input "$OUTPUT_DIR/5fli_A_projected.pdb" \
+  --output "$OUTPUT_DIR/5fli_A_rotamer_repaired.pdb" \
+  --metadata "$OUTPUT_DIR/5fli_A_rotamer_repair.json"
+
+"$PYTHON_BIN" Evaluation/structure_rec/restrained_geometry_repair.py \
+  --input "$OUTPUT_DIR/5fli_A_rotamer_repaired.pdb" \
+  --output "$OUTPUT_DIR/5fli_A_reconstructed_idealized.pdb" \
+  --metadata "$OUTPUT_DIR/5fli_A_geometry_repair.json" \
+  --strength 500 --steps 2000 --backbone-steps 500 --clash-strength 300 \
+  --peptide-tolerance 0.03 --peptide-angle-tolerance 0.01
+
+"$PYTHON_BIN" Evaluation/structure_rec/project_pdb_ideal_geometry.py \
+  --input "$OUTPUT_DIR/5fli_A_reconstructed_idealized.pdb" \
+  --output "$OUTPUT_DIR/5fli_A_reconstructed_idealized_for_view.pdb" \
+  --native "$OUTPUT_DIR/5fli_A_native.pdb" \
+  --pml "$OUTPUT_DIR/5fli_A_rotation_step40k_view.pml" \
+  --preserve-backbone
+
+# The second projection is invoked only to produce the standard PML. Restore
+# the already repaired coordinates at the exact path loaded by that PML.
+cp "$OUTPUT_DIR/5fli_A_reconstructed_idealized.pdb" \
+  "$OUTPUT_DIR/5fli_A_reconstructed_idealized_for_view.pdb"

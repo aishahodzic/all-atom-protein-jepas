@@ -110,8 +110,12 @@ class CanonicalTrainingConfigTest(unittest.TestCase):
         self.assertEqual(cfg.ema.decay, 0.9999)
         self.assertEqual(cfg.ema.update_every, 32)
         self.assertEqual(list(cfg.ema.include), ["encoder"])
+        self.assertFalse(cfg.pair_only_position_information)
+        self.assertFalse(cfg.pair_only_evolving_pair_repr)
+        self.assertFalse(cfg.sigreg.vicreg_rescue)
         self.assertEqual(cfg.checkpoint.every_n_train_steps, 10_000)
         self.assertIsNone(cfg.checkpoint.additional_every_n_train_steps)
+        self.assertIsNone(cfg.checkpoint.additional_train_steps)
         self.assertEqual(cfg.checkpoint.last_every_n_train_steps, 1_500)
 
     def test_numbered_and_rolling_checkpoint_cadences_are_separate(self):
@@ -153,6 +157,26 @@ class CanonicalTrainingConfigTest(unittest.TestCase):
         self.assertEqual(exposure_match.filename, "step-{step:08d}")
         self.assertEqual(exposure_match.save_top_k, -1)
         self.assertFalse(exposure_match.save_last)
+
+    def test_exact_additional_checkpoint_milestones(self):
+        cfg = self._resolved_config()
+        cfg.wandb.enabled = False
+        cfg.checkpoint.additional_train_steps = [15_000, 16_000, 17_000]
+        with tempfile.TemporaryDirectory() as directory:
+            callbacks = build_callbacks(cfg, Path(directory))
+        checkpoints = [
+            callback
+            for callback in callbacks
+            if isinstance(callback, ModelCheckpoint)
+        ]
+        self.assertEqual(
+            [callback._every_n_train_steps for callback in checkpoints],
+            [10_000, 15_000, 16_000, 17_000, 1_500],
+        )
+        for milestone in checkpoints[1:4]:
+            self.assertEqual(milestone.filename, "step-{step:08d}")
+            self.assertEqual(milestone.save_top_k, -1)
+            self.assertFalse(milestone.save_last)
 
     def test_trainer_has_no_validation_or_gradient_clipping(self):
         cfg = self._resolved_config()

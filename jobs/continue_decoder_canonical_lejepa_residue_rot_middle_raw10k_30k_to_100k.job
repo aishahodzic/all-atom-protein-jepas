@@ -1,0 +1,66 @@
+#!/bin/bash
+# Continue the cropped per-residue + SO(3) decoder from its exact step-30k
+# weights to step 100k. Decoder checkpoints contain weights only, so AdamW
+# restarts on resume. The existing calibration and 30k runs are preserved.
+# No --calibration flag is passed, so patience-based early stopping is disabled.
+#SBATCH --job-name=dec_resrot_100k
+#SBATCH --partition=normal
+#SBATCH --nodelist=noether
+#SBATCH --qos=medium
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=100G
+#SBATCH --time=12:00:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/decoder/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+PYTHON_BIN=/data-gauss/$USER/envs/laproteina_env/bin/python3
+ENCODER_ID=canonical-lejepa-residue-perview-rot-middle-lr-raw-step10k
+SOURCE_RUN_ID=${ENCODER_ID}-10k-to-30k
+RUN_ID=${ENCODER_ID}-30k-to-100k
+RESUME_STEP=30000
+RESUME_CKPT="$PROJECT_ROOT/Evaluation/structure_rec/checkpoints/${SOURCE_RUN_ID}_step${RESUME_STEP}.pt"
+CURVE_PATH="$PROJECT_ROOT/Evaluation/structure_rec/curves/${RUN_ID}_curve.csv"
+FINAL_PATH="$PROJECT_ROOT/Evaluation/structure_rec/checkpoints/${RUN_ID}_final.pt"
+SCRATCH_ROOT="$HOME/tmp/decoder-resrot-100k-$SLURM_JOB_ID"
+
+if [[ ! -s "$RESUME_CKPT" ]]; then
+    echo "ERROR: missing exact step-30k decoder checkpoint: $RESUME_CKPT" >&2
+    exit 1
+fi
+
+echo "338e3b88bdda362f50a39cafac82a2c95edf8b8be0bfe051c73019b53e0930fe  $RESUME_CKPT" | sha256sum -c -
+
+if [[ -e "$CURVE_PATH" || -e "$FINAL_PATH" ]]; then
+    echo "ERROR: continuation outputs already exist for $RUN_ID; refusing to overwrite them." >&2
+    exit 1
+fi
+
+mkdir -p "$PROJECT_ROOT/logs/decoder" "$SCRATCH_ROOT"
+export TMPDIR="$SCRATCH_ROOT"
+export MPLCONFIGDIR="$SCRATCH_ROOT/matplotlib"
+export TRITON_CACHE_DIR="$SCRATCH_ROOT/triton"
+export PYTHONPATH="$PROJECT_ROOT"
+export PYTHONUNBUFFERED=1
+mkdir -p "$MPLCONFIGDIR" "$TRITON_CACHE_DIR"
+
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+
+cd "$PROJECT_ROOT/Evaluation/structure_rec"
+srun "$PYTHON_BIN" -B train_decoder.py \
+  --encoder "$ENCODER_ID" \
+  --encoder-source online \
+  --run-id "$RUN_ID" \
+  --resume-from "$RESUME_CKPT" \
+  --resume-step "$RESUME_STEP" \
+  --max-steps 100000 \
+  --eval-every 2000 \
+  --batch-size 8 \
+  --lr 0.0001 \
+  --seed 42

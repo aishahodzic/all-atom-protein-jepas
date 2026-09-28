@@ -1,0 +1,105 @@
+{
+  "input": "non_code/pymol_proteins/8cbv_A/8cbv_A_reconstructed_idealized.pdb",
+  "output": "store/geometry-repair-validation/adjacent-clash-fix/all10/8cbv_A_rotamer.pdb",
+  "overlap": 1.2,
+  "trigger": 1.8,
+  "displacement_weight": 0.02,
+  "passes": 5,
+  "severe_pairs_before": 5,
+  "severe_pairs_after": 5,
+  "before": [
+    {
+      "left_residue": 7,
+      "right_residue": 8,
+      "distance": 1.1638947546921927,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 11,
+      "right_residue": 12,
+      "distance": 1.6512919184686878,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 14,
+      "right_residue": 15,
+      "distance": 1.6883320171103788,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 16,
+      "right_residue": 17,
+      "distance": 0.743872300868906,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 24,
+      "right_residue": 25,
+      "distance": 1.7654693426961567,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    }
+  ],
+  "after": [
+    {
+      "left_residue": 7,
+      "right_residue": 8,
+      "distance": 1.1638947546921927,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 11,
+      "right_residue": 12,
+      "distance": 1.6512919184686878,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 14,
+      "right_residue": 15,
+      "distance": 1.6883320171103788,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 16,
+      "right_residue": 17,
+      "distance": 0.743872300868906,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 24,
+      "right_residue": 25,
+      "distance": 1.7654693426961567,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    }
+  ],
+  "choices": []
+}

@@ -1,0 +1,65 @@
+#!/bin/bash
+#SBATCH --job-name=canonical_v1_prod_smoke
+#SBATCH --partition=normal
+#SBATCH --qos=short
+#SBATCH --nodes=1
+#SBATCH --ntasks=2
+#SBATCH --ntasks-per-node=2
+#SBATCH --gres=gpu:2
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=64G
+#SBATCH --time=01:00:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/canonical_lejepa/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+PYTHON_BIN=/slurm-storage/aishod/envs/la-proteina/bin/python
+RUN_NAME="canonical_lejepa_v1_production_smoke_${SLURM_JOB_ID}"
+
+cd "$PROJECT_ROOT"
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+export PYTHONPATH="$PROJECT_ROOT${PYTHONPATH:+:$PYTHONPATH}"
+export PATH="/slurm-storage/aishod/envs/la-proteina/bin:$PATH"
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+export MPLCONFIGDIR="/tmp/canonical-lejepa-production-smoke-${SLURM_JOB_ID}"
+export WANDB_MODE=offline
+mkdir -p "$MPLCONFIGDIR" "$PROJECT_ROOT/logs/canonical_lejepa"
+
+# First verify the exact production NCCL SIGReg collective in the same
+# two-GPU allocation. The training smoke starts only if this focused test
+# succeeds.
+srun --ntasks=1 "$PYTHON_BIN" -m torch.distributed.run \
+    --standalone \
+    --nproc-per-node=2 \
+    -m proteinfoundation.jepa.tests.run_canonical_sigreg_nccl
+
+MEMORY_LOG="$PROJECT_ROOT/logs/canonical_lejepa/${RUN_NAME}-gpu-memory.csv"
+(
+    while true; do
+        nvidia-smi \
+            --query-gpu=timestamp,index,uuid,name,memory.used,memory.total \
+            --format=csv,noheader,nounits
+        sleep 0.1
+    done
+) > "$MEMORY_LOG" &
+MEMORY_MONITOR_PID=$!
+stop_memory_monitor() {
+    kill "$MEMORY_MONITOR_PID" 2>/dev/null || true
+    wait "$MEMORY_MONITOR_PID" 2>/dev/null || true
+}
+trap stop_memory_monitor EXIT
+
+# Thirty-three optimizer steps are the shortest smoke that reaches the
+# configured EMA update at step 32. The scientific model/view configuration,
+# batch size, precision, loader, and optimizer remain the production defaults.
+srun --ntasks=2 "$PYTHON_BIN" -m proteinfoundation.jepa.train_canonical_lejepa \
+    "run_name_=${RUN_NAME}" \
+    trainer.max_steps=33 \
+    schedule.total_steps=33
+
+stop_memory_monitor
+trap - EXIT
+echo "GPU memory samples: $MEMORY_LOG"

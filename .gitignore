@@ -10,6 +10,10 @@ lightning_logs
 logs/
 outputs/
 wandb/
+.codex_tmp/
+.runtime-tmp/
+.scratch/
+.tmp/
 **.pdf
 **.svg
 **.npy
@@ -19,6 +23,21 @@ wandb/
 **.pt
 **.ckpt
 *.fasta
+*.aux
+*.acn
+*.alg
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.glo
+*.ist
+*.out
+*.run.xml
+*.synctex.gz
+*.tdo
+*.toc
+/iclr2027_overleaf.zip
 
 /checkpoints
 /tmp

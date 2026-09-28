@@ -1,0 +1,33 @@
+#!/bin/bash
+# Matched raw-10k chain-length diagnostic for the crop-only control.
+#SBATCH --job-name=tsne_crop_ctrl_10k
+#SBATCH --partition=normal
+#SBATCH --qos=short
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=64G
+#SBATCH --time=02:00:00
+#SBATCH --exclude=gauss
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/canonical_lejepa/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+PYTHON_BIN=/slurm-storage/aishod/envs/la-proteina/bin/python
+JOB_TMP="$PROJECT_ROOT/.tmp/matched-crop-control-${SLURM_JOB_ID}"
+
+cd "$PROJECT_ROOT"
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+export PYTHONPATH="$PROJECT_ROOT${PYTHONPATH:+:$PYTHONPATH}"
+export PATH="/slurm-storage/aishod/envs/la-proteina/bin:$PATH"
+export TMPDIR="$JOB_TMP"
+export MPLCONFIGDIR="$JOB_TMP/matplotlib"
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+mkdir -p "$TMPDIR" "$MPLCONFIGDIR" "$PROJECT_ROOT/logs/canonical_lejepa"
+
+srun --ntasks=1 "$PYTHON_BIN" \
+    Evaluation/latent_viz/analyze_matched_crop_control_10k.py

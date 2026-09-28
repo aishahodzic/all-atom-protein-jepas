@@ -1,0 +1,56 @@
+#!/bin/bash
+# Continue the stereochemistry-only intervention after the successful pilot.
+# Decoder architecture is unchanged; continue from the latest trained weights,
+# not the pilot's early-stopping-restored final checkpoint.
+#SBATCH --job-name=dec_jr70_geom20k
+#SBATCH --partition=normal
+#SBATCH --qos=short
+#SBATCH --exclude=gauss
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=100G
+#SBATCH --time=03:00:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/decoder/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+PYTHON_BIN=/data-gauss/$USER/envs/laproteina_env/bin/python3
+SOURCE_CKPT="$PROJECT_ROOT/Evaluation/structure_rec/checkpoints/jepa-rand-mask-70-target-geometry-w0p05-132k-to-137k_step136000.pt"
+RUN_ID=jepa-rand-mask-70-target-geometry-w0p05-136k-to-156k
+SCRATCH_ROOT="$HOME/tmp/dg-$SLURM_JOB_ID"
+
+[[ -s "$SOURCE_CKPT" ]] || { echo "ERROR: missing $SOURCE_CKPT" >&2; exit 1; }
+mkdir -p "$PROJECT_ROOT/logs/decoder" "$SCRATCH_ROOT"
+export TMPDIR="$SCRATCH_ROOT"
+export MPLCONFIGDIR="$SCRATCH_ROOT/matplotlib"
+export TRITON_CACHE_DIR="$SCRATCH_ROOT/triton"
+export PYTHONPATH="$PROJECT_ROOT"
+mkdir -p "$MPLCONFIGDIR" "$TRITON_CACHE_DIR"
+
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+
+cd "$PROJECT_ROOT/Evaluation/structure_rec"
+srun "$PYTHON_BIN" -B train_decoder.py \
+  --encoder jepa-rand-mask-70 \
+  --encoder-source target \
+  --run-id "$RUN_ID" \
+  --resume-from "$SOURCE_CKPT" \
+  --resume-step 136000 \
+  --max-steps 156000 \
+  --eval-every 1000 \
+  --eval-subset-size 50 \
+  --save-every 1000 \
+  --batch-size 4 \
+  --lr 0.00002 \
+  --geometry-weight 0.05 \
+  --geometry-predicted-sequence-weight 0.5 \
+  --geometry-tolerance-factor 12.0 \
+  --geometry-clash-overlap 1.5 \
+  --patience-threshold 0.0 \
+  --evaluate-before-training \
+  --no-wandb

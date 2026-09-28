@@ -1,0 +1,66 @@
+{
+  "input": "non_code/pymol_proteins/1kfm_A/1kfm_A_reconstructed_idealized.pdb",
+  "output": "store/geometry-repair-validation/all10/1kfm_A_repaired.pdb",
+  "strength": 100.0,
+  "steps": 2000,
+  "learning_rate": 0.01,
+  "bond_tolerance_angstrom": 0.02,
+  "virtual_tolerance_angstrom": 0.03,
+  "peptide_tolerance_angstrom": 0.02,
+  "peptide_angle_cosine_tolerance": 0.015,
+  "clash_strength": 30.0,
+  "clash_overlap_angstrom": 1.2,
+  "ca_gap_threshold_angstrom": 4.5,
+  "backbone_steps": 1200,
+  "continuous_peptide_edges": 49,
+  "inserted_internal_ter_records": 0,
+  "max_ca_shift_angstrom": 0.0,
+  "mean_moved_atom_distance_angstrom": 0.04505505928857083,
+  "max_moved_atom_distance_angstrom": 0.4379983294933611,
+  "history": [
+    {
+      "step": 1,
+      "stage": "peptide",
+      "loss": 6.386107810082713,
+      "displacement": 0.0,
+      "covalent": 6.522520676939144e-08,
+      "virtual": 0.0,
+      "peptide": 0.046869006396138425,
+      "peptide_angles": 0.016992006479481934,
+      "clash": 0.0
+    },
+    {
+      "step": 1200,
+      "stage": "peptide",
+      "loss": 0.02152446326665713,
+      "displacement": 0.017318353158710362,
+      "covalent": 7.94099156596519e-06,
+      "virtual": 0.00012208426365217359,
+      "peptide": 6.230862799886141e-07,
+      "peptide_angles": 2.9759573204704876e-06,
+      "clash": 0.0
+    },
+    {
+      "step": 1201,
+      "stage": "relaxation",
+      "loss": 0.012133398774850137,
+      "displacement": 0.007917838734708997,
+      "covalent": 7.925133044066649e-06,
+      "virtual": 0.00012202416559055912,
+      "peptide": 6.213648071924714e-07,
+      "peptide_angles": 2.9576847812258023e-06,
+      "clash": 4.845879042889565e-07
+    },
+    {
+      "step": 2000,
+      "stage": "relaxation",
+      "loss": 0.008909029325590819,
+      "displacement": 0.00847221949330878,
+      "covalent": 1.3581225975026333e-06,
+      "virtual": 9.16871680745524e-06,
+      "peptide": 8.54773096767048e-08,
+      "peptide_angles": 6.315673191905926e-07,
+      "clash": 2.5063152888334115e-09
+    }
+  ]
+}

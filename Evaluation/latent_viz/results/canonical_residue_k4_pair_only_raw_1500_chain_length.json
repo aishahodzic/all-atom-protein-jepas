@@ -1,0 +1,26 @@
+{
+  "description": "Chain-length-only t-SNE of stopped pair-only residue-K4 run",
+  "checkpoint_id": "canonical-lejepa-residue-k4-pair-only-raw-step1500",
+  "checkpoint_path": "/slurm-storage/aishod/projects/la-proteina/store/canonical_lejepa_v1_residue_k4_nocrop_pair_only_position_minvalid4_10k/evaluation/snapshots/raw-step00001500-full-state.ckpt",
+  "staged_checkpoint": "/slurm-storage/aishod/projects/la-proteina/store/canonical_lejepa_v1_residue_k4_nocrop_pair_only_position_minvalid4_10k/evaluation/pair-only-raw-step1500-staged.ckpt",
+  "encoder_source": "raw",
+  "training_step": 1500,
+  "proteins": 5224,
+  "residue_pool": 748402,
+  "sampled_residues": 15000,
+  "sample_seed": 42,
+  "physical_sample_sha256": "6281211e2d1f3364f54c33fbde061601e4d35560a56f75bd6864b993b775d9b8",
+  "latent_dim": 8,
+  "latent_input_sha256": "abbe8c735707c89b8707f889c8967215662592e91197b1d6417e9223a602bc03",
+  "chain_length_min": 17.0,
+  "chain_length_max": 255.0,
+  "log_chain_length_knn10_spearman": 0.10666364834698046,
+  "tsne": {
+    "metric": "cosine",
+    "perplexity": 30.0,
+    "max_iter": 1000,
+    "init": "random",
+    "coordinate_file": "/slurm-storage/aishod/projects/la-proteina/Evaluation/latent_viz/results/tsne_coordinates/canonical-lejepa-residue-k4-pair-only-raw-step1500_n15000_perp30p0_seed42_cosine.npz"
+  },
+  "figure": "/slurm-storage/aishod/projects/la-proteina/Evaluation/latent_viz/figures/canonical_lejepa/tsne_canonical_residue_k4_pair_only_raw_1500_chain-length.png"
+}

@@ -1,0 +1,54 @@
+#!/bin/bash
+# Compare matched protein predictions for rotation and non-rotation JEPA encoders.
+# The rotation decoder is an interim 40k-step snapshot; the non-rotation decoder
+# is the established finished decoder, so the output records exact provenance.
+#SBATCH --job-name=cmp_dec_rot
+#SBATCH --partition=h100
+#SBATCH --nodelist=hopper
+#SBATCH --qos=short
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=8
+#SBATCH --mem=64G
+#SBATCH --time=00:30:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/decoder/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+PYTHON_BIN=/slurm-storage/aishod/envs/la-proteina/bin/python
+ROTATION_ENCODER=/mnt/hopper-raid/aishod/runs/jepa_rand70_d8_independent_rotations_100k/store/jepa_rand70_d8_independent_rotations_100k/checkpoints/chk_epoch=00000019_step=000000100000.ckpt
+NONROTATION_ENCODER=/mnt/hopper-raid/aishod/runs/jepa_random_masking_70_v3/store/jepa_random_masking_70_v3/checkpoints/chk_epoch=00000019_step=000000100000.ckpt
+ROTATION_DECODER="$PROJECT_ROOT/Evaluation/structure_rec/checkpoints/jepa-rand70-d8-independent-rotations-target-step100k-decoder-140k_step40000.pt"
+NONROTATION_DECODER="$PROJECT_ROOT/Evaluation/structure_rec/checkpoints/jepa-rand-mask-70-target-80k-to-140k_final.pt"
+OUTPUT_DIR="$PROJECT_ROOT/non_code/pymol_proteins/audits/rotation_vs_nonrotation"
+SCRATCH_ROOT="$HOME/tmp/decoder-rotation-comparison-$SLURM_JOB_ID"
+
+mkdir -p "$PROJECT_ROOT/logs/decoder" "$OUTPUT_DIR" "$SCRATCH_ROOT"
+export TMPDIR="$SCRATCH_ROOT"
+export MPLCONFIGDIR="$SCRATCH_ROOT/matplotlib"
+export TRITON_CACHE_DIR="$SCRATCH_ROOT/triton"
+export PYTHONPATH="$PROJECT_ROOT"
+mkdir -p "$MPLCONFIGDIR" "$TRITON_CACHE_DIR"
+
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+
+cd "$PROJECT_ROOT"
+srun "$PYTHON_BIN" Evaluation/structure_rec/evaluate_oracle_aa_sidechains.py \
+  --encoder jepa-rand70-d8-independent-rotations-step100k \
+  --encoder-source target \
+  --encoder-checkpoint "$ROTATION_ENCODER" \
+  --decoder-checkpoint "$ROTATION_DECODER" \
+  --output "$OUTPUT_DIR/rotation_decoder_step40k.json" \
+  --device cuda
+
+srun "$PYTHON_BIN" Evaluation/structure_rec/evaluate_oracle_aa_sidechains.py \
+  --encoder jepa-rand-mask-70 \
+  --encoder-source target \
+  --encoder-checkpoint "$NONROTATION_ENCODER" \
+  --decoder-checkpoint "$NONROTATION_DECODER" \
+  --output "$OUTPUT_DIR/nonrotation_decoder_finished.json" \
+  --device cuda

@@ -1,0 +1,105 @@
+{
+  "artifact": "layerwise_768d_residue_tsne",
+  "blocks": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+  ],
+  "checkpoint": "/slurm-storage/aishod/projects/la-proteina/store/canonical_lejepa_v1_100k/evaluation/canonical-lejepa-v1-step100000-raw-staged.ckpt",
+  "checkpoint_sha256": "28f93a4224323b7366243265abd7721f2dffaaf6f8c9fd4aa4767788fd5d2bac",
+  "context": "full unmasked protein; no evaluation rotation",
+  "coordinates": [
+    {
+      "block": 1,
+      "input_sha256": "8163d2feebc56102694b9e182a5fcaf2c20f1f9c35d6c3bbed1de6682fcbd294",
+      "path": "/slurm-storage/aishod/projects/la-proteina/Evaluation/latent_viz/results/layerwise_tsne/layerwise-tsne-uncropped-le-jepa-block1-n15000-cosine-tsne.npz"
+    },
+    {
+      "block": 2,
+      "input_sha256": "a582afb7827c6c549a2c484b75d706d5d78195ea0d466c19f0e57ce86c529531",
+      "path": "/slurm-storage/aishod/projects/la-proteina/Evaluation/latent_viz/results/layerwise_tsne/layerwise-tsne-uncropped-le-jepa-block2-n15000-cosine-tsne.npz"
+    },
+    {
+      "block": 3,
+      "input_sha256": "aebf3740fc2b18f7533a0867a5e842ba8b16341dfb820c36d3a4d215f0b7e641",
+      "path": "/slurm-storage/aishod/projects/la-proteina/Evaluation/latent_viz/results/layerwise_tsne/layerwise-tsne-uncropped-le-jepa-block3-n15000-cosine-tsne.npz"
+    },
+    {
+      "block": 4,
+      "input_sha256": "eef31f09dae0b52319f7ae940c02aa33759fc602173d5d00dad7382f81491dfd",
+      "path": "/slurm-storage/aishod/projects/la-proteina/Evaluation/latent_viz/results/layerwise_tsne/layerwise-tsne-uncropped-le-jepa-block4-n15000-cosine-tsne.npz"
+    },
+    {
+      "block": 5,
+      "input_sha256": "b1eb6d7fa801f012f316076da91bdfaac59bbcb82e31e07e99950965ccfb409b",
+      "path": "/slurm-storage/aishod/projects/la-proteina/Evaluation/latent_viz/results/layerwise_tsne/layerwise-tsne-uncropped-le-jepa-block5-n15000-cosine-tsne.npz"
+    },
+    {
+      "block": 6,
+      "input_sha256": "09ddc326e4155687bf979ee1f00863748d62337c4ee9a9bdb31b179873524c4c",
+      "path": "/slurm-storage/aishod/projects/la-proteina/Evaluation/latent_viz/results/layerwise_tsne/layerwise-tsne-uncropped-le-jepa-block6-n15000-cosine-tsne.npz"
+    },
+    {
+      "block": 7,
+      "input_sha256": "026a7c95b2f91b37e18c23bdf4f294415dcd984e4cd611518d44dc70f58bcb00",
+      "path": "/slurm-storage/aishod/projects/la-proteina/Evaluation/latent_viz/results/layerwise_tsne/layerwise-tsne-uncropped-le-jepa-block7-n15000-cosine-tsne.npz"
+    },
+    {
+      "block": 8,
+      "input_sha256": "210911510f35abcee0b2097ff1d657eef9aa97ca38d8b9730a198946a9948d7c",
+      "path": "/slurm-storage/aishod/projects/la-proteina/Evaluation/latent_viz/results/layerwise_tsne/layerwise-tsne-uncropped-le-jepa-block8-n15000-cosine-tsne.npz"
+    },
+    {
+      "block": 9,
+      "input_sha256": "803d2f837df42984b36bdcd5ac2d798451305c83178a923cbb36b87ed84c6eaa",
+      "path": "/slurm-storage/aishod/projects/la-proteina/Evaluation/latent_viz/results/layerwise_tsne/layerwise-tsne-uncropped-le-jepa-block9-n15000-cosine-tsne.npz"
+    },
+    {
+      "block": 10,
+      "input_sha256": "a5f185168b9c59b31aa554e7516800886b0d21c09ee9ba060bf834fe7ab3a8d5",
+      "path": "/slurm-storage/aishod/projects/la-proteina/Evaluation/latent_viz/results/layerwise_tsne/layerwise-tsne-uncropped-le-jepa-block10-n15000-cosine-tsne.npz"
+    },
+    {
+      "block": 11,
+      "input_sha256": "9a19135fb6984037281e5dfc5f1cde28076906a784ef166a8602185767868754",
+      "path": "/slurm-storage/aishod/projects/la-proteina/Evaluation/latent_viz/results/layerwise_tsne/layerwise-tsne-uncropped-le-jepa-block11-n15000-cosine-tsne.npz"
+    },
+    {
+      "block": 12,
+      "input_sha256": "985d412f3fe58f8ae2b9b2eaf3235ed2ce61a6e4eaee1500ddcf6b04ca1aca04",
+      "path": "/slurm-storage/aishod/projects/la-proteina/Evaluation/latent_viz/results/layerwise_tsne/layerwise-tsne-uncropped-le-jepa-block12-n15000-cosine-tsne.npz"
+    }
+  ],
+  "encoder_source": "online",
+  "figure": "/slurm-storage/aishod/projects/la-proteina/iclr2027/figures/all-tsne-per-block-uncropped-le-jepa.png",
+  "model": "Uncropped LeJEPA",
+  "representation": "post-transformer-block, pre-final-LayerNorm, 768D",
+  "sample_cache": "/slurm-storage/aishod/projects/la-proteina/Evaluation/latent_viz/results/layerwise_tsne/layerwise-tsne-uncropped-le-jepa-sampled-768d.pt",
+  "schema_version": 1,
+  "selection": {
+    "labels_path": "/slurm-storage/aishod/projects/la-proteina/Evaluation/linear_probing/latents/labels.pt",
+    "pool_residues": 748402,
+    "sampled_proteins": 4738,
+    "sampled_residues": 15000,
+    "seed": 42,
+    "sha256": "8b97dc03ef9d2cb2caa10d956a79e7b24b79b40dc821166975edf9847dbc006f",
+    "validity": "AA-valid AND secondary-structure-valid"
+  },
+  "tsne": {
+    "init": "random",
+    "max_iter": 1000,
+    "method": "barnes_hut",
+    "metric": "cosine",
+    "perplexity": 30.0,
+    "seed": 42
+  }
+}

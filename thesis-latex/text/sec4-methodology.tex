@@ -1,0 +1,224 @@
+% the symbols must be standardizes across background and methods! 
+
+
+\section{Methodology}
+\label{sec:methodology}
+
+In this section, we describe the experimental setup and implementation of JEPA, JEPA+SIGReg and LeJEPA, followed by the protein views, training settings and evaluation protocols.
+
+\subsection{Experimental Setup}
+
+\subsubsection{Experimental Design}
+
+We use the La-Proteina encoder as the starting point for this work because it provides a compact, residue-level representation of protein sequence and structure. We retrain the encoder for each model, providing a consistent starting point for comparing the autoencoder baselines with the JEPA-based models. The main question is whether different training objectives can learn more useful protein representations from the same starting encoder. All models use eight-dimensional latent representations, unless otherwise specified.
+
+We evaluate JEPA, JEPA+SIGReg and LeJEPA, together with two autoencoder baselines and randomly initialised encoder controls. The experiments vary masking, predictor architecture, positional information, rotations, alignment and regularisation. Latent width, training budget and target-encoder setup are retained when comparing models within the same group.
+Figure~\ref{fig:methods-overview} summarises the models, design choices and evaluation.
+
+\begin{figure}[htbp]
+    \centering
+    \makebox[\textwidth][c]{\includegraphics[width=1\textwidth]{figures/methods/approach.pdf}}
+    \caption{Overview of the learning approaches, selected input and objective choices, and evaluation. The La-Proteina encoder architecture is retrained separately for each model.}
+    \label{fig:methods-overview}
+\end{figure}
+
+\subsubsection{Training Data and Splits}
+
+La-Proteina trains on subsets of the AlphaFold Database (AFDB) \citep{DBLP:journals/nar/VaradiADNNYYSWL22,la-proteina} and provides a PDB dataloader. We use the PDB because its smaller scale fits our compute budget.
+Data processing follows La-Proteina's filtering pipeline. It operates on individual polypeptide chains, with each chain becoming a training example. Structures are represented in mmCIF format and filtered as in La-Proteina: chain length in the range 50-256 residues, experimental method (X-ray diffraction or cryo-EM), resolution in the range 0.0-5.0\,\AA, standard-residue composition, availability and the provided exclusion list. Only cropped LeJEPA applies additional filtering, requiring a minimum chain length of 96 residues so that every protein can supply a 96-residue global crop (Section~\ref{sec:methods-cropped-lejepa}).
+
+Chains are split into train, validation and test sets by sequence-similarity clustering with a 50\% sequence-identity threshold.
+The result is 344{,}065 chains in total: 338{,}787 training, 4{,}775 validation and 503 test chains.
+
+\subsubsection{Input Representation}
+
+Input representation follows La-Proteina. Each residue is one of 20 canonical amino acid types, encoded as a one-hot vector. Atoms are represented in \emph{atom37} format, a fixed dictionary mapping each of 37 possible heavy-atom names (all atoms except hydrogen) to a slot index \citep{ahdritz2024openfold}. The slots store three-dimensional coordinates, and a boolean mask indicates which atoms are present. Thus, residue order within a chain and atom order within a residue are both fixed: residues follow the chain's N-to-C backbone direction, and atoms follow a predetermined slot assignment based on atom name.
+
+Each processed structure is stored as a set of per-residue tensors, padded
+to a common length for batching. Fields include residue type, residue index, atom
+coordinates, the atom presence mask, chain ID, and B-factor. A batch has shape
+[batch\_size, max\_num\_residues, \dots], e.g., coordinates [B, L, 37, 3], residue type
+[B, L], and the atom mask [B, L, 37]. These tensors are passed to the encoder's feature factories to construct its sequence and pair representations (Section~\ref{sec:background-autoencoder}).
+
+\subsubsection{Autoencoder Baselines}
+
+We use two autoencoder baselines: the C$\alpha$-conditioned baseline follows La-Proteina's implementation exactly, whereas the fully latent baseline does not provide C$\alpha$ coordinates explicitly and instead encodes all structural information in the latent representation. Both use the same decoder architecture and reconstruction loss.
+
+
+\subsubsection{JEPA}
+
+\contributionbox{JEPA for per-residue representations from all-atom protein structures.}
+
+Our JEPA implementation adapts the student-teacher architecture described in Section~\ref{sec:background-jepa} to all-atom protein structures, as shown in Figure~\ref{fig:methods-jepa-architecture}.
+In the random-masking JEPA runs, we mask 50\% or 70\% of valid residues before context encoding to form the target set $T$, and the remaining residues form the visible context set $C$. 
+Masks are sampled separately for each protein on each training pass, excluding padding. The context encoder $E_\theta$ receives only the context residues $x=y_C$ and produces latents $z_x$, while the target encoder $E_{\bar\theta}$ receives the complete protein $y$ and produces latents $z_y$ for all residues. We then select the target-residue representations $z_{y,i}$ for $i\in T$.
+
+A four-layer cross-attention predictor uses the context latents $z_x$, projected to 128 dimensions and combined with their learned absolute-position embeddings, as keys and values, and learned absolute target-position embeddings as queries. Each layer uses eight attention heads, and the predictor returns one eight-dimensional prediction $\hat z_{y,i}$ per target residue:
+\begin{equation}
+ z_x=E_\theta(x),\quad
+ z_y=\operatorname{sg}\!\left(E_{\bar\theta}(y)\right),\quad
+ \hat z_{y,i}=P_\phi(z_x,C,i),\quad i\in T,
+\end{equation}
+where $\theta$, $\bar\theta$ and $\phi$ denote the context-encoder, target-encoder and predictor parameters, respectively. The index $i$ identifies a target residue, and $\operatorname{sg}$ denotes stop-gradient.
+
+We minimise the Smooth-L1 loss $D(\hat z_{y,i},z_{y,i})$, normalising both vectors to unit length before computing the loss and averaging over valid target residues and latent coordinates. The target encoder starts as a copy of the context encoder and follows it through an EMA with decay 0.996.
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\linewidth]{figures/methods/JEPA.pdf}
+    \caption{JEPA architecture, illustrated with 50\% random masking. The context encoder processes visible residues, the EMA target encoder processes the complete protein, and the cross-attention predictor predicts the selected target-residue latents.}
+    \label{fig:methods-jepa-architecture}
+\end{figure}
+
+\subsubsection{JEPA + SIGReg}
+
+\contributionbox{Shared-encoder JEPA with SIGReg for all-atom protein representations.}
+
+JEPA+SIGReg keeps JEPA's cross-attention predictor for masked-residue prediction while adopting LeJEPA's shared encoder and SIGReg (Section~\ref{sec:background-lejepa}). This provides regularisation without EMA-target or stop-gradient heuristics. The complete architecture is shown in Appendix Figure~\ref{fig:methods-jepa-sigreg-architecture}. Our JEPA+SIGReg variants include 50\% and 70\% random masking, mutation conditioning, relative-position prediction, independent view rotations and spatial masking. The shared encoder processes both the context and target views, while the predictor maps context latents $z_C$ and target-position queries to missing residue latents $\hat z_T$. The targets $z_T$ are selected from the complete-view representations. Gradients from both views update the shared encoder. The loss is:
+\begin{equation}
+    \mathcal{L}=(1-\lambda)\mathcal{L}_{\mathrm{pred}}
+    +\lambda\!\sum_{u\in\{z_C,z_T,\hat z_T\}}\!\operatorname{SIGReg}(u),
+    \qquad \lambda=0.02.
+\end{equation}
+Here, $\mathcal{L}_{\mathrm{pred}}=\operatorname{MSE}(\hat z_T,z_T)$ compares predicted and target residue latents, rather than comparing each view with the global-view mean as in LeJEPA. We average the squared errors over valid target residues and latent coordinates.
+
+SIGReg is applied separately to the context latents, target latents and predictor outputs, and the three terms are summed. We introduced the SIGReg terms progressively after initial experiments showed near-constant representations. With context-only SIGReg, both target and predictor variances collapsed, and adding target SIGReg did not prevent predictor collapse. Regularising all three stabilised training.
+For each term, we combine valid residue embeddings across the batch. Each SIGReg term uses 32 random projection directions. 
+
+\subsubsection{LeJEPA}
+\contributionbox{LeJEPA for all-atom proteins using masking rates for multi-view alignment.}
+
+Following the LeJEPA formulation in Section~\ref{sec:background-lejepa}, we adapt LeVJEPA's implementation to protein views \citep{kuhn2026levjepaefficientscalable}. We construct $V_g=1$ global view and $V_l=4$ local views per protein, all processed by the same encoder. Instead of a [CLS] token, we mean-pool the visible residue embeddings separately within each view to obtain one eight-dimensional protein vector $z_{n,v}$. We use the MSE implementation of $\mathcal{L}_{\mathrm{pred}}$ described with Equation~\ref{eq:background-lejepa-batch}. Since $V_g=1$, $\mu_n$ is the global-view vector, and the loss aligns each of the four local-view vectors with it, as shown in Figure~\ref{fig:methods-lejepa-architecture}. SIGReg is computed separately for each view across the batch of protein vectors and then averaged over views (Equation~\ref{eq:background-sigreg}). Our implementation uses 1,024 random projection directions by default and we minimise:
+\begin{equation}
+    \mathcal{L}=\mathcal{L}_{\mathrm{pred}}+\lambda\mathcal{L}_{\mathrm{SIGReg}},
+    \qquad \lambda=0.02.
+    \label{eq:methods-lejepa-loss}
+\end{equation}
+Unlike LeVJEPA, we need no projector after LayerNorm because our encoder already has a linear latent head \citep{kuhn2026levjepaefficientscalable}. All views receive gradients through the shared encoder. For uncropped LeJEPA, we compare the raw shared encoder with a training-time EMA copy of its weights. This EMA is used only for evaluation and is not a target encoder. Independent view rotations are described in Section~\ref{sec:methods-views}.
+
+We use two view constructions with different masking: full-protein views (uncropped) and fixed-length cropped views.
+
+\paragraph{Uncropped LeJEPA.}\nopagebreak[4] The views use independently sampled random residue masks over the full chain. The uncropped LeJEPA views mask 20\% of residues globally and 80\% locally, as shown in Figure~\ref{fig:methods-lejepa-architecture}.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\linewidth]{figures/methods/LeJEPA.pdf}
+    \caption{Uncropped LeJEPA architecture. One global view and four local views are processed by the shared encoder and mean-pooled before applying the prediction and SIGReg losses.}
+    \label{fig:methods-lejepa-architecture}
+\end{figure}
+
+\paragraph{Cropped LeJEPA.}\mbox{}\par\nopagebreak[4]
+\label{sec:methods-cropped-lejepa}
+
+\contributionbox{Global and local sequence cropping for constructing protein views.}
+
+To address the chain-length shortcut in uncropped LeJEPA (Section~\ref{sec:results-organisation}), we introduced fixed-length views. We chose 96-residue global crops to retain more structural context from most proteins in our 50-256-residue dataset, whereas smaller crops, such as 50 residues, would discard more than half of most chains. Local crops contain 48 residues. Chains shorter than 96 residues are excluded.
+
+Local windows are sampled within the global crop, as illustrated in Figure~\ref{fig:methods-cropped-lejepa-views}. We mask 20\% of residues in the global view and 50\% in each local view. Crops are recentred before encoding. Both protein- and residue-level models use batches of 96 proteins.
+
+\begin{figure}[htbp]
+    \vspace{0.4\baselineskip}
+    \centering
+    \includegraphics[width=\linewidth]{figures/methods/Crop.pdf}
+    \caption{Cropped LeJEPA view construction. A 96-residue global sequence crop provides four 48-residue local sequence crops. Random masking is applied independently to each view. The protein images are illustrative.}
+    \label{fig:methods-cropped-lejepa-views}
+    \vspace{0.4\baselineskip}
+\end{figure}
+
+\textbf{Protein-level loss.} We follow the same objective as in uncropped LeJEPA. At the end of each encoder pass, we mean-pool the visible residue embeddings into one 8D protein vector. The MSE compares each local protein vector with the global-view mean, which here is the single global vector. Each protein contributes one vector to SIGReg.
+
+\textbf{Residue-level loss.} Our encoder produces residue embeddings, and our earlier JEPA models also learn at this level. We therefore also train a variant that preserves residue correspondence rather than mean-pooling. Here, $\mathcal{L}_{\mathrm{pred}}$ compares the 8D embeddings of the same residues wherever the global and local crops overlap. To help prevent a chain-length shortcut, we average the squared differences within each protein before averaging across views and proteins, so proteins with more overlapping residues do not dominate the loss.
+
+For SIGReg, we first subtract each protein's mean residue embedding within each view to focus regularisation on within-protein variation. Both per-residue models in Table~\ref{tab:results-stb-crops} sample $K=4$ distinct residues independently per protein and view. Each draw contributes one 8D vector per protein to a test across the 96 proteins, giving $5\times4=20$ SIGReg tests whose losses are averaged. This gives proteins equal weight without treating all their correlated residues as independent samples.
+
+\subsubsection{Masking techniques}
+\label{sec:methods-views}
+
+The masking strategy determines which information is available for prediction. 
+Unless stated otherwise, masking hides both the amino-acid identity and atomic coordinates of the selected residues from the masked view.
+Random masking assigns either 50\% or 70\% of valid residues to targets and leaves the remainder as context. Spatial masking instead selects separated C$\alpha$ seed positions and grows neighbourhoods around them, using a shared radius capped at 30~\AA{} to approach 75\% target coverage. 
+Chemical variants retain partial information at target positions. Coordinate masking (50\% atoms masked) retains amino-acid identity and hides approximately half of the observed atom coordinates per residue. Side-chain masking (50\% side-chain atoms masked) hides amino-acid identity and approximately half of the observed side-chain coordinates, while retaining the backbone coordinates.
+Rotation variants apply an independent three-dimensional rotation to each view, shared by all atoms within that view. 
+Finally, the relative-position predictor uses a shared target query and learned cross-attention bias instead of absolute context and target embeddings. The bias represents signed target-to-context residue-index differences clipped to $[-128,128]$, while retaining the encoder's pair features.
+
+\subsubsection{Mutation-conditioned Prediction}
+
+\contributionbox{Latent prediction conditioned on amino-acid substitutions at fixed geometry.}
+
+We introduce mutation conditioning to test whether JEPA and JEPA+SIGReg can learn to predict how residue representations change after an amino-acid substitution. For each protein, we sample one valid position and uniformly choose a different canonical amino acid. The context encoder receives the original protein view, while the target encoder receives a copy with the selected residue identity changed. We keep coordinates and atom-presence masks unchanged because this setup does not model the mutant's new conformation.
+
+We retain the cross-attention predictor from our earlier JEPA models and provide the mutation as an additional input. The action vector combines a learned embedding of the replacement amino acid with the mutation-position embedding. We add it to the corresponding target query if the mutated residue is masked, or to its context key and value if it is visible. Target queries do not communicate with one another, so an action at a masked target can affect only that prediction, while an action in the visible context can affect several targets. 
+
+\subsubsection{Training Settings and Reproducibility}
+
+JEPA and JEPA+SIGReg use \texttt{batch\_size=4}, a peak LR of $10^{-4}$ with a validation plateau schedule, and weight decay of $10^{-2}$.
+Following LeVJEPA's implementation, LeJEPA uses peak LR $=4\times10^{-4}$ with linear warmup and weight decay $=0.04$. Discarding masked residues in uncropped LeJEPA and limiting cropped views to fixed-length windows reduce memory use and support larger batches. Uncropped LeJEPA uses batch\_size=16, and cropped LeJEPA uses batch\_size=96.
+All models use AdamW, and seed 42 is the default. 
+
+The main results use 100,000-step checkpoints, except cropped LeJEPA at 10,000 steps. Its larger batch gives a similar order of protein presentations to uncropped LeJEPA despite the shorter training.
+Due to memory and compute constraints, batch sizes are limited and the main results come from single training runs.
+
+
+
+\subsection{Evaluation}
+\label{sec:methods-evaluation}
+
+In this section, we describe the evaluations used in this work: StructTokenBench, all-atom reconstruction, linear probes, latent-space diagnostics, rotation invariance and layerwise downstream performance.
+
+
+\subsubsection{StructTokenBench}
+
+We evaluate downstream performance using StructTokenBench \citep{yuan2025protein}. It contains 12 tasks: eight functional-site classification tasks, three structural-flexibility tasks and one remote-homology task. Functional-site tasks identify residues involved in binding, catalysis, conservation, repeats or epitopes. These diverse tasks test local residue-level function and flexibility alongside protein-level structural relationships.
+
+Ten tasks use fold and superfamily test splits, BindShake retains its original test split, and Homo uses fold, family and superfamily splits, giving 24 task/split scores in total. The tasks and splits are listed in main Table~\ref{tab:results-stb-main}. We freeze the encoder and train STB's task-specific nonlinear MLP for classification or regression. Predictions use individual residue representations for residue-level tasks and mean-pooled representations for remote homology. We report AUROC for functional-site classification, Spearman's $\rho$ for flexibility and macro-F1 for remote homology.
+
+STB uses a maximum evaluated length of 600 residues as standard, which we retain for the main results. We label this L600 to distinguish it from our additional L256 version, which includes proteins of at most 256 residues to match the training length range and is reported separately in Appendix~\ref{app:l256}. Published 128-dimensional SLAE scores provide an external reference, although its representation and training setup differ from ours. The StructTokenBench paper also evaluates seven protein structure representations: ProteinMPNN, MIF, Foldseek, ProTokens and ESM3, alongside the authors' VanillaVQ baseline and proposed AminoAseed tokenizer, but we do not compare these directly because their architectures and training setups differ from ours \citep{yuan2025protein}.
+
+\subsubsection{Reconstruction}
+\label{sec:methods-reconstruction}
+
+We evaluate reconstruction from frozen residue representations using La-Proteina's transformer decoder. For JEPA, we freeze the 100k target encoder from the 70\% random-masking run and train a new decoder for 300k optimisation steps. The C$\alpha$-conditioned baseline uses its jointly trained 100k encoder and decoder, and both models receive the native C$\alpha$ coordinates. The JEPA decoder receives coordinate and sequence cross-entropy losses while the JEPA encoder remains frozen. We evaluate reconstruction on 100 proteins. We require complete N, C$\alpha$, C and O coordinates and at least one native side-chain heavy atom. We estimate 95\% confidence intervals for the mean by resampling the proteins with replacement 20,000 times.
+
+We report three reconstruction comparisons:
+\begin{enumerate}[label=\arabic*.,leftmargin=2.5em,nosep]
+    \item predicted sequence, which uses the exact heavy-atom intersection shared by the native structure and both model outputs.
+    \item all residues, which uses the backbone atoms N, C$\alpha$, C and O for every residue and remains comparable when the predicted amino acid is wrong.
+    \item true sequence, which adds the true amino-acid identities only to select the appropriate atoms from the decoder's Atom37 coordinate output, without replacing any predicted coordinates.
+\end{enumerate}
+Because both decoders receive native C$\alpha$ coordinates, we additionally report true-sequence non-C$\alpha$ RMSD, which excludes these supplied anchors from scoring. We also measure sequence recovery as the fraction of residues reconstructed with the correct amino-acid identity.
+
+We report three structural metrics:
+\begin{enumerate}[label=\arabic*.,leftmargin=2.5em,nosep]
+    \item RMSD measures the distance between corresponding predicted and native atoms, with lower values indicating more precise placement.
+    \item TM-score compares the overall C$\alpha$ trace after alignment \citep{zhang2004tmscore}.
+    \item lDDT measures whether local interatomic distances are preserved without alignment, with higher values indicating better local structure. We use the standard 0.5, 1, 2 and 4~\AA{} distance thresholds \citep{mariani2013lddt}.
+\end{enumerate}
+
+When inspecting the decoded structures, we noted compressed residue geometries, overlapping atoms from neighbouring residues and distorted connections along the protein chain. We introduced deterministic postprocessing that rebuilds each residue using AlphaFold's standard amino-acid atom layout through its OpenFold implementation, searches for a side-chain rotation when neighbouring atoms overlap, and makes small coordinate adjustments to repair chain connections and inverted structures without moving C$\alpha$ \citep{jumper2021,ahdritz2024openfold}. We apply the same procedure independently to the predicted-sequence and true-sequence structures and report it separately from the direct decoder output.
+
+\subsubsection{Linear Probing}
+
+We use linear probes to test which residue properties can be predicted from the learned embeddings. We freeze the encoder and fit a separate linear predictor for each property. Logistic regression predicts amino-acid identity (AA) and three-state secondary structure (SS), while linear regression predicts relative solvent accessibility (RSA) and B-factor.
+
+We combine the encoder's validation and test proteins and split this pool 80/20 by protein into probe-training and probe-test sets. All residues of one protein remain in the same split. AA identity and B-factors are read from the data, while SS and RSA are computed from the coordinates using Biotite. B-factors are standardised within each protein, and classification features are scaled using only probe-training data. We report AA and SS accuracy, RSA $R^2$ and B-factor Spearman correlation, with a randomly initialised encoder as a control.
+
+\subsubsection{Latent-space and Layerwise Diagnostics}
+
+\contributionbox{Analysis of residue information across encoder layers and latent compression.}
+
+\textbf{t-SNE visualisations.} We use t-SNE to visualise the organisation and clustering of residue embeddings.
+We sample 15,000 residues from a pool of 5,224 protein chains in the validation and test sets. We use the same residues across models, coloured by property.
+These plots illustrate organisation, not distances between biological classes.
+
+\textbf{Neighbour purity.} To quantify the organisation seen in these t-SNE plots, we measure neighbour purity: the mean fraction of ten nearest neighbours sharing the query's amino-acid identity or absolute residue index. Neighbours are selected by cosine similarity in the 8D space. For AA purity, neighbours must come from other proteins. For index purity, we use the plotted residues and exclude only the query residue itself.
+
+\textbf{Effective rank.} To assess dimensional collapse, we compute entropy-based effective rank \citep{roy2007effective} on the same residue sample: $r_{\mathrm{eff}}=\exp(-\sum_{i:p_i>0}p_i\log p_i)$, where $p_i=\lambda_i/\sum_j\lambda_j$ and $\lambda_i$ are the eigenvalues of the centred embedding covariance matrix. Since we have eight-dimensional embeddings, $r_{\mathrm{eff}}$ near one indicates variance concentrated in one direction, while values near eight indicate near-full effective rank.
+
+\textbf{Protein-level structural neighbourhoods.} For 250 proteins, we mean-pool the residue embeddings from 64D JEPA with and without rotations and the matched uncropped and cropped LeJEPA controls. For each protein, we select the nearest latent neighbour from a different PDB entry and a random length-matched protein. We compare both pairs by aligned TM-score and sequence identity, and repeat the structural comparison using only neighbour pairs below 30\% sequence identity.
+
+\textbf{Rotation invariance.} For the two uncropped LeJEPA encoders, we sample 400 chains from the validation and test sets and encode each chain in full context under 16 independently sampled SO(3) rotations. We keep residue identities and correspondence fixed, changing only the atomic coordinates. We compare corresponding 8D residue latents by cosine similarity after subtracting each protein's mean latent, as shown in Equation~\ref{eq:methods-rotation-invariance}, and repeat the comparison with randomly mismatched residues as a control. We first average over residues and rotations within each protein, then average the 400 protein-level scores. We obtain 95\% confidence intervals by repeatedly resampling these protein-level scores with replacement.
+\begin{equation}
+s_{\mathrm{rot}}(X,R)=\frac{1}{L}\sum_{i=1}^{L}\cos\!\left(z_i(X)-\bar z(X),\ z_i(RX)-\bar z(RX)\right).
+\label{eq:methods-rotation-invariance}
+\end{equation}
+
+\textbf{Layerwise performance.} We test whether intermediate encoder blocks provide more useful representations for downstream tasks than the final 8D latent. This evaluation is applied to uncropped LeJEPA without rotations and JEPA with 70\% random masking. We extract 768-dimensional states after blocks 1, 6 and 12 and the final eight-dimensional latent mean, and run the STB evaluation on these outputs. As a control, we also evaluate the block-6 output of a randomly initialised, untrained encoder.

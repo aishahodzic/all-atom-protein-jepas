@@ -1,0 +1,33 @@
+#!/bin/bash
+# Quantify and visualize what the matched 768D block-12 spaces encode.
+#SBATCH --job-name=block12_org
+#SBATCH --partition=normal
+#SBATCH --qos=medium
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=48G
+#SBATCH --time=01:00:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/latent_viz/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+PYTHON_BIN=/slurm-storage/aishod/envs/la-proteina/bin/python
+
+cd "$PROJECT_ROOT"
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+
+export PYTHONPATH="$PROJECT_ROOT"
+export PYTHONDONTWRITEBYTECODE=1
+export MPLBACKEND=Agg
+export OMP_NUM_THREADS=16
+export OPENBLAS_NUM_THREADS=16
+export MKL_NUM_THREADS=16
+export TMPDIR="$HOME/tmp/block12-organization/${SLURM_JOB_ID}"
+export MPLCONFIGDIR="$TMPDIR/matplotlib"
+mkdir -p "$MPLCONFIGDIR"
+
+"$PYTHON_BIN" Evaluation/latent_viz/analyze_layerwise_block12_organization.py

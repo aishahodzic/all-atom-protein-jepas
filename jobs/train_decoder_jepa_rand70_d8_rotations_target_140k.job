@@ -1,0 +1,47 @@
+#!/bin/bash
+# Fresh decoder on the step-100k EMA/target encoder from JEPA rand-70 D8 with
+# independent target rotations. Raw metrics remain directly comparable with
+# the non-rotation decoder; ideal-geometry Fix 2 is applied only at export.
+#SBATCH --job-name=dec_jr70_d8rot
+#SBATCH --partition=h100
+#SBATCH --nodelist=hopper
+#SBATCH --qos=medium
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=100G
+#SBATCH --time=24:00:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/decoder/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+PYTHON_BIN=/data-gauss/$USER/envs/laproteina_env/bin/python3
+RUN_ID=jepa-rand70-d8-independent-rotations-target-step100k-decoder-140k
+SCRATCH_ROOT="$HOME/tmp/decoder-jr70-d8rot-$SLURM_JOB_ID"
+
+mkdir -p "$PROJECT_ROOT/logs/decoder" "$SCRATCH_ROOT"
+export TMPDIR="$SCRATCH_ROOT"
+export MPLCONFIGDIR="$SCRATCH_ROOT/matplotlib"
+export TRITON_CACHE_DIR="$SCRATCH_ROOT/triton"
+export PYTHONPATH="$PROJECT_ROOT"
+mkdir -p "$MPLCONFIGDIR" "$TRITON_CACHE_DIR"
+
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+
+cd "$PROJECT_ROOT/Evaluation/structure_rec"
+srun "$PYTHON_BIN" -B train_decoder.py \
+  --encoder jepa-rand70-d8-independent-rotations-step100k \
+  --encoder-source target \
+  --run-id "$RUN_ID" \
+  --max-steps 140000 \
+  --eval-every 2000 \
+  --eval-subset-size 200 \
+  --save-every 10000 \
+  --batch-size 8 \
+  --lr 0.0001 \
+  --patience-threshold 0.0 \
+  --evaluate-before-training

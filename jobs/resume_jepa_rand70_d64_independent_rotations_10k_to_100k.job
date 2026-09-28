@@ -1,6 +1,6 @@
 #!/bin/bash
-# Continue the JEPA rand70 D64 independent-rotations pilot from its exact 10k
-# full-state checkpoint to 100k. Old predictor; no SIGReg.
+# Continue the JEPA rand70 D64 independent-rotations run from rolling full state
+# to 100k. Old predictor; no SIGReg.
 # Numbered checkpoints every 10k; rolling last.ckpt every 1.5k.
 #SBATCH --job-name=jepa_d64_rot_100k
 #SBATCH --partition=normal
@@ -21,6 +21,7 @@ PYTHON=/slurm-storage/aishod/envs/la-proteina/bin/python
 RUN_NAME=jepa_rand70_d64_independent_rotations_10k
 RUN_DIR=/mnt/hopper-raid/aishod/runs/$RUN_NAME
 CHECKPOINT="$RUN_DIR/store/$RUN_NAME/checkpoints/last.ckpt"
+IMPORT_DIR="$HOME/tmp/jepa-d64-rotation-resume-import"
 
 set -a
 source "$PROJECT_ROOT/.env"
@@ -34,14 +35,15 @@ export WANDB_RESUME=must
 
 [[ "$(git -C "$WORKTREE" branch --show-current)" == "jepa-latent" ]] || { echo "ERROR: wrong worktree branch" >&2; exit 1; }
 [[ -s "$CHECKPOINT" ]] || { echo "ERROR: missing resume checkpoint: $CHECKPOINT" >&2; exit 1; }
-IMPORTED_FROM="$(cd /tmp && "$PYTHON" -c 'import proteinfoundation; print(proteinfoundation.__file__)')"
+mkdir -p "$IMPORT_DIR"
+IMPORTED_FROM="$(cd "$IMPORT_DIR" && "$PYTHON" -c 'import proteinfoundation; print(proteinfoundation.__file__)')"
 [[ "$IMPORTED_FROM" == "$WORKTREE"/proteinfoundation/* ]] || { echo "ERROR: imported $IMPORTED_FROM" >&2; exit 1; }
 
 mkdir -p "$RUN_DIR" "$PROJECT_ROOT/logs/jepa_interventions"
 cd "$RUN_DIR"
 
 echo "Checkpoint: $CHECKPOINT"
-echo "Continuing JEPA rand70 D64 independent rotations from exact step 10000 to 100000"
+echo "Continuing JEPA rand70 D64 independent rotations to step 100000"
 echo "Old predictor; SIGReg disabled; effective batch size 4"
 
 printf 'last\n' | srun --ntasks=1 "$PYTHON" "$WORKTREE/proteinfoundation/jepa/train.py" \

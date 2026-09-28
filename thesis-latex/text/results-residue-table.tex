@@ -1,0 +1,21 @@
+% !TeX root = ../Project.tex
+\begin{table}[htbp]
+\centering
+\resultstableformat
+\begin{tabular}{lrrrr}
+\toprule
+Encoder & AA accuracy & SS accuracy & RSA $R^2$ & B-factor $\rho$ \\
+\midrule
+Random init. & 0.693 & 0.472 & 0.111 & 0.015 \\
+$C_\alpha$ AE & 1.000 & 0.482 & 0.077 & 0.009 \\
+Fully latent AE & 1.000 & 0.480 & 0.097 & 0.012 \\
+JEPA 50 & 0.097 & 0.510 & 0.040 & 0.045 \\
+JEPA 70 & 0.106 & 0.566 & 0.110 & 0.039 \\
+JEPA mutation & 0.099 & 0.496 & 0.118 & 0.016 \\
+JEPA+SIGReg 50 abs. & 0.097 & 0.476 & 0.007 & 0.069 \\
+JEPA+SIGReg 70 abs. & 0.097 & 0.477 & 0.004 & 0.080 \\
+\bottomrule
+\end{tabular}
+\caption{Final-8D linear readouts on the common minimum-length-50 cohorts: trained encoders at 100k and a fixed random-init encoder, with fitted probes in every case. AA = amino-acid identity; classification values are proportions. Majority-class accuracy is 9.7\% for AA and 47.6\% for SS. The random encoder uses the same saved weights as the STB baseline. These are readout comparisons, not matched-objective ablations.}
+\label{tab:results-residue-probes}
+\end{table}

@@ -1,0 +1,62 @@
+% !TeX root = ../Project.tex
+\section{Downstream Results for Proteins up to 256 Residues}
+\label{app:l256}
+Table~\ref{tab:results-stb-l256} reports StructTokenBench results for proteins with at most 256 residues.
+\begingroup
+\ifdefined\stbworkshopbox\else\newsavebox{\stbworkshopbox}\fi
+\providecommand{\stbworkshopfit}{\ifdim\wd\stbworkshopbox>\linewidth\resizebox{\linewidth}{!}{\usebox{\stbworkshopbox}}\else\usebox{\stbworkshopbox}\fi}
+\begin{table}[H]
+\centering
+\resultstableformat
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{0.92}
+\captionsetup{font=small,skip=5pt}
+\fontsize{8.5}{10}\selectfont
+\caption{StructTokenBench evaluation restricted to proteins with at most 256 residues.}
+\label{tab:results-stb-l256}
+\sbox{\stbworkshopbox}{%
+\begin{tabular}{@{}lllrrrrrrrr@{}}
+\toprule
+\multirow{2}{*}{Task type} & \multirow{2}{*}{Task} & \multirow{2}{*}{Split} & \multicolumn{2}{c}{Autoencoders} & \multicolumn{3}{c}{JEPA} & \multicolumn{3}{c}{JEPA+SIGReg} \\[1.8pt]
+ & & & $C_\alpha$ & Full AE & 50\% & 70\% & Mut. & 50\% & 70\% & Mut. \\
+\midrule
+\multicolumn{11}{c}{\textbf{Functional-site prediction: AUROC $\times100$}} \\
+\midrule
+\multirow{5}{*}{Binding site} & \multirow{2}{*}{BindInt} & Fold & 41.69 & 40.66 & 40.54 & 42.03 & \textbf{42.14} & 38.91 & 40.65 & 39.69 \\
+ &  & SF & 86.84 & 85.80 & 87.39 & 86.07 & 86.82 & \textbf{89.52} & 83.70 & 88.85 \\
+ & \multirow{2}{*}{BindBio} & Fold & 62.96 & \textbf{65.32} & 55.60 & 58.54 & 57.47 & 57.12 & 57.47 & 57.16 \\
+ &  & SF & 63.23 & \textbf{65.63} & 58.22 & 60.02 & 59.49 & 59.60 & 59.79 & 59.73 \\
+ & BindShake & Test & 59.19 & \textbf{65.11} & 53.76 & 64.42 & 63.89 & 59.73 & 59.96 & 60.83 \\
+\multirow{4}{*}{Catalytic site} & \multirow{2}{*}{CatInt} & Fold & 58.97 & \textbf{61.19} & 58.92 & 58.09 & 59.94 & 59.38 & 58.19 & 57.39 \\
+ &  & SF & 76.50 & \textbf{76.82} & 73.79 & 75.37 & 75.36 & 74.33 & 75.91 & 76.47 \\
+ & \multirow{2}{*}{CatBio} & Fold & 64.01 & \textbf{71.89} & 54.46 & 62.41 & 60.40 & 53.05 & 51.54 & 51.53 \\
+ &  & SF & 78.31 & \textbf{84.44} & 65.48 & 71.96 & 69.87 & 62.06 & 61.68 & 63.21 \\
+\multirow{2}{*}{Conserved site} & \multirow{2}{*}{Con} & Fold & 57.20 & \textbf{59.98} & 59.51 & 58.51 & 59.34 & 58.85 & 59.43 & 59.22 \\
+ &  & SF & 71.97 & 73.48 & 70.73 & 71.22 & 72.43 & \textbf{74.30} & 74.10 & 74.11 \\
+\multirow{2}{*}{Repeat motif} & \multirow{2}{*}{Rep} & Fold & 65.38 & 64.43 & 66.08 & 65.91 & 65.37 & \textbf{67.73} & 66.97 & 67.08 \\
+ &  & SF & 80.79 & 79.82 & \textbf{82.00} & 79.24 & 81.25 & 77.65 & 76.02 & 77.46 \\
+\multirow{2}{*}{Epitope region} & \multirow{2}{*}{Ept} & Fold & 56.28 & 55.21 & \textbf{59.29} & 54.79 & 56.57 & 58.34 & 56.67 & 55.90 \\
+ &  & SF & 64.15 & 62.59 & \textbf{65.09} & 60.61 & 61.86 & 61.02 & 60.76 & 57.63 \\
+\midrule
+\multicolumn{11}{c}{\textbf{Remote homology: macro-F1 $\times100$}} \\
+\midrule
+\multirow{3}{*}{Remote homology} & \multirow{3}{*}{Homo} & Fold & 7.89 & 6.29 & 7.10 & \textbf{10.21} & 8.77 & 7.43 & 7.98 & 8.54 \\
+ &  & Family & \textbf{35.26} & 26.86 & 17.67 & 21.29 & 17.00 & 21.52 & 20.01 & 26.60 \\
+ &  & SF & 8.41 & 10.47 & 4.97 & \textbf{11.59} & 8.51 & 7.73 & 6.67 & 6.14 \\
+\midrule
+\multicolumn{11}{c}{\textbf{Structural flexibility: Spearman's $\rho\times100$}} \\
+\midrule
+\multirow{6}{*}{Flexibility} & \multirow{2}{*}{FlexRMSF} & Fold & 14.98 & \textbf{45.34} & 26.50 & 30.46 & 30.76 & 12.12 & 10.48 & 10.31 \\
+ &  & SF & 13.96 & \textbf{44.34} & 31.68 & 28.47 & 33.10 & 10.26 & 10.24 & 8.45 \\
+ & \multirow{2}{*}{FlexBFactor} & Fold & 11.21 & \textbf{26.00} & 1.80 & 19.62 & 16.25 & 1.91 & 3.32 & 2.80 \\
+ &  & SF & 11.26 & \textbf{26.94} & 12.97 & 22.10 & 23.40 & 4.01 & 3.56 & 4.92 \\
+ & \multirow{2}{*}{FlexNEQ} & Fold & 15.98 & 24.95 & 10.52 & \textbf{33.38} & 16.92 & 7.98 & 7.75 & 7.80 \\
+ &  & SF & 13.51 & 22.11 & 11.43 & \textbf{29.19} & 10.87 & 6.61 & 6.82 & 6.63 \\
+\bottomrule
+\end{tabular}%
+}
+\stbworkshopfit
+\end{table}
+
+\clearpage
+\endgroup

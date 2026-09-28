@@ -1,0 +1,244 @@
+{
+  "input": "non_code/pymol_proteins/1nkw_M/1nkw_M_reconstructed_idealized.pdb",
+  "output": "non_code/pymol_proteins/1nkw_M/1nkw_M_reconstructed_idealized.fixed.pdb",
+  "overlap": 1.2,
+  "trigger": 1.8,
+  "displacement_weight": 0.02,
+  "passes": 3,
+  "severe_pairs_before": 11,
+  "severe_pairs_after": 9,
+  "before": [
+    {
+      "left_residue": 2,
+      "right_residue": 4,
+      "distance": 1.798348965023196,
+      "atoms": [
+        "CG2",
+        "CG2"
+      ]
+    },
+    {
+      "left_residue": 3,
+      "right_residue": 6,
+      "distance": 1.7589482652994664,
+      "atoms": [
+        "N",
+        "NE"
+      ]
+    },
+    {
+      "left_residue": 8,
+      "right_residue": 10,
+      "distance": 1.5380968760126914,
+      "atoms": [
+        "O",
+        "CG2"
+      ]
+    },
+    {
+      "left_residue": 17,
+      "right_residue": 20,
+      "distance": 1.2214691973193592,
+      "atoms": [
+        "N",
+        "O"
+      ]
+    },
+    {
+      "left_residue": 23,
+      "right_residue": 84,
+      "distance": 1.6947722560863452,
+      "atoms": [
+        "OD1",
+        "CG1"
+      ]
+    },
+    {
+      "left_residue": 24,
+      "right_residue": 85,
+      "distance": 1.3489803556760935,
+      "atoms": [
+        "N",
+        "O"
+      ]
+    },
+    {
+      "left_residue": 25,
+      "right_residue": 41,
+      "distance": 1.5973985100781831,
+      "atoms": [
+        "O",
+        "CG"
+      ]
+    },
+    {
+      "left_residue": 40,
+      "right_residue": 47,
+      "distance": 1.7079335467166177,
+      "atoms": [
+        "O",
+        "CG2"
+      ]
+    },
+    {
+      "left_residue": 70,
+      "right_residue": 73,
+      "distance": 1.5493437320362455,
+      "atoms": [
+        "NH1",
+        "CD1"
+      ]
+    },
+    {
+      "left_residue": 98,
+      "right_residue": 100,
+      "distance": 1.4320464377945288,
+      "atoms": [
+        "CG",
+        "CD2"
+      ]
+    },
+    {
+      "left_residue": 100,
+      "right_residue": 103,
+      "distance": 1.7576831341285606,
+      "atoms": [
+        "N",
+        "O"
+      ]
+    }
+  ],
+  "after": [
+    {
+      "left_residue": 3,
+      "right_residue": 6,
+      "distance": 1.7591149957855645,
+      "atoms": [
+        "N",
+        "NE"
+      ]
+    },
+    {
+      "left_residue": 8,
+      "right_residue": 10,
+      "distance": 1.5380968760126914,
+      "atoms": [
+        "O",
+        "CG2"
+      ]
+    },
+    {
+      "left_residue": 17,
+      "right_residue": 20,
+      "distance": 1.2214691973193592,
+      "atoms": [
+        "N",
+        "O"
+      ]
+    },
+    {
+      "left_residue": 23,
+      "right_residue": 84,
+      "distance": 1.6947722560863452,
+      "atoms": [
+        "OD1",
+        "CG1"
+      ]
+    },
+    {
+      "left_residue": 24,
+      "right_residue": 85,
+      "distance": 1.3489803556760935,
+      "atoms": [
+        "N",
+        "O"
+      ]
+    },
+    {
+      "left_residue": 25,
+      "right_residue": 41,
+      "distance": 1.5973985100781831,
+      "atoms": [
+        "O",
+        "CG"
+      ]
+    },
+    {
+      "left_residue": 40,
+      "right_residue": 47,
+      "distance": 1.7079335467166177,
+      "atoms": [
+        "O",
+        "CG2"
+      ]
+    },
+    {
+      "left_residue": 70,
+      "right_residue": 73,
+      "distance": 1.5494456809068824,
+      "atoms": [
+        "NH1",
+        "CD1"
+      ]
+    },
+    {
+      "left_residue": 100,
+      "right_residue": 103,
+      "distance": 1.7576831341285606,
+      "atoms": [
+        "N",
+        "O"
+      ]
+    }
+  ],
+  "choices": [
+    {
+      "pass": 1,
+      "residue_number": 2,
+      "resname": "THR",
+      "candidate": 2,
+      "score_before": 0.1613235538979379,
+      "score_after": 0.05671010261694487
+    },
+    {
+      "pass": 1,
+      "residue_number": 6,
+      "resname": "ARG",
+      "candidate": 56,
+      "score_before": 0.6210683332889683,
+      "score_after": 0.6209746793509887
+    },
+    {
+      "pass": 1,
+      "residue_number": 40,
+      "resname": "ILE",
+      "candidate": 6,
+      "score_before": 0.1644790547128391,
+      "score_after": 0.16444861517182568
+    },
+    {
+      "pass": 1,
+      "residue_number": 70,
+      "resname": "ARG",
+      "candidate": 9,
+      "score_before": 0.28772939351503485,
+      "score_after": 0.2874211608335295
+    },
+    {
+      "pass": 1,
+      "residue_number": 98,
+      "resname": "LYS",
+      "candidate": 23,
+      "score_before": 4.150271668231047,
+      "score_after": 0.181796257679064
+    },
+    {
+      "pass": 1,
+      "residue_number": 100,
+      "resname": "LEU",
+      "candidate": 2,
+      "score_before": 0.1528958389456035,
+      "score_after": 0.1526124937217759
+    }
+  ]
+}

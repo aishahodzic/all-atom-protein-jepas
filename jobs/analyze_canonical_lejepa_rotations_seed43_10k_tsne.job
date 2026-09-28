@@ -1,0 +1,111 @@
+#!/bin/bash
+# Strict seed-43 replicate diagnostic.  The dependency guarantees the immutable
+# step-10k checkpoint is complete before provenance checks or staging begin.
+# Submit with:
+#   sbatch jobs/analyze_canonical_lejepa_rotations_seed43_10k_tsne.job
+#SBATCH --job-name=canon_rot_s43_10k_tsne
+#SBATCH --partition=normal
+#SBATCH --qos=medium
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=32G
+#SBATCH --time=01:00:00
+#SBATCH --dependency=afterok:257623
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/canonical_lejepa/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+PYTHON_BIN=/slurm-storage/aishod/envs/la-proteina/bin/python
+REFERENCE_CONFIG="$PROJECT_ROOT/store/canonical_lejepa_rotations_100k/checkpoints/exp_config_canonical_lejepa_rotations_100k.json"
+RUN_ROOT="$PROJECT_ROOT/store/canonical_lejepa_rotations_seed43_10k"
+CONFIG="$RUN_ROOT/checkpoints/exp_config_canonical_lejepa_rotations_seed43_10k.json"
+CHECKPOINT="$RUN_ROOT/checkpoints/step-00010000.ckpt"
+STAGED="$RUN_ROOT/evaluation/canonical-lejepa-v1-rotations-seed43-step10000-ema-staged.ckpt"
+
+cd "$PROJECT_ROOT"
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+if [[ "$(hostname -s)" == "hopper" ]]; then
+    export DATA_PATH="${DATA_PATH/\/mnt\/hopper-raid/\/mnt\/raid}"
+fi
+export PYTHONPATH="$PROJECT_ROOT${PYTHONPATH:+:$PYTHONPATH}"
+export PATH="/slurm-storage/aishod/envs/la-proteina/bin:$PATH"
+export MPLCONFIGDIR="/tmp/canonical-rot-seed43-10k-tsne-${SLURM_JOB_ID}"
+mkdir -p "$MPLCONFIGDIR" "$PROJECT_ROOT/logs/canonical_lejepa" "$(dirname "$STAGED")"
+
+"$PYTHON_BIN" -c '
+import copy
+import json
+import sys
+import torch
+
+reference_path, config_path, checkpoint_path = sys.argv[1:]
+with open(reference_path, encoding="utf-8") as handle:
+    reference = json.load(handle)
+with open(config_path, encoding="utf-8") as handle:
+    candidate = json.load(handle)
+
+assert candidate["run_name_"] == "canonical_lejepa_rotations_seed43_10k"
+assert candidate["seed"] == 43
+assert candidate["independent_view_rotations"] is True
+assert candidate["trainer"]["max_steps"] == 10_000
+assert candidate["schedule"]["total_steps"] == 10_000
+assert candidate["schedule"]["peak_step"] == 12_000
+
+# Prove this is the seed-42 rotation recipe with only the declared replicate
+# seed/run identity and stopping horizon changed.  The LR trace through 10k is
+# unchanged because both recipes share peak_step=12k.
+normalized = copy.deepcopy(candidate)
+normalized["run_name_"] = reference["run_name_"]
+normalized["seed"] = reference["seed"]
+normalized["trainer"]["max_steps"] = reference["trainer"]["max_steps"]
+normalized["schedule"]["total_steps"] = reference["schedule"]["total_steps"]
+assert normalized == reference, "seed-43 config differs outside approved fields"
+
+checkpoint = torch.load(checkpoint_path, map_location="cpu", weights_only=False)
+assert checkpoint.get("global_step") == 10_000, checkpoint.get("global_step")
+raw = checkpoint.get("state_dict", {})
+ema = checkpoint.get("state_dict_ema", {})
+assert sum(key.startswith("encoder.") for key in raw) == 381
+assert len(ema) == 381
+meta = checkpoint.get("state_dict_ema_meta", {})
+assert meta.get("update_every") == 32, meta
+assert meta.get("num_updates") == 312, meta
+assert meta.get("last_ema_step") == 9_984, meta
+print("Verified seed=43, rotations=true, matched config, step=10000, and EMA provenance metadata")
+' "$REFERENCE_CONFIG" "$CONFIG" "$CHECKPOINT"
+
+if [[ ! -s "$STAGED" ]]; then
+    temporary_staged="${STAGED}.tmp-${SLURM_JOB_ID}"
+    "$PYTHON_BIN" -m Evaluation.canonical_lejepa.stage_for_structtokenbench \
+        "$CHECKPOINT" "$temporary_staged" --encoder-source=ema
+    mv "$temporary_staged" "$STAGED"
+fi
+
+"$PYTHON_BIN" -c '
+import hashlib
+import sys
+import torch
+
+def sha256(path):
+    digest = hashlib.sha256()
+    with open(path, "rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+raw_path, staged_path = sys.argv[1:]
+staged = torch.load(staged_path, map_location="cpu", weights_only=False)
+provenance = staged.get("canonical_lejepa_evaluation", {})
+assert provenance.get("encoder_source") == "ema", provenance
+assert provenance.get("source_global_step") == 10_000, provenance
+assert provenance.get("source_checkpoint_sha256") == sha256(raw_path), provenance
+print(f"Verified unique staged seed-43 EMA provenance: {provenance}")
+' "$CHECKPOINT" "$STAGED"
+
+srun "$PYTHON_BIN" \
+    Evaluation/latent_viz/analyze_canonical_lejepa_rotations_seed43_10k.py

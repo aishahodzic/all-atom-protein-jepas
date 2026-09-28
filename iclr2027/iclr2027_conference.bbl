@@ -1,0 +1,100 @@
+\begin{thebibliography}{18}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Ahdritz et~al.(2024)Ahdritz, Bouatta, Kadyan, Xia, Gerecke, O'Donnell, Berenberg, Fisk, Zanichelli, Zhang, Nowaczynski, Wang, Stepniewska-Dziubinska, Zhang, Ojewole, Guney, Biderman, Watkins, Ra, Lorenzo, Nivon, Weitzner, Ban, Ban, Sorger, Mostaque, Zhang, Bonneau, and AlQuraishi]{ahdritz2024openfold}
+Gustaf Ahdritz, Nazim Bouatta, Sachin Kadyan, Qinghui Xia, William Gerecke, Timothy~J. O'Donnell, Daniel Berenberg, Ian Fisk, Niccol{\`o} Zanichelli, Bo~Zhang, Arkadiusz Nowaczynski, Bei Wang, Marta~M. Stepniewska-Dziubinska, Shang Zhang, Adegoke Ojewole, Murat~Efe Guney, Stella Biderman, Andrew~M. Watkins, Stephen Ra, Pablo~Ribalta Lorenzo, Lucas Nivon, Brian Weitzner, Yughyun Ban, Yun~A. Ban, Peter~K. Sorger, Emad Mostaque, Zhao Zhang, Richard Bonneau, and Mohammed AlQuraishi.
+\newblock {OpenFold}: Retraining {AlphaFold2} yields new insights into its learning mechanisms and capacity for generalization.
+\newblock \emph{Nature Methods}, 21\penalty0 (8):\penalty0 1514--1524, 2024.
+
+\bibitem[Assran et~al.(2023)Assran, Duval, Misra, Bojanowski, Vincent, Rabbat, LeCun, and Ballas]{assran2023ijepa}
+Mahmoud Assran, Quentin Duval, Ishan Misra, Piotr Bojanowski, Pascal Vincent, Michael Rabbat, Yann LeCun, and Nicolas Ballas.
+\newblock Self-supervised learning from images with a joint-embedding predictive architecture.
+\newblock In \emph{Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)}, pp.\  15619--15629, June 2023.
+
+\bibitem[Chen et~al.(2026)Chen, Lu, Zhao, Wayment-Steele, and Huang]{chen2026slae}
+Yilin Chen, Tianyu Lu, Cizhang Zhao, Hannah Wayment-Steele, and Po-Ssu Huang.
+\newblock {SLAE}: Strictly local all-atom environment for protein representation.
+\newblock In \emph{Forty-third International Conference on Machine Learning}, 2026.
+
+\bibitem[Geffner et~al.(2026)Geffner, Didi, Cao, Reidenbach, Zhang, Dallago, Kucukbenli, Kreis, and Vahdat]{la-proteina}
+Tomas Geffner, Kieran Didi, Zhonglin Cao, Danny Reidenbach, Zuobai Zhang, Christian Dallago, Emine Kucukbenli, Karsten Kreis, and Arash Vahdat.
+\newblock La-proteina: Atomistic protein generation via partially latent flow matching.
+\newblock In \emph{The Fourteenth International Conference on Learning Representations}, 2026.
+
+\bibitem[Hart et~al.(2026)Hart, Han, Kim, Zhao, and Ji]{hart2026protein}
+Anna Hart, Chi Han, Jeonghwan Kim, Huimin Zhao, and Heng Ji.
+\newblock Protein language models diverge from natural language: Comparative analysis and improved inference, 2026.
+
+\bibitem[Joeres et~al.(2026)Joeres, Senatorov, Kolchina, Klakow, and Kalinina]{joeres2026taskdataset}
+Roman Joeres, Ilya Senatorov, Anastasia Kolchina, Dietrich Klakow, and Olga~V. Kalinina.
+\newblock Task- and dataset-specific information in protein language models.
+\newblock \emph{CoRR}, abs/2608.12090, 2026.
+\newblock \doi{10.48550/ARXIV.2608.12090}.
+
+\bibitem[Kuhn et~al.(2026)Kuhn, Maes, Serra, Lidec, LeCun, Balestriero, and Buettner]{kuhn2026levjepaefficientscalable}
+Lukas Kuhn, Lucas Maes, Giuseppe Serra, Quentin~Le Lidec, Yann LeCun, Randall Balestriero, and Florian Buettner.
+\newblock {LeVJEPA}: Efficient \& scalable video pretraining without the heuristics, 2026.
+
+\bibitem[Li et~al.(2024)Li, Amini, Yue, Yang, and Lu]{li2024featurereuse}
+Francesca-Zhoufan Li, Ava~P. Amini, Yisong Yue, Kevin~K. Yang, and Alex~Xijie Lu.
+\newblock Feature reuse and scaling: Understanding transfer learning with protein language models.
+\newblock In \emph{Proceedings of the 41st International Conference on Machine Learning}, volume 235 of \emph{Proceedings of Machine Learning Research}, pp.\  27351--27375. PMLR, 2024.
+
+\bibitem[Ofer et~al.(2026)Ofer, Shahaf, and Linial]{ofer2026proteinjepa}
+Dan Ofer, Dafna Shahaf, and Michal Linial.
+\newblock Protein{JEPA}: Latent prediction complements protein language models.
+\newblock In \emph{{ICML} 2026 3rd Workshop on Multi-modal Foundation Models and Large Language Models for Life Sciences}, 2026.
+\newblock URL \url{https://openreview.net/forum?id=wduEG2D9uR}.
+
+\bibitem[Rao et~al.(2019)Rao, Bhattacharya, Thomas, Duan, Chen, Canny, Abbeel, and Song]{rao2019tape}
+Roshan Rao, Nicholas Bhattacharya, Neil Thomas, Yan Duan, Xi~Chen, John Canny, Pieter Abbeel, and Yun~S. Song.
+\newblock Evaluating protein transfer learning with {TAPE}.
+\newblock In \emph{Advances in Neural Information Processing Systems}, volume~32, 2019.
+
+\bibitem[Ravideshik et~al.(2026)Ravideshik, Kim, and Kellis]{ravideshik2026protjepa}
+Vaibhava~Lakshmi Ravideshik, Jinha Kim, and Manolis Kellis.
+\newblock Protjepa: A multimodal joint-embedding predictive architecture for protein biological world modeling with multi-teacher modality-attentive fusion.
+\newblock \emph{bioRxiv}, 2026.
+\newblock \doi{10.64898/2026.08.03.742606}.
+
+\bibitem[Roy \& Vetterli(2007)Roy and Vetterli]{roy2007effective}
+Olivier Roy and Martin Vetterli.
+\newblock The effective rank: A measure of effective dimensionality.
+\newblock In \emph{15th European Signal Processing Conference (EUSIPCO)}, 2007.
+
+\bibitem[Skean et~al.(2025)Skean, Arefin, Zhao, Patel, Naghiyev, Lecun, and Shwartz-Ziv]{skean2025layer}
+Oscar Skean, Md~Rifat Arefin, Dan Zhao, Niket~Nikul Patel, Jalal Naghiyev, Yann Lecun, and Ravid Shwartz-Ziv.
+\newblock Layer by layer: Uncovering hidden representations in language models.
+\newblock In \emph{Proceedings of the 42nd International Conference on Machine Learning}, volume 267 of \emph{Proceedings of Machine Learning Research}, pp.\  55854--55875. PMLR, 2025.
+
+\bibitem[Su et~al.(2024)Su, Han, Zhou, Shan, Zhou, and Yuan]{DBLP:conf/iclr/SuHZSZY24}
+Jin Su, Chenchen Han, Yuyang Zhou, Junjie Shan, Xibin Zhou, and Fajie Yuan.
+\newblock Saprot: Protein language modeling with structure-aware vocabulary.
+\newblock In \emph{The Twelfth International Conference on Learning Representations, {ICLR} 2024, Vienna, Austria, May 7-11, 2024}. OpenReview.net, 2024.
+
+\bibitem[Townshend et~al.(2021)Townshend, Vögele, Suriana, Derry, Powers, Laloudakis, Balachandar, Jing, Anderson, Eismann, Kondor, Altman, and Dror]{townshend2020atom3d}
+Raphael J.~L. Townshend, Martin Vögele, Patricia Suriana, Alexander Derry, Alexander~S. Powers, Yianni Laloudakis, Sidhika Balachandar, Bowen Jing, Brandon~M. Anderson, Stephan Eismann, Risi Kondor, Russ~B. Altman, and Ron~O. Dror.
+\newblock {ATOM3D}: Tasks on molecules in three dimensions.
+\newblock In Joaquin Vanschoren and Sai-Kit Yeung (eds.), \emph{Proceedings of the Neural Information Processing Systems Track on Datasets and Benchmarks 1, NeurIPS Datasets and Benchmarks 2021, December 2021, Virtual}, 2021.
+
+\bibitem[Yuan et~al.(2025)Yuan, Wang, Collins, and Rangwala]{yuan2025protein}
+Xinyu Yuan, Zichen Wang, Marcus~D. Collins, and Huzefa Rangwala.
+\newblock Protein structure tokenization: Benchmarking and new recipe.
+\newblock In Aarti Singh, Maryam Fazel, Daniel Hsu, Simon Lacoste{-}Julien, Felix Berkenkamp, Tegan Maharaj, Kiri Wagstaff, and Jerry Zhu (eds.), \emph{Forty-second International Conference on Machine Learning, {ICML} 2025, Vancouver, BC, Canada, July 13-19, 2025}, volume 267 of \emph{Proceedings of Machine Learning Research}. {PMLR} / OpenReview.net, 2025.
+
+\bibitem[Zhang et~al.(2023{\natexlab{a}})Zhang, Xu, Jamasb, Chenthamarakshan, Lozano, Das, and Tang]{zhang2023protein}
+Zuobai Zhang, Minghao Xu, Arian~Rokkum Jamasb, Vijil Chenthamarakshan, Aur{\'e}lie~C. Lozano, Payel Das, and Jian Tang.
+\newblock Protein representation learning by geometric structure pretraining.
+\newblock In \emph{The Eleventh International Conference on Learning Representations}. OpenReview.net, 2023{\natexlab{a}}.
+\newblock URL \url{https://openreview.net/forum?id=to3qCB3tOh9}.
+
+\bibitem[Zhang et~al.(2023{\natexlab{b}})Zhang, Xu, Lozano, Chenthamarakshan, Das, and Tang]{zhang2023siamdiff}
+Zuobai Zhang, Minghao Xu, Aur{\'e}lie~C. Lozano, Vijil Chenthamarakshan, Payel Das, and Jian Tang.
+\newblock Pre-training protein encoder via siamese sequence-structure diffusion trajectory prediction.
+\newblock In \emph{Advances in Neural Information Processing Systems}, volume~36, 2023{\natexlab{b}}.
+
+\end{thebibliography}

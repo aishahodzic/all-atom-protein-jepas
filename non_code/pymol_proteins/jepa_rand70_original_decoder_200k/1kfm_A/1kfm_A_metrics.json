@@ -1,0 +1,23 @@
+{
+  "protein_id": "1kfm_A",
+  "source_split": "test",
+  "num_residues": 50,
+  "encoder": "jepa-rand-mask-70",
+  "encoder_source": "target",
+  "encoder_checkpoint": "/mnt/hopper-raid/aishod/runs/jepa_random_masking_70_v3/store/jepa_random_masking_70_v3/checkpoints/chk_epoch=00000019_step=000000100000.ckpt",
+  "encoder_checkpoint_sha256": "63183c74a02386fdc9aaca3ff619e9f8e83705a79340610b1f4a064ba547098c",
+  "decoder_style": "fully-latent",
+  "decoder_checkpoint": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/checkpoints/jepa-rand-mask-70-target-140k-to-200k_final.pt",
+  "decoder_checkpoint_sha256": "acc5a299e780c4628d7ce68c205225d1eaa5f9f1e22d6a0a08b2c83329ce5c23",
+  "latent_tap": "mean",
+  "latent_seed": 42,
+  "device": "cuda",
+  "c_alpha_anchored": true,
+  "rmsd_all_atom_angstrom": 0.9762882590293884,
+  "rmsd_no_ca_angstrom": 1.0513787269592285,
+  "sequence_recovery": 0.7599999904632568,
+  "native_pdb": "/slurm-storage/aishod/projects/la-proteina/non_code/pymol_proteins/jepa_rand70_original_decoder_200k/1kfm_A/1kfm_A_native.pdb",
+  "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/non_code/pymol_proteins/jepa_rand70_original_decoder_200k/1kfm_A/1kfm_A_reconstructed_true_sequence.pdb",
+  "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/non_code/pymol_proteins/jepa_rand70_original_decoder_200k/1kfm_A/1kfm_A_reconstructed_predicted_sequence.pdb",
+  "pymol_script": "/slurm-storage/aishod/projects/la-proteina/non_code/pymol_proteins/jepa_rand70_original_decoder_200k/1kfm_A/1kfm_A_view.pml"
+}

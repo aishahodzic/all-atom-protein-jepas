@@ -1,0 +1,66 @@
+{
+  "input": "non_code/pymol_proteins/5l0o_A/5l0o_A_reconstructed_idealized.pdb",
+  "output": "store/geometry-repair-validation/all10/5l0o_A_repaired.pdb",
+  "strength": 100.0,
+  "steps": 2000,
+  "learning_rate": 0.01,
+  "bond_tolerance_angstrom": 0.02,
+  "virtual_tolerance_angstrom": 0.03,
+  "peptide_tolerance_angstrom": 0.02,
+  "peptide_angle_cosine_tolerance": 0.015,
+  "clash_strength": 30.0,
+  "clash_overlap_angstrom": 1.2,
+  "ca_gap_threshold_angstrom": 4.5,
+  "backbone_steps": 1200,
+  "continuous_peptide_edges": 163,
+  "inserted_internal_ter_records": 0,
+  "max_ca_shift_angstrom": 0.0,
+  "mean_moved_atom_distance_angstrom": 0.08035685552884235,
+  "max_moved_atom_distance_angstrom": 3.8543700869030193,
+  "history": [
+    {
+      "step": 1,
+      "stage": "peptide",
+      "loss": 16.40802280960542,
+      "displacement": 0.0,
+      "covalent": 0.011410799669197865,
+      "virtual": 0.0030049705706561665,
+      "peptide": 0.10800912285255267,
+      "peptide_angles": 0.043909062931639646,
+      "clash": 0.0
+    },
+    {
+      "step": 1200,
+      "stage": "peptide",
+      "loss": 0.6922920710880696,
+      "displacement": 0.07656060926676689,
+      "covalent": 0.004417354494418156,
+      "virtual": 0.004996229428542013,
+      "peptide": 0.00015452439519343284,
+      "peptide_angles": 0.00033637837146593464,
+      "clash": 0.0
+    },
+    {
+      "step": 1201,
+      "stage": "relaxation",
+      "loss": 0.6506638560301583,
+      "displacement": 0.03255387580858872,
+      "covalent": 0.00441743206169248,
+      "virtual": 0.004997533634226056,
+      "peptide": 0.00015452296169986076,
+      "peptide_angles": 0.0003360145486066299,
+      "clash": 7.915607220070376e-05
+    },
+    {
+      "step": 2000,
+      "stage": "relaxation",
+      "loss": 0.04558205580732048,
+      "displacement": 0.039892858416427084,
+      "covalent": 7.928625475333484e-06,
+      "virtual": 0.00017768788145464603,
+      "peptide": 5.552147517142004e-07,
+      "peptide_angles": 3.4310898055439445e-06,
+      "clash": 1.8502450422692898e-06
+    }
+  ]
+}

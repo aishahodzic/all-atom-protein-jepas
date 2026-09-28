@@ -1,0 +1,192 @@
+{
+  "metadata": {
+    "batch_size": 8,
+    "checkpoint": "/mnt/data/slurm-storage/aishod/.cache/huggingface/hub/datasets--msc-thesis-org--checkpoints/blobs/1db78106be46e4669bec2f04b1586af60f4e6e4b34a92dccc41a46ab70e199d4",
+    "checkpoint_global_step": 100000,
+    "checkpoint_sha256": "1db78106be46e4669bec2f04b1586af60f4e6e4b34a92dccc41a46ab70e199d4",
+    "cohort": "cluster-random representatives from the minimum-length-50 sequence-clustered validation split",
+    "comparison": "same structure, mutation, target representation, context/target split, and action position; only action identity/presence changes",
+    "family": "jepa",
+    "masking": "random 50%",
+    "num_proteins": 400,
+    "seed": 43,
+    "validation_size": 4716,
+    "wrong_action": "replacement identities rolled across the batch, with accidental identity matches replaced by the next amino-acid index"
+  },
+  "summary": {
+    "masked_target": {
+      "all_targets": {
+        "correct_minus_absent": {
+          "ci95": [
+            1.3437927942504758e-05,
+            2.1818505584633384e-05
+          ],
+          "fraction_correct_lower": 0.3025,
+          "mean": 1.7545985901961103e-05
+        },
+        "correct_minus_wrong": {
+          "ci95": [
+            -4.099448648958059e-06,
+            4.253716931998496e-06
+          ],
+          "fraction_correct_lower": 0.4625,
+          "mean": 9.74909562501125e-08
+        },
+        "mean_error": {
+          "absent": 0.004331954030330962,
+          "correct": 0.004349500016232923,
+          "wrong": 0.004349402525276673
+        },
+        "n": 400
+      },
+      "mutated_site": {
+        "correct_minus_absent": {
+          "ci95": [
+            0.0010142801491356294,
+            0.0016886384042909411
+          ],
+          "fraction_correct_lower": 0.3025,
+          "mean": 0.0013415222712683317
+        },
+        "correct_minus_wrong": {
+          "ci95": [
+            -0.0003114342168728399,
+            0.0003084016093698664
+          ],
+          "fraction_correct_lower": 0.4625,
+          "mean": 4.4930760486749935e-06
+        },
+        "mean_error": {
+          "absent": 0.004680057669520466,
+          "correct": 0.006021579940788797,
+          "wrong": 0.006017086864740122
+        },
+        "n": 400
+      },
+      "n_proteins": 400,
+      "other_targets": {
+        "correct_minus_absent": {
+          "ci95": [
+            0.0,
+            0.0
+          ],
+          "fraction_correct_lower": 0.0,
+          "mean": 0.0
+        },
+        "correct_minus_wrong": {
+          "ci95": [
+            0.0,
+            0.0
+          ],
+          "fraction_correct_lower": 0.0,
+          "mean": 0.0
+        },
+        "mean_error": {
+          "absent": 0.004327677479868726,
+          "correct": 0.004327677479868726,
+          "wrong": 0.004327677479868726
+        },
+        "n": 400
+      },
+      "prediction_shift_correct_absent": {
+        "ci95_mean": [
+          0.03365797112812288,
+          0.03830533467006171
+        ],
+        "mean": 0.03591975503601134,
+        "median": 0.03006450366228819
+      },
+      "prediction_shift_correct_wrong": {
+        "ci95_mean": [
+          0.02755623455371824,
+          0.03224622341460781
+        ],
+        "mean": 0.029801837052218616,
+        "median": 0.022934993728995323
+      },
+      "target_shift_mutant_wildtype": {
+        "ci95_mean": [
+          0.0070338998968181845,
+          0.008921866349639459
+        ],
+        "mean": 0.007937196907150793,
+        "median": 0.004891757387667894
+      }
+    },
+    "visible_context": {
+      "all_targets": {
+        "correct_minus_absent": {
+          "ci95": [
+            0.00011807901719294023,
+            0.00017439929235024462
+          ],
+          "fraction_correct_lower": 0.1775,
+          "mean": 0.00014429185286644498
+        },
+        "correct_minus_wrong": {
+          "ci95": [
+            -1.8905547002759704e-05,
+            2.398537507451691e-05
+          ],
+          "fraction_correct_lower": 0.4925,
+          "mean": 1.9235329091316087e-06
+        },
+        "mean_error": {
+          "absent": 0.004332641115342995,
+          "correct": 0.004476932968209439,
+          "wrong": 0.004475009435300308
+        },
+        "n": 400
+      },
+      "n_proteins": 400,
+      "other_targets": {
+        "correct_minus_absent": {
+          "ci95": [
+            0.00011807901719294023,
+            0.00017439929235024462
+          ],
+          "fraction_correct_lower": 0.1775,
+          "mean": 0.00014429185286644498
+        },
+        "correct_minus_wrong": {
+          "ci95": [
+            -1.8905547002759704e-05,
+            2.398537507451691e-05
+          ],
+          "fraction_correct_lower": 0.4925,
+          "mean": 1.9235329091316087e-06
+        },
+        "mean_error": {
+          "absent": 0.004332641115342995,
+          "correct": 0.004476932968209439,
+          "wrong": 0.004475009435300308
+        },
+        "n": 400
+      },
+      "prediction_shift_correct_absent": {
+        "ci95_mean": [
+          0.48579483867948875,
+          0.5231088038543239
+        ],
+        "mean": 0.5038198603875935,
+        "median": 0.47218966484069824
+      },
+      "prediction_shift_correct_wrong": {
+        "ci95_mean": [
+          0.513768549787812,
+          0.5457312817070633
+        ],
+        "mean": 0.5294985736533999,
+        "median": 0.5084363520145416
+      },
+      "target_shift_mutant_wildtype": {
+        "ci95_mean": [
+          0.0035175073958016584,
+          0.004789965339986338
+        ],
+        "mean": 0.004090831358589639,
+        "median": 0.002388222375884652
+      }
+    }
+  }
+}

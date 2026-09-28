@@ -1,0 +1,21 @@
+{
+  "protein_id": "5l0o_A",
+  "source_split": "test",
+  "num_residues": 164,
+  "encoder": "jepa-rand70-d8-independent-rotations-step100k",
+  "encoder_source": "target",
+  "encoder_checkpoint": "/mnt/raid/aishod/runs/jepa_rand70_d8_independent_rotations_100k/store/jepa_rand70_d8_independent_rotations_100k/checkpoints/chk_epoch=00000019_step=000000100000.ckpt",
+  "encoder_checkpoint_sha256": "36be2530bc8ad562320ed4fc33784285ce651bbd4781030dd66e76240f725588",
+  "decoder_style": "fully-latent",
+  "decoder_checkpoint": "/mnt/data/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/checkpoints/jepa-rand70-d8-independent-rotations-target-step100k-decoder-140k_step40000.pt",
+  "decoder_checkpoint_sha256": "dca940cec81773f4f39f26dcba7c59998de487bce51a1e1097226cc72c6d23b9",
+  "device": "cuda",
+  "c_alpha_anchored": true,
+  "rmsd_all_atom_angstrom": 2.3425021171569824,
+  "rmsd_no_ca_angstrom": 2.4980766773223877,
+  "sequence_recovery": 0.39024388790130615,
+  "native_pdb": "/mnt/data/slurm-storage/aishod/projects/la-proteina/non_code/pymol_proteins/jepa_rand70_d8_rotations_decoder_step40k/5l0o_A/5l0o_A_native.pdb",
+  "reconstructed_true_sequence_pdb": "/mnt/data/slurm-storage/aishod/projects/la-proteina/non_code/pymol_proteins/jepa_rand70_d8_rotations_decoder_step40k/5l0o_A/5l0o_A_reconstructed_true_sequence.pdb",
+  "reconstructed_predicted_sequence_pdb": "/mnt/data/slurm-storage/aishod/projects/la-proteina/non_code/pymol_proteins/jepa_rand70_d8_rotations_decoder_step40k/5l0o_A/5l0o_A_reconstructed_predicted_sequence.pdb",
+  "pymol_script": "/mnt/data/slurm-storage/aishod/projects/la-proteina/non_code/pymol_proteins/jepa_rand70_d8_rotations_decoder_step40k/5l0o_A/5l0o_A_view.pml"
+}

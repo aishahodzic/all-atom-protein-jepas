@@ -1,0 +1,76 @@
+#!/bin/bash
+# Short peak-memory test for canonical per-view SIGReg at global batch 64.
+# Runs the protein and residue objectives sequentially on the same two GPUs.
+#SBATCH --job-name=canon_crop_96_pv_b64_smoke
+#SBATCH --partition=normal
+#SBATCH --qos=short
+#SBATCH --nodes=1
+#SBATCH --ntasks=2
+#SBATCH --ntasks-per-node=2
+#SBATCH --gres=gpu:2
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=96G
+#SBATCH --time=00:30:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/canonical_lejepa/%x-%j.out
+
+set -uo pipefail
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+PYTHON_BIN=/slurm-storage/aishod/envs/la-proteina/bin/python
+cd "$PROJECT_ROOT"
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+export PYTHONPATH="$PROJECT_ROOT${PYTHONPATH:+:$PYTHONPATH}"
+export PATH="/slurm-storage/aishod/envs/la-proteina/bin:$PATH"
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+export TORCH_NCCL_ASYNC_ERROR_HANDLING=1
+export HYDRA_FULL_ERROR=1
+mkdir -p "$PROJECT_ROOT/logs/canonical_lejepa"
+
+run_smoke() {
+    local alignment=$1
+    local sigreg_input=$2
+    local checkpointing=$3
+    local compact_kv=$4
+    local run_name="canonical_lejepa_crop_fixed96_${alignment}_perview_sigreg_b64_smoke"
+    local port_offset=0
+    if [[ "$alignment" == "residue" ]]; then
+        port_offset=1
+    fi
+    export MASTER_ADDR=127.0.0.1
+    export MASTER_PORT=$((20000 + SLURM_JOB_ID % 19000 + port_offset))
+    export MPLCONFIGDIR="/tmp/${run_name}-${SLURM_JOB_ID}"
+    mkdir -p "$MPLCONFIGDIR"
+    srun --ntasks=2 --kill-on-bad-exit=1 --wait=30 --label "$PYTHON_BIN" \
+        -m proteinfoundation.jepa.train_canonical_lejepa \
+        run_name_="$run_name" seed=42 alignment_level="$alignment" \
+        masked_kv_mode=visible_only residue_view_checkpointing="$checkpointing" \
+        residue_compact_visible_kv="$compact_kv" independent_view_rotations=false \
+        views.cropping=true views.packed_views=true \
+        views.global_crop_length=96 views.global_crop_fraction_min=null \
+        views.global_crop_fraction_max=null views.global_crop_min_length=96 \
+        views.global_crop_max_length=null views.local_crop_length=48 \
+        views.locals_within_global=true views.global_mask_pct=0.20 \
+        views.local_mask_pct=0.50 sigreg.input="$sigreg_input" \
+        sigreg.joint_views=false dataset.datamodule.dataselector.min_length=96 \
+        dataset.datamodule.batch_size=32 trainer.devices=2 trainer.num_nodes=1 \
+        trainer.strategy=ddp trainer.use_distributed_sampler=false \
+        trainer.precision=bf16-mixed trainer.accumulate_grad_batches=1 \
+        trainer.max_steps=25 schedule.total_steps=100000 schedule.peak_step=12000 \
+        schedule.start_lr=1.0e-4 schedule.end_lr=4.0e-4 ema.enabled=true \
+        checkpoint.every_n_train_steps=10000 \
+        checkpoint.last_every_n_train_steps=1500 checkpoint.save_last=true \
+        checkpoint.save_weights_only=false wandb.enabled=false
+}
+
+run_smoke protein protein_mean false false
+protein_status=$?
+echo "B64 protein smoke exit status: $protein_status"
+
+run_smoke residue protein_centered_residue true true
+residue_status=$?
+echo "B64 residue smoke exit status: $residue_status"
+
+if (( protein_status != 0 || residue_status != 0 )); then
+    exit 1
+fi

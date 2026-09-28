@@ -1,0 +1,46 @@
+#!/bin/bash
+# Fresh decoder probe for the frozen target/EMA encoder of the historical
+# step-100k JEPA random-50% masking checkpoint.  Matches the existing
+# C-alpha-anchored decoder-reconstruction protocol.
+#SBATCH --job-name=dec_jr50_target
+#SBATCH --partition=normal
+#SBATCH --nodelist=klein
+#SBATCH --qos=short
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=100G
+#SBATCH --time=03:00:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/decoder/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+PYTHON_BIN=/data-gauss/$USER/envs/laproteina_env/bin/python3
+RUN_ID=jepa-rand-mask-50-target-calib
+SCRATCH_ROOT="$HOME/tmp/dj50-$SLURM_JOB_ID"
+
+mkdir -p "$PROJECT_ROOT/logs/decoder" "$SCRATCH_ROOT"
+export TMPDIR="$SCRATCH_ROOT"
+export MPLCONFIGDIR="$SCRATCH_ROOT/matplotlib"
+export TRITON_CACHE_DIR="$SCRATCH_ROOT/triton"
+export PYTHONPATH="$PROJECT_ROOT"
+mkdir -p "$MPLCONFIGDIR" "$TRITON_CACHE_DIR"
+
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+
+cd "$PROJECT_ROOT/Evaluation/structure_rec"
+srun "$PYTHON_BIN" train_decoder.py \
+  --encoder jepa-rand-mask-50 \
+  --encoder-source target \
+  --run-id "$RUN_ID" \
+  --max-steps 20000 \
+  --eval-every 2000 \
+  --calibration \
+  --patience-evals 5 \
+  --patience-threshold 0.01 \
+  --batch-size 8 \
+  --no-wandb

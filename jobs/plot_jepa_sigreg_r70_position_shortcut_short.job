@@ -1,0 +1,39 @@
+#!/bin/bash
+# Matched absolute-index audit for 100k JEPA+SIGReg with 70% masking.
+# The original absolute-position checkpoint is restored to disposable scratch;
+# durable outputs are latent caches, a CSV audit and one PNG figure.
+#SBATCH --job-name=tsne_jsr70_pos
+#SBATCH --partition=normal
+#SBATCH --qos=short
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=64G
+#SBATCH --time=03:00:00
+#SBATCH --chdir=/mnt/data/slurm-storage/aishod/projects/la-proteina
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/diagnostics/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+PYTHON_BIN=/mnt/data/slurm-storage/aishod/envs/la-proteina/bin/python
+SCRATCH_ROOT="$HOME/tmp/jepa-sigreg-r70-position-${SLURM_JOB_ID}"
+HF_CACHE="$SCRATCH_ROOT/huggingface"
+mkdir -p "$SCRATCH_ROOT" "$HF_CACHE" "$PROJECT_ROOT/logs/diagnostics"
+export TMPDIR="$SCRATCH_ROOT"
+export MPLCONFIGDIR="$SCRATCH_ROOT/matplotlib"
+export HF_HOME="$HF_CACHE"
+export PYTHONPATH="$PROJECT_ROOT${PYTHONPATH:+:$PYTHONPATH}"
+
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+
+ABS_CHECKPOINT=$(
+  "$PYTHON_BIN" -c 'from huggingface_hub import hf_hub_download; print(hf_hub_download(repo_id="msc-thesis-org/checkpoints", filename="le-jepa/random_masking_70pct/100k.ckpt", repo_type="dataset", cache_dir="'"$HF_CACHE"'"))'
+)
+REL_CHECKPOINT=/mnt/hopper-raid/aishod/runs/le_jepa_rand70_relative_positions_100k/store/le_jepa_rand70_relative_positions_100k/checkpoints/chk_epoch=00000019_step=000000100000.ckpt
+export ABS_CHECKPOINT REL_CHECKPOINT
+
+srun "$PYTHON_BIN" Evaluation/latent_viz/compare_sigreg_r70_position_shortcut.py

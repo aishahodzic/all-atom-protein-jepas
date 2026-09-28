@@ -1,0 +1,83 @@
+#!/bin/bash
+# Recompute the C-alpha-conditioned reconstruction comparison at the exact
+# JEPA decoder step 200k, including predicted- and true-sequence postprocessing.
+#SBATCH --job-name=rec_j200k
+#SBATCH --partition=h100
+#SBATCH --nodelist=hopper
+#SBATCH --qos=short
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=8
+#SBATCH --mem=64G
+#SBATCH --time=03:00:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/decoder/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+PYTHON_BIN=/slurm-storage/aishod/envs/la-proteina/bin/python
+BIOTITE_PYTHON=/slurm-storage/aishod/.conda/envs/pstbench/bin/python
+ENCODER_CKPT=/mnt/hopper-raid/aishod/runs/jepa_random_masking_70_v3/store/jepa_random_masking_70_v3/checkpoints/chk_epoch=00000019_step=000000100000.ckpt
+DECODER_CKPT="$PROJECT_ROOT/Evaluation/structure_rec/checkpoints/jepa-rand-mask-70-target-140k-to-200k_step200000.pt"
+EXPORT_ROOT="$PROJECT_ROOT/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder200k-three-way"
+SUMMARY="$PROJECT_ROOT/non_code/pymol_proteins/audits/oracle_aa_sidechains_200k.json"
+OUTPUT_JSON="$PROJECT_ROOT/non_code/pymol_proteins/audits/ca_cond_vs_jepa_200k_three_way_metrics.json"
+OUTPUT_CSV="$PROJECT_ROOT/non_code/pymol_proteins/audits/ca_cond_vs_jepa_200k_three_way_metrics.csv"
+SCRATCH_ROOT="$HOME/tmp/ca-cond-jepa-decoder200k-$SLURM_JOB_ID"
+PROTEINS=(1kfm_A 1nkw_M 3d3r_A 5a13_G 5fli_A 5l0o_A 5xr7_A 6o14_A 7cnw_A 8cbv_A)
+
+[[ -s "$ENCODER_CKPT" ]] || { echo "ERROR: missing encoder: $ENCODER_CKPT" >&2; exit 1; }
+[[ -s "$DECODER_CKPT" ]] || { echo "ERROR: missing decoder: $DECODER_CKPT" >&2; exit 1; }
+mkdir -p "$PROJECT_ROOT/logs/decoder" "$EXPORT_ROOT" "$SCRATCH_ROOT"
+export TMPDIR="$SCRATCH_ROOT"
+export MPLCONFIGDIR="$SCRATCH_ROOT/matplotlib"
+export TRITON_CACHE_DIR="$SCRATCH_ROOT/triton"
+export PYTHONPATH="$PROJECT_ROOT"
+mkdir -p "$MPLCONFIGDIR" "$TRITON_CACHE_DIR"
+
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+
+cd "$PROJECT_ROOT"
+srun "$PYTHON_BIN" Evaluation/structure_rec/evaluate_oracle_aa_sidechains.py \
+  --encoder jepa-rand-mask-70 \
+  --encoder-source target \
+  --encoder-checkpoint "$ENCODER_CKPT" \
+  --decoder-checkpoint "$DECODER_CKPT" \
+  --output "$SUMMARY" \
+  --export-root "$EXPORT_ROOT" \
+  --device cuda
+
+for protein in "${PROTEINS[@]}"
+do
+  protein_root="$EXPORT_ROOT/$protein"
+  for sequence_mode in predicted true
+  do
+    input="$protein_root/${protein}_reconstructed_${sequence_mode}_sequence.pdb"
+    projected="$protein_root/${protein}_reconstructed_${sequence_mode}_sequence_projected.pdb"
+    rotamer="$protein_root/${protein}_reconstructed_${sequence_mode}_sequence_rotamer.pdb"
+    final="$protein_root/${protein}_reconstructed_${sequence_mode}_sequence_postprocessed.pdb"
+    "$PYTHON_BIN" Evaluation/structure_rec/project_pdb_ideal_geometry.py \
+      --input "$input" \
+      --output "$projected"
+    "$PYTHON_BIN" Evaluation/structure_rec/rotamer_clash_repair.py \
+      --input "$projected" \
+      --output "$rotamer" \
+      --metadata "$protein_root/${protein}_${sequence_mode}_rotamer_repair.json"
+    "$PYTHON_BIN" Evaluation/structure_rec/restrained_geometry_repair.py \
+      --input "$rotamer" \
+      --output "$final" \
+      --metadata "$protein_root/${protein}_${sequence_mode}_geometry_repair.json" \
+      --strength 500 --steps 2000 --backbone-steps 500 --clash-strength 300 \
+      --peptide-tolerance 0.03 --peptide-angle-tolerance 0.01
+  done
+done
+
+srun "$BIOTITE_PYTHON" Evaluation/structure_rec/compare_ca_cond_jepa_reconstruction.py \
+  --jepa-root "$EXPORT_ROOT" \
+  --jepa-postprocessed-root "$EXPORT_ROOT" \
+  --jepa-sequence-summary "$SUMMARY" \
+  --output-json "$OUTPUT_JSON" \
+  --output-csv "$OUTPUT_CSV"

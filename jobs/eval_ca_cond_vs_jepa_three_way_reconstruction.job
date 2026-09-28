@@ -1,0 +1,50 @@
+#!/bin/bash
+# Export the exact JEPA-70 140k decoder outputs once, then compare them with
+# the C-alpha-conditioned La-Proteina baseline under three matched protocols.
+#SBATCH --job-name=rec_3way
+#SBATCH --partition=h100
+#SBATCH --nodelist=hopper
+#SBATCH --qos=short
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=8
+#SBATCH --mem=64G
+#SBATCH --time=00:20:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/decoder/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+PYTHON_BIN=/slurm-storage/aishod/envs/la-proteina/bin/python
+BIOTITE_PYTHON=/slurm-storage/aishod/.conda/envs/pstbench/bin/python
+ENCODER_CKPT=/mnt/hopper-raid/aishod/runs/jepa_random_masking_70_v3/store/jepa_random_masking_70_v3/checkpoints/chk_epoch=00000019_step=000000100000.ckpt
+DECODER_CKPT="$PROJECT_ROOT/Evaluation/structure_rec/checkpoints/jepa-rand-mask-70-target-80k-to-140k_final.pt"
+EXPORT_ROOT="$PROJECT_ROOT/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder140k-three-way"
+SUMMARY="$PROJECT_ROOT/non_code/pymol_proteins/audits/oracle_aa_sidechains.json"
+SCRATCH_ROOT="$HOME/tmp/ca-cond-jepa-three-way-$SLURM_JOB_ID"
+
+mkdir -p "$PROJECT_ROOT/logs/decoder" "$EXPORT_ROOT" "$SCRATCH_ROOT"
+export TMPDIR="$SCRATCH_ROOT"
+export MPLCONFIGDIR="$SCRATCH_ROOT/matplotlib"
+export TRITON_CACHE_DIR="$SCRATCH_ROOT/triton"
+export PYTHONPATH="$PROJECT_ROOT"
+mkdir -p "$MPLCONFIGDIR" "$TRITON_CACHE_DIR"
+
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+
+cd "$PROJECT_ROOT"
+srun "$PYTHON_BIN" Evaluation/structure_rec/evaluate_oracle_aa_sidechains.py \
+  --encoder jepa-rand-mask-70 \
+  --encoder-source target \
+  --encoder-checkpoint "$ENCODER_CKPT" \
+  --decoder-checkpoint "$DECODER_CKPT" \
+  --output "$SUMMARY" \
+  --export-root "$EXPORT_ROOT" \
+  --device cuda
+
+srun "$BIOTITE_PYTHON" Evaluation/structure_rec/compare_ca_cond_jepa_reconstruction.py \
+  --jepa-root "$EXPORT_ROOT" \
+  --jepa-sequence-summary "$SUMMARY"

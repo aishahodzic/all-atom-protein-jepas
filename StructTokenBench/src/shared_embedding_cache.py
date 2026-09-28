@@ -91,6 +91,7 @@ def _encoder_implementation_identity() -> dict:
         src_dir / "protein_chain.py",
         src_dir / "laproteina_checkpoint.py",
         src_dir / "laproteina_eval_policy.py",
+        src_dir / "laproteina_readout.py",
     }
     for source_root in (
         repository_dir / "proteinfoundation",
@@ -123,6 +124,9 @@ def _tokenizer_identity(tokenizer, *, use_sequence: bool) -> dict:
         "encoder_implementation_sha256": implementation["sha256"],
         "scientific_runtime_versions": scientific_runtime_versions(),
     }
+    readout = getattr(tokenizer, "readout", None)
+    if readout is not None and readout.get("kind") != "latent_mean":
+        identity["encoder_readout"] = readout
     identity["identity_sha256"] = canonical_json_sha256(identity)
     return identity
 

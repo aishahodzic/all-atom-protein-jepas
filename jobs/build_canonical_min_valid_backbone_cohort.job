@@ -1,0 +1,35 @@
+#!/bin/bash
+# Build a run-local canonical cohort that omits chains with fewer than four
+# backbone-N coordinate rows, without modifying the shared source dataset.
+#SBATCH --job-name=canon_minvalid4
+#SBATCH --partition=normal
+#SBATCH --qos=short
+#SBATCH --nodelist=gauss
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=48
+#SBATCH --mem=128G
+#SBATCH --time=01:00:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/canonical_lejepa/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+PYTHON_BIN=/slurm-storage/aishod/envs/la-proteina/bin/python
+RUN_NAME=canonical_lejepa_v1_residue_k4_nocrop_visible_only_minvalid4_10k
+OUTPUT_DIR="$PROJECT_ROOT/store/$RUN_NAME/cohort/pdb_train_min_valid_n4"
+
+cd "$PROJECT_ROOT"
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+export PYTHONPATH="$PROJECT_ROOT${PYTHONPATH:+:$PYTHONPATH}"
+export TMPDIR="$HOME/tmp/canonical-min-valid-cohort/$SLURM_JOB_ID"
+export MPLCONFIGDIR="$TMPDIR/matplotlib"
+mkdir -p "$TMPDIR" "$MPLCONFIGDIR" "$PROJECT_ROOT/logs/canonical_lejepa"
+
+"$PYTHON_BIN" Evaluation/diagnostics/build_min_valid_backbone_cohort.py \
+    --source "$DATA_PATH/pdb_train" \
+    --output "$OUTPUT_DIR" \
+    --min-valid 4 \
+    --workers 48

@@ -1,0 +1,98 @@
+#!/bin/bash
+# Export and score the direct CA-conditioned baseline and JEPA reconstructions
+# on a deterministic 100-protein structural cohort.  One historical CA-only
+# chain is retained in the export manifest but excluded from structural scores.
+#SBATCH --job-name=rec100_direct
+#SBATCH --partition=normal
+#SBATCH --qos=short
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=100G
+#SBATCH --time=03:00:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/decoder/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+PYTHON_BIN=/data-gauss/$USER/envs/laproteina_env/bin/python3
+BIOTITE_PYTHON=/mnt/data/slurm-storage/aishod/.conda/envs/pstbench/bin/python
+CA_ENCODER="$PROJECT_ROOT/StructTokenBench/100k-checkpoints/ae/ca-cond/100k-EMA.ckpt"
+CA_DECODER="$PROJECT_ROOT/Evaluation/structure_rec/checkpoints/ca-cond-100k-ema-own-decoder.pt"
+JEPA_ENCODER=/mnt/hopper-raid/aishod/runs/jepa_random_masking_70_v3/store/jepa_random_masking_70_v3/checkpoints/chk_epoch=00000019_step=000000100000.ckpt
+JEPA_DECODER="$PROJECT_ROOT/Evaluation/structure_rec/checkpoints/jepa-rand-mask-70-target-140k-to-200k_step200000.pt"
+COHORT="$PROJECT_ROOT/non_code/pymol_proteins/audits/reconstruction_random100_cohort.json"
+CA_ROOT="$PROJECT_ROOT/Evaluation/structure_rec/exports/ca-cond-original-random100"
+JEPA_ROOT="$PROJECT_ROOT/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder200k-random100"
+CA_SUMMARY="$PROJECT_ROOT/non_code/pymol_proteins/audits/ca_cond_random100_summary.json"
+JEPA_SUMMARY="$PROJECT_ROOT/non_code/pymol_proteins/audits/jepa_decoder200k_random100_summary.json"
+OUTPUT_JSON="$PROJECT_ROOT/non_code/pymol_proteins/audits/ca_cond_vs_jepa_200k_random100_direct_metrics.json"
+OUTPUT_CSV="$PROJECT_ROOT/non_code/pymol_proteins/audits/ca_cond_vs_jepa_200k_random100_direct_metrics.csv"
+SCRATCH_ROOT="$HOME/tmp/reconstruction-random100-direct-$SLURM_JOB_ID"
+
+for path in "$CA_ENCODER" "$CA_DECODER" "$JEPA_ENCODER" "$JEPA_DECODER"
+do
+  [[ -s "$path" ]] || { echo "ERROR: missing checkpoint: $path" >&2; exit 1; }
+done
+mkdir -p "$PROJECT_ROOT/logs/decoder" "$CA_ROOT" "$JEPA_ROOT" "$SCRATCH_ROOT"
+export TMPDIR="$SCRATCH_ROOT"
+export MPLCONFIGDIR="$SCRATCH_ROOT/matplotlib"
+export TRITON_CACHE_DIR="$SCRATCH_ROOT/triton"
+export PYTHONPATH="$PROJECT_ROOT"
+mkdir -p "$MPLCONFIGDIR" "$TRITON_CACHE_DIR"
+
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+cd "$PROJECT_ROOT"
+
+srun "$PYTHON_BIN" Evaluation/structure_rec/select_reconstruction_cohort.py \
+  --output "$COHORT" \
+  --scored-count 100 \
+  --pool-seed 42 \
+  --selection-seed 20260920
+
+if [[ ! -s "$CA_SUMMARY" ]]
+then
+  srun "$PYTHON_BIN" Evaluation/structure_rec/evaluate_oracle_aa_sidechains.py \
+    --encoder ca-cond \
+    --encoder-source online \
+    --encoder-checkpoint "$CA_ENCODER" \
+    --decoder-checkpoint "$CA_DECODER" \
+    --decoder-style ca-cond \
+    --latent-tap sample \
+    --latent-seed 42 \
+    --protein-ids-file "$COHORT" \
+    --protein-ids-key export_ids \
+    --output "$CA_SUMMARY" \
+    --export-root "$CA_ROOT" \
+    --device cuda
+fi
+
+if [[ ! -s "$JEPA_SUMMARY" ]]
+then
+  srun "$PYTHON_BIN" Evaluation/structure_rec/evaluate_oracle_aa_sidechains.py \
+    --encoder jepa-rand-mask-70 \
+    --encoder-source target \
+    --encoder-checkpoint "$JEPA_ENCODER" \
+    --decoder-checkpoint "$JEPA_DECODER" \
+    --decoder-style fully-latent \
+    --latent-tap mean \
+    --latent-seed 42 \
+    --protein-ids-file "$COHORT" \
+    --protein-ids-key export_ids \
+    --output "$JEPA_SUMMARY" \
+    --export-root "$JEPA_ROOT" \
+    --device cuda
+fi
+
+srun "$BIOTITE_PYTHON" Evaluation/structure_rec/compare_ca_cond_jepa_reconstruction.py \
+  --ca-root "$CA_ROOT" \
+  --jepa-root "$JEPA_ROOT" \
+  --ca-sequence-summary "$CA_SUMMARY" \
+  --jepa-sequence-summary "$JEPA_SUMMARY" \
+  --protein-ids-file "$COHORT" \
+  --protein-ids-key scored_ids \
+  --output-json "$OUTPUT_JSON" \
+  --output-csv "$OUTPUT_CSV"

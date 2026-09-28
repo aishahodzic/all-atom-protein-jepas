@@ -1,0 +1,68 @@
+#!/bin/bash
+# Full upstream-L600 STB evaluation of JEPA rand70 D8 with rotations at 100k.
+#SBATCH --job-name=stb_jepa_d8_rot_100k
+#SBATCH --partition=h100
+#SBATCH --nodelist=hopper
+#SBATCH --qos=medium
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=100G
+#SBATCH --time=1-00:00:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/stb/publication_upstream/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+STB_ROOT="$PROJECT_ROOT/StructTokenBench"
+PYTHON_BIN=/slurm-storage/aishod/.conda/envs/pstbench/bin/python
+CHECKPOINT_DIR=/mnt/hopper-raid/aishod/runs/jepa_rand70_d8_independent_rotations_100k/store/jepa_rand70_d8_independent_rotations_100k/checkpoints
+ENCODER_CONFIG="$STB_ROOT/100k-checkpoints/shared/exp_config_jepa_nn130m.json"
+
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+
+mapfile -t checkpoints < <(find "$CHECKPOINT_DIR" -maxdepth 1 -type f -name 'chk_epoch=*_step=000000100000.ckpt' -print)
+if [[ "${#checkpoints[@]}" -ne 1 ]]; then
+    echo "ERROR: expected exactly one immutable step-100k checkpoint, found ${#checkpoints[@]}" >&2
+    printf '%s\n' "${checkpoints[@]}" >&2
+    exit 1
+fi
+RAW_CHECKPOINT="${checkpoints[0]}"
+export JEPA_RAND70_D8_INDEPENDENT_ROTATIONS_CKPT="$CHECKPOINT_DIR/stb-step-100000.ckpt"
+ln -sfn "$RAW_CHECKPOINT" "$JEPA_RAND70_D8_INDEPENDENT_ROTATIONS_CKPT"
+[[ "$(readlink -f "$JEPA_RAND70_D8_INDEPENDENT_ROTATIONS_CKPT")" == "$(readlink -f "$RAW_CHECKPOINT")" ]] || {
+    echo "ERROR: safe checkpoint alias does not resolve to $RAW_CHECKPOINT" >&2
+    exit 1
+}
+
+[[ -s "$JEPA_RAND70_D8_INDEPENDENT_ROTATIONS_CKPT" ]] || { echo "ERROR: missing checkpoint" >&2; exit 1; }
+echo "Checkpoint: $JEPA_RAND70_D8_INDEPENDENT_ROTATIONS_CKPT"
+sha256sum "$JEPA_RAND70_D8_INDEPENDENT_ROTATIONS_CKPT"
+echo "98e0350d418e7d840fa245ddfd7150064e87a9ac74c72c9150a946f0f66ccd9d  $ENCODER_CONFIG" | sha256sum -c -
+echo "Repository revision: $(git -C "$PROJECT_ROOT" rev-parse HEAD)"
+echo "Repository branch: $(git -C "$PROJECT_ROOT" branch --show-current)"
+
+cd "$STB_ROOT"
+export STB_SKIP_BOOTSTRAP=1
+export STB_SKIP_DATA_SETUP=1
+export STB_SMOKE=0
+export DS_IGNORE_CUDA_DETECTION=1
+export PYTHON_BIN
+export NUM_WORKERS=8
+export PDB_DATA_ROOT=/mnt/hopper-raid/aishod/data/struct_token_bench_pdb_data
+export STB_RELEASE_DATA_ROOT=/mnt/hopper-raid/aishod/data/struct_token_bench_release_data
+export EVALUATION_RUN_ID="slurm-${SLURM_JOB_ID}-jepa-rand70-d8-independent-rotations-100k"
+export STB_LOG_ROOT="$STB_ROOT/struct_token_bench_logs/upstream-l600-v1-full/runs/$EVALUATION_RUN_ID"
+export SUMMARY_FILE="$STB_LOG_ROOT/summary_results.csv"
+export MPLCONFIGDIR="/mnt/data/slurm-storage/aishod/tmp/stb-jepa-d8-rot-mpl-${SLURM_JOB_ID}"
+export TRITON_CACHE_DIR="/mnt/data/slurm-storage/aishod/tmp/stb-jepa-d8-rot-triton-${SLURM_JOB_ID}"
+mkdir -p "$STB_LOG_ROOT" "$MPLCONFIGDIR" "$TRITON_CACHE_DIR"
+
+bash src/script/run_eval.sh \
+    --protocol=upstream-l600-v1 \
+    --checkpoint=100k \
+    --experiment=jepa-rand70-d8-independent-rotations-100k \
+    --tasks=all

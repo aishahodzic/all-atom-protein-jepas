@@ -1,0 +1,34 @@
+#!/bin/bash
+# Extract and plot the matched 100k D64 JEPA rotation comparison.
+#SBATCH --job-name=tsne_jepa_d64_100k_pair
+#SBATCH --partition=normal
+#SBATCH --nodelist=noether
+#SBATCH --qos=medium
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=64G
+#SBATCH --time=03:00:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/diagnostics/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+PYTHON=/slurm-storage/aishod/.conda/envs/pstbench/bin/python
+OUTPUT="$PROJECT_ROOT/Evaluation/latent_viz/figures-extended/workshop/main/tsne_aa20_jepa-r70-d64-100k-v-rotation-100k_labels-on-clusters.png"
+THESIS_OUTPUT="$PROJECT_ROOT/thesis-latex/figures/results/tsne_aa20_jepa-r70-d64-100k-v-rotation-100k_labels-on-clusters.png"
+
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+
+cd "$PROJECT_ROOT"
+export PYTHONPATH="$PROJECT_ROOT"
+export MPLCONFIGDIR="/mnt/data/slurm-storage/aishod/tmp/tsne-jepa-d64-100k-${SLURM_JOB_ID}"
+mkdir -p "$PROJECT_ROOT/logs/diagnostics" "$MPLCONFIGDIR"
+
+srun "$PYTHON" Evaluation/latent_viz/plot_jepa_d64_exact_100k_pair.py
+[[ -s "$OUTPUT" ]] || { echo "ERROR: expected output was not generated: $OUTPUT" >&2; exit 1; }
+cp "$OUTPUT" "$THESIS_OUTPUT"
+echo "Thesis figure: $THESIS_OUTPUT"

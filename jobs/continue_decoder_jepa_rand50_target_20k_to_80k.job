@@ -1,0 +1,54 @@
+#!/bin/bash
+# Continue the JEPA random-50 target-encoder decoder calibration from its
+# immutable step-20k decoder weights to a total budget of 80k steps.
+# The decoder trainer stores weights only, so AdamW is intentionally restarted.
+# No calibration early stopping is used: this job always targets step 80k.
+#SBATCH --job-name=dec_jr50_t80k
+#SBATCH --partition=normal
+#SBATCH --nodelist=klein
+#SBATCH --qos=medium
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=100G
+#SBATCH --time=10:00:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/decoder/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+PYTHON_BIN=/data-gauss/$USER/envs/laproteina_env/bin/python3
+SOURCE_RUN_ID=jepa-rand-mask-50-target-calib
+RUN_ID=jepa-rand-mask-50-target-20k-to-80k
+RESUME_STEP=20000
+RESUME_CKPT="$PROJECT_ROOT/Evaluation/structure_rec/checkpoints/${SOURCE_RUN_ID}_step${RESUME_STEP}.pt"
+SCRATCH_ROOT="$HOME/tmp/dj50-80k-$SLURM_JOB_ID"
+
+if [[ ! -s "$RESUME_CKPT" ]]; then
+  echo "ERROR: missing step-20k decoder checkpoint: $RESUME_CKPT" >&2
+  exit 1
+fi
+
+mkdir -p "$PROJECT_ROOT/logs/decoder" "$SCRATCH_ROOT"
+export TMPDIR="$SCRATCH_ROOT"
+export MPLCONFIGDIR="$SCRATCH_ROOT/matplotlib"
+export TRITON_CACHE_DIR="$SCRATCH_ROOT/triton"
+export PYTHONPATH="$PROJECT_ROOT"
+mkdir -p "$MPLCONFIGDIR" "$TRITON_CACHE_DIR"
+
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+
+cd "$PROJECT_ROOT/Evaluation/structure_rec"
+srun "$PYTHON_BIN" train_decoder.py \
+  --encoder jepa-rand-mask-50 \
+  --encoder-source target \
+  --run-id "$RUN_ID" \
+  --resume-from "$RESUME_CKPT" \
+  --resume-step "$RESUME_STEP" \
+  --max-steps 80000 \
+  --eval-every 2000 \
+  --batch-size 8 \
+  --no-wandb

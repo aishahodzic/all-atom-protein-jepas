@@ -1,0 +1,55 @@
+% !TeX root = ../Project.tex
+\begin{table}[p]
+\centering
+\resultstableformat
+\setlength{\tabcolsep}{1.8pt}
+\renewcommand{\arraystretch}{0.86}
+\caption{Full-L600 layerwise STB for canonical LeJEPA v1 using raw weights from the 100k checkpoint and full-context evaluation. Scores are multiplied by 100; higher is better and row maxima are bold. The canonical columns follow encoder depth from blocks 1, 6 and 12 to the final 8D latent mean. Random-init block 6 is an untrained 768D control and is not part of this progression. Cohorts and encoder inputs match, but the 768D and 8D readouts give the downstream head different input parameterisations. Where a later recovery job repeated a completed task, we retain the first successful matched result.}
+\label{tab:results-layer-stb}
+\begin{tabular}{@{}lllrrrrr@{}}
+\toprule
+\multirow{2}{*}{Task type} & \multirow{2}{*}{Task} & \multirow{2}{*}{Split} & \multicolumn{4}{c}{Canonical LeJEPA v1, raw 100k} & \multicolumn{1}{c}{Control} \\[1.8pt]
+& & & \shortstack{Block 1\\768D} & \shortstack{Block 6\\768D} & \shortstack{Block 12\\768D} & \shortstack{Final mean\\8D} & \shortstack{Random init.\\block 6, 768D} \\
+\midrule
+\multicolumn{8}{c}{\textbf{Functional-site prediction: AUROC $\times100$}} \\
+\midrule
+\multirow{5}{*}{Binding site}
+& \multirow{2}{*}{BindInt} & Fold & 46.49 & \textbf{52.19} & 46.68 & 50.30 & 48.98 \\
+& & SF & 93.16 & \textbf{94.13} & 90.96 & 88.45 & 88.06 \\
+& \multirow{2}{*}{BindBio} & Fold & \textbf{78.35} & 78.31 & 71.32 & 59.32 & 74.12 \\
+& & SF & 79.30 & \textbf{80.04} & 71.18 & 61.82 & 74.58 \\
+& BindShake & Test & 79.61 & \textbf{83.11} & 80.38 & 58.45 & 78.23 \\
+\multirow{4}{*}{Catalytic site}
+& \multirow{2}{*}{CatInt} & Fold & 67.23 & \textbf{69.36} & 57.25 & 51.71 & 64.32 \\
+& & SF & 94.48 & \textbf{95.78} & 88.98 & 80.74 & 88.95 \\
+& \multirow{2}{*}{CatBio} & Fold & 83.27 & \textbf{85.05} & 80.17 & 53.67 & 81.87 \\
+& & SF & \textbf{94.40} & 94.04 & 82.98 & 60.61 & 91.41 \\
+\multirow{2}{*}{Conserved site}
+& \multirow{2}{*}{Con} & Fold & 68.07 & 68.22 & \textbf{72.61} & 60.10 & 63.47 \\
+& & SF & 88.83 & \textbf{92.16} & 84.21 & 77.27 & 81.40 \\
+\multirow{2}{*}{Repeat motif}
+& \multirow{2}{*}{Rep} & Fold & 67.95 & 60.39 & 53.50 & 71.05 & \textbf{76.66} \\
+& & SF & 85.40 & \textbf{91.66} & 80.96 & 83.49 & 79.48 \\
+\multirow{2}{*}{Epitope region}
+& \multirow{2}{*}{Ept} & Fold & 55.58 & 55.70 & 61.36 & \textbf{62.00} & 55.61 \\
+& & SF & 69.33 & \textbf{76.09} & 65.93 & 59.72 & 69.06 \\
+\midrule
+\multicolumn{8}{c}{\textbf{Remote homology: macro-F1 $\times100$}} \\
+\midrule
+\multirow{3}{*}{Remote homology}
+& \multirow{3}{*}{Homo} & Fold & 14.56 & \textbf{16.94} & 9.68 & 6.73 & 6.64 \\
+& & Family & 36.89 & \textbf{39.88} & 26.89 & 19.64 & 21.76 \\
+& & SF & 17.19 & \textbf{19.90} & 8.52 & 5.54 & 6.77 \\
+\midrule
+\multicolumn{8}{c}{\textbf{Structural flexibility: Spearman's $\rho\times100$}} \\
+\midrule
+\multirow{6}{*}{Flexibility}
+& \multirow{2}{*}{FlexRMSF} & Fold & 52.41 & \textbf{63.39} & 42.74 & 22.48 & 43.84 \\
+& & SF & 53.13 & \textbf{68.52} & 52.51 & 30.96 & 41.73 \\
+& \multirow{2}{*}{FlexBFactor} & Fold & 34.28 & \textbf{37.71} & 22.56 & 5.01 & 31.14 \\
+& & SF & 29.65 & \textbf{32.73} & 20.58 & 3.50 & 27.15 \\
+& \multirow{2}{*}{FlexNEQ} & Fold & 46.97 & \textbf{51.39} & 39.73 & 2.46 & 19.11 \\
+& & SF & 46.70 & \textbf{50.69} & 39.76 & 3.54 & 19.29 \\
+\bottomrule
+\end{tabular}
+\end{table}

@@ -1,0 +1,61 @@
+#!/bin/bash
+# Independent-local protein/per-view B96 optimizer ablation: 30k schedule,
+# 1,200-step warmup, peak LR 1e-3, cosine decay to 1e-5.
+#SBATCH --job-name=canon_indlocal_lr1e3_30k
+#SBATCH --partition=normal
+#SBATCH --qos=medium
+#SBATCH --nodes=1
+#SBATCH --ntasks=2
+#SBATCH --ntasks-per-node=2
+#SBATCH --gres=gpu:2
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=64G
+#SBATCH --time=08:30:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/canonical_lejepa/%x-%j.out
+
+set -euo pipefail
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+PYTHON_BIN=/slurm-storage/aishod/envs/la-proteina/bin/python
+RUN_NAME=canonical_lejepa_crop_fixed96_protein_perview_sigreg_b96_independent_locals_lr1e3_cosine_30k
+CHECKPOINT_DIR="$PROJECT_ROOT/store/$RUN_NAME/checkpoints"
+cd "$PROJECT_ROOT"
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+export PYTHONPATH="$PROJECT_ROOT${PYTHONPATH:+:$PYTHONPATH}"
+export PATH="/slurm-storage/aishod/envs/la-proteina/bin:$PATH"
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+export MASTER_ADDR=127.0.0.1
+export MASTER_PORT=$((20000 + SLURM_JOB_ID % 20000))
+export TORCH_NCCL_ASYNC_ERROR_HANDLING=1
+export HYDRA_FULL_ERROR=1
+export MPLCONFIGDIR="/tmp/${RUN_NAME}-${SLURM_JOB_ID}"
+mkdir -p "$MPLCONFIGDIR" "$PROJECT_ROOT/logs/canonical_lejepa"
+
+RESUME_OVERRIDE=()
+if [[ -f "$CHECKPOINT_DIR/last.ckpt" ]]; then
+    RESUME_OVERRIDE=("resume.ckpt_path=$CHECKPOINT_DIR/last.ckpt")
+fi
+
+srun --ntasks=2 --kill-on-bad-exit=1 --wait=30 --label "$PYTHON_BIN" \
+    -m proteinfoundation.jepa.train_canonical_lejepa \
+    run_name_="$RUN_NAME" seed=42 alignment_level=protein \
+    masked_kv_mode=visible_only residue_view_checkpointing=false \
+    residue_compact_visible_kv=false independent_view_rotations=false \
+    views.cropping=true views.packed_views=true \
+    views.global_crop_length=96 views.global_crop_fraction_min=null \
+    views.global_crop_fraction_max=null views.global_crop_min_length=96 \
+    views.global_crop_max_length=null views.local_crop_length=48 \
+    views.locals_within_global=true views.shared_crop_anchor=false \
+    views.global_mask_pct=0.20 views.local_mask_pct=0.50 \
+    sigreg.input=protein_mean sigreg.joint_views=false \
+    dataset.datamodule.dataselector.min_length=96 \
+    dataset.datamodule.batch_size=48 trainer.devices=2 trainer.num_nodes=1 \
+    trainer.strategy=ddp trainer.use_distributed_sampler=false \
+    trainer.precision=bf16-mixed trainer.accumulate_grad_batches=1 \
+    trainer.max_steps=30000 optimizer.lr=1.0e-3 \
+    schedule.total_steps=30000 schedule.peak_step=1200 \
+    schedule.start_lr=2.5e-4 schedule.end_lr=1.0e-5 \
+    ema.enabled=true checkpoint.every_n_train_steps=10000 \
+    checkpoint.last_every_n_train_steps=1500 checkpoint.save_last=true \
+    checkpoint.save_weights_only=false "${RESUME_OVERRIDE[@]}"

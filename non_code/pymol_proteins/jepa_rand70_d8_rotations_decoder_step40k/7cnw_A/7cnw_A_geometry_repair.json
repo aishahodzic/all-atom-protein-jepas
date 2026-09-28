@@ -1,0 +1,66 @@
+{
+  "input": "/mnt/data/slurm-storage/aishod/projects/la-proteina/non_code/pymol_proteins/jepa_rand70_d8_rotations_decoder_step40k/7cnw_A/7cnw_A_rotamer_repaired.pdb",
+  "output": "/mnt/data/slurm-storage/aishod/projects/la-proteina/non_code/pymol_proteins/jepa_rand70_d8_rotations_decoder_step40k/7cnw_A/7cnw_A_reconstructed_idealized.pdb",
+  "strength": 500.0,
+  "steps": 2000,
+  "learning_rate": 0.02,
+  "bond_tolerance_angstrom": 0.15,
+  "virtual_tolerance_angstrom": 0.2,
+  "peptide_tolerance_angstrom": 0.03,
+  "peptide_angle_cosine_tolerance": 0.01,
+  "clash_strength": 300.0,
+  "clash_overlap_angstrom": 1.2,
+  "ca_gap_threshold_angstrom": 4.5,
+  "backbone_steps": 500,
+  "continuous_peptide_edges": 252,
+  "inserted_internal_ter_records": 0,
+  "max_ca_shift_angstrom": 0.0,
+  "mean_moved_atom_distance_angstrom": 0.5257580918403271,
+  "max_moved_atom_distance_angstrom": 4.257868940018045,
+  "history": [
+    {
+      "step": 1,
+      "stage": "peptide",
+      "loss": 2593.1682361246785,
+      "displacement": 0.0,
+      "covalent": 0.033728719015372347,
+      "virtual": 0.006523500450793439,
+      "peptide": 4.657347895349824,
+      "peptide_angles": 0.4936289827714619,
+      "clash": 0.0
+    },
+    {
+      "step": 500,
+      "stage": "peptide",
+      "loss": 12.752712432390819,
+      "displacement": 1.3739841471975864,
+      "covalent": 0.012370440307737504,
+      "virtual": 0.03482789795075529,
+      "peptide": 0.0005005191886074843,
+      "peptide_angles": 0.0011795225863526573,
+      "clash": 0.0
+    },
+    {
+      "step": 501,
+      "stage": "relaxation",
+      "loss": 15.504949210959959,
+      "displacement": 0.6352171603543384,
+      "covalent": 0.012364048437218136,
+      "virtual": 0.03480430322682472,
+      "peptide": 0.0004996163816887711,
+      "peptide_angles": 0.0011778190379780873,
+      "clash": 0.011661507396033444
+    },
+    {
+      "step": 2000,
+      "stage": "relaxation",
+      "loss": 0.8765110663953852,
+      "displacement": 0.8389252912946076,
+      "covalent": 1.0954629335963571e-05,
+      "virtual": 0.00019986706443452377,
+      "peptide": 1.407730442108039e-06,
+      "peptide_angles": 3.3466030764466413e-06,
+      "clash": 1.5826368730676862e-05
+    }
+  ]
+}

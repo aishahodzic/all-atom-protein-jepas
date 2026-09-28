@@ -1,0 +1,90 @@
+#!/bin/bash
+# Matched four-task STB evaluation for Middle-LR raw checkpoints.
+# Array 0: step 16,667; array 1: step 30,000.
+# Task set is the common four-task LR comparison panel.
+#SBATCH --job-name=stb_mid_17_30
+#SBATCH --partition=normal
+#SBATCH --qos=medium
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=64G
+#SBATCH --time=08:00:00
+#SBATCH --array=0-1
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/stb/publication_upstream/%x-%A_%a.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+STB_ROOT="$PROJECT_ROOT/StructTokenBench"
+STB_PYTHON_BIN=/slurm-storage/aishod/.conda/envs/pstbench/bin/python
+ENCODER_CONFIG="$STB_ROOT/100k-checkpoints/shared/exp_config_jepa_nn130m.json"
+
+STEPS=(16667 30000)
+LABELS=(16667 30k)
+EXPERIMENTS=(
+    canonical-lejepa-middle-lr4e4-raw-step16667
+    canonical-lejepa-middle-lr4e4-raw-step30k
+)
+CHECKPOINTS=(
+    "$STB_ROOT/100k-checkpoints/canonical-lejepa/jarvis/middle-lr/CLJP_step-00016667-raw-stb.ckpt"
+    "$STB_ROOT/100k-checkpoints/canonical-lejepa/jarvis/middle-lr/CLJP_step-00030000-raw-stb.ckpt"
+)
+SOURCE_SHA256=(
+    e4d394cb797f29b995030981ccbdbac137dd844f5334c65bb3fb323c000ec9f4
+    244c3da2a7bc629d0c1ee352c44b7b421294437a79b368b10a8670dae0541e75
+)
+
+STEP="${STEPS[$SLURM_ARRAY_TASK_ID]}"
+LABEL="${LABELS[$SLURM_ARRAY_TASK_ID]}"
+EXPERIMENT="${EXPERIMENTS[$SLURM_ARRAY_TASK_ID]}"
+CHECKPOINT="${CHECKPOINTS[$SLURM_ARRAY_TASK_ID]}"
+EXPECTED_SOURCE_SHA="${SOURCE_SHA256[$SLURM_ARRAY_TASK_ID]}"
+
+test -f "$CHECKPOINT"
+test -f "$ENCODER_CONFIG"
+
+"$STB_PYTHON_BIN" -c '
+import sys
+import torch
+
+checkpoint = torch.load(sys.argv[1], map_location="cpu", weights_only=False, mmap=True)
+provenance = checkpoint.get("canonical_lejepa_evaluation", {})
+assert provenance.get("source_global_step") == int(sys.argv[2]), provenance
+assert provenance.get("encoder_source") == "raw", provenance
+assert provenance.get("source_checkpoint_sha256") == sys.argv[3], provenance
+assert provenance.get("latent_dim") == 8, provenance
+state = checkpoint.get("state_dict", {})
+online = [key for key in state if key.startswith("online_encoder.")]
+assert len(online) == 381, len(online)
+print(f"Verified raw step-{sys.argv[2]} STB checkpoint with 381 encoder tensors")
+' "$CHECKPOINT" "$STEP" "$EXPECTED_SOURCE_SHA"
+
+sha256sum "$CHECKPOINT" "$ENCODER_CONFIG"
+
+cd "$STB_ROOT"
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+export STB_SKIP_BOOTSTRAP=1
+export STB_SKIP_DATA_SETUP=1
+export STB_SMOKE=0
+export STB_SHARED_EMBEDDING_CACHE=1
+export DS_IGNORE_CUDA_DETECTION=1
+export PYTHON_BIN="$STB_PYTHON_BIN"
+export NUM_WORKERS=8
+export PDB_DATA_ROOT=/mnt/hopper-raid/aishod/data/struct_token_bench_pdb_data
+export STB_RELEASE_DATA_ROOT=/mnt/hopper-raid/aishod/data/struct_token_bench_release_data
+export EVALUATION_RUN_ID="slurm-${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}-${EXPERIMENT}-four-stb"
+export STB_LOG_ROOT="$STB_ROOT/struct_token_bench_logs/upstream-l600-v1-full/runs/$EVALUATION_RUN_ID"
+export SUMMARY_FILE="$STB_LOG_ROOT/summary_results.csv"
+export MPLCONFIGDIR="$HOME/tmp/stb-runtime-cache/${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}-middle/mpl"
+export TRITON_CACHE_DIR="$HOME/tmp/stb-runtime-cache/${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}-middle/triton"
+mkdir -p "$STB_LOG_ROOT" "$MPLCONFIGDIR" "$TRITON_CACHE_DIR"
+
+bash src/script/run_eval.sh \
+    --protocol=upstream-l600-v1 \
+    --checkpoint="$LABEL" \
+    --experiment="$EXPERIMENT" \
+    --tasks=Homo,CatBio,FlexRMSF,BindShake

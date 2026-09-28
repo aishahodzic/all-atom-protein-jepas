@@ -1,0 +1,110 @@
+#!/bin/bash
+# Exact upstream-L600 FlexRMSF control for the seed-43 independent-rotation
+# replicate. Submit only after the matched seed-43 t-SNE job succeeds:
+#   sbatch --dependency=afterok:<TSNE_JOB_ID> jobs/eval_canonical_lejepa_rotations_seed43_ema_10k_flexrmsf_upstream_l600.job
+#SBATCH --job-name=stb_canon_rot_s43_10k_rmsf
+#SBATCH --partition=normal
+#SBATCH --qos=medium
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=64G
+#SBATCH --time=04:00:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/stb/publication_upstream/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+STB_ROOT="$PROJECT_ROOT/StructTokenBench"
+TRAIN_PYTHON_BIN=/slurm-storage/aishod/envs/la-proteina/bin/python
+STB_PYTHON_BIN=/slurm-storage/aishod/.conda/envs/pstbench/bin/python
+ENCODER_CONFIG="$STB_ROOT/100k-checkpoints/shared/exp_config_jepa_nn130m.json"
+REFERENCE_CONFIG="$PROJECT_ROOT/store/canonical_lejepa_rotations_100k/checkpoints/exp_config_canonical_lejepa_rotations_100k.json"
+RUN_ROOT="$PROJECT_ROOT/store/canonical_lejepa_rotations_seed43_10k"
+CONFIG="$RUN_ROOT/checkpoints/exp_config_canonical_lejepa_rotations_seed43_10k.json"
+CHECKPOINT="$RUN_ROOT/checkpoints/step-00010000.ckpt"
+STAGED="$RUN_ROOT/evaluation/canonical-lejepa-v1-rotations-seed43-step10000-ema-staged.ckpt"
+TSNE_MANIFEST="$PROJECT_ROOT/Evaluation/latent_viz/results/canonical_lejepa_v1_rotations_seed43_ema_10k_position.json"
+
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+
+if [[ "$(git -C "$PROJECT_ROOT" branch --show-current)" != "canonical-lejepa" ]]; then
+    echo "ERROR: expected canonical-lejepa branch" >&2
+    exit 1
+fi
+[[ -s "$TSNE_MANIFEST" ]] || {
+    echo "ERROR: matched seed-43 t-SNE manifest is absent: $TSNE_MANIFEST" >&2
+    exit 1
+}
+
+"$TRAIN_PYTHON_BIN" -c '
+import copy
+import hashlib
+import json
+import sys
+import torch
+
+reference_path, config_path, checkpoint_path, staged_path = sys.argv[1:]
+with open(reference_path, encoding="utf-8") as handle:
+    reference = json.load(handle)
+with open(config_path, encoding="utf-8") as handle:
+    candidate = json.load(handle)
+assert candidate["run_name_"] == "canonical_lejepa_rotations_seed43_10k"
+assert candidate["seed"] == 43
+assert candidate["independent_view_rotations"] is True
+normalized = copy.deepcopy(candidate)
+normalized["run_name_"] = reference["run_name_"]
+normalized["seed"] = reference["seed"]
+normalized["trainer"]["max_steps"] = reference["trainer"]["max_steps"]
+normalized["schedule"]["total_steps"] = reference["schedule"]["total_steps"]
+assert normalized == reference, "seed-43 config differs outside approved fields"
+
+checkpoint = torch.load(checkpoint_path, map_location="cpu", weights_only=False)
+assert checkpoint.get("global_step") == 10_000
+assert len(checkpoint.get("state_dict_ema", {})) == 381
+meta = checkpoint.get("state_dict_ema_meta", {})
+assert meta.get("num_updates") == 312 and meta.get("last_ema_step") == 9_984, meta
+
+def sha256(path):
+    digest = hashlib.sha256()
+    with open(path, "rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+staged = torch.load(staged_path, map_location="cpu", weights_only=False)
+provenance = staged.get("canonical_lejepa_evaluation", {})
+assert provenance.get("encoder_source") == "ema", provenance
+assert provenance.get("source_global_step") == 10_000, provenance
+assert provenance.get("source_checkpoint_sha256") == sha256(checkpoint_path), provenance
+print("Verified strict seed-43 checkpoint/config/EMA/staged provenance before FlexRMSF")
+' "$REFERENCE_CONFIG" "$CONFIG" "$CHECKPOINT" "$STAGED"
+
+echo "98e0350d418e7d840fa245ddfd7150064e87a9ac74c72c9150a946f0f66ccd9d  $ENCODER_CONFIG" | sha256sum -c -
+
+cd "$STB_ROOT"
+export STB_SKIP_BOOTSTRAP=1
+export STB_SKIP_DATA_SETUP=1
+export STB_SMOKE=0
+export STB_SHARED_EMBEDDING_CACHE=1
+export DS_IGNORE_CUDA_DETECTION=1
+export PYTHON_BIN="$STB_PYTHON_BIN"
+export NUM_WORKERS=8
+export PDB_DATA_ROOT=/mnt/hopper-raid/aishod/data/struct_token_bench_pdb_data
+export STB_RELEASE_DATA_ROOT=/mnt/hopper-raid/aishod/data/struct_token_bench_release_data
+export CANONICAL_LEJEPA_V1_ROTATIONS_SEED43_EMA_STEP10K_CKPT="$STAGED"
+export EVALUATION_RUN_ID="slurm-${SLURM_JOB_ID}-canonical-lejepa-v1-rotations-seed43-ema-step10k-flexrmsf"
+export STB_LOG_ROOT="$STB_ROOT/struct_token_bench_logs/upstream-l600-v1-full/runs/$EVALUATION_RUN_ID"
+export SUMMARY_FILE="$STB_LOG_ROOT/summary_results.csv"
+export MPLCONFIGDIR="/tmp/stb-canonical-lejepa-v1-rotations-seed43-ema-10k-rmsf-mpl-${SLURM_JOB_ID}"
+export TRITON_CACHE_DIR="/tmp/stb-canonical-lejepa-v1-rotations-seed43-ema-10k-rmsf-triton-${SLURM_JOB_ID}"
+mkdir -p "$STB_LOG_ROOT" "$MPLCONFIGDIR" "$TRITON_CACHE_DIR"
+
+bash src/script/run_eval.sh \
+    --protocol=upstream-l600-v1 \
+    --checkpoint=10k-seed43 \
+    --experiment=canonical-lejepa-v1-rotations-seed43-ema-step10k \
+    --tasks=FlexRMSF

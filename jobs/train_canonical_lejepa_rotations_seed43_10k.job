@@ -1,0 +1,43 @@
+#!/bin/bash
+#SBATCH --job-name=canon_lj_rot_s43_10k
+#SBATCH --partition=normal
+#SBATCH --qos=long
+#SBATCH --nodes=1
+#SBATCH --ntasks=2
+#SBATCH --ntasks-per-node=2
+#SBATCH --gres=gpu:2
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=64G
+#SBATCH --time=03:00:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/canonical_lejepa/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+PYTHON_BIN=/slurm-storage/aishod/envs/la-proteina/bin/python
+
+cd "$PROJECT_ROOT"
+
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+
+export PYTHONPATH="$PROJECT_ROOT${PYTHONPATH:+:$PYTHONPATH}"
+export PATH="/slurm-storage/aishod/envs/la-proteina/bin:$PATH"
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+export MPLCONFIGDIR="/tmp/canonical-lejepa-rotations-seed43-${SLURM_JOB_ID}"
+
+mkdir -p "$MPLCONFIGDIR" "$PROJECT_ROOT/logs/canonical_lejepa"
+
+# Exact independent-rotation canonical replicate through step 10,000.
+# The sole scientific change from job 257609 is pretraining seed 42 -> 43.
+# total_steps is shortened only to satisfy the existing trainer/scheduler guard;
+# because peak_step=12,000, its LR trace through step 10,000 is exactly identical
+# to the original 100,000-step schedule. Checkpoints remain every 10,000 steps.
+srun --ntasks=2 "$PYTHON_BIN" \
+    -m proteinfoundation.jepa.train_canonical_lejepa \
+    run_name_=canonical_lejepa_rotations_seed43_10k \
+    seed=43 \
+    independent_view_rotations=true \
+    trainer.max_steps=10000 \
+    schedule.total_steps=10000

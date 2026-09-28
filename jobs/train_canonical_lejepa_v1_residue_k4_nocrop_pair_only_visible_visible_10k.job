@@ -1,0 +1,124 @@
+#!/bin/bash
+# One-factor repair of the stopped pair-only residue run. Residue invariance is
+# evaluated only on pairwise global/local visible intersections, and K=4
+# protein-centred SIGReg samples only visible rows independently in each view.
+#SBATCH --job-name=canon_resk4_pair_vv
+#SBATCH --partition=normal
+#SBATCH --qos=medium
+#SBATCH --nodes=1
+#SBATCH --ntasks=2
+#SBATCH --ntasks-per-node=2
+#SBATCH --gres=gpu:2
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=64G
+#SBATCH --time=10:00:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/canonical_lejepa/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+PYTHON_BIN=/slurm-storage/aishod/envs/la-proteina/bin/python
+RUN_NAME=canonical_lejepa_v1_residue_k4_nocrop_pair_only_visible_visible_10k
+CHECKPOINT_DIR="$PROJECT_ROOT/store/$RUN_NAME/checkpoints"
+COHORT_DIR="$PROJECT_ROOT/store/canonical_lejepa_cohorts/pdb_train_min_valid_n16"
+
+cd "$PROJECT_ROOT"
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+export PYTHONPATH="$PROJECT_ROOT${PYTHONPATH:+:$PYTHONPATH}"
+export PATH="/slurm-storage/aishod/envs/la-proteina/bin:$PATH"
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+export MASTER_ADDR=127.0.0.1
+export MASTER_PORT=$((20000 + SLURM_JOB_ID % 20000))
+export TORCH_NCCL_ASYNC_ERROR_HANDLING=1
+export HYDRA_FULL_ERROR=1
+export TMPDIR="$HOME/tmp/canonical-residue-pair-vv/$SLURM_JOB_ID"
+export MPLCONFIGDIR="$TMPDIR/matplotlib"
+export TRITON_CACHE_DIR="$TMPDIR/triton"
+mkdir -p "$TMPDIR" "$MPLCONFIGDIR" "$TRITON_CACHE_DIR" \
+    "$PROJECT_ROOT/logs/canonical_lejepa"
+
+if [[ ! -f "$COHORT_DIR/SUMMARY.txt" ]]; then
+    echo "Missing filtered cohort: $COHORT_DIR/SUMMARY.txt" >&2
+    exit 1
+fi
+grep -q '^min_valid_backbone_n=16$' "$COHORT_DIR/SUMMARY.txt"
+
+RESUME_OVERRIDE=()
+if [[ -f "$CHECKPOINT_DIR/last.ckpt" ]]; then
+    RESUME_STEP=$(
+        "$PYTHON_BIN" -c \
+        'import sys, torch; print(int(torch.load(sys.argv[1], map_location="cpu", weights_only=False, mmap=True)["global_step"]))' \
+        "$CHECKPOINT_DIR/last.ckpt"
+    )
+    if (( RESUME_STEP >= 10000 )); then
+        echo "$RUN_NAME is already complete at step $RESUME_STEP"
+        exit 0
+    fi
+    echo "Resuming $RUN_NAME from step $RESUME_STEP"
+    RESUME_OVERRIDE=("resume.ckpt_path=$CHECKPOINT_DIR/last.ckpt")
+fi
+
+echo "Canonical pair-only residue K=4 visible-visible diagnostic"
+echo "MSE: exact physical residue, only when visible globally and locally"
+echo "SIGReg: four distinct visible residues per protein and per view"
+echo "Expected no-crop overlap: 16% per local; 47.232% unique across four locals"
+
+srun --ntasks=2 --kill-on-bad-exit=1 --wait=30 --label "$PYTHON_BIN" \
+    -m proteinfoundation.jepa.train_canonical_lejepa \
+    run_name_="$RUN_NAME" \
+    seed=42 \
+    pair_only_position_information=true \
+    pair_only_evolving_pair_repr=false \
+    nn_ae.encoder.pair_context_to_sequence=false \
+    nn_ae.encoder.update_pair_repr=false \
+    nn_ae.encoder.use_tri_mult=false \
+    alignment_level=residue \
+    residue_visible_only_objective=true \
+    masked_kv_mode=visible_only \
+    residue_view_checkpointing=true \
+    residue_compact_visible_kv=true \
+    independent_view_rotations=false \
+    views.cropping=false \
+    views.packed_views=false \
+    views.global_mask_pct=0.20 \
+    views.local_mask_pct=0.80 \
+    views.num_local_views=4 \
+    sigreg.input=protein_centered_residue \
+    sigreg.weight=0.02 \
+    sigreg.knots=17 \
+    sigreg.num_proj=1024 \
+    sigreg.normalize_by_n=false \
+    sigreg.joint_views=false \
+    sigreg.residue_samples_per_protein=4 \
+    sigreg.independent_residue_samples=true \
+    sigreg.vicreg_rescue=false \
+    dataset.datamodule.data_dir="$COHORT_DIR" \
+    dataset.datamodule.dataselector.data_dir="$COHORT_DIR" \
+    dataset.datamodule.datasplitter.data_dir="$COHORT_DIR" \
+    dataset.datamodule.batch_size=8 \
+    optimizer.lr=4.0e-4 \
+    optimizer.weight_decay=0.04 \
+    optimizer.betas='[0.9,0.95]' \
+    schedule.total_steps=100000 \
+    schedule.peak_step=12000 \
+    schedule.start_lr=1.0e-4 \
+    schedule.end_lr=4.0e-4 \
+    ema.enabled=true \
+    ema.decay=0.9999 \
+    ema.update_every=32 \
+    trainer.devices=2 \
+    trainer.num_nodes=1 \
+    trainer.strategy=ddp \
+    trainer.use_distributed_sampler=false \
+    trainer.precision=bf16-mixed \
+    trainer.accumulate_grad_batches=1 \
+    trainer.max_steps=10000 \
+    checkpoint.every_n_train_steps=10000 \
+    checkpoint.additional_every_n_train_steps=null \
+    checkpoint.additional_train_steps=null \
+    checkpoint.last_every_n_train_steps=1500 \
+    checkpoint.save_last=true \
+    checkpoint.save_weights_only=false \
+    "${RESUME_OVERRIDE[@]}"

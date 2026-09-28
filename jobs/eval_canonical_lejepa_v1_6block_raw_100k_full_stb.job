@@ -1,0 +1,123 @@
+#!/bin/bash
+# Full locked upstream-L600 StructTokenBench evaluation of the raw step-100k
+# encoder from the six-block canonical LeJEPA V1 run.
+#SBATCH --job-name=stb_canon_b6_raw100k
+#SBATCH --partition=h100
+#SBATCH --qos=medium
+#SBATCH --nodelist=hopper
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=64G
+#SBATCH --time=12:00:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/stb/publication_upstream/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+STB_ROOT="$PROJECT_ROOT/StructTokenBench"
+TRAIN_PYTHON_BIN=/slurm-storage/aishod/envs/la-proteina/bin/python
+STB_PYTHON_BIN=/slurm-storage/aishod/.conda/envs/pstbench/bin/python
+EXPERIMENT=canonical-lejepa-v1-6block-raw-step100k
+SOURCE_CHECKPOINT="$PROJECT_ROOT/store/canonical_lejepa_v1_6block_100k/checkpoints/step-00100000.ckpt"
+SOURCE_CONFIG="$PROJECT_ROOT/store/canonical_lejepa_v1_6block_100k/checkpoints/exp_config_canonical_lejepa_v1_6block_100k.json"
+STAGED_CHECKPOINT="$PROJECT_ROOT/store/canonical_lejepa_v1_6block_100k/evaluation/canonical-lejepa-v1-6block-step100000-raw-staged.ckpt"
+EXPECTED_SOURCE_SHA256=0b197cb89a28cc9213f89337369053426277c1cf3e392b1285cd0b794c0001fe
+EXPECTED_CONFIG_SHA256=f13caa687591e6fbb534ed5c3c2a23e6bb01265955a72248d5d724cb804725a8
+EXPECTED_STAGED_SHA256=61e8267003539ae3e46d149853262525ff2c1f6da057123cca438131caeae559
+
+cd "$PROJECT_ROOT"
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+
+if [[ "$(git branch --show-current)" != "canonical-lejepa" ]]; then
+    echo "ERROR: expected canonical-lejepa branch" >&2
+    exit 1
+fi
+
+echo "$EXPECTED_SOURCE_SHA256  $SOURCE_CHECKPOINT" | sha256sum -c -
+echo "$EXPECTED_CONFIG_SHA256  $SOURCE_CONFIG" | sha256sum -c -
+
+if [[ ! -s "$STAGED_CHECKPOINT" ]]; then
+    mkdir -p "$(dirname "$STAGED_CHECKPOINT")"
+    staged_tmp="$HOME/tmp/stb-canon-b6-raw100k-${SLURM_JOB_ID}/staged.ckpt"
+    mkdir -p "$(dirname "$staged_tmp")"
+    "$TRAIN_PYTHON_BIN" -m Evaluation.canonical_lejepa.stage_for_structtokenbench \
+        "$SOURCE_CHECKPOINT" "$staged_tmp" --encoder-source=raw
+    mv "$staged_tmp" "$STAGED_CHECKPOINT"
+fi
+
+echo "$EXPECTED_STAGED_SHA256  $STAGED_CHECKPOINT" | sha256sum -c -
+
+"$TRAIN_PYTHON_BIN" -c '
+import json
+import re
+import sys
+import torch
+
+source_path, staged_path, config_path, expected_sha = sys.argv[1:]
+with open(config_path, encoding="utf-8") as handle:
+    config = json.load(handle)
+assert config["nn_ae"]["encoder"]["nlayers"] == 6
+assert config["nn_ae"]["latent_z_dim"] == 8
+assert not bool(config.get("independent_view_rotations", False))
+source = torch.load(source_path, map_location="cpu", weights_only=False, mmap=True)
+assert source.get("global_step") == 100_000, source.get("global_step")
+raw_encoder = {
+    key: value for key, value in source.get("state_dict", {}).items()
+    if key.startswith("encoder.")
+}
+assert len(raw_encoder) == 195, len(raw_encoder)
+raw_layers = sorted({
+    int(match.group(1))
+    for key in raw_encoder
+    if (match := re.match(r"encoder\.transformer_layers\.(\d+)\.", key))
+})
+assert raw_layers == list(range(6)), raw_layers
+staged = torch.load(staged_path, map_location="cpu", weights_only=False, mmap=True)
+provenance = staged.get("canonical_lejepa_evaluation", {})
+assert provenance.get("encoder_source") == "raw", provenance
+assert provenance.get("source_global_step") == 100_000, provenance
+assert provenance.get("source_checkpoint_sha256") == expected_sha, provenance
+assert provenance.get("latent_dim") == 8, provenance
+assert provenance.get("projector") is None, provenance
+staged_layers = sorted({
+    int(match.group(1))
+    for key in staged.get("state_dict", {})
+    if (match := re.match(r"online_encoder\.transformer_layers\.(\d+)\.", key))
+})
+assert staged_layers == list(range(6)), staged_layers
+print(f"Verified six-block raw step-100k staging: {provenance}")
+' "$SOURCE_CHECKPOINT" "$STAGED_CHECKPOINT" "$SOURCE_CONFIG" "$EXPECTED_SOURCE_SHA256"
+
+cd "$STB_ROOT"
+export STB_SKIP_BOOTSTRAP=1
+export STB_SKIP_DATA_SETUP=1
+export STB_SMOKE=0
+export STB_SHARED_EMBEDDING_CACHE=1
+export STB_SHARED_EMBEDDING_CACHE_ROOT=/mnt/raid/aishod/data/struct_token_bench_release_data/shared_embedding_cache
+export DS_IGNORE_CUDA_DETECTION=1
+export PYTHON_BIN="$STB_PYTHON_BIN"
+export NUM_WORKERS=8
+export DATA_PATH=/mnt/raid/aishod/data
+export PDB_DATA_ROOT=/mnt/raid/aishod/data/struct_token_bench_pdb_data
+export STB_RELEASE_DATA_ROOT=/mnt/raid/aishod/data/struct_token_bench_release_data
+export CANONICAL_LEJEPA_V1_6BLOCK_RAW_STEP100K_CKPT="$STAGED_CHECKPOINT"
+export CANONICAL_LEJEPA_V1_6BLOCK_ENCODER_CFG="$SOURCE_CONFIG"
+
+export EVALUATION_RUN_ID="slurm-${SLURM_JOB_ID}-${EXPERIMENT}-all"
+export STB_LOG_ROOT="$STB_ROOT/struct_token_bench_logs/upstream-l600-v1-full/runs/$EVALUATION_RUN_ID"
+export SUMMARY_FILE="$STB_LOG_ROOT/summary_results.csv"
+SCRATCH_ROOT="$HOME/tmp/stb-canon-b6-raw100k-${SLURM_JOB_ID}"
+export TMPDIR="$SCRATCH_ROOT/tmp"
+export MPLCONFIGDIR="$SCRATCH_ROOT/matplotlib"
+export TRITON_CACHE_DIR="$SCRATCH_ROOT/triton"
+mkdir -p "$STB_LOG_ROOT" "$TMPDIR" "$MPLCONFIGDIR" "$TRITON_CACHE_DIR"
+
+bash src/script/run_eval.sh \
+    --protocol=upstream-l600-v1 \
+    --checkpoint=100k \
+    --experiment="$EXPERIMENT" \
+    --tasks=all

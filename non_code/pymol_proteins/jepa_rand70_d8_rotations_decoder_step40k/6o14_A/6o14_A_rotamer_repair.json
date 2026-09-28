@@ -1,0 +1,2229 @@
+{
+  "input": "/mnt/data/slurm-storage/aishod/projects/la-proteina/non_code/pymol_proteins/jepa_rand70_d8_rotations_decoder_step40k/6o14_A/6o14_A_projected.pdb",
+  "output": "/mnt/data/slurm-storage/aishod/projects/la-proteina/non_code/pymol_proteins/jepa_rand70_d8_rotations_decoder_step40k/6o14_A/6o14_A_rotamer_repaired.pdb",
+  "overlap": 1.2,
+  "trigger": 1.8,
+  "displacement_weight": 0.02,
+  "passes": 3,
+  "severe_pairs_before": 118,
+  "severe_pairs_after": 79,
+  "before": [
+    {
+      "left_residue": 1,
+      "right_residue": 2,
+      "distance": 0.6649187920340356,
+      "atoms": [
+        "C",
+        "OD2"
+      ]
+    },
+    {
+      "left_residue": 2,
+      "right_residue": 108,
+      "distance": 1.1988782256759847,
+      "atoms": [
+        "CB",
+        "OD2"
+      ]
+    },
+    {
+      "left_residue": 3,
+      "right_residue": 6,
+      "distance": 1.795499094959395,
+      "atoms": [
+        "CE1",
+        "O"
+      ]
+    },
+    {
+      "left_residue": 3,
+      "right_residue": 109,
+      "distance": 1.1590793760567064,
+      "atoms": [
+        "CE2",
+        "C"
+      ]
+    },
+    {
+      "left_residue": 4,
+      "right_residue": 108,
+      "distance": 0.3588913484607846,
+      "atoms": [
+        "NE2",
+        "OD1"
+      ]
+    },
+    {
+      "left_residue": 5,
+      "right_residue": 35,
+      "distance": 1.5174699338042912,
+      "atoms": [
+        "CD1",
+        "O"
+      ]
+    },
+    {
+      "left_residue": 5,
+      "right_residue": 36,
+      "distance": 1.0063841214963596,
+      "atoms": [
+        "CD1",
+        "CA"
+      ]
+    },
+    {
+      "left_residue": 6,
+      "right_residue": 35,
+      "distance": 1.0420758129809937,
+      "atoms": [
+        "CE1",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 7,
+      "right_residue": 8,
+      "distance": 1.7095993682731632,
+      "atoms": [
+        "N",
+        "O"
+      ]
+    },
+    {
+      "left_residue": 8,
+      "right_residue": 9,
+      "distance": 1.4307403677816593,
+      "atoms": [
+        "OE2",
+        "CA"
+      ]
+    },
+    {
+      "left_residue": 12,
+      "right_residue": 13,
+      "distance": 1.4552340018017722,
+      "atoms": [
+        "CB",
+        "O"
+      ]
+    },
+    {
+      "left_residue": 13,
+      "right_residue": 14,
+      "distance": 1.781871207467027,
+      "atoms": [
+        "CA",
+        "O"
+      ]
+    },
+    {
+      "left_residue": 13,
+      "right_residue": 18,
+      "distance": 1.5464197360354661,
+      "atoms": [
+        "NZ",
+        "CG1"
+      ]
+    },
+    {
+      "left_residue": 14,
+      "right_residue": 15,
+      "distance": 1.6364119285803314,
+      "atoms": [
+        "N",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 14,
+      "right_residue": 16,
+      "distance": 1.6544636593168203,
+      "atoms": [
+        "N",
+        "O"
+      ]
+    },
+    {
+      "left_residue": 15,
+      "right_residue": 16,
+      "distance": 1.291001549185748,
+      "atoms": [
+        "CD",
+        "C"
+      ]
+    },
+    {
+      "left_residue": 19,
+      "right_residue": 20,
+      "distance": 0.7882119004430214,
+      "atoms": [
+        "CG",
+        "C"
+      ]
+    },
+    {
+      "left_residue": 20,
+      "right_residue": 21,
+      "distance": 1.0968491236263993,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 21,
+      "right_residue": 22,
+      "distance": 0.5729188424201108,
+      "atoms": [
+        "O",
+        "CG2"
+      ]
+    },
+    {
+      "left_residue": 22,
+      "right_residue": 23,
+      "distance": 1.296676520956557,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 24,
+      "right_residue": 85,
+      "distance": 1.2110445904259672,
+      "atoms": [
+        "CB",
+        "OD1"
+      ]
+    },
+    {
+      "left_residue": 25,
+      "right_residue": 26,
+      "distance": 1.3757041833184929,
+      "atoms": [
+        "N",
+        "ND2"
+      ]
+    },
+    {
+      "left_residue": 25,
+      "right_residue": 83,
+      "distance": 1.0318614248047069,
+      "atoms": [
+        "O",
+        "O"
+      ]
+    },
+    {
+      "left_residue": 29,
+      "right_residue": 81,
+      "distance": 1.1758520315073666,
+      "atoms": [
+        "CG",
+        "CG"
+      ]
+    },
+    {
+      "left_residue": 30,
+      "right_residue": 80,
+      "distance": 1.6281111755651085,
+      "atoms": [
+        "N",
+        "O"
+      ]
+    },
+    {
+      "left_residue": 31,
+      "right_residue": 79,
+      "distance": 1.7556599898613625,
+      "atoms": [
+        "CG1",
+        "CG2"
+      ]
+    },
+    {
+      "left_residue": 32,
+      "right_residue": 33,
+      "distance": 1.3993319834835478,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 33,
+      "right_residue": 34,
+      "distance": 1.3982217277670947,
+      "atoms": [
+        "CB",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 33,
+      "right_residue": 35,
+      "distance": 1.6736971052134857,
+      "atoms": [
+        "OD1",
+        "CG2"
+      ]
+    },
+    {
+      "left_residue": 35,
+      "right_residue": 36,
+      "distance": 1.2084080436673692,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 37,
+      "right_residue": 38,
+      "distance": 1.8357916548453979,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 39,
+      "right_residue": 41,
+      "distance": 1.4664709339090225,
+      "atoms": [
+        "OD1",
+        "ND2"
+      ]
+    },
+    {
+      "left_residue": 39,
+      "right_residue": 72,
+      "distance": 0.6627020446626072,
+      "atoms": [
+        "N",
+        "CE"
+      ]
+    },
+    {
+      "left_residue": 41,
+      "right_residue": 42,
+      "distance": 0.947212225427861,
+      "atoms": [
+        "C",
+        "CG"
+      ]
+    },
+    {
+      "left_residue": 42,
+      "right_residue": 70,
+      "distance": 1.0598886733992405,
+      "atoms": [
+        "N",
+        "OE1"
+      ]
+    },
+    {
+      "left_residue": 42,
+      "right_residue": 99,
+      "distance": 1.337820989519898,
+      "atoms": [
+        "O",
+        "CG1"
+      ]
+    },
+    {
+      "left_residue": 43,
+      "right_residue": 44,
+      "distance": 1.0587322607722882,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 44,
+      "right_residue": 100,
+      "distance": 1.0394830445947654,
+      "atoms": [
+        "OH",
+        "CA"
+      ]
+    },
+    {
+      "left_residue": 46,
+      "right_residue": 96,
+      "distance": 1.7353100587503094,
+      "atoms": [
+        "O",
+        "O"
+      ]
+    },
+    {
+      "left_residue": 47,
+      "right_residue": 48,
+      "distance": 1.0655557235546156,
+      "atoms": [
+        "CD2",
+        "CB"
+      ]
+    },
+    {
+      "left_residue": 47,
+      "right_residue": 49,
+      "distance": 0.8455028089840978,
+      "atoms": [
+        "CG",
+        "CD1"
+      ]
+    },
+    {
+      "left_residue": 48,
+      "right_residue": 49,
+      "distance": 1.2970439468267836,
+      "atoms": [
+        "CA",
+        "CD1"
+      ]
+    },
+    {
+      "left_residue": 49,
+      "right_residue": 50,
+      "distance": 1.7951515256378785,
+      "atoms": [
+        "C",
+        "CB"
+      ]
+    },
+    {
+      "left_residue": 50,
+      "right_residue": 51,
+      "distance": 0.37115225986109834,
+      "atoms": [
+        "O",
+        "OG"
+      ]
+    },
+    {
+      "left_residue": 50,
+      "right_residue": 54,
+      "distance": 1.7530926957808022,
+      "atoms": [
+        "O",
+        "O"
+      ]
+    },
+    {
+      "left_residue": 51,
+      "right_residue": 52,
+      "distance": 1.6261565115326382,
+      "atoms": [
+        "O",
+        "CB"
+      ]
+    },
+    {
+      "left_residue": 51,
+      "right_residue": 54,
+      "distance": 1.6684591694135047,
+      "atoms": [
+        "OG",
+        "O"
+      ]
+    },
+    {
+      "left_residue": 52,
+      "right_residue": 53,
+      "distance": 2.1620531908350453,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 57,
+      "right_residue": 58,
+      "distance": 1.085214264557926,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 58,
+      "right_residue": 59,
+      "distance": 1.1349894272635317,
+      "atoms": [
+        "CE2",
+        "O"
+      ]
+    },
+    {
+      "left_residue": 59,
+      "right_residue": 60,
+      "distance": 2.044228216222445,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 60,
+      "right_residue": 61,
+      "distance": 1.4620444589683306,
+      "atoms": [
+        "CG1",
+        "CA"
+      ]
+    },
+    {
+      "left_residue": 60,
+      "right_residue": 64,
+      "distance": 1.1458259030062117,
+      "atoms": [
+        "CG2",
+        "OE2"
+      ]
+    },
+    {
+      "left_residue": 61,
+      "right_residue": 62,
+      "distance": 1.5090159044887501,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 61,
+      "right_residue": 63,
+      "distance": 0.7273204245722787,
+      "atoms": [
+        "CB",
+        "NH1"
+      ]
+    },
+    {
+      "left_residue": 63,
+      "right_residue": 64,
+      "distance": 1.522606318126915,
+      "atoms": [
+        "CB",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 64,
+      "right_residue": 65,
+      "distance": 2.121216632029836,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 65,
+      "right_residue": 67,
+      "distance": 0.9350604258549282,
+      "atoms": [
+        "O",
+        "CD2"
+      ]
+    },
+    {
+      "left_residue": 66,
+      "right_residue": 67,
+      "distance": 0.7056946931924603,
+      "atoms": [
+        "N",
+        "CE1"
+      ]
+    },
+    {
+      "left_residue": 67,
+      "right_residue": 68,
+      "distance": 1.3119108201398444,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 68,
+      "right_residue": 69,
+      "distance": 1.191582561134561,
+      "atoms": [
+        "OG1",
+        "CG2"
+      ]
+    },
+    {
+      "left_residue": 69,
+      "right_residue": 70,
+      "distance": 1.9530819235249715,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 70,
+      "right_residue": 71,
+      "distance": 1.2357232699921132,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 71,
+      "right_residue": 72,
+      "distance": 1.1972890210805416,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 73,
+      "right_residue": 76,
+      "distance": 1.6008063593077073,
+      "atoms": [
+        "O",
+        "OH"
+      ]
+    },
+    {
+      "left_residue": 74,
+      "right_residue": 75,
+      "distance": 1.8152963945317586,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 75,
+      "right_residue": 76,
+      "distance": 1.9167475055416157,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 78,
+      "right_residue": 79,
+      "distance": 1.8257913352845123,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 79,
+      "right_residue": 80,
+      "distance": 1.8857189610331644,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 81,
+      "right_residue": 82,
+      "distance": 1.6462013850073145,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 82,
+      "right_residue": 83,
+      "distance": 2.0687198940407567,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 83,
+      "right_residue": 84,
+      "distance": 1.1658173098732056,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 85,
+      "right_residue": 124,
+      "distance": 1.550111286327534,
+      "atoms": [
+        "OD1",
+        "CZ"
+      ]
+    },
+    {
+      "left_residue": 86,
+      "right_residue": 87,
+      "distance": 1.7547526891274463,
+      "atoms": [
+        "O",
+        "CB"
+      ]
+    },
+    {
+      "left_residue": 87,
+      "right_residue": 88,
+      "distance": 2.007760443877706,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 88,
+      "right_residue": 89,
+      "distance": 1.6005117931461803,
+      "atoms": [
+        "CD",
+        "C"
+      ]
+    },
+    {
+      "left_residue": 89,
+      "right_residue": 90,
+      "distance": 0.5019850595386278,
+      "atoms": [
+        "N",
+        "OD1"
+      ]
+    },
+    {
+      "left_residue": 90,
+      "right_residue": 91,
+      "distance": 1.4873627667788378,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 90,
+      "right_residue": 118,
+      "distance": 0.8064018849184318,
+      "atoms": [
+        "OD2",
+        "O"
+      ]
+    },
+    {
+      "left_residue": 91,
+      "right_residue": 92,
+      "distance": 1.2439461403131569,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 91,
+      "right_residue": 116,
+      "distance": 1.785920490951375,
+      "atoms": [
+        "O",
+        "O"
+      ]
+    },
+    {
+      "left_residue": 93,
+      "right_residue": 113,
+      "distance": 0.5132582196127008,
+      "atoms": [
+        "O",
+        "O"
+      ]
+    },
+    {
+      "left_residue": 94,
+      "right_residue": 95,
+      "distance": 1.6380665432148962,
+      "atoms": [
+        "O",
+        "CG2"
+      ]
+    },
+    {
+      "left_residue": 94,
+      "right_residue": 112,
+      "distance": 1.6908843839837178,
+      "atoms": [
+        "OG1",
+        "C"
+      ]
+    },
+    {
+      "left_residue": 95,
+      "right_residue": 96,
+      "distance": 0.9970777301695193,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 96,
+      "right_residue": 110,
+      "distance": 1.7135422375885574,
+      "atoms": [
+        "CZ",
+        "CB"
+      ]
+    },
+    {
+      "left_residue": 96,
+      "right_residue": 111,
+      "distance": 1.5667944983309077,
+      "atoms": [
+        "NH2",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 96,
+      "right_residue": 112,
+      "distance": 0.7540570270211662,
+      "atoms": [
+        "NH2",
+        "CD2"
+      ]
+    },
+    {
+      "left_residue": 98,
+      "right_residue": 99,
+      "distance": 0.568600035174111,
+      "atoms": [
+        "OE2",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 101,
+      "right_residue": 102,
+      "distance": 1.6315517153924357,
+      "atoms": [
+        "CG",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 101,
+      "right_residue": 104,
+      "distance": 1.4826300954722325,
+      "atoms": [
+        "O",
+        "OG"
+      ]
+    },
+    {
+      "left_residue": 102,
+      "right_residue": 103,
+      "distance": 2.0748050510831133,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 103,
+      "right_residue": 105,
+      "distance": 1.4614516755609808,
+      "atoms": [
+        "O",
+        "OE2"
+      ]
+    },
+    {
+      "left_residue": 104,
+      "right_residue": 105,
+      "distance": 0.9387875158948363,
+      "atoms": [
+        "CA",
+        "CD"
+      ]
+    },
+    {
+      "left_residue": 105,
+      "right_residue": 106,
+      "distance": 1.7636139033246465,
+      "atoms": [
+        "C",
+        "OG1"
+      ]
+    },
+    {
+      "left_residue": 107,
+      "right_residue": 108,
+      "distance": 1.3950290319559668,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 111,
+      "right_residue": 112,
+      "distance": 1.0241059515499369,
+      "atoms": [
+        "N",
+        "CD2"
+      ]
+    },
+    {
+      "left_residue": 113,
+      "right_residue": 114,
+      "distance": 1.1808581625241874,
+      "atoms": [
+        "N",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 114,
+      "right_residue": 115,
+      "distance": 1.153896442493866,
+      "atoms": [
+        "C",
+        "CB"
+      ]
+    },
+    {
+      "left_residue": 115,
+      "right_residue": 116,
+      "distance": 1.3531744159567898,
+      "atoms": [
+        "C",
+        "OG1"
+      ]
+    },
+    {
+      "left_residue": 116,
+      "right_residue": 117,
+      "distance": 1.318367930435203,
+      "atoms": [
+        "C",
+        "CD2"
+      ]
+    },
+    {
+      "left_residue": 118,
+      "right_residue": 119,
+      "distance": 1.780643423035617,
+      "atoms": [
+        "C",
+        "CG1"
+      ]
+    },
+    {
+      "left_residue": 119,
+      "right_residue": 120,
+      "distance": 0.7535210680531766,
+      "atoms": [
+        "CG2",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 122,
+      "right_residue": 124,
+      "distance": 0.9791292049571397,
+      "atoms": [
+        "OD2",
+        "CD1"
+      ]
+    },
+    {
+      "left_residue": 123,
+      "right_residue": 124,
+      "distance": 1.0022509665747399,
+      "atoms": [
+        "CE2",
+        "CB"
+      ]
+    },
+    {
+      "left_residue": 123,
+      "right_residue": 125,
+      "distance": 0.29704376781881786,
+      "atoms": [
+        "OH",
+        "CA"
+      ]
+    },
+    {
+      "left_residue": 123,
+      "right_residue": 126,
+      "distance": 0.39797612993746145,
+      "atoms": [
+        "OH",
+        "CD"
+      ]
+    },
+    {
+      "left_residue": 124,
+      "right_residue": 125,
+      "distance": 1.6393391961397132,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 125,
+      "right_residue": 126,
+      "distance": 0.20041457032860638,
+      "atoms": [
+        "CA",
+        "CD"
+      ]
+    },
+    {
+      "left_residue": 126,
+      "right_residue": 127,
+      "distance": 1.1288374550837692,
+      "atoms": [
+        "N",
+        "OD1"
+      ]
+    },
+    {
+      "left_residue": 129,
+      "right_residue": 130,
+      "distance": 1.4342555560289796,
+      "atoms": [
+        "O",
+        "CB"
+      ]
+    },
+    {
+      "left_residue": 131,
+      "right_residue": 132,
+      "distance": 0.47278007572231695,
+      "atoms": [
+        "N",
+        "CG"
+      ]
+    },
+    {
+      "left_residue": 134,
+      "right_residue": 135,
+      "distance": 1.601515220033828,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 135,
+      "right_residue": 136,
+      "distance": 1.6841523090267099,
+      "atoms": [
+        "CG2",
+        "CB"
+      ]
+    },
+    {
+      "left_residue": 136,
+      "right_residue": 137,
+      "distance": 2.036749125444762,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 138,
+      "right_residue": 139,
+      "distance": 1.7886179021803414,
+      "atoms": [
+        "CG1",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 139,
+      "right_residue": 140,
+      "distance": 1.1481924925725668,
+      "atoms": [
+        "O",
+        "O"
+      ]
+    },
+    {
+      "left_residue": 141,
+      "right_residue": 142,
+      "distance": 0.9911710245966637,
+      "atoms": [
+        "CG",
+        "CB"
+      ]
+    }
+  ],
+  "after": [
+    {
+      "left_residue": 2,
+      "right_residue": 3,
+      "distance": 0.7351937751100159,
+      "atoms": [
+        "OD2",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 2,
+      "right_residue": 108,
+      "distance": 1.3640797799418602,
+      "atoms": [
+        "O",
+        "OD2"
+      ]
+    },
+    {
+      "left_residue": 3,
+      "right_residue": 4,
+      "distance": 1.241324462660949,
+      "atoms": [
+        "C",
+        "CG"
+      ]
+    },
+    {
+      "left_residue": 5,
+      "right_residue": 35,
+      "distance": 1.6502443551155663,
+      "atoms": [
+        "CD1",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 6,
+      "right_residue": 35,
+      "distance": 0.912139390857789,
+      "atoms": [
+        "CD2",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 7,
+      "right_residue": 8,
+      "distance": 1.7095993682731632,
+      "atoms": [
+        "N",
+        "O"
+      ]
+    },
+    {
+      "left_residue": 12,
+      "right_residue": 13,
+      "distance": 1.4552340018017722,
+      "atoms": [
+        "CB",
+        "O"
+      ]
+    },
+    {
+      "left_residue": 13,
+      "right_residue": 14,
+      "distance": 1.781871207467027,
+      "atoms": [
+        "CA",
+        "O"
+      ]
+    },
+    {
+      "left_residue": 13,
+      "right_residue": 19,
+      "distance": 1.4893211296473512,
+      "atoms": [
+        "N",
+        "OE2"
+      ]
+    },
+    {
+      "left_residue": 14,
+      "right_residue": 15,
+      "distance": 1.6364119285803314,
+      "atoms": [
+        "N",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 14,
+      "right_residue": 16,
+      "distance": 1.6544636593168203,
+      "atoms": [
+        "N",
+        "O"
+      ]
+    },
+    {
+      "left_residue": 20,
+      "right_residue": 21,
+      "distance": 1.0968491236263993,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 21,
+      "right_residue": 22,
+      "distance": 0.847975235487452,
+      "atoms": [
+        "C",
+        "CB"
+      ]
+    },
+    {
+      "left_residue": 22,
+      "right_residue": 23,
+      "distance": 1.296676520956557,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 22,
+      "right_residue": 118,
+      "distance": 1.7919603682457648,
+      "atoms": [
+        "CG2",
+        "CG2"
+      ]
+    },
+    {
+      "left_residue": 24,
+      "right_residue": 122,
+      "distance": 1.4508149660638578,
+      "atoms": [
+        "CA",
+        "OD1"
+      ]
+    },
+    {
+      "left_residue": 25,
+      "right_residue": 83,
+      "distance": 1.0318614248047069,
+      "atoms": [
+        "O",
+        "O"
+      ]
+    },
+    {
+      "left_residue": 30,
+      "right_residue": 80,
+      "distance": 1.6281111755651085,
+      "atoms": [
+        "N",
+        "O"
+      ]
+    },
+    {
+      "left_residue": 32,
+      "right_residue": 33,
+      "distance": 1.3993319834835478,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 33,
+      "right_residue": 34,
+      "distance": 1.3982217277670947,
+      "atoms": [
+        "CB",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 35,
+      "right_residue": 36,
+      "distance": 1.2084080436673692,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 37,
+      "right_residue": 38,
+      "distance": 1.8357916548453979,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 41,
+      "right_residue": 42,
+      "distance": 1.0997404239182988,
+      "atoms": [
+        "O",
+        "CB"
+      ]
+    },
+    {
+      "left_residue": 43,
+      "right_residue": 44,
+      "distance": 1.0587322607722882,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 44,
+      "right_residue": 68,
+      "distance": 1.0519823597404003,
+      "atoms": [
+        "OH",
+        "OG1"
+      ]
+    },
+    {
+      "left_residue": 46,
+      "right_residue": 96,
+      "distance": 1.7353100587503094,
+      "atoms": [
+        "O",
+        "O"
+      ]
+    },
+    {
+      "left_residue": 47,
+      "right_residue": 48,
+      "distance": 1.2201434341912427,
+      "atoms": [
+        "O",
+        "CB"
+      ]
+    },
+    {
+      "left_residue": 49,
+      "right_residue": 50,
+      "distance": 1.7951515256378785,
+      "atoms": [
+        "C",
+        "CB"
+      ]
+    },
+    {
+      "left_residue": 50,
+      "right_residue": 51,
+      "distance": 1.152939720887437,
+      "atoms": [
+        "O",
+        "CB"
+      ]
+    },
+    {
+      "left_residue": 50,
+      "right_residue": 54,
+      "distance": 1.7530926957808022,
+      "atoms": [
+        "O",
+        "O"
+      ]
+    },
+    {
+      "left_residue": 51,
+      "right_residue": 52,
+      "distance": 1.6261565115326382,
+      "atoms": [
+        "O",
+        "CB"
+      ]
+    },
+    {
+      "left_residue": 52,
+      "right_residue": 53,
+      "distance": 2.1620531908350453,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 57,
+      "right_residue": 58,
+      "distance": 1.085214264557926,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 58,
+      "right_residue": 59,
+      "distance": 1.6676840716902346,
+      "atoms": [
+        "CE3",
+        "O"
+      ]
+    },
+    {
+      "left_residue": 59,
+      "right_residue": 60,
+      "distance": 2.044228216222445,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 61,
+      "right_residue": 62,
+      "distance": 1.5090159044887501,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 63,
+      "right_residue": 64,
+      "distance": 1.522606318126915,
+      "atoms": [
+        "CB",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 64,
+      "right_residue": 65,
+      "distance": 2.121216632029836,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 67,
+      "right_residue": 68,
+      "distance": 1.3119108201398444,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 68,
+      "right_residue": 69,
+      "distance": 1.7152112302874585,
+      "atoms": [
+        "CA",
+        "CG1"
+      ]
+    },
+    {
+      "left_residue": 69,
+      "right_residue": 70,
+      "distance": 1.9530819235249715,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 70,
+      "right_residue": 71,
+      "distance": 1.2357232699921132,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 71,
+      "right_residue": 72,
+      "distance": 1.1972890210805416,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 74,
+      "right_residue": 75,
+      "distance": 1.8152963945317586,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 75,
+      "right_residue": 76,
+      "distance": 1.9167475055416157,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 78,
+      "right_residue": 79,
+      "distance": 1.8257913352845123,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 79,
+      "right_residue": 80,
+      "distance": 1.8857189610331644,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 81,
+      "right_residue": 82,
+      "distance": 1.6462013850073145,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 82,
+      "right_residue": 83,
+      "distance": 2.0687198940407567,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 83,
+      "right_residue": 84,
+      "distance": 1.1658173098732056,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 85,
+      "right_residue": 132,
+      "distance": 1.4879625262738412,
+      "atoms": [
+        "O",
+        "ND1"
+      ]
+    },
+    {
+      "left_residue": 86,
+      "right_residue": 87,
+      "distance": 1.7547526891274463,
+      "atoms": [
+        "O",
+        "CB"
+      ]
+    },
+    {
+      "left_residue": 87,
+      "right_residue": 88,
+      "distance": 2.007760443877706,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 88,
+      "right_residue": 89,
+      "distance": 1.6005117931461803,
+      "atoms": [
+        "CD",
+        "C"
+      ]
+    },
+    {
+      "left_residue": 89,
+      "right_residue": 90,
+      "distance": 1.5022199216864984,
+      "atoms": [
+        "N",
+        "OD1"
+      ]
+    },
+    {
+      "left_residue": 90,
+      "right_residue": 91,
+      "distance": 1.4873627667788378,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 91,
+      "right_residue": 92,
+      "distance": 1.2439461403131569,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 91,
+      "right_residue": 116,
+      "distance": 1.785920490951375,
+      "atoms": [
+        "O",
+        "O"
+      ]
+    },
+    {
+      "left_residue": 93,
+      "right_residue": 113,
+      "distance": 0.5132582196127008,
+      "atoms": [
+        "O",
+        "O"
+      ]
+    },
+    {
+      "left_residue": 95,
+      "right_residue": 96,
+      "distance": 0.9970777301695193,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 97,
+      "right_residue": 98,
+      "distance": 1.6715205827776558,
+      "atoms": [
+        "O",
+        "CG"
+      ]
+    },
+    {
+      "left_residue": 101,
+      "right_residue": 102,
+      "distance": 1.6315517153924357,
+      "atoms": [
+        "CG",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 102,
+      "right_residue": 103,
+      "distance": 2.0748050510831133,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 104,
+      "right_residue": 105,
+      "distance": 1.594674261408893,
+      "atoms": [
+        "N",
+        "CB"
+      ]
+    },
+    {
+      "left_residue": 107,
+      "right_residue": 108,
+      "distance": 1.3950290319559668,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 113,
+      "right_residue": 114,
+      "distance": 1.1808581625241874,
+      "atoms": [
+        "N",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 114,
+      "right_residue": 115,
+      "distance": 1.153896442493866,
+      "atoms": [
+        "C",
+        "CB"
+      ]
+    },
+    {
+      "left_residue": 115,
+      "right_residue": 116,
+      "distance": 1.5577492626133802,
+      "atoms": [
+        "C",
+        "OG1"
+      ]
+    },
+    {
+      "left_residue": 117,
+      "right_residue": 118,
+      "distance": 1.7658564049669219,
+      "atoms": [
+        "CD2",
+        "OG1"
+      ]
+    },
+    {
+      "left_residue": 118,
+      "right_residue": 119,
+      "distance": 1.5604939050007505,
+      "atoms": [
+        "C",
+        "CG2"
+      ]
+    },
+    {
+      "left_residue": 119,
+      "right_residue": 120,
+      "distance": 1.9880324444032587,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 123,
+      "right_residue": 124,
+      "distance": 1.7087878744888136,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 124,
+      "right_residue": 125,
+      "distance": 1.6393391961397132,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 129,
+      "right_residue": 130,
+      "distance": 1.4342555560289796,
+      "atoms": [
+        "O",
+        "CB"
+      ]
+    },
+    {
+      "left_residue": 131,
+      "right_residue": 132,
+      "distance": 1.3678636627968443,
+      "atoms": [
+        "N",
+        "CB"
+      ]
+    },
+    {
+      "left_residue": 134,
+      "right_residue": 135,
+      "distance": 1.601515220033828,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 136,
+      "right_residue": 137,
+      "distance": 2.036749125444762,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 139,
+      "right_residue": 140,
+      "distance": 1.1481924925725668,
+      "atoms": [
+        "O",
+        "O"
+      ]
+    },
+    {
+      "left_residue": 141,
+      "right_residue": 142,
+      "distance": 0.9911710245966637,
+      "atoms": [
+        "CG",
+        "CB"
+      ]
+    }
+  ],
+  "choices": [
+    {
+      "pass": 1,
+      "residue_number": 2,
+      "resname": "ASP",
+      "candidate": 1,
+      "score_before": 3.526250555525908,
+      "score_after": 2.4483925967379716
+    },
+    {
+      "pass": 1,
+      "residue_number": 3,
+      "resname": "TYR",
+      "candidate": 4,
+      "score_before": 2.901192830148401,
+      "score_after": 0.4739491979611825
+    },
+    {
+      "pass": 1,
+      "residue_number": 4,
+      "resname": "HIS",
+      "candidate": 2,
+      "score_before": 6.393332468819238,
+      "score_after": 2.0740571066336813
+    },
+    {
+      "pass": 1,
+      "residue_number": 5,
+      "resname": "LEU",
+      "candidate": 1,
+      "score_before": 1.9531960787859695,
+      "score_after": 0.33650424703553694
+    },
+    {
+      "pass": 1,
+      "residue_number": 6,
+      "resname": "HIS",
+      "candidate": 4,
+      "score_before": 2.3842130191813697,
+      "score_after": 1.8457594914099402
+    },
+    {
+      "pass": 1,
+      "residue_number": 8,
+      "resname": "GLU",
+      "candidate": 6,
+      "score_before": 0.6760094199898172,
+      "score_after": 0.08883853851366004
+    },
+    {
+      "pass": 1,
+      "residue_number": 13,
+      "resname": "LYS",
+      "candidate": 16,
+      "score_before": 0.25359308225458943,
+      "score_after": 0.11044199164666535
+    },
+    {
+      "pass": 1,
+      "residue_number": 15,
+      "resname": "GLU",
+      "candidate": 7,
+      "score_before": 1.5599614463993985,
+      "score_after": 0.1792252259460836
+    },
+    {
+      "pass": 1,
+      "residue_number": 19,
+      "resname": "GLU",
+      "candidate": 1,
+      "score_before": 3.7354973095377066,
+      "score_after": 0.3661904719049391
+    },
+    {
+      "pass": 1,
+      "residue_number": 22,
+      "resname": "VAL",
+      "candidate": 2,
+      "score_before": 6.582868283797211,
+      "score_after": 3.9085070400642987
+    },
+    {
+      "pass": 1,
+      "residue_number": 26,
+      "resname": "ASN",
+      "candidate": 1,
+      "score_before": 0.30500668650751084,
+      "score_after": 0.02561661921742566
+    },
+    {
+      "pass": 1,
+      "residue_number": 29,
+      "resname": "ARG",
+      "candidate": 21,
+      "score_before": 1.8338905842185969,
+      "score_after": 0.06356333139057367
+    },
+    {
+      "pass": 1,
+      "residue_number": 31,
+      "resname": "ILE",
+      "candidate": 9,
+      "score_before": 0.27952467415195215,
+      "score_after": 0.01841820818626269
+    },
+    {
+      "pass": 1,
+      "residue_number": 33,
+      "resname": "ASP",
+      "candidate": 5,
+      "score_before": 0.5702953418133255,
+      "score_after": 0.5103588712900262
+    },
+    {
+      "pass": 1,
+      "residue_number": 39,
+      "resname": "ASP",
+      "candidate": 3,
+      "score_before": 0.20566438664396372,
+      "score_after": 0.05390522650301896
+    },
+    {
+      "pass": 1,
+      "residue_number": 42,
+      "resname": "ASN",
+      "candidate": 6,
+      "score_before": 3.355432296591892,
+      "score_after": 1.072643162845284
+    },
+    {
+      "pass": 1,
+      "residue_number": 47,
+      "resname": "LEU",
+      "candidate": 6,
+      "score_before": 6.016598850094494,
+      "score_after": 0.12101858577191207
+    },
+    {
+      "pass": 1,
+      "residue_number": 49,
+      "resname": "ILE",
+      "candidate": 2,
+      "score_before": 1.707744706141005,
+      "score_after": 0.11887240545672584
+    },
+    {
+      "pass": 1,
+      "residue_number": 51,
+      "resname": "SER",
+      "candidate": 1,
+      "score_before": 4.221946158618994,
+      "score_after": 0.9114410353379349
+    },
+    {
+      "pass": 1,
+      "residue_number": 58,
+      "resname": "TRP",
+      "candidate": 2,
+      "score_before": 1.0789084832990794,
+      "score_after": 0.28328248800717876
+    },
+    {
+      "pass": 1,
+      "residue_number": 60,
+      "resname": "VAL",
+      "candidate": 1,
+      "score_before": 3.253801213738288,
+      "score_after": 0.7499531894110955
+    },
+    {
+      "pass": 1,
+      "residue_number": 63,
+      "resname": "ARG",
+      "candidate": 8,
+      "score_before": 4.077158858795616,
+      "score_after": 0.4237765456058085
+    },
+    {
+      "pass": 1,
+      "residue_number": 64,
+      "resname": "GLU",
+      "candidate": 11,
+      "score_before": 0.6895336315281615,
+      "score_after": 0.03474399666726012
+    },
+    {
+      "pass": 1,
+      "residue_number": 67,
+      "resname": "TYR",
+      "candidate": 4,
+      "score_before": 7.647273937208711,
+      "score_after": 0.7257001481279702
+    },
+    {
+      "pass": 1,
+      "residue_number": 68,
+      "resname": "THR",
+      "candidate": 3,
+      "score_before": 1.9572767017423343,
+      "score_after": 0.8810472646675259
+    },
+    {
+      "pass": 1,
+      "residue_number": 69,
+      "resname": "VAL",
+      "candidate": 1,
+      "score_before": 0.8989986964432746,
+      "score_after": 0.34433662194387504
+    },
+    {
+      "pass": 1,
+      "residue_number": 70,
+      "resname": "GLU",
+      "candidate": 17,
+      "score_before": 0.6621892413914549,
+      "score_after": 0.22244459288404017
+    },
+    {
+      "pass": 1,
+      "residue_number": 72,
+      "resname": "LYS",
+      "candidate": 70,
+      "score_before": 2.8318305014074032,
+      "score_after": 0.10593275381575072
+    },
+    {
+      "pass": 1,
+      "residue_number": 76,
+      "resname": "TYR",
+      "candidate": 2,
+      "score_before": 0.057213597747633654,
+      "score_after": 0.04384022626726318
+    },
+    {
+      "pass": 1,
+      "residue_number": 85,
+      "resname": "ASN",
+      "candidate": 5,
+      "score_before": 0.8817181422619326,
+      "score_after": 0.08401467808106261
+    },
+    {
+      "pass": 1,
+      "residue_number": 90,
+      "resname": "ASP",
+      "candidate": 1,
+      "score_before": 3.4978114780481224,
+      "score_after": 0.21521689996076773
+    },
+    {
+      "pass": 1,
+      "residue_number": 94,
+      "resname": "THR",
+      "candidate": 3,
+      "score_before": 0.12972023365847493,
+      "score_after": 0.10237750268756672
+    },
+    {
+      "pass": 1,
+      "residue_number": 95,
+      "resname": "VAL",
+      "candidate": 2,
+      "score_before": 0.1538301282729164,
+      "score_after": 0.05506409877975608
+    },
+    {
+      "pass": 1,
+      "residue_number": 96,
+      "resname": "ARG",
+      "candidate": 76,
+      "score_before": 2.7676911128660553,
+      "score_after": 0.12715591310920468
+    },
+    {
+      "pass": 1,
+      "residue_number": 98,
+      "resname": "GLU",
+      "candidate": 1,
+      "score_before": 2.253731331653841,
+      "score_after": 0.1910207670530899
+    },
+    {
+      "pass": 1,
+      "residue_number": 104,
+      "resname": "SER",
+      "candidate": 3,
+      "score_before": 1.2702734666167965,
+      "score_after": 1.164229401147869
+    },
+    {
+      "pass": 1,
+      "residue_number": 105,
+      "resname": "GLU",
+      "candidate": 8,
+      "score_before": 7.192230376795729,
+      "score_after": 0.47717803284608407
+    },
+    {
+      "pass": 1,
+      "residue_number": 106,
+      "resname": "THR",
+      "candidate": 1,
+      "score_before": 0.06573383056842348,
+      "score_after": 0.011142851495766616
+    },
+    {
+      "pass": 1,
+      "residue_number": 108,
+      "resname": "ASP",
+      "candidate": 4,
+      "score_before": 0.8323679307777013,
+      "score_after": 0.38464054569542194
+    },
+    {
+      "pass": 1,
+      "residue_number": 112,
+      "resname": "LEU",
+      "candidate": 1,
+      "score_before": 1.540668694297078,
+      "score_after": 0.2955609249388009
+    },
+    {
+      "pass": 1,
+      "residue_number": 115,
+      "resname": "ILE",
+      "candidate": 2,
+      "score_before": 2.447916795988428,
+      "score_after": 2.4379906408765564
+    },
+    {
+      "pass": 1,
+      "residue_number": 116,
+      "resname": "THR",
+      "candidate": 2,
+      "score_before": 0.5553748517016478,
+      "score_after": 0.2776318737976482
+    },
+    {
+      "pass": 1,
+      "residue_number": 117,
+      "resname": "TYR",
+      "candidate": 3,
+      "score_before": 1.2124987929410165,
+      "score_after": 0.6548678649070521
+    },
+    {
+      "pass": 1,
+      "residue_number": 119,
+      "resname": "VAL",
+      "candidate": 3,
+      "score_before": 2.3264704972263552,
+      "score_after": 0.8022077329015339
+    },
+    {
+      "pass": 1,
+      "residue_number": 122,
+      "resname": "ASP",
+      "candidate": 3,
+      "score_before": 1.628115363308199,
+      "score_after": 0.4524552739083531
+    },
+    {
+      "pass": 1,
+      "residue_number": 123,
+      "resname": "TYR",
+      "candidate": 3,
+      "score_before": 13.639594446386491,
+      "score_after": 0.32416933942249837
+    },
+    {
+      "pass": 1,
+      "residue_number": 126,
+      "resname": "LYS",
+      "candidate": 55,
+      "score_before": 14.81286046883942,
+      "score_after": 0.26093421422002067
+    },
+    {
+      "pass": 1,
+      "residue_number": 127,
+      "resname": "ASN",
+      "candidate": 1,
+      "score_before": 0.555858211988811,
+      "score_after": 0.1052961070249405
+    },
+    {
+      "pass": 1,
+      "residue_number": 130,
+      "resname": "LEU",
+      "candidate": 4,
+      "score_before": 0.5250674558066614,
+      "score_after": 0.4610403835221496
+    },
+    {
+      "pass": 1,
+      "residue_number": 132,
+      "resname": "HIS",
+      "candidate": 3,
+      "score_before": 3.6444990801371455,
+      "score_after": 1.0029477601589698
+    },
+    {
+      "pass": 1,
+      "residue_number": 135,
+      "resname": "THR",
+      "candidate": 1,
+      "score_before": 0.2930933698300665,
+      "score_after": 0.0277906818585378
+    },
+    {
+      "pass": 1,
+      "residue_number": 138,
+      "resname": "VAL",
+      "candidate": 1,
+      "score_before": 0.2527227121845186,
+      "score_after": 0.23293656438784888
+    },
+    {
+      "pass": 2,
+      "residue_number": 44,
+      "resname": "TYR",
+      "candidate": 1,
+      "score_before": 2.3175929547495047,
+      "score_after": 1.826290199462548
+    },
+    {
+      "pass": 2,
+      "residue_number": 96,
+      "resname": "ARG",
+      "candidate": 51,
+      "score_before": 0.12715591310920468,
+      "score_after": 0.053810316990905195
+    },
+    {
+      "pass": 2,
+      "residue_number": 99,
+      "resname": "VAL",
+      "candidate": 3,
+      "score_before": 0.5413143053434255,
+      "score_after": 0.11325861008587312
+    }
+  ]
+}

@@ -1,7 +1,11 @@
-"""Exact step-matched JEPA-r70 D64 60k comparison with AA labels."""
+"""Exact step-matched JEPA-r70 D64 60k comparison with AA labels.
+
+Use --from-latents to render from frozen latent caches without loading models.
+"""
 
 from __future__ import annotations
 
+import argparse
 import pathlib
 import sys
 
@@ -16,14 +20,15 @@ KNN = REPO / "Evaluation" / "knn_purity"
 sys.path[:0] = [str(REPO), str(LINEAR), str(KNN), str(HERE)]
 
 import checkpoints  # noqa: E402
-from extract_latents import extract  # noqa: E402
 from knn import common_protein_ids, load_encoder_latents, load_labels  # noqa: E402
 from run_tsne import (  # noqa: E402
     annotate_aa_locations,
     coordinate_path,
+    load_or_fit,
     run as run_tsne,
     scatter_panel,
 )
+from thesis_plot_style import BLACK, apply_thesis_style  # noqa: E402
 from viz import CombinedSelection, SEED, sample_indices  # noqa: E402
 
 
@@ -40,15 +45,18 @@ CHECKPOINT_PATHS = {
     ),
 }
 CHECKPOINT_IDS = tuple(CHECKPOINT_PATHS)
+ANNOTATE_ID = "jepa-r70-d64-rot-step60000"
 TITLES = {
-    "jepa-r70-d64-step60000": "JEPA-r70 D64 (60k)",
-    "jepa-r70-d64-rot-step60000": "JEPA-r70 D64 with rotations (60k)",
+    "jepa-r70-d64-step60000": "JEPA-r70 D64",
+    "jepa-r70-d64-rot-step60000": "JEPA-r70 D64 with rotations",
 }
 N_POINTS = 15_000
 PERPLEXITY = 30.0
 MAX_ITER = 1_000
-OUTPUT = HERE / "figures" / "workshop" / "main" / (
-    "tsne_aa20_jepa-r70-d64-60k-v-rotation-60k_labels-on-clusters.png"
+FILENAME = "tsne_aa20_jepa-r70-d64-60k-v-rotation-60k_labels-on-clusters.png"
+OUTPUTS = (
+    HERE / "figures-extended" / "workshop" / "main" / FILENAME,
+    REPO / "thesis-latex" / "figures" / "results" / FILENAME,
 )
 
 
@@ -61,36 +69,56 @@ def register() -> None:
         checkpoints.ALL_CHECKPOINTS[checkpoint_id] = entry
 
 
-def main() -> None:
-    register()
-    extract(checkpoint_ids=list(CHECKPOINT_IDS), device="cuda")
-    run_tsne(
-        checkpoint_ids=list(CHECKPOINT_IDS),
-        n_points=N_POINTS,
-        perplexity=PERPLEXITY,
-        seed=SEED,
-        max_iter=MAX_ITER,
-        force=False,
-        output_tag="jepa-r70-d64-exact-60k-pair",
-        grid_ncols=2,
-        include_purity=False,
-        show_suptitle=False,
-    )
+def main(from_latents: bool = False) -> None:
+    lm_family = apply_thesis_style()
+    if not from_latents:
+        from extract_latents import extract
+
+        register()
+        extract(checkpoint_ids=list(CHECKPOINT_IDS), device="cuda")
+        run_tsne(
+            checkpoint_ids=list(CHECKPOINT_IDS),
+            n_points=N_POINTS,
+            perplexity=PERPLEXITY,
+            seed=SEED,
+            max_iter=MAX_ITER,
+            force=False,
+            output_tag="jepa-r70-d64-exact-60k-pair",
+            grid_ncols=2,
+            include_purity=False,
+            show_suptitle=False,
+        )
 
     labels = load_labels()
-    latent_caches = {
-        checkpoint_id: load_encoder_latents(checkpoint_id)
+    latent_paths = {
+        checkpoint_id: LINEAR / "latents" / f"{checkpoint_id}.pt"
         for checkpoint_id in CHECKPOINT_IDS
     }
-    protein_ids = common_protein_ids(latent_caches)
+    have_latents = all(path.exists() for path in latent_paths.values())
+    latent_caches = (
+        {
+            checkpoint_id: load_encoder_latents(checkpoint_id)
+            for checkpoint_id in CHECKPOINT_IDS
+        }
+        if have_latents else {}
+    )
+    protein_ids = common_protein_ids(latent_caches) if have_latents else sorted(labels)
     selection = CombinedSelection(protein_ids, labels)
     sampled = sample_indices(selection.n, n_points=N_POINTS, seed=SEED)
     aa = selection.aa[sampled]
 
     fig, axes = plt.subplots(1, 2, figsize=(7.1, 3.25), squeeze=False)
     for ax, checkpoint_id in zip(axes.ravel(), CHECKPOINT_IDS):
-        path = coordinate_path(checkpoint_id, N_POINTS, PERPLEXITY, SEED)
-        embedding = np.load(path, allow_pickle=False)["embedding"]
+        if have_latents:
+            X = selection.build_X(latent_caches[checkpoint_id])[sampled]
+            embedding, _, _ = load_or_fit(
+                checkpoint_id, X, perplexity=PERPLEXITY, seed=SEED,
+                max_iter=MAX_ITER, force=False,
+            )
+        else:
+            path = coordinate_path(checkpoint_id, N_POINTS, PERPLEXITY, SEED)
+            cached = np.load(path, allow_pickle=False)
+            embedding = cached["embedding"]
         if len(embedding) != len(sampled):
             raise ValueError(
                 f"{checkpoint_id}: {len(embedding)} coordinates != "
@@ -100,17 +128,28 @@ def main() -> None:
         for collection in ax.collections:
             collection.set_alpha(0.92)
             collection.set_sizes([4.6])
-        if checkpoint_id == "jepa-r70-d64-rot-step60000":
+        if checkpoint_id == ANNOTATE_ID:
             annotate_aa_locations(ax, embedding, aa, ["black"] * 20)
-        ax.set_title(TITLES[checkpoint_id], fontsize=10)
+            for annotation in ax.texts:
+                annotation.set_fontsize(8.5)
+                annotation.set_color(BLACK)
+                annotation.set_fontfamily(lm_family)
+                annotation.set_fontweight(600)
+        ax.set_title(TITLES[checkpoint_id], fontsize=14, color=BLACK)
         ax.set_aspect("equal", adjustable="box")
 
     fig.tight_layout(rect=[0, 0, 1, 1], w_pad=2.0)
-    OUTPUT.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(OUTPUT, dpi=300, bbox_inches="tight")
+    for output in OUTPUTS:
+        output.parent.mkdir(parents=True, exist_ok=True)
+        fig.savefig(output, dpi=600, bbox_inches="tight", facecolor="white")
+        print(output)
     plt.close(fig)
-    print(OUTPUT)
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--from-latents", action="store_true",
+        help="Use existing latent caches; do not load checkpoints or re-extract latents.",
+    )
+    main(from_latents=parser.parse_args().from_latents)

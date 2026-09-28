@@ -1,0 +1,3 @@
+encoder,aa_purity_k10_original_8d,n_points,seed,perplexity,max_iter,metric
+jepa-r70-d64-step100000,,15000,42,30.0,1000,cosine
+jepa-r70-d64-rot-step100000,,15000,42,30.0,1000,cosine

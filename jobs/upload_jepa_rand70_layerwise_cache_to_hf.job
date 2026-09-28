@@ -1,0 +1,120 @@
+#!/bin/bash
+# Archive the six content-addressed JEPA-rand70 STB cache namespaces and move
+# them to the msc-thesis-org/metadata Hugging Face dataset. Each local
+# namespace is removed only after the Hub reports the same byte size and LFS
+# SHA256 for its archive. Lock files are operational and are not archived.
+#
+# This is CPU-only. Hopper is selected for its writable native RAID, which is
+# used for one temporary archive at a time and for Hugging Face's upload cache.
+#SBATCH --job-name=upload_jepa_cache_hf
+#SBATCH --partition=h100
+#SBATCH --qos=long
+#SBATCH --nodelist=hopper
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=8G
+#SBATCH --time=1-00:00:00
+#SBATCH --output=/mnt/raid/aishod/data/struct_token_bench_release_data/shared_embedding_cache/jepa-rand70-hf-transfer-%j.out
+#SBATCH --error=/mnt/raid/aishod/data/struct_token_bench_release_data/shared_embedding_cache/jepa-rand70-hf-transfer-%j.err
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+SOURCE_CACHE="$PROJECT_ROOT/store/jepa_rand70_100k/evaluation/stb_layerwise_shared_cache"
+HOPPER_CACHE_ROOT=/mnt/raid/aishod/data/struct_token_bench_release_data/shared_embedding_cache
+HF_BIN=/slurm-storage/aishod/envs/la-proteina/bin/hf
+PYTHON_BIN=/slurm-storage/aishod/envs/la-proteina/bin/python
+HF_REPO=msc-thesis-org/metadata
+REMOTE_PREFIX=jepa-rand70/stb-layerwise-shared-cache-v1/archives
+
+EXPECTED_NAMESPACES=(
+    3d9e0fe20cc7f4d3519a095a21ce45bbd01336221cf620a1e1aa9f7d181ac158
+    41ea6d046775ff67a9842f56794e43fc36e4c262304744d3112608e4798d9417
+    4587e3f56940949474b67abdb25e46c75197f3d9c876ae56a71092a27561b82d
+    6f50dcaad83b581bc2a890c898179a47c51525dc328c65cfcea9405ca980e4e8
+    a3ce115633e68ec0cbe3cf8c0fff4e0bb5e7006f19af173271a41352c7b62ea2
+    ebcd126a42e90beec6c383ac26dbd28dd7ff1dc149bf522c718db93ca7c314eb
+)
+
+[[ "$SOURCE_CACHE" == "/mnt/data/slurm-storage/aishod/projects/la-proteina/store/jepa_rand70_100k/evaluation/stb_layerwise_shared_cache" ]]
+[[ -d "$SOURCE_CACHE/v1" ]]
+[[ -d "$HOPPER_CACHE_ROOT" && -w "$HOPPER_CACHE_ROOT" ]]
+[[ -x "$HF_BIN" && -x "$PYTHON_BIN" ]]
+
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+[[ -n "${HF_TOKEN:-}" ]]
+
+ARCHIVE_SCRATCH=$(mktemp -d "$HOPPER_CACHE_ROOT/jepa-rand70-hf-XXXXXX")
+cleanup_scratch() {
+    find "$ARCHIVE_SCRATCH" -type f -delete 2>/dev/null || true
+    find "$ARCHIVE_SCRATCH" -depth -type d -empty -delete 2>/dev/null || true
+}
+trap cleanup_scratch EXIT HUP INT TERM
+
+export HF_HOME="$ARCHIVE_SCRATCH/hf-home"
+export HF_XET_CACHE="$ARCHIVE_SCRATCH/hf-xet"
+export HF_HUB_DISABLE_PROGRESS_BARS=1
+
+for namespace in "${EXPECTED_NAMESPACES[@]}"; do
+    namespace_path="$SOURCE_CACHE/v1/$namespace"
+    [[ -d "$namespace_path" ]] || {
+        echo "Expected source namespace is missing: $namespace_path" >&2
+        exit 1
+    }
+
+    archive="$ARCHIVE_SCRATCH/jepa-rand70-stb-cache-v1-$namespace.tar"
+    remote_path="$REMOTE_PREFIX/$(basename "$archive")"
+    echo "archive_started=$namespace $(date --iso-8601=seconds)"
+
+    tar --exclude='*.lock' -cf "$archive" -C "$SOURCE_CACHE" "v1/$namespace"
+    archive_size=$(stat -c %s "$archive")
+    archive_sha=$(sha256sum "$archive" | awk '{print $1}')
+
+    "$HF_BIN" upload "$HF_REPO" "$archive" "$remote_path" \
+        --repo-type dataset \
+        --commit-message "Archive JEPA-rand70 STB cache namespace $namespace" \
+        --quiet
+
+    "$PYTHON_BIN" - "$HF_REPO" "$remote_path" "$archive_size" "$archive_sha" <<'PY'
+import sys
+from huggingface_hub import HfApi
+
+repo, remote_path, expected_size, expected_sha = sys.argv[1:]
+entries = HfApi().get_paths_info(
+    repo,
+    [remote_path],
+    repo_type="dataset",
+    expand=True,
+)
+assert len(entries) == 1, (remote_path, entries)
+entry = entries[0]
+assert entry.size == int(expected_size), (remote_path, entry.size, expected_size)
+assert entry.lfs is not None, (remote_path, "missing LFS metadata")
+assert entry.lfs.sha256 == expected_sha, (
+    remote_path,
+    entry.lfs.sha256,
+    expected_sha,
+)
+print(
+    f"remote_verified={remote_path} bytes={expected_size} "
+    f"sha256={expected_sha}",
+    flush=True,
+)
+PY
+
+    # The remote archive is now independently verified. Remove only this exact
+    # content-addressed source namespace and its temporary archive.
+    find "$namespace_path" -type f -delete
+    find "$namespace_path" -depth -type d -empty -delete
+    [[ ! -e "$namespace_path" ]]
+    find "$ARCHIVE_SCRATCH" -maxdepth 1 -type f -delete
+    echo "source_namespace_removed=$namespace $(date --iso-8601=seconds)"
+done
+
+rmdir "$SOURCE_CACHE/v1"
+rmdir "$SOURCE_CACHE"
+echo "all_namespaces_uploaded_verified_and_source_removed=yes"
+df -h /mnt/data /mnt/raid

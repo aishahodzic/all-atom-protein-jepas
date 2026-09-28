@@ -1,0 +1,64 @@
+{
+  "description": "AA-coloured t-SNE; model labels and AA labels on C-alpha AE clusters only; no overall title or legend",
+  "readout": "full-context per-residue final latent mean",
+  "selection": {
+    "shared_proteins": 5224,
+    "eligible_residues": 748402,
+    "sampled_residues": 15000,
+    "physical_sample_sha256": "6281211e2d1f3364f54c33fbde061601e4d35560a56f75bd6864b993b775d9b8"
+  },
+  "tsne": {
+    "metric": "cosine",
+    "perplexity": 30.0,
+    "seed": 42,
+    "max_iter": 1000,
+    "init": "random",
+    "learning_rate": "auto",
+    "early_exaggeration": 12.0,
+    "method": "barnes_hut",
+    "angle": 0.5
+  },
+  "encoders": [
+    {
+      "checkpoint_id": "ca-cond",
+      "label": "C$\\alpha$-conditioned AE",
+      "encoder_training_step": 100000,
+      "weight_source": "ema",
+      "latent_dim": 8,
+      "latent_cache": "Evaluation/linear_probing/latents/ca-cond.pt",
+      "latent_cache_sha256": "d6198c2aff00f182d9347ddd6fd41ab8ed67f5ba1dccb617085bd5d9b96dc39d",
+      "sampled_latents_sha256": "cf3c5e0edcd6b7bd1eb2a7b8f9209177d31bac4d7472ac8ca376b4e1da514e80",
+      "coordinate_cache": "Evaluation/latent_viz/results/tsne_coordinates/ca-cond_n15000_perp30p0_seed42_cosine.npz",
+      "coordinate_cache_sha256": "63836081ff6d93667c42003fb7246537f29f0ff9ff59eca52212ce3980f2fe4b"
+    },
+    {
+      "checkpoint_id": "jepa-rand-mask-70",
+      "label": "JEPA-rand70",
+      "encoder_training_step": 100000,
+      "weight_source": "raw",
+      "latent_dim": 8,
+      "latent_cache": "Evaluation/linear_probing/latents/jepa-rand-mask-70.pt",
+      "latent_cache_sha256": "5e776a6e49e11be12576da6a444d01ce435f60286c6dcc4b58723d01dacaa474",
+      "sampled_latents_sha256": "3e308a6220cfaffed4c757ccbc0533e2a4d72c0bb44d0ab312de430768430c0d",
+      "coordinate_cache": "Evaluation/latent_viz/results/tsne_coordinates/jepa-rand-mask-70_n15000_perp30p0_seed42_cosine.npz",
+      "coordinate_cache_sha256": "3ec5255c5d906d16ffb921cacf48155cf266cd9891569b4e7227aca4e57a694a"
+    },
+    {
+      "checkpoint_id": "canonical-lejepa-v1-rotations-raw-step100000",
+      "label": "Uncropped LeJEPA + SO(3)",
+      "encoder_training_step": 100000,
+      "weight_source": "raw",
+      "latent_dim": 8,
+      "latent_cache": "Evaluation/linear_probing/latents/canonical-lejepa-v1-rotations-raw-step100000.pt",
+      "latent_cache_sha256": "1635a45c3c9212b746871701f443fe1599d17183b11380240fb36a3feeb2a51d",
+      "sampled_latents_sha256": "693b6139551801eff194497552d9ce574f7679773c532e17e27a620610d0f514",
+      "coordinate_cache": "Evaluation/latent_viz/results/tsne_coordinates/canonical-lejepa-v1-rotations-raw-step100000_n15000_perp30p0_seed42_cosine.npz",
+      "coordinate_cache_sha256": "9381489eaedfd225263e678f18566ff8545caf98ea2641de35ec93a7f1f7d46c"
+    }
+  ],
+  "outputs": [
+    "non_code/main_thesis_figures/show/tsne_aa_ca_cond_jepa70_uncropped_lejepa_so3_100k.png",
+    "thesis-latex/figures/results/tsne_aa_ca_cond_jepa70_uncropped_lejepa_so3_100k.png"
+  ],
+  "note": "AE EMA baseline retained by author request; JEPA and LeJEPA use raw weights. Independently fitted t-SNE axes and inter-island distances are not comparable across models."
+}

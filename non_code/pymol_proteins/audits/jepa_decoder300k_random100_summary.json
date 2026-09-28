@@ -1,0 +1,3067 @@
+{
+  "protocol": "Frozen encoder and unchanged La Proteina decoder; true amino-acid identity/mask used only for coordinate scoring and idealization.",
+  "encoder": "jepa-rand-mask-70",
+  "encoder_source": "target",
+  "encoder_checkpoint": "/mnt/hopper-raid/aishod/runs/jepa_random_masking_70_v3/store/jepa_random_masking_70_v3/checkpoints/chk_epoch=00000019_step=000000100000.ckpt",
+  "decoder_checkpoint": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/checkpoints/jepa-rand-mask-70-target-200k-to-300k_step300000.pt",
+  "decoder_parameters": 127928320,
+  "latent_tap": "mean",
+  "latent_seed": 42,
+  "proteins": [
+    {
+      "protein_id": "1kfm_A",
+      "residues": 50,
+      "sequence_recovery": 0.78,
+      "native_sequence": "SNAKIDQLSSDVQTLNAKVDQLSNDVNAARSDAQAAKDDAARANQRLDNM",
+      "predicted_sequence": "TAAVIDQLSSRVGTLNAKADRLSNSVQAAREDAQAAKDDAARANQRLDNA",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/1kfm_A/1kfm_A_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/1kfm_A/1kfm_A_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/1kfm_A/1kfm_A_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.3294635306516769,
+        "atoms": 163
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 1.6632328662183717,
+        "atoms": 163
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.229252160820035,
+        "atoms": 131
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.678440500504236,
+        "atoms": 32
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.29158774443461744,
+        "atoms": 200
+      }
+    },
+    {
+      "protein_id": "3d3r_A",
+      "residues": 80,
+      "sequence_recovery": 0.4875,
+      "native_sequence": "ENLYFQGCLSIPSQVVAVDNERQSVTVDTLGVRRDVSSHLTEPLAIGDYVLIHIGFVNKIDRNDALQSLELYQEIVSKLE",
+      "predicted_sequence": "ESGKIGGQKAVPARVVAVDPDQKSAVVDEDGKERYVPTDAGDPLQEGDYVLIHAGQEPDVDLNDHLQSLELYLEVVSRLE",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/3d3r_A/3d3r_A_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/3d3r_A/3d3r_A_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/3d3r_A/3d3r_A_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.6717743385757173,
+        "atoms": 311
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 1.9915202152274947,
+        "atoms": 311
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.3979397776231453,
+        "atoms": 140
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.866289025064893,
+        "atoms": 171
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.4454245309281169,
+        "atoms": 320
+      }
+    },
+    {
+      "protein_id": "5a13_G",
+      "residues": 245,
+      "sequence_recovery": 0.6979591836734694,
+      "native_sequence": "APMMADRAKLLTTPGVFGNFSTYKVRADYMKLPAAERKAAAAEAQMVIDKHKDKVIVDTYLTRGLGAGSDYLLRVHSTDMAATQAFLVDWRATKLGMYSDVTENLVGITKALNYISKDKSPDLNAGLSSATYSDSAPRYVIVIPVKKDAAWWNMSDEQRLKEIEVHTQPTLQYLVNVKRKLYHSTGLADADFITYFETADLAAFNNLLIALAKVPENTHHVRWGNPTVLGTIQSADVLVKTLSGM",
+      "predicted_sequence": "APAPADRAALLKAPGALGLSSTYAVRADAAALPAAERHAAAAEIEMVVDAHKDKVFVDTYLTGGLGPGADYYLRVHSRDMAATQQFLVDWKATKIGMLTQVVEDVVGRLKALNYISRDLDPDLNAGLSSAKFSATAPRFLLVIDVKKDAAWWNMSDEQRLKEIEAHTQPTLQYLSNMVYKQYNCVGLTEADFILYFQTSDLAAFNNAYITLAKTPENTYLPRWGDPPVLGRIQSLDALVKTLLGG",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/5a13_G/5a13_G_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/5a13_G/5a13_G_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/5a13_G/5a13_G_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.610739385273691,
+        "atoms": 926
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.057553830656029,
+        "atoms": 925
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.5822114076695755,
+        "atoms": 634
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.6710046063604194,
+        "atoms": 292
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.3609510063167259,
+        "atoms": 980
+      }
+    },
+    {
+      "protein_id": "5fli_A",
+      "residues": 183,
+      "sequence_recovery": 0.6284153005464481,
+      "native_sequence": "IEYATRHRARSFIPPEPGKPYFIEKGLGDRAHLFGDLITIYAGGEQTENTFNFFTCEGPKGEVIPAHSHADTYEVFYITQGAVRLFVEDLEGEQHEKLLTPGDFGFVPKNCVHAYRMERHHSQVVGVAAGPGGTFERFFESLGTPAEELGLPVRPFVPEPEKFRTVPEQYDVRFRPDHQWHTG",
+      "predicted_sequence": "EPYATPNYALSPISLEPGTPYFIPYGLGERYHFRGLWITILGGASQTENTFNFYRSLGPKGEVLPLHSHADLVEVFYILQGAVRLFVEDLEGESHEFLLDFGQFGYIPKGCVHAFRMERHESQVVMTAWGDGGYLSPFFIQWGTRTEEPGPPVRPLAPDLDKFNRVPDQYGVIQRPDHQWHEG",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/5fli_A/5fli_A_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/5fli_A/5fli_A_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/5fli_A/5fli_A_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.7907721715615277,
+        "atoms": 740
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.4149694488268154,
+        "atoms": 740
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.6846810370616623,
+        "atoms": 443
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.9382552647763094,
+        "atoms": 297
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.4244462302628057,
+        "atoms": 732
+      }
+    },
+    {
+      "protein_id": "5l0o_A",
+      "residues": 164,
+      "sequence_recovery": 0.6158536585365854,
+      "native_sequence": "AEEMDERRRQNVAYEYLCHLEEAKRWMEACLGEDLPPTTELEEGLRNGVYLAKLGNFFSPKVVSLKKIYDREQTRYKATGLHFRHTDNVIQWLNAMDEIGLPKIFYPETTDIYDRKNMPRCIYCIHALSLYLFCLGLAPQIQDLYGKVDFTEEEINNMKTELEK",
+      "predicted_sequence": "SEEMDERRKQNVAYEKLCHLSEAKEWLDKLLGEQIPNPSDFEQGLRDGVNLAKYGRFLAPKVYSDKKIYCGDNDIYQSCPLNSRHLLAVIQWQRAMDEIGLPKIWIPETNDIYDSKNMTRCILRVEALSEYLNCAGRAPEPKDLYGEVDYTEEEINNMRTQIEK",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/5l0o_A/5l0o_A_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/5l0o_A/5l0o_A_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/5l0o_A/5l0o_A_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.758824956370444,
+        "atoms": 703
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.2292844532644542,
+        "atoms": 702
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.6648438656102296,
+        "atoms": 417
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.8874864796737376,
+        "atoms": 286
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.368942871369379,
+        "atoms": 656
+      }
+    },
+    {
+      "protein_id": "5xr7_A",
+      "residues": 167,
+      "sequence_recovery": 0.6586826347305389,
+      "native_sequence": "YDYLFKLVLIGDSGVGKSNLLSRFTKNEFNLESKSTIGVEFATKTTKVEGKVVKAQIWDTAGKRAITSAYYRGAVGALLIYDVTRHATFENAARWLRELRGHTDPNIVVMLIGNKCDLRHLVAVKTEEAKAFAERESLYFMETSALDATNVENAFTEVLTQIHKIVS",
+      "predicted_sequence": "GPNTAKLVILGDSGVGKSNLVSGFSKNEAHLDAKPMIGVQLKTKTTKFDGETVKLQIWDMAIGGEIVSAFYRGAVGALLVYDVTHHAVFENAARWLRFLRGHTDPNIVLMLVGNKCDLEKKKAVKPEEAKAKAERDSLEFKLTSAEDLSGVEQAATEVLTKIHQILA",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/5xr7_A/5xr7_A_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/5xr7_A/5xr7_A_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/5xr7_A/5xr7_A_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.6577430147976486,
+        "atoms": 642
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.172117403520311,
+        "atoms": 642
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.5116979568983433,
+        "atoms": 400
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.8743544294757397,
+        "atoms": 242
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.3980264024299983,
+        "atoms": 668
+      }
+    },
+    {
+      "protein_id": "6o14_A",
+      "residues": 145,
+      "sequence_recovery": 0.6689655172413793,
+      "native_sequence": "MNFKAVIKEVRLKSEHGYTNNFPSGDTLFIELDVEAKEDLQDVVAGILIRDRFGQDIFGINTYLMEKKVELKKGKYLFTFKMPLNLAPGKYTLTVALHKGMDHAQECYHWIDNVCNFEVNGFKKEQFVGVCYLPTEFNYRKIPKL",
+      "predicted_sequence": "GNHDVVIKSVRLKSENGSTNMFPSGTTLFIRLDIESNTDLQDVQLGIMIQDRKGQPIFGFLAATMQTKVELKKGVYVFTLDMILNLTPGKYTLSFALHKGTLHAQESYHRFDNVCNFEVNGFKHAQVDGQTYLPTPINYRKIPKL",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/6o14_A/6o14_A_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/6o14_A/6o14_A_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/6o14_A/6o14_A_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.8443138238930172,
+        "atoms": 607
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.5283295320552432,
+        "atoms": 607
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.8637777767174941,
+        "atoms": 393
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.808023938000433,
+        "atoms": 214
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.49435468500508445,
+        "atoms": 580
+      }
+    },
+    {
+      "protein_id": "7cnw_A",
+      "residues": 253,
+      "sequence_recovery": 0.5652173913043478,
+      "native_sequence": "MLNSFKLSLQYILPKLWLTRLAGWGASKRAGWLTKLVIDLFVKYYKVDMKEAQKPDTASYRTFNEFFVRPLRDEVRPIDTDPNVLVMPADGVISQLGKIEEDKILQAKGHNYSLEALLAGNYLMADLFRNGTFVTTYLSPRDYHRVHMPCNGILREMIYVPGDLFSVNHLTAQNVPNLFARNERVICLFDTEFGPMAQILVGATIVGSIETVWAGTITPPREGIIKRWTWPAGENDGSVALLKGQEMGRFKLG",
+      "predicted_sequence": "MANSFKLQLQWIMDHVNLTRQAGQGAVKSKAELRKLVIDKFVKQYKVDPKILQKPDTASYRTLNEFFSQALPDEHRKLDTAPNALTPLGQGEISYSGEIEGGKIAFSEGCESSLAALLGGNKDMANAFEDGTFVVTRLSPGTYHRVAFPCNGVLEEMIIVPGDQLPVNVLDAQNADNGWGNALRIIHLMDTEFGPYADIHVGAGVNGYVATPWVGRVSPDRIGELKRWTWPKDSNDGLVALQTGQELGRIQAG",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/7cnw_A/7cnw_A_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/7cnw_A/7cnw_A_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/7cnw_A/7cnw_A_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.8869032958242076,
+        "atoms": 988
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.481658233588152,
+        "atoms": 987
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.823896718085693,
+        "atoms": 521
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.9548001381725475,
+        "atoms": 467
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.44026984794490065,
+        "atoms": 1012
+      }
+    },
+    {
+      "protein_id": "8cbv_A",
+      "residues": 50,
+      "sequence_recovery": 0.38,
+      "native_sequence": "NFRVYYRDDPVWKGPAKLLEKGEGAVVIQDNSDIKVVPRRKAKIIRDYGK",
+      "predicted_sequence": "MVKVYRSEDEELLGPFKLLEKDEGELQVQVNGNIIEVPSKYCKEVRPLHD",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/8cbv_A/8cbv_A_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/8cbv_A/8cbv_A_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/8cbv_A/8cbv_A_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 2.1081105667944358,
+        "atoms": 210
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.825526216529873,
+        "atoms": 210
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.5965506491319048,
+        "atoms": 77
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 2.354002091928062,
+        "atoms": 133
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.5690994698143451,
+        "atoms": 200
+      }
+    },
+    {
+      "protein_id": "4z48_B",
+      "residues": 235,
+      "sequence_recovery": 0.6127659574468085,
+      "native_sequence": "TDPVKAGYDLAVRDQVDTSQDSYSEAVSINRGGKVLTRSFKTYSKHFGKDGKDEYSLIVFDRPADVNGTKYLVWSYRGLEQDDDWVYLPAESLVRRISGSSKFASFRSDLSNEDIQNLDDVDEYDYLLQGEENVDGIDCYILERTPKKGKETQYSRQVQWVRKDTLLRLRADYYDKKDRLVKKLFFSRQEKIDGIWTVTQRVERPREGSFTVIDWSNLRYDVGLSDAYFEHSALQ",
+      "predicted_sequence": "ADAVKAGYDLRKEDKLYNSQDSYCQGDEINRGGKVLTRSFKTYSKAFGPNGNTEWSLIVFDKPASLNGTKYLQWQHLGSELDTSVVFLPANSLVRRISGSSLFASDESDNPFEDLSNLFKIDQYDYVFNGTENVDGVEATILERTPLKGKDTAYARQHRWVRKDSLFILKSDYYDDDDELVRKEFISRQEKIFGSWVVSRYVVRPREGDFTVIEFSNIKFPEGLSPAFFDQSAYQ",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/4z48_B/4z48_B_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/4z48_B/4z48_B_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/4z48_B/4z48_B_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.6305469962122139,
+        "atoms": 989
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.2933257525822683,
+        "atoms": 989
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.526000384164681,
+        "atoms": 577
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.766593493774576,
+        "atoms": 412
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.39801835989514606,
+        "atoms": 940
+      }
+    },
+    {
+      "protein_id": "8ik1_B",
+      "residues": 206,
+      "sequence_recovery": 0.7427184466019418,
+      "native_sequence": "DGEIDIVALGDSLTRGTGDESGKGYIGYMVDELRQQTDEPIRVTNLAIRGLRSDGLLRQLGQSEIQRQIAMADLIVMTIGGNDLFQGGEALEWNVKELDEAKRQYIANLDRIFALLRRLNSEAVIFAIGLYNAASDLDDAKRTSAIVRDWNFAAEVAAHYPNIVAVPTFDLFALHVNDYLYSDHFHPNKEGYKRIGERVASLITLT",
+      "predicted_sequence": "DGEIRIVALGGSSTNGRGTSRPKGLIGFTVDELRKQTDEPIRVTDLSREGLNTDGLLRQLGQSEIQRQIARADLVVIDIGGNDLFGGGNLLDFNAKELDRAKRQYIANLDRIFALLRRLNPETVIFIIGPYNKASTLDQAKRTSAIVRDWNEYEEVAAHVPNIVAVPLSDLFALHVNDFLTGDKRHPNEEGWKRIGERVASVFVLT",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/8ik1_B/8ik1_B_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/8ik1_B/8ik1_B_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/8ik1_B/8ik1_B_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.4994120805726179,
+        "atoms": 776
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 1.9166673050142278,
+        "atoms": 776
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.4718571394044788,
+        "atoms": 564
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.5703662178106668,
+        "atoms": 212
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.3864763051146319,
+        "atoms": 824
+      }
+    },
+    {
+      "protein_id": "5xr4_A",
+      "residues": 155,
+      "sequence_recovery": 0.7096774193548387,
+      "native_sequence": "MYDYLFKLVLIGDSGVGKSNLLSRFTKNEFNLEEFATKTTKVEGKVVKAQIWDTTSAYYRGAVGALLIYDVTRHATFENAARWLRELRGHTDPNIVVMLIGNKCDLRHLVAVKTEEAKAFAERESLYFMETSALDATNVENAFTEVLTQIHKIVS",
+      "predicted_sequence": "EYDFLFKLVLLGDSGVGKSDLVSFYTDGQFPSDSVYEISTKVQGKVVRADVADHDSAYYRGAQGLLLVFDVTDHWTFENAARWLRELRGHTDDNIVVVLIGNKCDQRELVCVKTEEVKKKAEREDLYFMETSALTAKNVVNAFTEVLTQIHKIVE",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/5xr4_A/5xr4_A_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/5xr4_A/5xr4_A_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/5xr4_A/5xr4_A_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.7042734853116128,
+        "atoms": 602
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.2425668923960433,
+        "atoms": 602
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.7269738912999286,
+        "atoms": 425
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.6484907371848931,
+        "atoms": 177
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.36246617788479873,
+        "atoms": 620
+      }
+    },
+    {
+      "protein_id": "6atg_D",
+      "residues": 61,
+      "sequence_recovery": 0.4426229508196721,
+      "native_sequence": "HMKCYFPYLENGYNQNHGRKFVQGKSIDVACHPGYALPKAQTTVTCMENGWSPTPRCIRVK",
+      "predicted_sequence": "QVLCTIPELENGDCRFTGKSVRDGTSVDVSCAPGFVLPRATTSLTCNDQGWSPEPHCVRAE",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/6atg_D/6atg_D_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/6atg_D/6atg_D_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/6atg_D/6atg_D_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.9993839757733975,
+        "atoms": 238
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.507767198175869,
+        "atoms": 238
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.9219425377699468,
+        "atoms": 75
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 2.0340263514939285,
+        "atoms": 163
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.5492576990771431,
+        "atoms": 244
+      }
+    },
+    {
+      "protein_id": "3uyc_B",
+      "residues": 246,
+      "sequence_recovery": 0.6341463414634146,
+      "native_sequence": "PRYLKGWLEDVVQLSLRRPSLHASRQRPIISLRERILEFNKRNNTAIIAVYKRKSPSGLNVERDPIEYAKFMERGVVGLAILTEEKYFNGSYEDLRKIASSVSIPILMWDIIVKESQIDDAYNLGADTVGLIVKILTERELKSLLEYARSYGMEPAIVINDENDLDIALRIGARFIIISSHDLETLEINKENQRKLISMVPSDVVKVVASGISERNEIEELRKLGVNAFEIGSSLMRNPEKIKEFI",
+      "predicted_sequence": "SGPLKGYLEDTVQLSLVIPSYHASLHRPIISIRYWILEANKENNIAIILVHKKDTPSGDSIRVDPSVYASFMERGVVGIEVELERPVFGGSYEDLRKLKSSVSVPVIMANIIVKKSQIDHAYNLGADSFGIFAAVMTEDELKSLKEYARSYGMEPAIEVRDPNDLDIALRSGAKFILIHPRDLRTLVISPENQRKLISMIPSDVMVIVYSVIKDYNEIEELLKLGVKAYQIGSQLLENPDKIKELL",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/3uyc_B/3uyc_B_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/3uyc_B/3uyc_B_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/3uyc_B/3uyc_B_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.5909435885957968,
+        "atoms": 970
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.118088508254919,
+        "atoms": 970
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.3598074571628866,
+        "atoms": 578
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.880622333544876,
+        "atoms": 392
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.3562031397471842,
+        "atoms": 984
+      }
+    },
+    {
+      "protein_id": "1kn0_E",
+      "residues": 184,
+      "sequence_recovery": 0.657608695652174,
+      "native_sequence": "CFGQCQYTAEEYQAIQKALRQRLGPEYISSRMAGGGQKVCYIEGHRVINLANEMFGYNGWAHSITQQNVDFVDLNNGKFYVGVCAFVRVQLKDGSYHEDVGYGVSEGLKSKALSLEKARKEAVTDGLKRALRSFGNALGNCILDKDYLRSLNKLPRQLPLEVDLTKAKRQDLEPSVEEARYNSC",
+      "predicted_sequence": "HPGSREVTAEEYQAIQKALQQPPGPEYMSFRPAEGGQRVCYASGSQVINRAEEMFGYDGLAVSILQQSVLSVDLPNGKFYVGVAAVVRVVLSDGSLHETSGQGVNRGSKSKAQSLEKAFREAITDGLNRALRSFSNLLGECALDKDWVRDLNLLPRAGPLEPDLTKIRKELLEPSVEEARENAR",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/1kn0_E/1kn0_E_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/1kn0_E/1kn0_E_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/1kn0_E/1kn0_E_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.7605676451426822,
+        "atoms": 714
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.3821831334077648,
+        "atoms": 714
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.684650868320067,
+        "atoms": 429
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.8690368557523513,
+        "atoms": 285
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.4158662807109737,
+        "atoms": 736
+      }
+    },
+    {
+      "protein_id": "6wu9_2",
+      "residues": 56,
+      "sequence_recovery": 0.7321428571428571,
+      "native_sequence": "AVPARRTSKAKKAKRRTHYKLTIKGLNACSNCGEMKKSHHVCPACGHYDGKDVMSK",
+      "predicted_sequence": "SRHARRTSKAKKAKRRTHSKLTIKGIVACKNCGKRKISHHVCPICGAYDGKDVYNP",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/6wu9_2/6wu9_2_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/6wu9_2/6wu9_2_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/6wu9_2/6wu9_2_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.8810910813022121,
+        "atoms": 205
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.185159761899085,
+        "atoms": 205
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.9576515325603845,
+        "atoms": 148
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.6659550268500998,
+        "atoms": 57
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.5226256494159948,
+        "atoms": 224
+      }
+    },
+    {
+      "protein_id": "6e69_A",
+      "residues": 217,
+      "sequence_recovery": 0.5161290322580645,
+      "native_sequence": "IVGGRRARPHAWPFMVSLQLRGGHFCGATLIAPNFVMSAAHCVANVNVRAVRVVLGAHNLSRREPTRQVFAVQRIFENGYDPVNLLNDIVILQLNGSATINANVQVAQLPAQGRRLGNGVQCLAMGWGLLGRNRGIASVLQELNVTVVTSLCRRSNVCTLVRGQAGVCFGDSGSPLVCNGLIHGIASFVRGGCASGLYPDAFAPVAQFVNWIDSIIQ",
+      "predicted_sequence": "IIGGRRAEPHAWPFQVSLRLDGGNTCGAFLINNNYVMTAAHCFVDSSPLGLTCRFGAHNLSKNQQTIQTFRVQRIIVGPYDPVNLSNDLVILVLNGTATVSANSQAATLPSEGATLANGVQYLCMGWGTLGDSQGWADVPRVVSATVESSSCSARRLRVRSSGGSDLCQGDSGGPLVFDGRVVGLASFAEGGGCGPSFPDAFTPICQLVNWIDQVLE",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/6e69_A/6e69_A_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/6e69_A/6e69_A_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/6e69_A/6e69_A_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.802382033559467,
+        "atoms": 735
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.291303504001375,
+        "atoms": 735
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.562091923184161,
+        "atoms": 348
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.9938803401317464,
+        "atoms": 387
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.5588619720045284,
+        "atoms": 868
+      }
+    },
+    {
+      "protein_id": "6zkt_f",
+      "residues": 113,
+      "sequence_recovery": 0.7168141592920354,
+      "native_sequence": "LLKKTTGLVGLAVCETPHERLKILYTKILDVLGHIPKNAAYRKYTEQITNEKLSIVKAEPDVKKLEEQLQGGQIEEVILQAENELSLARKMIQWKPWEPLVEEPPASQWKWPI",
+      "predicted_sequence": "ELKEDTGRVGLSVVENPHERLKILYNKIEEVLGHLPPNCALRKYCRQITNEKLSIVQAEKDVSKLDEQLKGRGISEVIRQAENELSLARKMIQRGLCEPLVEEPPASQWLKGI",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/6zkt_f/6zkt_f_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/6zkt_f/6zkt_f_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/6zkt_f/6zkt_f_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.8840122095221041,
+        "atoms": 465
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.4355702357254825,
+        "atoms": 465
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.6504944303631948,
+        "atoms": 323
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 2.3295767905818066,
+        "atoms": 142
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.5305122364127094,
+        "atoms": 452
+      }
+    },
+    {
+      "protein_id": "1wsj_A",
+      "residues": 155,
+      "sequence_recovery": 0.632258064516129,
+      "native_sequence": "MLKQVEIFTDGSCLGNPGPGGYGAILRYRGREKTFSAGYTRTTNNRMELMAAIVALEALKEHCEVILSTDSQYVRQGITQWIHNWKARGWKTADKKPVKNVDLWQRLDAALGQHQIKWEWVKGAAGHPENERCDELARAAAMNPTLEDTGYQVEV",
+      "predicted_sequence": "MAKQALVYVDGASLANPGPGGIGAISRYRGREKTLSVGYTVHTNFWMEAMAAIVALEAMKAHVEVLLVTGSEMLRKGMTTWLSPWKARGWKTANNRPIQNEDLWSRYDAALGSTQIHWESRPGMAGHPENELCDELARAAAMNRKQEATALQVPR",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/1wsj_A/1wsj_A_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/1wsj_A/1wsj_A_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/1wsj_A/1wsj_A_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.7952978409904374,
+        "atoms": 608
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.3231467459509862,
+        "atoms": 608
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.7453615397248872,
+        "atoms": 362
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.8663532973193369,
+        "atoms": 246
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.41422219334261506,
+        "atoms": 620
+      }
+    },
+    {
+      "protein_id": "6bto_B",
+      "residues": 200,
+      "sequence_recovery": 0.56,
+      "native_sequence": "AATSRPERVWPDGVIPFVIGGNFTGSQRAVFRQAMRHWEKHTCVTFLERTDEDSYIVFTYRPCGCCSYVGRRGGGPQAISIGKNCDKFGIVVHELGHVVGFWHEHTRPDRDRHVSIVRENIQPGQEYNFLKMEPQEVESLGETYDFDSIMHYARNTFSRGIFLDTIVPKYEVNGVKPPIGQRTRLSKGDIAQARKLYKCP",
+      "predicted_sequence": "SRLSRPENQLPDGVIPFDIAGNYTGSERAVFRQAMTHLKKSTCLDLLDVTDEENVIVFAYMPCGPDSVVGAPKGRPYEISINKNWDKIGEVFHRLCHLLGFWHEHRRPDRKRHIDIILENIRPGQEERFQYLNPQESHSLGETINLESIFHPEKNYWGREDRLKRIVPQYEIEGRIPAIHYMERLDQGFIADARKNYKCP",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/6bto_B/6bto_B_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/6bto_B/6bto_B_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/6bto_B/6bto_B_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.731884939449368,
+        "atoms": 798
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.3557550727355547,
+        "atoms": 798
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.640657648415938,
+        "atoms": 433
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.8342333518330987,
+        "atoms": 365
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.4405798056942089,
+        "atoms": 800
+      }
+    },
+    {
+      "protein_id": "8p50_B",
+      "residues": 161,
+      "sequence_recovery": 0.7453416149068323,
+      "native_sequence": "MRILMVGLDAAGKTTILYKLKLGEIVTTIPTIGFNVETVEYKNISFTVWDVGGLDKIRPLWRHYFQNTQGLIFVVDSNDRERVNEAREELMRMLAEDELRDAVLLVFANKQDLPNAMNAAEITDKLGLHSLRHRNWYIQATCATSGDGLYEGLDWLANQLK",
+      "predicted_sequence": "MEILMLGLDASGKTTIWYKLKEGEKVTVLSRIGFNSRDVVLDNISFFVWDVGGLDKIRPRWRHYFPNTEGLIFVIDSNDRERVNQAREELMRMLAEPELRDAVLLVFATKQDLPNAMSAEELTDKLGLESQRNRNMEVIALSSLSGKGLYSGLDDLANQLK",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/8p50_B/8p50_B_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/8p50_B/8p50_B_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/8p50_B/8p50_B_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.674026908947783,
+        "atoms": 648
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.177985121356505,
+        "atoms": 648
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.6633012099616356,
+        "atoms": 470
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.702022650705808,
+        "atoms": 178
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.33840626382615246,
+        "atoms": 644
+      }
+    },
+    {
+      "protein_id": "5v5k_B",
+      "residues": 162,
+      "sequence_recovery": 0.5370370370370371,
+      "native_sequence": "SISEKMVEALNRQINAEIYSAYLYLSMASYFDSIGLKGFSNWMRVQWQEELMHAMKMFDFVSRRGGRVKLYAVEEPPSEWDSPLAAFEHVYEHEVNVTKRIHELVEMAMQEKDFATYNFLQWYVAEQVEEEASALDIVEKLRLIGEDKRALLFLDKELSLRQ",
+      "predicted_sequence": "SLDKKMNEALNSQMNAHFYVAKLYAGMASLFQSIGLKGFSFSMKAQFQIKLMEAGKMKDMVLENGGRIKLGALEGADSENESPLSAIAEVYKREANVTKEGAELVERLMQEKDFAMLNFLQIFNAELIELELSALQIYYILRANGETHSALEYIRKVISKLK",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/5v5k_B/5v5k_B_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/5v5k_B/5v5k_B_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/5v5k_B/5v5k_B_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 0.4011437979743073,
+        "atoms": 157
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 0.35503226883950717,
+        "atoms": 157
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 0.38659750275191296,
+        "atoms": 82
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 0.4164667692692887,
+        "atoms": 75
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.4449930513865751,
+        "atoms": 648
+      }
+    },
+    {
+      "protein_id": "8xlp_5",
+      "residues": 183,
+      "sequence_recovery": 0.7704918032786885,
+      "native_sequence": "FSESVPFLKTPTNLDGSLPGDVGFDPLGFSEVFDIRVLREAELKHGRIAMLATLGYLVQEAYVLPFFEKVPPIQAHDALVKSGGMSQILLWTSFLEIFGGIALFSTIQGRRYPGDFSFDPLGLSQGKNADKLEQYQLAEIKHSRLAMLAFSGFVHQGFITKQGVLEQLGNFRPIPGFPEATFF",
+      "predicted_sequence": "ASSSNPFLKTPTNLDGSIPGDVGFDPLGFSTVFDIRVLREAERKHGRIAMLATLGYLVQEAYELPDLKKVPPIQAHEALFKTGGMHQILLWEFFLLIEGAKALFSTIQGKRLPGDFKFPPLGESRGKNAKDLSRYQLAEIKHSRLAMLAVSGFAHQGVFTKKGVLSQLGNFRPLPGYVEDTEA",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/8xlp_5/8xlp_5_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/8xlp_5/8xlp_5_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/8xlp_5/8xlp_5_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.8662619298886818,
+        "atoms": 698
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.130848200230738,
+        "atoms": 698
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.763625426223232,
+        "atoms": 513
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 2.125095170017114,
+        "atoms": 185
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.4823557162993637,
+        "atoms": 732
+      }
+    },
+    {
+      "protein_id": "7cnw_C",
+      "residues": 250,
+      "sequence_recovery": 0.584,
+      "native_sequence": "SFKLSLQYILPKLWLTRLAGWGASKRAGWLTKLVIDLFVKYYKVDMKEAQKPDTASYRTFNEFFVRPLRDEVRPIDTDPNVLVMPADGVISQLGKIEEDKILQAKGHNYSLEALLAGNYLMADLFRNGTFVTTYLSPRDYHRVHMPCNGILREMIYVPGDLFSVNHLTAQNVPNLFARNERVICLFDTEFGPMAQILVGATIVGSIETVWAGTITPPREGIIKRWTWPAGENDGSVALLKGQEMGRFKLG",
+      "predicted_sequence": "SSDLALLYVDDKLWLMRLHIWGLSSNEGWRTKLVIKLFVADLKVDMGEFPNPDYASYRTFNEAFVRPTNPKVLPLDTSPDTRVMPARGASAQLGKIEDDKILRGDGISVSLEAVLAGLYLMASLFRNGDWVITYLSPRGYWTLHTDWDGILVAMIYVPGELIEVTSEVAQARPDLFARASRVTILLDTEFGVMAQIFVHATAFGNIWTVIEGKFTGAWSGIPKIFSLPKGENDGSVILRKGQIMGRFTRA",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/7cnw_C/7cnw_C_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/7cnw_C/7cnw_C_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/7cnw_C/7cnw_C_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.7750556242556166,
+        "atoms": 969
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.3779289433986013,
+        "atoms": 968
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.7945939901345342,
+        "atoms": 553
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.748744807892939,
+        "atoms": 416
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.4140224037189896,
+        "atoms": 1000
+      }
+    },
+    {
+      "protein_id": "5wa8_A",
+      "residues": 115,
+      "sequence_recovery": 0.6782608695652174,
+      "native_sequence": "RPGGDTIFGKIIRKEIPAKIIFEDDRCLAFHDISPQAPTHFLVIPKKHISQISVAEDDDESLLGHLMIVGKKCAADLGLNKGYRMVVNEGSDGGQSVYHVNLHVLGGRQMHWPPG",
+      "predicted_sequence": "ASGPNTWYGKILNQEVPADILFEDSQCLAFHDPFPQYPTHFLVIPKKHISSISVLEDDDEAAIGHVMTVGKKCAAQLGLNEGYRVRVNTGSAGGQTVQHVHLHVLGGKQWHSPGG",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/5wa8_A/5wa8_A_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/5wa8_A/5wa8_A_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/5wa8_A/5wa8_A_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.839202739827219,
+        "atoms": 417
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.4815653806935756,
+        "atoms": 416
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.6803114857242196,
+        "atoms": 271
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 2.1025391836623677,
+        "atoms": 146
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.49121908319106106,
+        "atoms": 460
+      }
+    },
+    {
+      "protein_id": "6j6g_I",
+      "residues": 102,
+      "sequence_recovery": 0.5686274509803921,
+      "native_sequence": "RGGISYDQLAKLSYEKTLRNLATQTQNSSKQDKVQKDTKTGKITIADDDKLVNKLAVSLQSESKKRYEARKRQMQNAKTLYGVESFINDKNKQFNEKLSRES",
+      "predicted_sequence": "IKPVPKAQLAKLSYEKALRNLDFQLQNKAELKTVQFDTKTGKVTIPTDLQLVNELSNQMVTTSKLIEEARIREMQNQKTLYGVTSVINLANARFNEKLSREV",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/6j6g_I/6j6g_I_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/6j6g_I/6j6g_I_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/6j6g_I/6j6g_I_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.8140218745581052,
+        "atoms": 414
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.0415844182865643,
+        "atoms": 414
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.7760699575081687,
+        "atoms": 242
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.866112943542017,
+        "atoms": 172
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.45832866863522104,
+        "atoms": 408
+      }
+    },
+    {
+      "protein_id": "7bv8_P",
+      "residues": 117,
+      "sequence_recovery": 0.6153846153846154,
+      "native_sequence": "MDKKSARIRRATRARRKLQELGATRLVVHRTPRHIYAQVIAPNGSEVLVAASTVEKAIAEQLKYTGNKDAAAAVGKAVAERALEKGIKDVSFDRSGFQYHGRVQALADAAREAGLQF",
+      "predicted_sequence": "MDTKSARIERAARAFRKFQELGRLRLVVHRTARHTKAFLIAPDGSELLARASNENKAILEKTKRPGSQDAAVAVGKAVAEKLTENGLNKVVFDASGFSKRGRTQALIKALREAGLKL",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/7bv8_P/7bv8_P_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/7bv8_P/7bv8_P_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/7bv8_P/7bv8_P_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.8368021198409634,
+        "atoms": 432
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.425448419996918,
+        "atoms": 431
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.640920021625581,
+        "atoms": 246
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 2.06756266774665,
+        "atoms": 186
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.35214455902315916,
+        "atoms": 468
+      }
+    },
+    {
+      "protein_id": "7ard_s",
+      "residues": 115,
+      "sequence_recovery": 0.6782608695652174,
+      "native_sequence": "VKTLADYIHWRNKPSSIPPVDEYRPPVPLVNYDKLSTQFFSKLDNDPVINRVLRAPKVTVMATSLPIVNHPAFLFVAGALTGFSLTYAITSHYVGRKEIENLVKFDPRYFPEYTK",
+      "predicted_sequence": "VKTLADYIHIGPKPSSNPPVDEFRPPVPLVMYVKPHTQKYSKLKNDPQINRVLRSPKRTVFTTDKPIKNNPAVLFVAGQKTGFRLRYAILLRKVLRKEMENLVKRDPETFPEYVA",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/7ard_s/7ard_s_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/7ard_s/7ard_s_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/7ard_s/7ard_s_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 2.121110837179898,
+        "atoms": 473
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.6788155492237022,
+        "atoms": 473
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.99034807072145,
+        "atoms": 311
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 2.3518544773054892,
+        "atoms": 162
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.6490705498293237,
+        "atoms": 460
+      }
+    },
+    {
+      "protein_id": "6ii6_C",
+      "residues": 164,
+      "sequence_recovery": 0.7134146341463414,
+      "native_sequence": "KKEMRILMVGLDAAGKTTILYKLKLGEIVTTIPTIGFNVETVEYKNISFTVWDVGGLDKIRPLWRHYFQNTQGLIFVVDSNDRERVNEAREELMRMLAEDELRDAVLLVFANKQDLPNAMNAAEITDKLGLHSLRHRNWYIQATCATSGDGLYEGLDWLANQLE",
+      "predicted_sequence": "KNVKRILMVGVDNVGKTAILYKLKTGEIVTEQAIEGLDTFTVEYKNVSFTVWDVGGLPKLRPLWSKYLDNADGLIFVFDSGDKERINEAREALHRMLAEDELRDASLLVFLNKASLPNAMNAKEITDKLGLHKLSKRPWFIFATCAETGDGLYEGLDWLLNQIE",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/6ii6_C/6ii6_C_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/6ii6_C/6ii6_C_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/6ii6_C/6ii6_C_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.7215160002780485,
+        "atoms": 663
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.1067113684867316,
+        "atoms": 663
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.5890097213327419,
+        "atoms": 473
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 2.013867935714753,
+        "atoms": 190
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.35813026437018713,
+        "atoms": 656
+      }
+    },
+    {
+      "protein_id": "8pyr_G",
+      "residues": 66,
+      "sequence_recovery": 0.6212121212121212,
+      "native_sequence": "ALYEYQPLQIETYGPHVPELEMLGRLGYLNHVRAASPQDLAGGYTSSLACHRALQDAFSGLFWQPS",
+      "predicted_sequence": "ARMDFQRLQMQTNGPNVPALSFLCRFGLLNHLPAPSPQDLAGGDTDCLACHRALVDAFHGLFIQPR",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/8pyr_G/8pyr_G_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/8pyr_G/8pyr_G_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/8pyr_G/8pyr_G_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.9025734728169261,
+        "atoms": 254
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.567748033351982,
+        "atoms": 254
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.5733134933341453,
+        "atoms": 135
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 2.217686842129238,
+        "atoms": 119
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.3816523574422329,
+        "atoms": 264
+      }
+    },
+    {
+      "protein_id": "1a8r_J",
+      "residues": 221,
+      "sequence_recovery": 0.6787330316742082,
+      "native_sequence": "PSLSKEAALVHEALVARGLETPLRPPVHEMDNETRKSLIAGHMTEIMQLLNLDLADDSLMETPHRIAKMYVDEIFSGLDYANFPKITLIENKMKVDEMVTVRDITLTSTCESHFVTIDGKATVAYIPKDSVIGLSKINRIVQFFAQRPQVQERLTQQILIALQTLLGTNNVAVSIDAVHYCVKARGIRDATSATTTTSLGGLFKSSQNTRHEFLRAVRHHN",
+      "predicted_sequence": "PVWSVEAALVHEALVARGLPAPQRPPVHEVPNESRASLIAGCMTVIMQKKNLDLADESLMEKAHRMAKMYTDESFLGLDPDNKPKIYIFESKTNATEMFTVRDIKVTGTCESGDDTQDGKATVAYIPVDHVIGKAKINRVVSFFTERPQHQERLTQQIWIALQTALGTNDVAVSIEAVHYKAKAGGKNDSTEIVTSTSLGGLYKLDQNTRHEILRAIHLHD",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/1a8r_J/1a8r_J_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/1a8r_J/1a8r_J_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/1a8r_J/1a8r_J_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.7194519213790462,
+        "atoms": 844
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.124263843293872,
+        "atoms": 844
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.5517847722071787,
+        "atoms": 566
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 2.01821747840276,
+        "atoms": 278
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.39101768123162567,
+        "atoms": 884
+      }
+    },
+    {
+      "protein_id": "6pta_A",
+      "residues": 165,
+      "sequence_recovery": 0.6606060606060606,
+      "native_sequence": "LFASLLGEMRILMVGLDAAGKTTILYKLKLGEIVTTIPTIGFNVETVEYKNISFTVWDVGGPLWRYYFQNTQGIIFVVDSNDRDRINEAREELQSMLNEDELKDAVLLVLANKQDLPNAMNAAEITEKMGLHSIRNRPWFIQATCATTGDGLYEGLEWLSNQVGK",
+      "predicted_sequence": "NFASSLGPKRVLMLGQDKAGKTTLAKKLKLGEIIETVITIGFNVKTVEYKNISVTTTDIASDLWRYLYHGTQGIIFVVDSTDPANINEAREVIQNMLNEKELKDAVLLLLGNKADLPNAMNAAELTEAMGLASLRNRPTHVVAYSATKGDGVIEGLQQLSNQLSS",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/6pta_A/6pta_A_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/6pta_A/6pta_A_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/6pta_A/6pta_A_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.7656544312117317,
+        "atoms": 646
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.3320224684111306,
+        "atoms": 646
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.6018682084903069,
+        "atoms": 399
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 2.0021257107831283,
+        "atoms": 247
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.4079036039101148,
+        "atoms": 660
+      }
+    },
+    {
+      "protein_id": "3pio_Q",
+      "residues": 93,
+      "sequence_recovery": 0.5268817204301075,
+      "native_sequence": "SHYDILQAPVISEKAYSAMERGVYSFWVSPKATKTEIKDAIQQAFGVRVIGISTMNVPGKRKRVGRFIGQRNDRKKAIVRLAEGQSIEALAGQ",
+      "predicted_sequence": "SPYDVLAAPLVSEKDIASMEQGIVFFKCPPKLTKREIDKAVQRAFGKKVVGLSTMELVGKRITEGRKIGQRNQHKQAIVRLAKVGPVDPLAAQ",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/3pio_Q/3pio_Q_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/3pio_Q/3pio_Q_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/3pio_Q/3pio_Q_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.9203907659840025,
+        "atoms": 354
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.5571392452447665,
+        "atoms": 354
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.8544927649302305,
+        "atoms": 175
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.9827000509604036,
+        "atoms": 179
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.5655005127268792,
+        "atoms": 372
+      }
+    },
+    {
+      "protein_id": "1p7j_B",
+      "residues": 51,
+      "sequence_recovery": 0.6274509803921569,
+      "native_sequence": "AFSSEQLARLKREFNENRYLTERRRQQLSSELGLNEAQIKIWFQNERAKIK",
+      "predicted_sequence": "SLSSEQLALLDLLFERNRYLTQRSREQLSKVLGLTERQIVIWFQNRRAKLS",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/1p7j_B/1p7j_B_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/1p7j_B/1p7j_B_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/1p7j_B/1p7j_B_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.7571076835984194,
+        "atoms": 224
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 1.8949949525722054,
+        "atoms": 224
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.781175835093846,
+        "atoms": 146
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.7111474120440917,
+        "atoms": 78
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.3639455051131513,
+        "atoms": 204
+      }
+    },
+    {
+      "protein_id": "2jd6_O",
+      "residues": 167,
+      "sequence_recovery": 0.718562874251497,
+      "native_sequence": "MLSERMLKALNDQLNRELYSAYLYFAMAAYFEDLGLEGFANWMKAQAEEEIGHALRFYNYIYDRNGRVELDEIPKPPKEWESPLKAFEAAYEHEKFISKSIYELAALAEEEKDYSTRAFLEWFINEQVEEEASVKKILDKLKFAKDSPQILFMLDKELSARAPKLPG",
+      "predicted_sequence": "MLSERMLKVLDDQINREVYSAELYFAMAAYFEAAGIEGFVNFMKAQAKEYIGHCLRAFNTIYTLHGRVELDEINAPPQEIEGALKAFEVADEHEKFVTKSIYGLAALAEEQKNYSWFAFLEWVINEQREREAYVKKILDKLKFGWNTPVILFMLDKELSARQPPLST",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/2jd6_O/2jd6_O_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/2jd6_O/2jd6_O_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/2jd6_O/2jd6_O_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.6675792182328752,
+        "atoms": 715
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.1315091779430824,
+        "atoms": 715
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.6611031737646496,
+        "atoms": 512
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.683801990388983,
+        "atoms": 203
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.3598375906114574,
+        "atoms": 668
+      }
+    },
+    {
+      "protein_id": "9h9h_S",
+      "residues": 83,
+      "sequence_recovery": 0.5783132530120482,
+      "native_sequence": "PRSLKKGPFIDLHLLKKVEKAVESGDKKPLRTWSRRSTIFPNMIGLTIAVHNGRQHVPVFVTDEMVGHKLGEFAPTRTYRGHA",
+      "predicted_sequence": "MVSPKYGSLAPPHLTKVAEKAVESGDLKPLYTPGRDSTVRPPMIGLYIAVKSGRQTVPVFVTEEFIGHKLGFFAPTSVEAAEG",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/9h9h_S/9h9h_S_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/9h9h_S/9h9h_S_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/9h9h_S/9h9h_S_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 2.154495587141518,
+        "atoms": 331
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.464694171178156,
+        "atoms": 331
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.663237920790439,
+        "atoms": 165
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 2.5506949418851983,
+        "atoms": 166
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.4517330761461147,
+        "atoms": 332
+      }
+    },
+    {
+      "protein_id": "7wfg_O",
+      "residues": 75,
+      "sequence_recovery": 0.30666666666666664,
+      "native_sequence": "VYSMKKGQIVRVEKEKYLNSINYLSVGGLDYIYEDRGEVLDLREYALVGWVGIPTAPAWLPTDMLIKCEKLVYER",
+      "predicted_sequence": "AGHWKKGDHVFLSPEKLPNHLVGTRLEKQDAWAQARGVILGMDDWLVVGFVGIRRVKVWLNEDQLTVVEALVLTD",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/7wfg_O/7wfg_O_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/7wfg_O/7wfg_O_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/7wfg_O/7wfg_O_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 2.115401350514153,
+        "atoms": 220
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.549369595371926,
+        "atoms": 220
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.9693814170113166,
+        "atoms": 79
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 2.19296814894272,
+        "atoms": 141
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.5847160880682465,
+        "atoms": 300
+      }
+    },
+    {
+      "protein_id": "2zjr_Q",
+      "residues": 93,
+      "sequence_recovery": 0.4838709677419355,
+      "native_sequence": "SHYDILQAPVISEKAYSAMERGVYSFWVSPKATKTEIKDAIQQAFGVRVIGISTMNVPGKRKRVGRFIGQRNDRKKAIVRLAEGQSIEALAGQ",
+      "predicted_sequence": "SPYDFLQRPLTSEKDIAAVEQGIVFFKIPPHATKTECVYAAQEAFGIKAVGLSQMYGVGKRETRGRFIGQRNQHQTVEVRLDEGGMPDELLGA",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/2zjr_Q/2zjr_Q_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/2zjr_Q/2zjr_Q_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/2zjr_Q/2zjr_Q_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 2.1509582509201857,
+        "atoms": 354
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.7570180816110925,
+        "atoms": 354
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 2.1559486952641818,
+        "atoms": 160
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 2.1468336914440753,
+        "atoms": 194
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.666404405916942,
+        "atoms": 372
+      }
+    },
+    {
+      "protein_id": "7r48_V",
+      "residues": 114,
+      "sequence_recovery": 0.7105263157894737,
+      "native_sequence": "GLLKKTTGLVGLAVCETPHERLKILYTKILDVLGHIPKNAAYRKYTEQITNEKLSMVKAEPDVKKLEERLQGGQIEEVILQAENELSLARKMIQWKPWEPLVEEPPASQWKWPI",
+      "predicted_sequence": "GLLVKDSGRVGLEVVETPHERLKILYTKIADVLGHVPPNSALRKYCRQITNEKLSMIQACDDVKKVERRLKGGQIQEVIRQAENVLSLARKAIQRGPGEPLAEALPASQWLVLI",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/7r48_V/7r48_V_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/7r48_V/7r48_V_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/7r48_V/7r48_V_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.987485101556216,
+        "atoms": 467
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.536576442078369,
+        "atoms": 467
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.6692794904986545,
+        "atoms": 317
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 2.531635451619335,
+        "atoms": 150
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.49201369503289005,
+        "atoms": 456
+      }
+    },
+    {
+      "protein_id": "9s2d_B",
+      "residues": 183,
+      "sequence_recovery": 0.6010928961748634,
+      "native_sequence": "TGTQRFKEALQDPFTLCLANVPGQPDLRHIVIDGSNVAMVHGLQHYFSSRGIAIAVQYFWDRGHRDITVFVPQWRFSKDAKVRESHFLQKLYSLSLLSLTPSRVMDGKRISSYDDRFMVKLAEETDGIIVSNDQFRDLAEESEKWMAIIRERLLPFTFVGNLFMVPDDPLGRNGPTLDEFLKK",
+      "predicted_sequence": "TPTQRFKKEFQVPFELDLPDEPGDPDLRDVVINGSNVDMKHSLQMFLSSRGIATAVQYFQDAGFRDVRLVVPKWQLAKASKVQFMHYVQKLLSLSLLQAIPSSTMDGKEVDPYNERFMVALALDFDCIIVSNDEGRNLAQASQKWMAIASKRELPFTFNGADLMVPPEPLGGNGPTLDEFLKK",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/9s2d_B/9s2d_B_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/9s2d_B/9s2d_B_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/9s2d_B/9s2d_B_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.5487435127671223,
+        "atoms": 721
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 1.95667119122004,
+        "atoms": 721
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.5934218383381404,
+        "atoms": 426
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.4818497839223446,
+        "atoms": 295
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.3908646379014094,
+        "atoms": 732
+      }
+    },
+    {
+      "protein_id": "7x9z_A",
+      "residues": 144,
+      "sequence_recovery": 0.7291666666666666,
+      "native_sequence": "MVISEKVRKALNDQLNREIYSSYLYLSMATYFDAEGFKEFAHWMKKQAQEELTHAMKFYEYIYERGGRVELEAIEKPPSNWNGIKDAFEAALKHEEFVTQSIYNILELASEEKDHATVSFLKWFVDEQVEEEDQVREILDLLEK",
+      "predicted_sequence": "MVISEKVRKALNDLKNAEIYSSYLLLSMAEYCDAEGFKELRHWMKRYAQEELTHEMKLKELIYEIGGRPELPQIEKLPPNWNGQKAAYIAALKHEEFVADSIYNVLELASEEKDHILAEFLKWFVDELRELLDRVREIYDLLRG",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/7x9z_A/7x9z_A_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/7x9z_A/7x9z_A_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/7x9z_A/7x9z_A_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.6551122299246546,
+        "atoms": 632
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 1.9670987461880878,
+        "atoms": 632
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.6894221137515377,
+        "atoms": 457
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.5619648637184742,
+        "atoms": 175
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.3059627440024392,
+        "atoms": 576
+      }
+    },
+    {
+      "protein_id": "1sqq_K",
+      "residues": 54,
+      "sequence_recovery": 0.5370370370370371,
+      "native_sequence": "MLTRFLGPRYRQLARNWVPTASLWGAVGAVGLVWATDWRLILDWVPYINGKFKK",
+      "predicted_sequence": "MLQTFLGPRYFQLARNWFPTAFAFGLIGALGLLTATKTDRVAKMLPPAAGKYKK",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/1sqq_K/1sqq_K_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/1sqq_K/1sqq_K_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/1sqq_K/1sqq_K_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 2.498366366275227,
+        "atoms": 231
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.9541309392378103,
+        "atoms": 231
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 2.2955683766832533,
+        "atoms": 102
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 2.6477444297926147,
+        "atoms": 129
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.5228042610064645,
+        "atoms": 216
+      }
+    },
+    {
+      "protein_id": "8ik1_A",
+      "residues": 204,
+      "sequence_recovery": 0.6666666666666666,
+      "native_sequence": "DGEIDIVALGDSLTRGTGDESGKGYIGYMVDELRQQTDEPIRVTNLAIRGLRSDGLLRQLGQSEIQRQIAMADLIVMTIGGNDLFQGALEWNVKELDEAKRQYIANLDRIFALLRRLNSEAVIFAIGLYNAASDLDDAKRTSAIVRDWNFAAEVAAHYPNIVAVPTFDLFALHVNDYLYSDHFHPNKEGYKRIGERVASLITLT",
+      "predicted_sequence": "AGAIDIVALGDSLNAGLGDEDGDGGVGSMVIEIRLKTDENIRYTNLGIRGVSSDGLLRQLSEAEIQRQIAMADLIFSTIGTNDIFRGAFSTDIKELDEAKREYIANLERTFALLRTLRSEAVIVALSLPNVLTDLPDGKRTTAIVRDWNELDEAAANYPDIVAVPLTDLFVDHVADLLTADHHHPTAEGYKRISKRVAEKITLT",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/8ik1_A/8ik1_A_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/8ik1_A/8ik1_A_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/8ik1_A/8ik1_A_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.606897848459084,
+        "atoms": 782
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 1.9600111981463308,
+        "atoms": 782
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.4592357525943878,
+        "atoms": 516
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.860212543663753,
+        "atoms": 266
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.42310222901548133,
+        "atoms": 816
+      }
+    },
+    {
+      "protein_id": "5k7j_B",
+      "residues": 243,
+      "sequence_recovery": 0.6666666666666666,
+      "native_sequence": "PRYLKGWLKDVVQLSLRRPSFRASRQRPIISLNERILEFNKRNITAIIAEYKRKSPSGLDVERDPIEYSKFMERYAVGLSILTEEKYFNGSYETLRKIASSVSIPILMADFIVKESQIDDAYNLGADTVLLIVKILTERELESLLEYARSYGMEPLIGINDENDLDIALRIGARFIGIHSDHETLNKENQRKLISMIPNVVKVAAHGISERNEIEELRKLGVNAFLIGSSLMRNPEKIKEFIL",
+      "predicted_sequence": "PLTLTGWLKDVVQLWLKKPVEREVRQRPKISVSERILEKKKENIKVFLAQVKRKSPSGLILEADPRELSKKWEQYAIGITVEIVEELFNGSYEDTRKIAKSMSLPILMALFIVNESQIDLAYNLGADEVKLYVNLMTEKELESLLEYARSYGMTPLIGVNDKNDLDIALEFGARFIGTEYPHYLKGLENQRKLISKISNKIRIADDGVSERNEIAELRKLGVNAFLVGDSLMRNPEKIKEFIE",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/5k7j_B/5k7j_B_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/5k7j_B/5k7j_B_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/5k7j_B/5k7j_B_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.7215391629363432,
+        "atoms": 976
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.173348686064422,
+        "atoms": 975
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.6141278069573353,
+        "atoms": 637
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.907076633295043,
+        "atoms": 339
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.38197247437656984,
+        "atoms": 972
+      }
+    },
+    {
+      "protein_id": "5xrz_H",
+      "residues": 184,
+      "sequence_recovery": 0.6902173913043478,
+      "native_sequence": "CFGQCQYTAEEYQAIQKALRQRLGPEYISSRMAGGGQKVCYIEGHRVINLANEMFGYNGWAHSITQQNVDFVDLNNGAFYVGVCAFVRVQLKDGSYHEDVGYGVSEGLASKALSLEKARKEAVTDGLKRALRSFGNALGNCILDKDYLRSLNKLPRQLPLEVDLTKAKRQDLEPSVEEARYNSC",
+      "predicted_sequence": "DFGQCQYTAEEHQAIQKALAQRPGPDLIQKEMLAGGPPLYYLTGHRVENLANEMFGYNGYAVSIAQFDVLYTDLNNGSFYHGARAVVRVQLKDGDYHSSEGIGVVEGLASEAESLEKARKEAVSNGLKRALRSLGPRLGNCILDKDYLRRLMMLPRPPPVERDLTKVPRQDTEPSLEEARYNAE",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/5xrz_H/5xrz_H_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/5xrz_H/5xrz_H_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/5xrz_H/5xrz_H_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.7043447523873396,
+        "atoms": 706
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.351977267886027,
+        "atoms": 706
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.6806393715999461,
+        "atoms": 478
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.7530026788134363,
+        "atoms": 228
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.39556186570800245,
+        "atoms": 736
+      }
+    },
+    {
+      "protein_id": "9m3l_A",
+      "residues": 157,
+      "sequence_recovery": 0.5605095541401274,
+      "native_sequence": "STGDYWIVYGKGERYNNEVFVANATGILQQPKGIQSAQIIQLFEDRSMPTLTAYEVQFKCKERRVRFDNARAMRRIDNVITNVKTVDGWIDPEKYDYWLQRSFAFVCAPAIRDNNQMLPLGKMPIARMVQTVQAMFVELQGVQAKKQTMRDLDAMLG",
+      "predicted_sequence": "SYWDTYIAYKEGNSYNREFYVAFETGILSTPNGNKTAKVILVNLDRSMPTYSAFEVQFKCKNKEMRFLFARAQNRIDNKVTNVKTTDGWVDPAKKKYWFQRSFAFYDEPAGRPGNTTLKLGKMTKAEMVEAIENMLNELQGRQGKKQNMRDLDAMAR",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/9m3l_A/9m3l_A_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/9m3l_A/9m3l_A_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/9m3l_A/9m3l_A_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.761461522746283,
+        "atoms": 642
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.297796761898332,
+        "atoms": 642
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.7141738066714753,
+        "atoms": 353
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.8175528231189129,
+        "atoms": 289
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.3984586601217373,
+        "atoms": 628
+      }
+    },
+    {
+      "protein_id": "9s2d_A",
+      "residues": 162,
+      "sequence_recovery": 0.5185185185185185,
+      "native_sequence": "TGTQRFKEALQDPFTLCLANVPGQPDLRHIVIDGSNVAMVHGLQHYFSSRGIAIAVQYFWDRGHRDITVFVPQWRFSAKVRESHFLQKLYSLSLLSLTPDDRFMVKLAEETDGIIVSNESEKWMAIIRERLLPFTFVGNLFMVPDDPLGRNGPTLDEFLKKP",
+      "predicted_sequence": "TSVQRFKEIFFIPFTLSLPKKASRPDERKVYISGSNVLMKSDLDMFVSSRGIAIILAYCVDRGFDDIRVYVPKWQLDPDQQEVDALQKLYELGLIVIPEQERFFVKLAKQQGGIILGPGSEKWRKIIRERLIPFTFNGPSLMVPEKLLGSNGPSLDEFLKAD",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/9s2d_A/9s2d_A_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/9s2d_A/9s2d_A_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/9s2d_A/9s2d_A_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.6403730507806873,
+        "atoms": 640
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.1356292569165762,
+        "atoms": 640
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.6391166396952401,
+        "atoms": 345
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.6418412561938667,
+        "atoms": 295
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.440996785118068,
+        "atoms": 648
+      }
+    },
+    {
+      "protein_id": "8qu5_N",
+      "residues": 205,
+      "sequence_recovery": 0.6,
+      "native_sequence": "KPKLRFIERAPLVPKVRREPKNLSDIRGPSTEATEFTEGNFAILALGGGYLHWGHFEMMRLTINRSMDPKNMFAIWRVPAPFKPITRKSVGHRMGGGKGAIDHYVTPVKAGRLVVEMGGRCEFEEVQGFLDQVAHKLPFAAKAVSRGTLEKMRKDQEERERNNQNPWTFERIATANMLGIRKVLSPYDLTHKGKYWGKFYMPKRV",
+      "predicted_sequence": "EVQLDPPRPAPKVPKTEPEPLNYARLIGPPTEDPELRGGNFMIVALGGGWINVGHYEMMRETINRKMDPKNMDVKIDVPAPTEPEYRKSAGHRMGGGQGAVDSYVTPVKAGRPIVRMGGRCEPEEVQGLLDQVASKLPFRLQALSRGTLEKMRKDQEERIRNTVFPWPHKRIATSDSLGIRKKLVEQALIVNGRKEGWYYRPNRL",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/8qu5_N/8qu5_N_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/8qu5_N/8qu5_N_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/8qu5_N/8qu5_N_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.8636257440270054,
+        "atoms": 834
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.555588655559392,
+        "atoms": 834
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.788571426302877,
+        "atoms": 446
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.9463274106421256,
+        "atoms": 388
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.4856723557763492,
+        "atoms": 820
+      }
+    },
+    {
+      "protein_id": "3r5v_A",
+      "residues": 175,
+      "sequence_recovery": 0.7257142857142858,
+      "native_sequence": "MNPFHELEPGPEVPEVVYALIEIPKGSRNKYELDKKTGLLKLDRVLYSPFFYPVDYGIIPQTWYDDGDPFDIMVIMREPVYPLTIIEARPIGIMKMEDSGDKDWKVLAVPVEDPYFNDWKDISDVPKAFLDEIAHFFQRYKELQGKTTKIEGWGNAEEAKREILRAIEMYKEKFG",
+      "predicted_sequence": "MSPFCTLEPGPDAPRVVYALIEIPAGETNYYELNRETGLAKFDRVLIAPIPYPFHYGSIPQTWQDDGDPISIMIITREPLKPGTIIEARVIGLMKMEVEGNKDWFVLAVPVEHPYENYWKEFSDVPKAFLDEIAHFFQRYKEDQGKLAEIEGWGPAEEAKREVLRAIEMYKELFG",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/3r5v_A/3r5v_A_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/3r5v_A/3r5v_A_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/3r5v_A/3r5v_A_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.6335113231482414,
+        "atoms": 739
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 1.9556231486476088,
+        "atoms": 739
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.5998264102980426,
+        "atoms": 528
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.7149063515856997,
+        "atoms": 211
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.3414564471770564,
+        "atoms": 700
+      }
+    },
+    {
+      "protein_id": "5ipe_A",
+      "residues": 115,
+      "sequence_recovery": 0.6695652173913044,
+      "native_sequence": "RPGGDTIFGKIIRKEIPAKIIFEDDRCLAFHDISPQAPTHFLVIPKKHISQISVAEDDDESLLGHLMIVGKKCAADLGLNKGYRMVVNEGSDGGQSVYHVHLHVLGGRQMHWPPG",
+      "predicted_sequence": "ALGGGTVFGKILNQEIRADILFEDPQCLAFHDPFPQYPTHFLVLPKKHISSISVLEDDDEAAIGHVMTVGKYCAAQLGINKGYRVRINTGSAGGQTVNMVHLHVLGGKQMHSGGG",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/5ipe_A/5ipe_A_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/5ipe_A/5ipe_A_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/5ipe_A/5ipe_A_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.8555193858831456,
+        "atoms": 432
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.5138740060167,
+        "atoms": 431
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.6741840684220413,
+        "atoms": 269
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 2.12114311322617,
+        "atoms": 163
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.48580694419345166,
+        "atoms": 460
+      }
+    },
+    {
+      "protein_id": "1rbs_A",
+      "residues": 155,
+      "sequence_recovery": 0.6580645161290323,
+      "native_sequence": "MLKQVEIFTDGSCLGNPGPGGYGAILRYRGREKTFSAGYTRTTNNRMELMAAIVALEALKEACEVILSTDSQYVRQGITQWIHNWKKRGWKTADKKPVKNVDLWQRLDAALGQHQIKWEWVKGHAGHPENERCDELARAAAMNPTLEDTGYQVEV",
+      "predicted_sequence": "MLAGVRLFMDGSAVNNPGPGGFGAVVEYEGREKLFSAGYPRYTNARMEKMAAIVALEALKEDKEVVLETNSERVWQGLTQHIHNWKQYGWQTADKKPVRNYDDWKRLDAALGQAQIKWEWVPGDRQHPEVERLDELTRAALMRPQEPDSGYDENE",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/1rbs_A/1rbs_A_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/1rbs_A/1rbs_A_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/1rbs_A/1rbs_A_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.7217018021744432,
+        "atoms": 613
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.3078240399346845,
+        "atoms": 612
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.665668378505127,
+        "atoms": 395
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.8188378112274732,
+        "atoms": 218
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.391946196881262,
+        "atoms": 620
+      }
+    },
+    {
+      "protein_id": "5gaf_P",
+      "residues": 117,
+      "sequence_recovery": 0.6666666666666666,
+      "native_sequence": "MDKKSARIRRATRARRKLQELGATRLVVHRTPRHIYAQVIAPNGSEVLVAASTVEKAIAEQLKYTGNKDAAAAVGKAVAERALEKGIKDVSFDRSGFQYHGRVQALADAAREAGLQF",
+      "predicted_sequence": "VDPNSAFIRRATRARRKLQELGVTVLVIHRTEDHIYLEVIEPNGSKVLYTTSNAEKTIREQSERFGNKDAAILVGKAVAERAKEYGIKDVVIDREGFKLKGRADALADALRKAGLPF",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/5gaf_P/5gaf_P_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/5gaf_P/5gaf_P_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/5gaf_P/5gaf_P_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.8366725066596585,
+        "atoms": 432
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.2164978582400994,
+        "atoms": 431
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.8415510601168634,
+        "atoms": 285
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.8271769792465427,
+        "atoms": 147
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.3529106180129255,
+        "atoms": 468
+      }
+    },
+    {
+      "protein_id": "8fha_D",
+      "residues": 143,
+      "sequence_recovery": 0.6293706293706294,
+      "native_sequence": "YVNPEGKISTTVKADDSTASETALAEVAEGVAVVDTIHYTGLVEGKEYDVTGTLYEVKDGVVVGDAKATKTAVLTAGKDGKGDWELDFGTVEGLEVGKSYVVYEKAVSKENLVDADGDKKPESKQEVKHENPADKSQTFIIKE",
+      "predicted_sequence": "LPNPFGRLSTTVKAQQSKLSNTAPVYVSASPSVVVVIHSTGLVEGTEYDVTGTLYSVKDGVRQGNAILETTAVFTSSKDGSGDWEIDFGTVEGLEDGKNYTLFFKAVSKTNKVDADGDASPTSVQEVKIVNPKDPSLTLIIKE",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/8fha_D/8fha_D_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/8fha_D/8fha_D_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/8fha_D/8fha_D_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.5299415964857244,
+        "atoms": 482
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.02832069391101,
+        "atoms": 482
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.3600131830430349,
+        "atoms": 295
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.7650575773551063,
+        "atoms": 187
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.4301591015464004,
+        "atoms": 572
+      }
+    },
+    {
+      "protein_id": "7g9d_B",
+      "residues": 235,
+      "sequence_recovery": 0.6978723404255319,
+      "native_sequence": "SMEMDEKDFAADSWSLAVDSSFLQQHKKEVMKQQDVIYELIQTELHHVRTLKIMTRLFRTGMLEELHLEPGVVQGLFPCVDELSDIHTRFLSQLLERRRQALCPGSTRNFVIHRLGDLLISQFSGPSAEQMCKTYSEFCSRHSKALKLYKELYARDKRFQQFIRKVTRPAVLKRHGVQECILLVTQRITKYPLLISRILQHSHGIEEERQDLTTALGLVKELLSNVDEGIYQLEK",
+      "predicted_sequence": "LDVMEEKDFSAKSVPLAMPSSFLRQLTPEVLKRQDVIYELIQKLLKHVRTLKRMHRRFFTSALEVNHLEPGTIDGLFPNIDELSEIHTRFIRQLLNRRRQALVPDSDRNFVIHRLGDILCSQFSGPVGEHMKKTYSEFKSRHSKALKLYKELYAQDKRFQQFLRQVYDKASLKRFGLVEIILLVTHRILDYPLDIERILQHSHGTEVERQDLTRALGLIKEWLSNVDEGDHQIET",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/7g9d_B/7g9d_B_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/7g9d_B/7g9d_B_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/7g9d_B/7g9d_B_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.6614552273681518,
+        "atoms": 983
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.0562163926915002,
+        "atoms": 983
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.675506296180805,
+        "atoms": 706
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.6250934229688394,
+        "atoms": 277
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.34303352462732123,
+        "atoms": 940
+      }
+    },
+    {
+      "protein_id": "6txn_C",
+      "residues": 164,
+      "sequence_recovery": 0.7682926829268293,
+      "native_sequence": "MMVISEKVRKALNDQLNREIYSSYLYLSMATYFDAEGFKGFAHWMKKQAQEELTHAMKFYEYIYERGGRVELEAIEKPPSNWNGIKDAFEAALKHEEFVTQSIYNILELASEEKDHATVSFLKWFVDEQVEEEDQVREILDLLEKANGQMSVIFQLDRYLGQRE",
+      "predicted_sequence": "MHTISEKARKLLNAQLNREVESSYLYESMAKYFKAKGFEGFAHWLKKQAQEEREHAMKMYELIYRRGGKVELEAVEKPPSSWSSIEDAFEAALKHEEFVTQSIYNILKLASQEKDHATVSFLKWYVDVCVEEEDQVREILSLLEKLEGQASVIFQLDRFYGANL",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/6txn_C/6txn_C_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/6txn_C/6txn_C_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/6txn_C/6txn_C_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.722957865363883,
+        "atoms": 711
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.2542017142700335,
+        "atoms": 710
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.6700512333658155,
+        "atoms": 538
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.877987425442012,
+        "atoms": 173
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.30781654694355004,
+        "atoms": 656
+      }
+    },
+    {
+      "protein_id": "2w81_A",
+      "residues": 115,
+      "sequence_recovery": 0.46956521739130436,
+      "native_sequence": "CDYPDIKHGGLYHENMRRPYFPVAVGKYYSYYCDEHFETPSGSYWDHIHCTQDGWSPAVPCLRKCYFPYLENGYNQNHGRKFVQGKSIDVACHYALKAQTVTCMENGWSPTPRCI",
+      "predicted_sequence": "CDWPTLNNCVVEHEHMQLPDVPLEVGSYYTYYCPDGYENRSGSSEYEIRCTRDGWYPPIPCERKCYRLDHTNCENQNRGEEFYYGESIIVACNNGGNGSTVRCTEKGWNPDPGCI",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/2w81_A/2w81_A_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/2w81_A/2w81_A_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/2w81_A/2w81_A_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 2.2233296185484517,
+        "atoms": 483
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.912818996938974,
+        "atoms": 483
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 2.03991989876058,
+        "atoms": 200
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 2.344310058967969,
+        "atoms": 283
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.5866959538644445,
+        "atoms": 460
+      }
+    },
+    {
+      "protein_id": "9zcd_x",
+      "residues": 83,
+      "sequence_recovery": 0.5542168674698795,
+      "native_sequence": "MARSLKKGPFVHYKLDKKVQENVESGKNSVVKTWSRASMITPDFVGQTIAVHNGRQFVPVYVTENMVGHKLGEFSPTRSFRGH",
+      "predicted_sequence": "PHESGKRPVFVHYNADEKVQEAIENGKNGVIETQNLAVQIRPDFIGLTVAVHNGRQFIEVVVTENMVGHKVGEFTSARASPDP",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/9zcd_x/9zcd_x_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/9zcd_x/9zcd_x_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/9zcd_x/9zcd_x_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.8467586680790211,
+        "atoms": 300
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.280937121808892,
+        "atoms": 300
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.738966180745004,
+        "atoms": 164
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.9689102463816186,
+        "atoms": 136
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.4685149434573653,
+        "atoms": 332
+      }
+    },
+    {
+      "protein_id": "4wkz_B",
+      "residues": 184,
+      "sequence_recovery": 0.6195652173913043,
+      "native_sequence": "NNAVINVDEMNEAFKDVPDLEGEGAHITLSNTTAKPGEMAEVTMSVSNADMQWNMCGIHIIYPDILKPEMKDPEERTVAFQKGDALEAATGIVCMEWQEGLPPVLTENKKGCLFLTAMFSGNQGGEGDMATFRFKVPDNAEPGAVYNLGYYYMNTDLFINEQNIPTYQKYAFTHMEGGTITVEL",
+      "predicted_sequence": "DNSSLNKDLMNEKFKDVTNGPGNGAHIRLSNTTAKPGQMADITLELENAKGKYVKCGIWIVYPAILKPVESDAENRTVPFQPGDALENASSQRATKLNEDLPPVLAENKKGCLFLTSMASGNQGGSGTLATFRLKMPDDAKTGTVYQLGYYLMKNDLFVNESNNPTYQVYAFIHMEGGTITVKP",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/4wkz_B/4wkz_B_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/4wkz_B/4wkz_B_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/4wkz_B/4wkz_B_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.6792509471710513,
+        "atoms": 687
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.1828452373334213,
+        "atoms": 687
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.6371355524652755,
+        "atoms": 412
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.7404413768005935,
+        "atoms": 275
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.42244574965726683,
+        "atoms": 736
+      }
+    },
+    {
+      "protein_id": "3wpr_C",
+      "residues": 218,
+      "sequence_recovery": 0.7018348623853211,
+      "native_sequence": "KQIEDKIEEILSKIYHIENEIARIKKLIKAVGNQVVTTQTTLVNSLGGNAKVNADGTITGPTYNVAQGNQTNVGDALTALDNAINTAATTSKSTVSNGQNIVVSKSKNADGSDNYEVSTAKDLTVDSVKAGDTVLNNAGITIGNNAVVLNNTGLTISGGPSVTLAGIDAGNKTIQNVANAVNATDAVNKGQMKQIEDKIEEILSKIYHIENEIARIKK",
+      "predicted_sequence": "AAIAQYIEEILSKIPHIENEIARIKKLIAAVGNQVRDNQTVLVNSTGGTAKVNADGTITGPTYNLGDGTKTNNGDALYAADNAANLAAYLAISTYSDGPNTNKSLTTNSNGSDVTEESTAPIPAVDSVKDGESKIKTGGITIGNNAVTSENTGITIKGGPSVTLAGIDAGNKTIQNVANATNSTKAVNKGQMAQIEDKIEEILSAIYHIENEIAAIKA",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/3wpr_C/3wpr_C_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/3wpr_C/3wpr_C_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/3wpr_C/3wpr_C_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 2.1436964318922733,
+        "atoms": 685
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.63629526962201,
+        "atoms": 685
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 2.230394889518792,
+        "atoms": 479
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.9270806768901703,
+        "atoms": 206
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.9207736783130438,
+        "atoms": 872
+      }
+    },
+    {
+      "protein_id": "1n3t_A",
+      "residues": 221,
+      "sequence_recovery": 0.7285067873303167,
+      "native_sequence": "PSLSKEAALVHEALVARGLETPLRPPVHEMDNETRKSLIAGHMTEIMQLLNLDLADDSLMETPHRIAKMYVDEIFSGLDYANFPKITLIENKMKVDEMVTVRDITLTSTCEHHFVTIDGKATVAYIPKDSVIGLSKINRIVQFFAQRPQVQERLTQQILIALQTLLGTNNVAVSIDAVHYSVKARGIRDATSATTTTSLGGLFKSSQNTRHEFLRAVRHHN",
+      "predicted_sequence": "PSLSVEAALVHDALVERGLPAPWREPVHPMDNETRKSLIAGNMTEIMQLLNLDLADDSLMEQHHRIAKMYQDEKFSGLDPLNFPKIIRSERKVKVDEMVTVRDIEVTGTNEFALDTQDGLATVAYIPTDSVIGLSQINRVVAFFTERLQVQERLTQQIRIALETALGTEDVAVSGEAVHYSATARGIRASTASVTTTSLGGLFQAYPNVRHEFLREKRLFN",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/1n3t_A/1n3t_A_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/1n3t_A/1n3t_A_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/1n3t_A/1n3t_A_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.7511079975598536,
+        "atoms": 849
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.1732023720742033,
+        "atoms": 848
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.7170587124061303,
+        "atoms": 620
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.8401348151970922,
+        "atoms": 229
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.45526417112230555,
+        "atoms": 884
+      }
+    },
+    {
+      "protein_id": "5xrz_F",
+      "residues": 184,
+      "sequence_recovery": 0.6684782608695652,
+      "native_sequence": "CFGQCQYTAEEYQAIQKALRQRLGPEYISSRMAGGGQKVCYIEGHRVINLANEMFGYNGWAHSITQQNVDFVDLNNGAFYVGVCAFVRVQLKDGSYHEDVGYGVSEGLASKALSLEKARKEAVTDGLKRALRSFGNALGNCILDKDYLRSLNKLPRQLPLEVDLTKAKRQDLEPSVEEARYNSC",
+      "predicted_sequence": "AFGQVQYTAEEVQAIQKALRHRPGKEHIKEKMDGGGQVEYYFTGWRLINLANRLLGPNAFAHKIERLNVLFVDLNNGVFYLTAMCFVRVQLKDGSYLEDHGVGVAFGLASKALALEKARKEAVHLGLKRALRAFGNALGPCILDKDDQRSLAKLPIREPPETPVTKALRTDLEPSVEEKEYNLK",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/5xrz_F/5xrz_F_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/5xrz_F/5xrz_F_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/5xrz_F/5xrz_F_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.7230167311069777,
+        "atoms": 706
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.3474101643241676,
+        "atoms": 706
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.6153329027876664,
+        "atoms": 463
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.9114741674630942,
+        "atoms": 243
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.4029197321981658,
+        "atoms": 736
+      }
+    },
+    {
+      "protein_id": "5eki_B",
+      "residues": 71,
+      "sequence_recovery": 0.5633802816901409,
+      "native_sequence": "QDCCLKYSQRKIPAKVVRSYRKQEPSLGCSIPAILFLPRKRSQAELCADPKELWVQQLMQHLDKTPSPQKP",
+      "predicted_sequence": "MPHCLKYSQRIIPLELIEAYRKSFPSDGCSRDAVKFEPREPSQAEICADPKEKWCQQLKRHLRECPGPIPP",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/5eki_B/5eki_B_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/5eki_B/5eki_B_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/5eki_B/5eki_B_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.8664998871528968,
+        "atoms": 285
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.507873856644073,
+        "atoms": 285
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.71258348966357,
+        "atoms": 163
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 2.0542231192329594,
+        "atoms": 122
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.4574332718654392,
+        "atoms": 284
+      }
+    },
+    {
+      "protein_id": "4rrr_A",
+      "residues": 143,
+      "sequence_recovery": 0.6433566433566433,
+      "native_sequence": "MRVLLIHSDYIEYEVKDKALKNPEPISEDMKRGRMEEVLVAFISVEKVDEKNPEEVSLKAIEEISKVAEQVKAENVFVYPFAHLSSELAKPSVAMDILNRVYQGLKERGFNVGKAPFGYYMAFKISCKGHPLAELSRTIVPEE",
+      "predicted_sequence": "MKLLLIKADKIEYEVEDPAKTNPEEIAEDEKKARAEDVLVLLICLDKSNEKNPEEVSLKAIEEISKVAEQVNCENVVVIPNTHMSKQEAKPSVAMDILNRVYQGLKERGFKVQYLPMGQYMKFNLERLGRPDAKLSITIKPDE",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/4rrr_A/4rrr_A_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/4rrr_A/4rrr_A_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/4rrr_A/4rrr_A_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.6634901860258824,
+        "atoms": 565
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.1356961536469634,
+        "atoms": 565
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.5783479385336838,
+        "atoms": 357
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.8002614442761211,
+        "atoms": 208
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.35010689733085054,
+        "atoms": 572
+      }
+    },
+    {
+      "protein_id": "4qtr_B",
+      "residues": 54,
+      "sequence_recovery": 0.5555555555555556,
+      "native_sequence": "TAFSEEQKKALDLAFYFDRYLTPEWRRYLSQRLGLNEAQIKIWFQNKRAKIKKS",
+      "predicted_sequence": "RVFTIQQVKFLNKAFRLQKYLTPERIRELSQRFGLTEKQVKVWFQNKRAKRKRR",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/4qtr_B/4qtr_B_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/4qtr_B/4qtr_B_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/4qtr_B/4qtr_B_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.6037541008841945,
+        "atoms": 197
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.139580989737796,
+        "atoms": 197
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.3265012967521033,
+        "atoms": 108
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.8862363022907163,
+        "atoms": 89
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.30640585430352496,
+        "atoms": 216
+      }
+    },
+    {
+      "protein_id": "8cus_B",
+      "residues": 201,
+      "sequence_recovery": 0.7512437810945274,
+      "native_sequence": "MEELFKKHKIVAVLRANSVEEAKEKALAVFRGGVHLIEITFTVPDADTVIKELSFLKEKGAIIGAGTVTSLEQCQKAVESGAEFIVSPHLDPEISKFCKINGVFYMPGVMTPTELVKAMKLGHTILKLFPGEVVGPQFVKAMKGPFPNVKFVPTGGVNDQNVCEWFKAGVLAVGVGSALVKGTPEQVEMLAVLFVAKIAGC",
+      "predicted_sequence": "MEELFKKHKILAFIRANSAEEAKKKALALFRANIHHLEISPRVPDADTVIKQLKFLKEKGAIIGVGTVTSIEQCQKAVEAGADVIVSPHLDPEIHKFARINGVVYVPGVMTPTELVEAMELGHTILKLFPGQVRGPQFWKAMKDPFPNVKAVPTGGITAENYCEHFKAGVDMVGVGPVLVAGRPEHREMKAVLFVEKIQGC",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/8cus_B/8cus_B_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/8cus_B/8cus_B_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/8cus_B/8cus_B_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.4757851031593257,
+        "atoms": 709
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 1.8384002450000627,
+        "atoms": 709
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.4554062255493145,
+        "atoms": 531
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.5349716868248522,
+        "atoms": 178
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.376009542200981,
+        "atoms": 804
+      }
+    },
+    {
+      "protein_id": "3bfk_A",
+      "residues": 159,
+      "sequence_recovery": 0.6855345911949685,
+      "native_sequence": "DYYDYLFKIVLIGDSGVGKSNLLSRFTRDEFNLGVEFATKSIQLNNKIIKAQIWDTAITSAYYRGAVGALLVYDITKKNSFENIEKWLKELRDNADSNIVILLVGNKSDLKHLRVINDNDATQYAKKEKLAFIETSALEATNVELAFHQLLNEIYNVRQ",
+      "predicted_sequence": "INFDYIFKVPLIGDSGVGKSNLLERFTKKEFLPKSQSRTISIYINNKIIKLQILTIGKISALYKGAVGLILTFDSTEKNSFEDIEKWLKELQDNADSNTVILPVGNKSDLKHLKVINDNKITKYAREEKLAFIETSALRKLNVELAFHQLLNEVYKLRQ",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/3bfk_A/3bfk_A_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/3bfk_A/3bfk_A_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/3bfk_A/3bfk_A_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.6751481851773495,
+        "atoms": 636
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.0483176980088365,
+        "atoms": 636
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.4905400255679528,
+        "atoms": 431
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 2.0086840900282885,
+        "atoms": 205
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.4056825998581987,
+        "atoms": 636
+      }
+    },
+    {
+      "protein_id": "5qru_A",
+      "residues": 171,
+      "sequence_recovery": 0.6081871345029239,
+      "native_sequence": "ELRVGLEESELWLRFKELTNEMIVTKNGRRMFPVLKVNVSGLDPNAMYSFLLDFVAADNHRWKYVNGEWVPGGKPEPQAPSCVYIHPDSPNFGAHWMKAPVSFSKVKLTNKLNGGGQIMLNSLHKYEPRIHIVRVGGPQRMITSHCFPETQFIAVTAYQNEEITALKIKYN",
+      "predicted_sequence": "ELKVGVENVEKWLEFRSLENYLWVDKNGSSGWPDLKFNVTGLDPNAMYSFYILFDKATSHIYKCVNGEWQLGGKPEPQARSNLVIHPFDPCAKDKWMKRPVSFSKVKLSNKDNGGGDITLNKLHRYAPTIHIEKVGHKQQMIRKHCFPEIQAIAVRAPTNEEITAHKQKYS",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/5qru_A/5qru_A_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/5qru_A/5qru_A_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/5qru_A/5qru_A_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.6469172438106192,
+        "atoms": 685
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.017075579288954,
+        "atoms": 685
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.5864361180489577,
+        "atoms": 406
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.7311586859717236,
+        "atoms": 279
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.421999748678395,
+        "atoms": 684
+      }
+    },
+    {
+      "protein_id": "4n4o_D",
+      "residues": 57,
+      "sequence_recovery": 0.543859649122807,
+      "native_sequence": "SSLAPISAKDMLDYLACKDKKPTDVVKSHTEVENGKIVRVKCGDIVALVQKAREQSG",
+      "predicted_sequence": "PKRAPLSAKEMTLVRACENKKPAEVVKCHTKIENGKIVKIKCGEILRLVEKARKLAT",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/4n4o_D/4n4o_D_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/4n4o_D/4n4o_D_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/4n4o_D/4n4o_D_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.5733780136088193,
+        "atoms": 201
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 1.911772032945015,
+        "atoms": 201
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.5444743654502582,
+        "atoms": 104
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.6037888999099563,
+        "atoms": 97
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.37201158011085694,
+        "atoms": 228
+      }
+    },
+    {
+      "protein_id": "3von_D",
+      "residues": 137,
+      "sequence_recovery": 0.6642335766423357,
+      "native_sequence": "VKVPRNFRLLEELEEGQKGVGDGTVSWGLEDDEDMTLTRWTGMIIGPPRTNYENRIYSLKVECGPKYPEAPPSVRFVTKINMNGINNSSGMVDARSIPVLAKWQNSYSIKVVLQELRRLMMSKENMKLPQPPEGQTY",
+      "predicted_sequence": "VEIPRKLRLLESLEKGMLGVGDGAVALGLVDKEDKHLDKWYGEITGPPKTNYENRVFPLTVEAHQKYPEVPPSLRFVTKINMQGINEKSGQVDAKKIPVMAEWQNSASIKLVLQELVQLMEEKENMKLPQPPCGRTY",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/3von_D/3von_D_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/3von_D/3von_D_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/3von_D/3von_D_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.7054797968489068,
+        "atoms": 544
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.169630089219049,
+        "atoms": 543
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.5969067845648415,
+        "atoms": 345
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.8789007202968704,
+        "atoms": 199
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.3958406119178749,
+        "atoms": 548
+      }
+    },
+    {
+      "protein_id": "8cbs_C",
+      "residues": 52,
+      "sequence_recovery": 0.38461538461538464,
+      "native_sequence": "NFRVYYRDSRDPVWKGPAKLLEKGEGAVVIQDNSDIKVVPRRKAKIIRDYGK",
+      "predicted_sequence": "MVKAFYTLSKDTVLLGPFKLLEKGEGEVQIKYKRNWIEVPSSYVKEIPPLES",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/8cbs_C/8cbs_C_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/8cbs_C/8cbs_C_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/8cbs_C/8cbs_C_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.8201266207739426,
+        "atoms": 219
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.8307594742247604,
+        "atoms": 219
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.3595853696006523,
+        "atoms": 70
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 2.0002070582178604,
+        "atoms": 149
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.5537115336916815,
+        "atoms": 208
+      }
+    },
+    {
+      "protein_id": "5fbq_B",
+      "residues": 162,
+      "sequence_recovery": 0.6481481481481481,
+      "native_sequence": "DYLFKVVLIGDSGVGKSNLLSRFTRNEFNLESKSTIGVEFATRSIQVDGKTIKAQIWDTRAITSAYYRGAVGALLVYDIAKHLTYENVERWLKELRDHADSNIVIMLVGNKSDLRHLRAVPTDEARAFAEKNGLSFIETSALDSTNVEAAFQTILTEIYRIV",
+      "predicted_sequence": "DTLFSVVLIGEPGVGKSYLLSAATRGSFNPEDKETIGYEFLTKSIEVKGKTIKLQVIDAGSIPPDKYRGQEGALLVYDIYKHKTRSNVERWLKEIRDIADKDSKIMLIGNKSDLEDLRKVPTDELRAFLNKNGASFIETSAIESTNIEAAFDTVLTEKLKKE",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/5fbq_B/5fbq_B_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/5fbq_B/5fbq_B_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/5fbq_B/5fbq_B_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.5553426301437427,
+        "atoms": 555
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 1.9955766029701971,
+        "atoms": 555
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.4453784681804143,
+        "atoms": 370
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.7547176208576922,
+        "atoms": 185
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.3973072414512224,
+        "atoms": 648
+      }
+    },
+    {
+      "protein_id": "3hrs_A",
+      "residues": 214,
+      "sequence_recovery": 0.6962616822429907,
+      "native_sequence": "TPNKEDYLKCLYELGTRHNKITNKEIAQLMQVSPPAVTEMMKKLLAEELLIKDKKAGYLLTDLGLKLVSDLYRKHRLIEVFLVHHLGYTTEEIHEEAEVLEHTVSDHFVERLDQLLDYPKACPHGGTIPAKGELLVEKHKLTLEEAKEKGDYILARVHDNFDLLTYLERNGLQVGKTIRFLGYDDFSHLYSLEVDGQEIQLAQPIAQQIYVEKI",
+      "predicted_sequence": "QLNKEDYVKNLYELGTRHDPLTLKEIAQLMQVSPPEVTSMMKKLLAEEILQKDKKEGYTLTDLGEKLVSDLYRKHQLIEVFVQHSLGYTIEEIHREAEVLLHTVSDHEIERLDQLLDNEKICPYGNPIYESGEVTDEKHRLKVEEAKEEGDYIISRLHSELDLIKRLERLGLQPGMTIRFLGKDEESGEVSLNVDGTEIQLLRPIASQFYVEVI",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/3hrs_A/3hrs_A_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/3hrs_A/3hrs_A_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/3hrs_A/3hrs_A_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.5859546940403744,
+        "atoms": 883
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 1.9513406673625058,
+        "atoms": 882
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.562576466318162,
+        "atoms": 613
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.6377937983007247,
+        "atoms": 270
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.3790692968113559,
+        "atoms": 856
+      }
+    },
+    {
+      "protein_id": "9e4w_J",
+      "residues": 88,
+      "sequence_recovery": 0.6590909090909091,
+      "native_sequence": "NAENFECLRESKLKRKVYEDLVKEATFVRVSPKSTVCVVTDHNSFEVIGTSSVYKVENFNDEIGRDTALSQALDSFIKFLAYSGELSD",
+      "predicted_sequence": "SLDEFDCFREQKLKRKLYEDFVKELSARRVSPKSFVCTVKDKNSHEVIGISSNIKIENFNDEIGRDRALSQALDSLTKHLTGKDELSD",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/9e4w_J/9e4w_J_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/9e4w_J/9e4w_J_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/9e4w_J/9e4w_J_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.5501391944218208,
+        "atoms": 346
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.2273862213510047,
+        "atoms": 346
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.368704515511383,
+        "atoms": 229
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.8545778830186734,
+        "atoms": 117
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.33757200468406573,
+        "atoms": 352
+      }
+    },
+    {
+      "protein_id": "9fks_o",
+      "residues": 44,
+      "sequence_recovery": 0.6136363636363636,
+      "native_sequence": "FDTMTVTKAAGALIGSLLFLLLMSWAASGIFHVGTAQAYTIPVE",
+      "predicted_sequence": "LSTMTVTKAAGALTGALLFLLLASTLDLGVSHLRRGLAYTHPVE",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/9fks_o/9fks_o_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/9fks_o/9fks_o_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/9fks_o/9fks_o_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.9643146527489486,
+        "atoms": 148
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.636592761629635,
+        "atoms": 148
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.869226363849385,
+        "atoms": 86
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 2.0890578771859363,
+        "atoms": 62
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.5258677985276531,
+        "atoms": 176
+      }
+    },
+    {
+      "protein_id": "2jd8_U",
+      "residues": 167,
+      "sequence_recovery": 0.7904191616766467,
+      "native_sequence": "MLSERMLKALNDQLNRELYSAYLYFAMAAYFEDLGLEGFANWMKAQAEEEIGHALRFYNYIYDRNGRVELDEIPKPPKEWESPLKAFEAAYEHEKFISKSIYELAALAEEEKDYSTRAFLEWFINEQVEEEASVKKILDKLKFAKDSPQILFMLDKELSARAPKLPG",
+      "predicted_sequence": "NLSEKMLKALNWQINRELYSAYLYKIMAAYFEELGLEGFANWMYAQAEEEIGHNLRLYNYIYDRNGRVELDQIPKPPKEWESPLQLFEAAYDHEKQISKALNELAAQAEEEKDESTREFLESFINELKEEEASIKKILDKLAKAQDNPHYLFMLLKELSAFAPKEEG",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/2jd8_U/2jd8_U_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/2jd8_U/2jd8_U_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/2jd8_U/2jd8_U_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.5857207030417022,
+        "atoms": 715
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.1596296010330605,
+        "atoms": 715
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.4561375792315336,
+        "atoms": 554
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.9674499907199887,
+        "atoms": 161
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.3427384079424376,
+        "atoms": 668
+      }
+    },
+    {
+      "protein_id": "4etr_A",
+      "residues": 121,
+      "sequence_recovery": 0.8099173553719008,
+      "native_sequence": "NLDDTLDVLNDLLQTSKDGEAGFHACAEDLRDPQLKAAMLEQSRDCAAAADELERIVLELGGKPEEAVLNECERGEDVAKHRYQAALEKSLPAEIHQVIERQYQGVLRHHDRVRALRDARA",
+      "predicted_sequence": "ELKDTKDVLNDLLQASRQGLAGFHTCAEDTGDPQLKILMVEQSRDCAAAADELNRYVLELGVELERAVLNECERGYDVAKHRYQAALEKSLPAEIHEVIERQYQGILRHHDEVRALRDARA",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/4etr_A/4etr_A_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/4etr_A/4etr_A_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/4etr_A/4etr_A_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.4907207613977582,
+        "atoms": 466
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 1.7394712554842389,
+        "atoms": 465
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.3888878556260893,
+        "atoms": 377
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.861288321509431,
+        "atoms": 89
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.34093659029935197,
+        "atoms": 484
+      }
+    },
+    {
+      "protein_id": "9tf5_A",
+      "residues": 117,
+      "sequence_recovery": 0.6495726495726496,
+      "native_sequence": "SEEELQVIQPDKSVSVAAGESAILHCTVTSLIPVGPIQWFRGAGPARELIYNQKEGHFPRVTTVSESTKRENMDFSISISNITPADAGTYYCVKFRKGSPDTEFKSGAGTELSVRAK",
+      "predicted_sequence": "SDPALQVVLPASSISVASGESAILHCTVTSSIPNGHIQWSRGPGPARQLLYSQHSGWDPRVTPVSESTKPETTSFSISLENLTPADAGTYYCVYRRVGNPDRVVETGAGTALSVVAP",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/9tf5_A/9tf5_A_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/9tf5_A/9tf5_A_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/9tf5_A/9tf5_A_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.5477015252260085,
+        "atoms": 426
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 1.9749187545038753,
+        "atoms": 426
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.2880247639584237,
+        "atoms": 245
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.8417728617149534,
+        "atoms": 181
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.4978203336430389,
+        "atoms": 468
+      }
+    },
+    {
+      "protein_id": "4yy3_S",
+      "residues": 84,
+      "sequence_recovery": 0.5595238095238095,
+      "native_sequence": "PRSLKKGVFVDDHLLEKVLELNAKGEKRLIKTWSRRSTIVPEMVGHTIAVYNGKQHVPVYITENMVGHKLGEFAPTRTYRGHGK",
+      "predicted_sequence": "MHIPKKGFAVSDHTVEKVLELKAYGQKNAVLDTARDNLITPSMVGKTVIVYDGKQTMPVYITPNMVGHKIGEFAPMRTLPGKGN",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/4yy3_S/4yy3_S_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/4yy3_S/4yy3_S_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/4yy3_S/4yy3_S_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 2.2424792638708015,
+        "atoms": 338
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.7702696066215164,
+        "atoms": 338
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.8617485844489006,
+        "atoms": 169
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 2.56735622455748,
+        "atoms": 169
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.6766232894391657,
+        "atoms": 336
+      }
+    },
+    {
+      "protein_id": "8etc_y",
+      "residues": 225,
+      "sequence_recovery": 0.6355555555555555,
+      "native_sequence": "ALRAQFENSNEIGVFSNLTNSYALVALGGSENFYSVFEAELGDVVPVVHTTIGGTRIIGRLTCGNRKGLLVPSSTTDNELQHLRNSLPDPVKIQRVDERLSALGNIVACNDYVALVHPDIERETEEIIADVLDVEVFRQTVAGNVLTGSYCALSNQGALVHPRTSIQEQDELSSLLQVPLVAGTINRGSDVIGAGLVVNDWCAFAGLDTTATELAVCESIFKLQD",
+      "predicted_sequence": "ILKIQFDQSNRIGSFSLATNSIALVAIGGSENFYSVFSDEFGDILKIVHVTIGGEERIGAIIAGLGKGLLVPSSTTDNELQHLRNELPKNTKIQRVNTRFSELGDIVVCTDTVALVNPDLEKQTLERIADVLDVEVFRQTVAGGVRPGSYCCLGVQGLIVHPDTSTQEQDELSNETDIPLVPGYANGGSDEMGSGLLITAKKAFTTPDTTATELAVLESLFRLSE",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/8etc_y/8etc_y_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/8etc_y/8etc_y_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/8etc_y/8etc_y_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.6927356088752508,
+        "atoms": 797
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.089648659711942,
+        "atoms": 797
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.5939753416093065,
+        "atoms": 485
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.8357381276430067,
+        "atoms": 312
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.3869927042411145,
+        "atoms": 900
+      }
+    },
+    {
+      "protein_id": "1n3r_C",
+      "residues": 221,
+      "sequence_recovery": 0.665158371040724,
+      "native_sequence": "PSLSKEAALVHEALVARGLETPLRPPVHEMDNETRKSLIAGHMTEIMQLLNLDLADDSLMETPHRIAKMYVDEIFSGLDYANFPKITLIENKMKVDEMVTVRDITLTSTCESHFVTIDGKATVAYIPKDSVIGLSKINRIVQFFAQRPQVQERLTQQILIALQTLLGTNNVAVSIDAVHYCVKARGIRDATSATTTTSLGGLFKSSQNTRHEFLRAVRHHN",
+      "predicted_sequence": "MHLSKEAALVHEALVARGLLTPRRPPFTEVDLETRAAHIAGEMTEIMQLLNSDYADDSLMELPKAIAKMYEGAWFAGRRLPNFPPVELIENKMEADEMVTVGDIPLTSTEASHDVTIEGKALVAYIPKDSAVGDTEFNEVVHMFTERPQEQEALTQQIYIALQTLLGTNNVAVSIDLVHWPQKASGVFDAGSQTTHVSLGGLFRSAENARNEFLRKLGFHP",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/1n3r_C/1n3r_C_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/1n3r_C/1n3r_C_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/1n3r_C/1n3r_C_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.6949803419391418,
+        "atoms": 844
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.204072768475485,
+        "atoms": 844
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.4788451834298852,
+        "atoms": 537
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 2.0181318330089617,
+        "atoms": 307
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.43875783593419915,
+        "atoms": 884
+      }
+    },
+    {
+      "protein_id": "6lsp_B",
+      "residues": 193,
+      "sequence_recovery": 0.689119170984456,
+      "native_sequence": "MSNISLIVGLGNPGSEYAQTRHNAGFWFVEQLADKYGITLKNDPKFHGISGRGNIEGHDVRLLLPMTYMNRSGQSVVPFSKFYQIAPEAILIAHDELDMNPGVIRLKTGGGHGGHNGLRDIVPHIGPNFHRLRIGIGHPGSKERVSGHVLGKAPSNEQSLMDGAIDHALSKVKLLVQGQVPQAMNQINAYKPA",
+      "predicted_sequence": "MSNITLIIALGIPGSEYANTRHNAGFWFVEQLARKYGITRQYDDKFEGISSTGDIEGHKVRFLLPTEHMSRHGRSVAPFTCAYEIAPQRILIAYDNPDMNPGDVRLKTGGGHGGHPGLRQIVPHIGPNFHVLKIGIGTPGSRAKLAGHFQGPLPREEESLYEGAIDHALSKVKTLLQGQVPQVINQINALTPG",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/6lsp_B/6lsp_B_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/6lsp_B/6lsp_B_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/6lsp_B/6lsp_B_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.6285183038953412,
+        "atoms": 704
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.018758264266187,
+        "atoms": 703
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.5873604801644055,
+        "atoms": 460
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.7034086627164948,
+        "atoms": 244
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.4061506749741198,
+        "atoms": 772
+      }
+    },
+    {
+      "protein_id": "1ox9_B",
+      "residues": 108,
+      "sequence_recovery": 0.6759259259259259,
+      "native_sequence": "SQLTPRRPYLLRAFYEWLLDNQLTPHLVVDVTLPGVQVPMEYARDGQIVLNIAPRAVGNLELANDEVRFNARFGGIPRQVSVPLAAVLAIYARENGAGTMFEPEAAYD",
+      "predicted_sequence": "SQLTPSRPYLLRAYYEWAEDNQATPQLVVDMTLPGVQVPMEKLRDGFLELDLSPDALGDLELSNTSIVFNAKLGGIPRPVSVPLCAVLAIKARECGQGTLFEPSPACS",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/1ox9_B/1ox9_B_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/1ox9_B/1ox9_B_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/1ox9_B/1ox9_B_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.6165937988650942,
+        "atoms": 417
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.150319870303345,
+        "atoms": 416
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.6504375314458748,
+        "atoms": 262
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.557715836050355,
+        "atoms": 155
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.4037417280803966,
+        "atoms": 432
+      }
+    },
+    {
+      "protein_id": "8axp_B",
+      "residues": 189,
+      "sequence_recovery": 0.6455026455026455,
+      "native_sequence": "NTIKMVVGLGNPGKEYEQTRHNAGFWFLDELAWKWKASFKEEKKFFGEVARAALPDGDVWLLKPATFMNRSGQAVAALAQFYKIKPEEILVVHDELDIPCGRIKFKLGGGNGGHNGLKDIQAKLGTADYYRLRLGIGHPGDRNLVVGYVLNKPSAEHRRQIDDAVAKSLQAVPDIISGKWEEATRFLHS",
+      "predicted_sequence": "ANIKMVVGLGNPGKAKRQNISAVGRDFLDELAWKWNASWREDKNFGGEVAEANFPRGTLWVLRPSTDMNDSGQSVAAFAQHYDIKPEQVLFVHDDRDIPCGQWYVQLGGGLGGHTGLKDIQAKLGTDNIRTLRLGIGHPGSRNQVVGYSSNKINSEHRRQIDDAVRKALQLMPDILSGAWDEATAQLSS",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/8axp_B/8axp_B_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/8axp_B/8axp_B_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/8axp_B/8axp_B_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.7089048392861268,
+        "atoms": 709
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.191176168793519,
+        "atoms": 709
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.6103832150344544,
+        "atoms": 425
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.8465473648358133,
+        "atoms": 284
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.39700927954710746,
+        "atoms": 756
+      }
+    },
+    {
+      "protein_id": "8vtv_2X",
+      "residues": 95,
+      "sequence_recovery": 0.6526315789473685,
+      "native_sequence": "MKTAYDVILAPVLSEKAYAGFAEGKYTFWVHPKATKTEIKNAVETAFKVKVVKVNTLHVRGKKKRLGRYLGKRPDRKKAIVQVAPGQKIEALEGL",
+      "predicted_sequence": "MPTPRDRIKSPVISEKAYAGIAKGVVTMEVKPKATETEIKNAVETLFKVKVVEVFNLTGEGKKYRLGDSEGKRPDRKKAIVKVAPGQKIKKYIRP",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/8vtv_2X/8vtv_2X_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/8vtv_2X/8vtv_2X_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/8vtv_2X/8vtv_2X_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.7519816015888245,
+        "atoms": 370
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.064929178352898,
+        "atoms": 370
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.4949738620043096,
+        "atoms": 214
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 2.0528498991239794,
+        "atoms": 156
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.43095012978968733,
+        "atoms": 380
+      }
+    },
+    {
+      "protein_id": "1ude_A",
+      "residues": 168,
+      "sequence_recovery": 0.6845238095238095,
+      "native_sequence": "FHDLEPGPNVPEVVYALIEIPKGSRNKYELDKETGLLKLDRVLYTPFHYPVDYGIIPRTWYEDGDPFDIMVIMREPTYPLTIIEARPIGLFKMIDSGDKDYKVLAVPVEDPYFKDWKDISDVPKAFLDEIAHFFKRYKELEGKEIIVEGWEGAEAAKREILRAIEMYK",
+      "predicted_sequence": "LHRKAPGENTKSVVYLYIEVQKGSRNKYELDKETGSLKEPRELSTNVSYPYDYGQIPRTWNETGDPFDILVPMEEPVKPNTIIEARPVGLLKMILSGRKWYYILCVPVNDPYFKDWKDISDIPQAFLDEIAHFWKRLKEASGLKFRVEGREGAEAAKRKILRAIEMAS",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/1ude_A/1ude_A_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/1ude_A/1ude_A_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/1ude_A/1ude_A_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.753055356854584,
+        "atoms": 718
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.2832202351580926,
+        "atoms": 718
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.689643482399351,
+        "atoms": 469
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.8666530553920075,
+        "atoms": 249
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.41962009201990125,
+        "atoms": 672
+      }
+    },
+    {
+      "protein_id": "7ndk_C",
+      "residues": 156,
+      "sequence_recovery": 0.6346153846153846,
+      "native_sequence": "LRPVVINGSNVAMSHGNKEVFSCRGIKLAVDWFLERGHKDITVFVPAWRKEQSRPDLITDQEILRKLEKEKILVFTPSRRVRVVCYDDRFIVKLAFESDGIIVSNDNYRDLANEKPEWKKFIDERLLMYSFVNDKFMPPDDPLGRHGPSLDNFLRK",
+      "predicted_sequence": "LPRVVIDGSNVLSHHGNPRKMSNRGVKLAVKWFLEQGHKDITVFVPNWLTEKLPKSKIEDQEILRKLVKKKILVYPPSRKIVVVCSRDRFIVKLAFENDGLLVSNTPYRDLINEKPEWKKFMDERLIMITFHDDELMLRDKPYGTHTPKVDNFLNL",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/7ndk_C/7ndk_C_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/7ndk_C/7ndk_C_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/7ndk_C/7ndk_C_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.8890208297406699,
+        "atoms": 660
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.4906715163330406,
+        "atoms": 660
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.6872107955994124,
+        "atoms": 420
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 2.198046678310666,
+        "atoms": 240
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.44998780149787954,
+        "atoms": 624
+      }
+    },
+    {
+      "protein_id": "8zdj_q",
+      "residues": 165,
+      "sequence_recovery": 0.7151515151515152,
+      "native_sequence": "AVVLPDWYEEAFVNVENLFIDMFTDLLPDYESGCWAPDDWLADEIEVKPTIWFFRLPGGRVDWDGRKDECQLQVMVVTGSRDDSWRLMDFVRAMLLPMQGDKYKMADGYTAQIRCAGEVAGPQLLTPGQRIDTRVVTATFKVSVSMKSAKNYKQKLYELWQALRG",
+      "predicted_sequence": "MVTLPSWYEISFMSVENLFIDMFNDQNPDAEVGPELPDDWQADDDKVKPTIEIQRLPSGEVDWDGKLDTCQLQVMVVTGSRDDSWRLMDFVRAMLLDMQGDTFKMPDGTTFKISCAGTVKGPQLLTPGQRIDTRIVLMNFKVEVAMPSSFNYKQKLYELEQALRG",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/8zdj_q/8zdj_q_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/8zdj_q/8zdj_q_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/8zdj_q/8zdj_q_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.903444088444616,
+        "atoms": 674
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.6709027852733493,
+        "atoms": 674
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.7308168661062586,
+        "atoms": 474
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 2.2605247009993334,
+        "atoms": 200
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.3900483729337669,
+        "atoms": 660
+      }
+    },
+    {
+      "protein_id": "1z4a_C",
+      "residues": 164,
+      "sequence_recovery": 0.7439024390243902,
+      "native_sequence": "MMVISEKVRKALNEQLNREIYSSYLYLSMATYFDAEGFKGFAHWMKKQAQEELTHAMKFYEYIYERGGRVELEAIEKPPSNWNGIKDAFEAALKHEEFVTQSIYNILELASEEKDHATVSFLKWFVDEQVEEEDQVREILDLLEKANGQMSVIFQLDRYLGQRE",
+      "predicted_sequence": "MDVISEKVRKALNEELNREIADSYLYLSMAQYFDAEGRKGFAHWMKKQAQEELTHAMKFYEYIEKRGGKVELKQVKKPPTSWNGIKDAVEAQLKHEEAITESTFNILELASEEKDHESVSFLLEKVDELVEELEQLREKLDLLESANEDVSKIKQIDRYLGLKK",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/1z4a_C/1z4a_C_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/1z4a_C/1z4a_C_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/1z4a_C/1z4a_C_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.6626710237046487,
+        "atoms": 712
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.189806587316751,
+        "atoms": 711
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.5785774563762862,
+        "atoms": 514
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.8633439914764365,
+        "atoms": 198
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.33884971779009526,
+        "atoms": 656
+      }
+    },
+    {
+      "protein_id": "9z5n_d",
+      "residues": 104,
+      "sequence_recovery": 0.8365384615384616,
+      "native_sequence": "TEAELQRVQKVRELELVYARAQLELEVSKAQQLAEVEAKKFKQMTEALGPSTIKDLAVAGPEMQVKLLQSLGLKSTLITDGSTPVNLFNTAFGLLGLGADGQPL",
+      "predicted_sequence": "TEAELQRVQKVRELELVYARAQLELEVKKAQQLAEAEAKKIKQMLEALGPDTMKDLAVAGGTMQEKLLESLGLKKTLITDESTEVNLWNTAFGLLGLGADGRGE",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/9z5n_d/9z5n_d_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/9z5n_d/9z5n_d_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/9z5n_d/9z5n_d_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.7028853281928769,
+        "atoms": 371
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.0931566788671248,
+        "atoms": 371
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.762978296567586,
+        "atoms": 310
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.3569734275528968,
+        "atoms": 61
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.47757339534143933,
+        "atoms": 416
+      }
+    },
+    {
+      "protein_id": "7dy9_B",
+      "residues": 162,
+      "sequence_recovery": 0.6728395061728395,
+      "native_sequence": "VISEKVRKALNDQLNREIYSSYLYLSMATYFDAEGFKGFAHWMKKQAQEELTHAMKFYEYIYERGGRVELEAIEKPPSNWNGIKDAFEAALKHEEFVTQSIYNILELASLALDHATVSFLKWFVDEQVEEEDQVREILDLLEKAFGQMSVIFQLDRYLGQRE",
+      "predicted_sequence": "MISEKVRKALNDQLNQLIYSSAVYLSLATYFDAEGFTGPAHWLRIQAQEELQHAVRFTQYIYERGGRVELEAPEEPNPYASDLKDAFENALKHEELVTQSIYNILELASEAPAHATVVQLKEFVDELFREPDRVREIIGLFESRQRQPSSIFQLVRRLEKIL",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/7dy9_B/7dy9_B_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/7dy9_B/7dy9_B_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/7dy9_B/7dy9_B_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.9056538148503184,
+        "atoms": 700
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.4366686283950867,
+        "atoms": 699
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.7110019915164885,
+        "atoms": 458
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 2.2279722003609237,
+        "atoms": 242
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.3580103388605691,
+        "atoms": 648
+      }
+    },
+    {
+      "protein_id": "3o2u_A",
+      "residues": 190,
+      "sequence_recovery": 0.6947368421052632,
+      "native_sequence": "GSMLKLRQLQKKKQKENENSSSIQPNLSAARIRLKRDLDSLDLPPTVTLNVITSPDSADRSQSPKLEVIVRPDEGYYNYGSINFNLDFNEVYPIEPPKVVCLKKIFHPNIDLKGNVCLNILREDWSPALDLQSIITGLLFLFLEPNPNDPLNKDAAKLLCEGEKEFAEAVRLTMSGGSIEHVKYDNIVSP",
+      "predicted_sequence": "GSMLKLRTLTKKKQKANELSSSVKAELSNAQIRLKRDLDSLDLPPTVTIDFLKSPESSDRKQSPKLLVRFRPTEGPLQKGSIPFTVDFNEKYPFLPPKMVCLKKIFHPNVDESGNVCLNIFREDWNPALDLQSIINGLLFIFSNPNLNDPINKDAAKLLCRGTKEFAEVINLEKNGKSIEGVKPLNIESD",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/3o2u_A/3o2u_A_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/3o2u_A/3o2u_A_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/3o2u_A/3o2u_A_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.6457850604879554,
+        "atoms": 730
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.0679793084982045,
+        "atoms": 730
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.6398305145662886,
+        "atoms": 502
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.6588203313047993,
+        "atoms": 228
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.44545963635705005,
+        "atoms": 760
+      }
+    },
+    {
+      "protein_id": "3lte_K",
+      "residues": 120,
+      "sequence_recovery": 0.7166666666666667,
+      "native_sequence": "QSKRILVVDDDQAMAAAIERVLKRDHWQVEIAHNGFDAGIKLSTFEPAIMTLDLSMPKLDGLDVIRSLRQNKVANQPKILVVSGLDKAKLQQAVTEGADDYLEKPFDNDALLDRIHDLVN",
+      "predicted_sequence": "MSKRILVVDDDQARAAEINRVLMAEGLQVDPAKNGFDAGIRVSTHDPDIMVLDLDMPKLDGLDVIRSIRQSQVINQPKILAVSGPDKAKLQQALRAGADDYLERPFDNDALLGMIHSLLS",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/3lte_K/3lte_K_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/3lte_K/3lte_K_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/3lte_K/3lte_K_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.4897129375555878,
+        "atoms": 461
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 1.8682639531439706,
+        "atoms": 461
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.3816803020755453,
+        "atoms": 313
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.6956665262355493,
+        "atoms": 148
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.36627861787785276,
+        "atoms": 480
+      }
+    },
+    {
+      "protein_id": "8wmw_i",
+      "residues": 175,
+      "sequence_recovery": 0.7485714285714286,
+      "native_sequence": "DMSASVPFLPRPAALDGSMVGDVGFDPLGFTTKYDIKWLRESELKHGRVCMLASLGCIVQEIVHLPFEATSNPVASEAFFQVPAGGLWQIFAGIGIVEHFSNNFKMSGSTMRAPGNLGFDPLNFGKNPSARARYELAEIKNGRLAMLGFGGMIHGCFITGKGPIGALTSMDWHQS",
+      "predicted_sequence": "DMSKSVPFLPAPASLDGKLWGDVGFDPLGFTTKYDIKWLRESELKHGRICMLASLGCIVQEVAHLPTDSWDNPVLSEAFFQIPPGVAWQIFVGIGIVEHFKRNFKAPGSHSSKPGNFGFDPWNFGKNPSAKKWYRLAEIKNGRLAMLGFGGMLIGCFNSGKGFIGALTSPPNPQG",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/8wmw_i/8wmw_i_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/8wmw_i/8wmw_i_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/8wmw_i/8wmw_i_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.7853231394314877,
+        "atoms": 624
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.342173364598944,
+        "atoms": 624
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.6793695776886854,
+        "atoms": 467
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 2.068650843653382,
+        "atoms": 157
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.43869043438827376,
+        "atoms": 700
+      }
+    },
+    {
+      "protein_id": "10px_2X",
+      "residues": 95,
+      "sequence_recovery": 0.6947368421052632,
+      "native_sequence": "MKTAYDVILAPVLSEKAYAGFAEGKYTFWVHPKATKTEIKNAVETAFKVKVVKVNTLHVRGKKKRLGRYLGKRPDRKKAIVQVAPGQKIEALEGL",
+      "predicted_sequence": "MKTARDRIKSPVLSEKAYAGIAEGVVTMEVKPKATETEIKNAVKDAFKVKVVEVFTLTGIGKKYRLGWSEGKRPDRKKAIVKIAPGQKIKKLIRP",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/10px_2X/10px_2X_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/10px_2X/10px_2X_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/10px_2X/10px_2X_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.9236876202721982,
+        "atoms": 370
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.308967767211382,
+        "atoms": 370
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.7695733346521234,
+        "atoms": 226
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 2.1433331884183384,
+        "atoms": 144
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.5040937780584593,
+        "atoms": 380
+      }
+    },
+    {
+      "protein_id": "1n3r_H",
+      "residues": 221,
+      "sequence_recovery": 0.6923076923076923,
+      "native_sequence": "PSLSKEAALVHEALVARGLETPLRPPVHEMDNETRKSLIAGHMTEIMQLLNLDLADDSLMETPHRIAKMYVDEIFSGLDYANFPKITLIENKMKVDEMVTVRDITLTSTCESHFVTIDGKATVAYIPKDSVIGLSKINRIVQFFAQRPQVQERLTQQILIALQTLLGTNNVAVSIDAVHYCVKARGIRDATSATTTTSLGGLFKSSQNTRHEFLRAVRHHN",
+      "predicted_sequence": "SVLSKEAALVHEALVERGLLHPRRPRVHAMDNETRKSLISGHMTEIMQLLNLDHADDELMELPHRIAKMLVDERFSNLDQENLPKLTLIEPKIPFDEMVTFKDIPLTATFEAHASGIRGTATVVYIPKTARIGLSLATRIVTSFSGVPQRQERLTQQIRIALQTLLGTNNVAVSIETVDYNPKVRGINEATSATEHESLGGPFKSSQNIRSKFLRNLKRHK",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/1n3r_H/1n3r_H_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/1n3r_H/1n3r_H_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/1n3r_H/1n3r_H_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.6863164650079743,
+        "atoms": 844
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.152797976961551,
+        "atoms": 844
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.5467350150104013,
+        "atoms": 588
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.9698183097900133,
+        "atoms": 256
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.4272758819710147,
+        "atoms": 884
+      }
+    },
+    {
+      "protein_id": "9b3j_R",
+      "residues": 105,
+      "sequence_recovery": 0.7142857142857143,
+      "native_sequence": "FGDYPAEYNPKVHGPYDPARFYGKADVPLGQVKLGELSQWLGRRNKNPQAVAAAVSRGWWRWQHKYVLPRKGGIAPYIQLIVGCSIFFYAINYGKMVAHRQRKYH",
+      "predicted_sequence": "AGDLPAEYNPKVFGPYDPHRDWGKADAPPGDVKAGELSQWQGEMNKTPQAVAAAVSRGFNRWRHKYVLPRQGTGSPKFQLIVGFSIFFYGINYGLMVAHKQDKDG",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/9b3j_R/9b3j_R_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/9b3j_R/9b3j_R_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/9b3j_R/9b3j_R_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.90174454227174,
+        "atoms": 436
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.4270835896792136,
+        "atoms": 436
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.6503545701693405,
+        "atoms": 284
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 2.2989261590770984,
+        "atoms": 152
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.3923513054108032,
+        "atoms": 420
+      }
+    },
+    {
+      "protein_id": "9r01_f",
+      "residues": 113,
+      "sequence_recovery": 0.7079646017699115,
+      "native_sequence": "LLKKTTGLVGLAVCETPHERLKILYTKILDVLGHIPKNAAYRKYTEQITNEKLSIVKAEPDVKKLEEQLQGGQIEEVILQAENELSLARKMIQWKPWEPLVEEPPASQWKWPI",
+      "predicted_sequence": "ELKEDTGRVGRSVVENPHERLKILYTKIEDVLGHVPKNSALRKYCRQITNEKLSIIQNEKDVIKLDAQLKGGGISEVIRQASNELSLARKMIQTGPNEPLVEEPPASQKLKLI",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/9r01_f/9r01_f_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/9r01_f/9r01_f_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/9r01_f/9r01_f_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.8392469385798278,
+        "atoms": 465
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.3680047617307065,
+        "atoms": 465
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.522493762691485,
+        "atoms": 310
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 2.3478740598265597,
+        "atoms": 155
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.5110900104549675,
+        "atoms": 452
+      }
+    },
+    {
+      "protein_id": "5imj_A",
+      "residues": 246,
+      "sequence_recovery": 0.6341463414634146,
+      "native_sequence": "QTQVLFEHPLNEKMRTWLRIEFLIQQLTVNLPIVDHAGALHFFRNVSELLDVFERGEVRTELLKELDRQQRKLQTWIGVPGVDQSRIEALIQQLKAAGSVLISAPRIGQFLREDRLIALVRQRLSIPGGCCSFDLPTLHIWLHLPQAQRDSQVETWIASLNPLTQALTMVLDLIRQSAPFRKQTSLNGFYQDNGGDADLLRLNLSLDSQLYPQISGHKSRFAIRFMPLDTENGQVPERLDFELACC",
+      "predicted_sequence": "KRQVHLELPTTFAEELWLRIEFLIQQLIDNKGAEQHEGLLHFFRNVSELLDVVQHGDVSTELLKRLDRQVRNLQTWELSGGVDQSRINDLIQQLKAAGSVLISQPPPFERLREDRLIALIRQRTEIPSAYGFRDEPALHEWAHLPLAQRESQVESWIALLNPLVQALTMVLDLIREEAPFRKQTSPDGFYDDSGGDAVLLRLNLGDRKQGLFQIDGTKAKLRIKYMPVDTEDGLVPETLKFFLLPL",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/5imj_A/5imj_A_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/5imj_A/5imj_A_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/5imj_A/5imj_A_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.8761730705414679,
+        "atoms": 1000
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.425301205520667,
+        "atoms": 1000
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.7864471612365747,
+        "atoms": 649
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 2.031665836516819,
+        "atoms": 351
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.4936463066056411,
+        "atoms": 984
+      }
+    },
+    {
+      "protein_id": "6f58_A",
+      "residues": 180,
+      "sequence_recovery": 0.6166666666666667,
+      "native_sequence": "GELRVGLEESELWLRFKELTNEMIVTKNGRRMFPVLKVNVSGLDPNAMYSFLLDFVAADNHRWKYVNGEWVPGAPSCVYIHPDSPNFGAHWMKAPVSFSKVKLTNKLNGGGQIMLNSLHKYEPRIHIVRVGGPQRMITSHCFPETQFIAVTAYQNEEITALKIKYNPFAKAFLDAKERSH",
+      "predicted_sequence": "GTLRVGLEGRELWLRFKELNIPMFVTESGRRVLPALSAKVFGVDPNAMYSFLLSVRKLEPSALKMDNGEWAPPAPSEVVTCPLHPLDGAHWMKRPLSFSKVKFTNQPSGGGQVMFISRVKYQPRIHLVQVGGPRRMATTHCYPETQFIASTRLPNEEITALWVEYDPRAKSFLDAWERSR",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/6f58_A/6f58_A_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/6f58_A/6f58_A_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/6f58_A/6f58_A_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.7824992117721217,
+        "atoms": 728
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.3413535138064927,
+        "atoms": 728
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.7933537920335638,
+        "atoms": 430
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.7667189655836841,
+        "atoms": 298
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.4502467620938405,
+        "atoms": 720
+      }
+    },
+    {
+      "protein_id": "8s1p_T",
+      "residues": 91,
+      "sequence_recovery": 0.7032967032967034,
+      "native_sequence": "KDPRDVLKRPVITERSADLMTEKKYTFEVDVRANKTEVKDAVESIFGVKVDKVNIMNYKGKSKRVGRYTGMTSRRRKAIVKLTADSKEIEI",
+      "predicted_sequence": "KDPRDIIKRPILTERVADLKKENTIVFEVDARANKTEVKDTVESIFGIKVDKVNLVNYKGKSVRKGRYAGMTEKRRKAIVKLDKDSKLLLL",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/8s1p_T/8s1p_T_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/8s1p_T/8s1p_T_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/8s1p_T/8s1p_T_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": 1.798131998181581,
+        "atoms": 369
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": 2.2763334303283993,
+        "atoms": 369
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": 1.655899049342624,
+        "atoms": 268
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": 2.129991980896519,
+        "atoms": 101
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.44319118543697356,
+        "atoms": 364
+      }
+    },
+    {
+      "protein_id": "1nkw_M",
+      "residues": 111,
+      "sequence_recovery": 0.7837837837837838,
+      "native_sequence": "ATTIRRKLRTRRKVRTTTAASGRLRLSVYRSSKHIYAQIIDDSRGQTLAAASSAALKSGNKTDTAAAVGKALAAAAAEKGIKQVVFDRGSYKYHGRVKALADAAREGGLDF",
+      "predicted_sequence": "ATTIAAKEYTNMAVRTTIAASGRIRLSVYRSSRHIVAKIIDDSRGQTTKYESSAALRSGRYTDTAAAVGIALAAAAAEQGMKQVVFDRGSYKIHGRVKALADAAIEGGLDF",
+      "native_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/1nkw_M/1nkw_M_native.pdb",
+      "reconstructed_true_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/1nkw_M/1nkw_M_reconstructed_true_sequence.pdb",
+      "reconstructed_predicted_sequence_pdb": "/slurm-storage/aishod/projects/la-proteina/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100/1nkw_M/1nkw_M_reconstructed_predicted_sequence.pdb",
+      "oracle_sidechain_raw": {
+        "rmsd_angstrom": null,
+        "atoms": 0
+      },
+      "oracle_sidechain_idealized": {
+        "rmsd_angstrom": null,
+        "atoms": 0
+      },
+      "correct_aa_sidechain_raw": {
+        "rmsd_angstrom": null,
+        "atoms": 0
+      },
+      "incorrect_aa_sidechain_raw": {
+        "rmsd_angstrom": null,
+        "atoms": 0
+      },
+      "backbone_raw": {
+        "rmsd_angstrom": 0.0,
+        "atoms": 111
+      }
+    }
+  ],
+  "aggregate": {
+    "proteins": 101,
+    "residues": 14946,
+    "sequence_recovery": 0.6552923859226549,
+    "oracle_sidechain_raw": {
+      "rmsd_angstrom": 1.7518479790769146,
+      "atoms": 57557
+    },
+    "oracle_sidechain_idealized": {
+      "rmsd_angstrom": 2.253396342822772,
+      "atoms": 57538
+    },
+    "correct_aa_sidechain_raw": {
+      "rmsd_angstrom": 1.647648522978628,
+      "atoms": 36570
+    },
+    "incorrect_aa_sidechain_raw": {
+      "rmsd_angstrom": 1.9199510971151363,
+      "atoms": 20987
+    },
+    "backbone_raw": {
+      "rmsd_angstrom": 0.4374903442105449,
+      "atoms": 59451
+    }
+  }
+}

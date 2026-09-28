@@ -1,0 +1,53 @@
+#!/bin/bash
+# Continue the JEPA random-70 target-encoder decoder from its exact step-80k
+# weights to step 140k. Decoder checkpoints contain weights only, so AdamW
+# restarts on resume.
+#SBATCH --job-name=dec_jr70_t140k
+#SBATCH --partition=normal
+#SBATCH --nodelist=noether
+#SBATCH --qos=medium
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=100G
+#SBATCH --time=09:00:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/decoder/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+PYTHON_BIN=/data-gauss/$USER/envs/laproteina_env/bin/python3
+SOURCE_RUN_ID=jepa-rand-mask-70-target-56k-to-80k
+RUN_ID=jepa-rand-mask-70-target-80k-to-140k
+RESUME_STEP=80000
+RESUME_CKPT="$PROJECT_ROOT/Evaluation/structure_rec/checkpoints/${SOURCE_RUN_ID}_step${RESUME_STEP}.pt"
+SCRATCH_ROOT="$HOME/tmp/dj70-140k-$SLURM_JOB_ID"
+
+if [[ ! -s "$RESUME_CKPT" ]]; then
+  echo "ERROR: missing exact step-80k decoder checkpoint: $RESUME_CKPT" >&2
+  exit 1
+fi
+
+mkdir -p "$PROJECT_ROOT/logs/decoder" "$SCRATCH_ROOT"
+export TMPDIR="$SCRATCH_ROOT"
+export MPLCONFIGDIR="$SCRATCH_ROOT/matplotlib"
+export TRITON_CACHE_DIR="$SCRATCH_ROOT/triton"
+export PYTHONPATH="$PROJECT_ROOT"
+mkdir -p "$MPLCONFIGDIR" "$TRITON_CACHE_DIR"
+
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+
+cd "$PROJECT_ROOT/Evaluation/structure_rec"
+srun "$PYTHON_BIN" train_decoder.py \
+  --encoder jepa-rand-mask-70 \
+  --encoder-source target \
+  --run-id "$RUN_ID" \
+  --resume-from "$RESUME_CKPT" \
+  --resume-step "$RESUME_STEP" \
+  --max-steps 140000 \
+  --eval-every 2000 \
+  --batch-size 8 \
+  --no-wandb

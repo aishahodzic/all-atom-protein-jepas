@@ -1,0 +1,33 @@
+#!/bin/bash
+#SBATCH --job-name=dec_geom_preflight
+#SBATCH --partition=normal
+#SBATCH --qos=short
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=8
+#SBATCH --mem=64G
+#SBATCH --time=00:15:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/decoder/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+PYTHON_BIN=/data-gauss/$USER/envs/laproteina_env/bin/python3
+DECODER_CKPT="$PROJECT_ROOT/Evaluation/structure_rec/checkpoints/jepa-rand-mask-70-target-80k-to-140k_final.pt"
+SCRATCH_ROOT="$HOME/tmp/decoder-geometry-preflight-$SLURM_JOB_ID"
+
+[[ -s "$DECODER_CKPT" ]] || { echo "ERROR: missing $DECODER_CKPT" >&2; exit 1; }
+mkdir -p "$PROJECT_ROOT/logs/decoder" "$SCRATCH_ROOT"
+export TMPDIR="$SCRATCH_ROOT"
+export PYTHONPATH="$PROJECT_ROOT"
+
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+
+cd "$PROJECT_ROOT/Evaluation/structure_rec"
+srun "$PYTHON_BIN" -B preflight_geometry_regularizer.py \
+  --decoder-checkpoint "$DECODER_CKPT" \
+  --batch-size 2 \
+  --num-workers 4

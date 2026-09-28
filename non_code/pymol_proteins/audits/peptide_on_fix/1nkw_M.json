@@ -1,0 +1,5292 @@
+[
+  {
+    "pdb": "/mnt/data/slurm-storage/aishod/projects/la-proteina/store/geometry-repair-validation/peptide-on-fix/all10/1nkw_M_final.pdb",
+    "residues": 111,
+    "ca_gap_threshold_angstrom": 4.5,
+    "covalent": {
+      "count": 747,
+      "mean_absolute_deviation_angstrom": 0.03570821132348313,
+      "median_absolute_deviation_angstrom": 0.023964720575806453,
+      "max_absolute_deviation_angstrom": 0.16265686876108298,
+      "fraction_over_0p2_angstrom": 0.0,
+      "fraction_over_0p5_angstrom": 0.0
+    },
+    "virtual": {
+      "count": 819,
+      "mean_absolute_deviation_angstrom": 0.05763254437917451,
+      "median_absolute_deviation_angstrom": 0.04282078492005503,
+      "max_absolute_deviation_angstrom": 0.2743344128837144,
+      "fraction_over_0p2_angstrom": 0.02564102564102564,
+      "fraction_over_0p5_angstrom": 0.0
+    },
+    "peptide_c_n": {
+      "count": 110,
+      "mean_absolute_deviation_angstrom": 0.021648256186907338,
+      "median_absolute_deviation_angstrom": 0.023382895424856498,
+      "max_absolute_deviation_angstrom": 0.03167373017928221,
+      "fraction_over_0p2_angstrom": 0.0,
+      "fraction_over_0p5_angstrom": 0.0
+    },
+    "residue_details": [
+      {
+        "chain": "A",
+        "residue_number": 1,
+        "resname": "ALA",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.5445212850589023,
+            "ideal": 1.52,
+            "absolute_deviation": 0.024521285058902276
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.4374703475202544,
+            "ideal": 1.459,
+            "absolute_deviation": 0.021529652479745698
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.568492907220173,
+            "ideal": 1.525,
+            "absolute_deviation": 0.04349290722017307
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.2456279540858108,
+            "ideal": 1.229,
+            "absolute_deviation": 0.016627954085810748
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 2,
+        "resname": "THR",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.561200499615601,
+            "ideal": 1.529,
+            "absolute_deviation": 0.03220049961560112
+          },
+          {
+            "atoms": "CB-OG1",
+            "distance": 1.4525777087646632,
+            "ideal": 1.428,
+            "absolute_deviation": 0.024577708764663253
+          },
+          {
+            "atoms": "CB-CG2",
+            "distance": 1.49652230187191,
+            "ideal": 1.519,
+            "absolute_deviation": 0.022477698128089862
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.542186759118363,
+            "ideal": 1.459,
+            "absolute_deviation": 0.08318675911836282
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.5662585993379259,
+            "ideal": 1.525,
+            "absolute_deviation": 0.04125859933792597
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.3784883024530887,
+            "ideal": 1.229,
+            "absolute_deviation": 0.14948830245308864
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 3,
+        "resname": "THR",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.5457975287857066,
+            "ideal": 1.529,
+            "absolute_deviation": 0.016797528785706728
+          },
+          {
+            "atoms": "CB-OG1",
+            "distance": 1.407170920677371,
+            "ideal": 1.428,
+            "absolute_deviation": 0.020829079322628896
+          },
+          {
+            "atoms": "CB-CG2",
+            "distance": 1.5355748109421432,
+            "ideal": 1.519,
+            "absolute_deviation": 0.016574810942143303
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.4477544681333228,
+            "ideal": 1.459,
+            "absolute_deviation": 0.011245531866677316
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.6417837860083775,
+            "ideal": 1.525,
+            "absolute_deviation": 0.11678378600837758
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.3751178131345687,
+            "ideal": 1.229,
+            "absolute_deviation": 0.14611781313456862
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 4,
+        "resname": "ILE",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.5674759966264233,
+            "ideal": 1.544,
+            "absolute_deviation": 0.0234759966264233
+          },
+          {
+            "atoms": "CB-CG1",
+            "distance": 1.5677362660855934,
+            "ideal": 1.536,
+            "absolute_deviation": 0.03173626608559332
+          },
+          {
+            "atoms": "CB-CG2",
+            "distance": 1.4798651965635248,
+            "ideal": 1.524,
+            "absolute_deviation": 0.044134803436475245
+          },
+          {
+            "atoms": "CG1-CD1",
+            "distance": 1.5225944962464562,
+            "ideal": 1.5,
+            "absolute_deviation": 0.022594496246456153
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.5021381427818137,
+            "ideal": 1.459,
+            "absolute_deviation": 0.043138142781813604
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.5286641226901339,
+            "ideal": 1.525,
+            "absolute_deviation": 0.003664122690133942
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.2899817828171065,
+            "ideal": 1.229,
+            "absolute_deviation": 0.06098178281710642
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 5,
+        "resname": "ASN",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.526570666559527,
+            "ideal": 1.527,
+            "absolute_deviation": 0.00042933344047302313
+          },
+          {
+            "atoms": "CB-CG",
+            "distance": 1.5210121630019926,
+            "ideal": 1.506,
+            "absolute_deviation": 0.015012163001992596
+          },
+          {
+            "atoms": "CG-OD1",
+            "distance": 1.2532413973373207,
+            "ideal": 1.235,
+            "absolute_deviation": 0.018241397337320553
+          },
+          {
+            "atoms": "CG-ND2",
+            "distance": 1.3120876495112666,
+            "ideal": 1.324,
+            "absolute_deviation": 0.011912350488733514
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.5239429123165997,
+            "ideal": 1.459,
+            "absolute_deviation": 0.06494291231659965
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.6221041890088312,
+            "ideal": 1.525,
+            "absolute_deviation": 0.09710418900883133
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.3779873003768939,
+            "ideal": 1.229,
+            "absolute_deviation": 0.14898730037689378
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 6,
+        "resname": "ARG",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.5743627282173578,
+            "ideal": 1.535,
+            "absolute_deviation": 0.03936272821735787
+          },
+          {
+            "atoms": "CB-CG",
+            "distance": 1.4894475485897452,
+            "ideal": 1.521,
+            "absolute_deviation": 0.031552451410254756
+          },
+          {
+            "atoms": "CG-CD",
+            "distance": 1.5467549902941968,
+            "ideal": 1.515,
+            "absolute_deviation": 0.03175499029419693
+          },
+          {
+            "atoms": "CD-NE",
+            "distance": 1.4848262524618836,
+            "ideal": 1.46,
+            "absolute_deviation": 0.024826252461883636
+          },
+          {
+            "atoms": "NE-CZ",
+            "distance": 1.3042649270757836,
+            "ideal": 1.326,
+            "absolute_deviation": 0.021735072924216503
+          },
+          {
+            "atoms": "CZ-NH1",
+            "distance": 1.341043250607527,
+            "ideal": 1.326,
+            "absolute_deviation": 0.01504325060752687
+          },
+          {
+            "atoms": "CZ-NH2",
+            "distance": 1.3468994023311458,
+            "ideal": 1.326,
+            "absolute_deviation": 0.020899402331145733
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.5105528789155316,
+            "ideal": 1.459,
+            "absolute_deviation": 0.05155287891553151
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.5518717730534308,
+            "ideal": 1.525,
+            "absolute_deviation": 0.026871773053430914
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.379409656338537,
+            "ideal": 1.229,
+            "absolute_deviation": 0.15040965633853687
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 7,
+        "resname": "ALA",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.539175103748758,
+            "ideal": 1.52,
+            "absolute_deviation": 0.01917510374875797
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.4090070972142048,
+            "ideal": 1.459,
+            "absolute_deviation": 0.04999290278579527
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.5283589238133828,
+            "ideal": 1.525,
+            "absolute_deviation": 0.0033589238133828747
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.2680181386715252,
+            "ideal": 1.229,
+            "absolute_deviation": 0.03901813867152515
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 8,
+        "resname": "GLU",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.5270589379588475,
+            "ideal": 1.535,
+            "absolute_deviation": 0.007941062041152414
+          },
+          {
+            "atoms": "CB-CG",
+            "distance": 1.4939427699881944,
+            "ideal": 1.517,
+            "absolute_deviation": 0.023057230011805485
+          },
+          {
+            "atoms": "CG-CD",
+            "distance": 1.4932853042871606,
+            "ideal": 1.515,
+            "absolute_deviation": 0.02171469571283935
+          },
+          {
+            "atoms": "CD-OE1",
+            "distance": 1.2752866344473335,
+            "ideal": 1.252,
+            "absolute_deviation": 0.023286634447333476
+          },
+          {
+            "atoms": "CD-OE2",
+            "distance": 1.2763910059225576,
+            "ideal": 1.252,
+            "absolute_deviation": 0.024391005922557607
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.4793393795880645,
+            "ideal": 1.459,
+            "absolute_deviation": 0.02033937958806442
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.5518331095836302,
+            "ideal": 1.525,
+            "absolute_deviation": 0.026833109583630277
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.258129166659767,
+            "ideal": 1.229,
+            "absolute_deviation": 0.029129166659766836
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 9,
+        "resname": "ASN",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.4978037254593808,
+            "ideal": 1.527,
+            "absolute_deviation": 0.029196274540619127
+          },
+          {
+            "atoms": "CB-CG",
+            "distance": 1.5298735241842707,
+            "ideal": 1.506,
+            "absolute_deviation": 0.02387352418427069
+          },
+          {
+            "atoms": "CG-OD1",
+            "distance": 1.2547306483863376,
+            "ideal": 1.235,
+            "absolute_deviation": 0.019730648386337535
+          },
+          {
+            "atoms": "CG-ND2",
+            "distance": 1.3033572035324774,
+            "ideal": 1.324,
+            "absolute_deviation": 0.02064279646752265
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.478121104646029,
+            "ideal": 1.459,
+            "absolute_deviation": 0.019121104646028897
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.5175849234886332,
+            "ideal": 1.525,
+            "absolute_deviation": 0.007415076511366747
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.3242454455273767,
+            "ideal": 1.229,
+            "absolute_deviation": 0.09524544552737657
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 10,
+        "resname": "THR",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.5551208956219447,
+            "ideal": 1.529,
+            "absolute_deviation": 0.02612089562194475
+          },
+          {
+            "atoms": "CB-OG1",
+            "distance": 1.4505037056140193,
+            "ideal": 1.428,
+            "absolute_deviation": 0.022503705614019376
+          },
+          {
+            "atoms": "CB-CG2",
+            "distance": 1.4980914524821245,
+            "ideal": 1.519,
+            "absolute_deviation": 0.02090854751787541
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.5064468128679485,
+            "ideal": 1.459,
+            "absolute_deviation": 0.047446812867948385
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.5678816919653098,
+            "ideal": 1.525,
+            "absolute_deviation": 0.04288169196530989
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.3042177732265414,
+            "ideal": 1.229,
+            "absolute_deviation": 0.07521777322654133
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 11,
+        "resname": "ASN",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.479898645178108,
+            "ideal": 1.527,
+            "absolute_deviation": 0.04710135482189193
+          },
+          {
+            "atoms": "CB-CG",
+            "distance": 1.531527995173447,
+            "ideal": 1.506,
+            "absolute_deviation": 0.02552799517344706
+          },
+          {
+            "atoms": "CG-OD1",
+            "distance": 1.2389196906983115,
+            "ideal": 1.235,
+            "absolute_deviation": 0.00391969069831144
+          },
+          {
+            "atoms": "CG-ND2",
+            "distance": 1.304118859613647,
+            "ideal": 1.324,
+            "absolute_deviation": 0.019881140386353024
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.4408726522493236,
+            "ideal": 1.459,
+            "absolute_deviation": 0.01812734775067648
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.5050770744383821,
+            "ideal": 1.525,
+            "absolute_deviation": 0.019922925561617788
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.2497699788361063,
+            "ideal": 1.229,
+            "absolute_deviation": 0.020769978836106207
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 12,
+        "resname": "ASN",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.5028739135403208,
+            "ideal": 1.527,
+            "absolute_deviation": 0.024126086459679064
+          },
+          {
+            "atoms": "CB-CG",
+            "distance": 1.5220292375641147,
+            "ideal": 1.506,
+            "absolute_deviation": 0.016029237564114673
+          },
+          {
+            "atoms": "CG-OD1",
+            "distance": 1.2150382710021934,
+            "ideal": 1.235,
+            "absolute_deviation": 0.019961728997806683
+          },
+          {
+            "atoms": "CG-ND2",
+            "distance": 1.3222590517746526,
+            "ideal": 1.324,
+            "absolute_deviation": 0.0017409482253474273
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.5087242955556857,
+            "ideal": 1.459,
+            "absolute_deviation": 0.04972429555568558
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.4776389951540942,
+            "ideal": 1.525,
+            "absolute_deviation": 0.04736100484590566
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.3789865844162514,
+            "ideal": 1.229,
+            "absolute_deviation": 0.14998658441625135
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 13,
+        "resname": "GLN",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.4564401807146081,
+            "ideal": 1.535,
+            "absolute_deviation": 0.0785598192853918
+          },
+          {
+            "atoms": "CB-CG",
+            "distance": 1.594701853012029,
+            "ideal": 1.521,
+            "absolute_deviation": 0.07370185301202903
+          },
+          {
+            "atoms": "CG-CD",
+            "distance": 1.4791467134804452,
+            "ideal": 1.506,
+            "absolute_deviation": 0.026853286519554764
+          },
+          {
+            "atoms": "CD-OE1",
+            "distance": 1.2575949268345508,
+            "ideal": 1.235,
+            "absolute_deviation": 0.022594926834550666
+          },
+          {
+            "atoms": "CD-NE2",
+            "distance": 1.3501473993605284,
+            "ideal": 1.324,
+            "absolute_deviation": 0.026147399360528345
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.482383890900059,
+            "ideal": 1.459,
+            "absolute_deviation": 0.02338389090005899
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.4815809124040442,
+            "ideal": 1.525,
+            "absolute_deviation": 0.0434190875959557
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.273003534951887,
+            "ideal": 1.229,
+            "absolute_deviation": 0.0440035349518868
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 14,
+        "resname": "VAL",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.5208635704756692,
+            "ideal": 1.543,
+            "absolute_deviation": 0.022136429524330703
+          },
+          {
+            "atoms": "CB-CG1",
+            "distance": 1.5474666393819285,
+            "ideal": 1.524,
+            "absolute_deviation": 0.0234666393819285
+          },
+          {
+            "atoms": "CB-CG2",
+            "distance": 1.5045700382501308,
+            "ideal": 1.524,
+            "absolute_deviation": 0.019429961749869218
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.5511044452260456,
+            "ideal": 1.459,
+            "absolute_deviation": 0.09210444522604555
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.5326036669667729,
+            "ideal": 1.525,
+            "absolute_deviation": 0.007603666966772948
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.2697850211748443,
+            "ideal": 1.229,
+            "absolute_deviation": 0.04078502117484417
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 15,
+        "resname": "LYS",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.558418108211016,
+            "ideal": 1.535,
+            "absolute_deviation": 0.023418108211016087
+          },
+          {
+            "atoms": "CB-CG",
+            "distance": 1.5410042180344594,
+            "ideal": 1.521,
+            "absolute_deviation": 0.02000421803445951
+          },
+          {
+            "atoms": "CG-CD",
+            "distance": 1.5413091837785167,
+            "ideal": 1.52,
+            "absolute_deviation": 0.02130918377851665
+          },
+          {
+            "atoms": "CD-CE",
+            "distance": 1.5287753268548,
+            "ideal": 1.508,
+            "absolute_deviation": 0.020775326854800102
+          },
+          {
+            "atoms": "CE-NZ",
+            "distance": 1.5052205818417443,
+            "ideal": 1.486,
+            "absolute_deviation": 0.019220581841744355
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.45681227342441,
+            "ideal": 1.459,
+            "absolute_deviation": 0.0021877265755900765
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.5593110658236213,
+            "ideal": 1.525,
+            "absolute_deviation": 0.03431106582362142
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.2414588192928513,
+            "ideal": 1.229,
+            "absolute_deviation": 0.012458819292851198
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 16,
+        "resname": "THR",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.487519075507941,
+            "ideal": 1.529,
+            "absolute_deviation": 0.04148092449205887
+          },
+          {
+            "atoms": "CB-OG1",
+            "distance": 1.4508249377509344,
+            "ideal": 1.428,
+            "absolute_deviation": 0.022824937750934415
+          },
+          {
+            "atoms": "CB-CG2",
+            "distance": 1.5487766139763344,
+            "ideal": 1.519,
+            "absolute_deviation": 0.029776613976334465
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.4840168462655665,
+            "ideal": 1.459,
+            "absolute_deviation": 0.02501684626556644
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.479947634208724,
+            "ideal": 1.525,
+            "absolute_deviation": 0.045052365791275806
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.3202492188977044,
+            "ideal": 1.229,
+            "absolute_deviation": 0.09124921889770432
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 17,
+        "resname": "THR",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.554980385728387,
+            "ideal": 1.529,
+            "absolute_deviation": 0.025980385728387123
+          },
+          {
+            "atoms": "CB-OG1",
+            "distance": 1.458567447874797,
+            "ideal": 1.428,
+            "absolute_deviation": 0.030567447874797038
+          },
+          {
+            "atoms": "CB-CG2",
+            "distance": 1.5066018053885373,
+            "ideal": 1.519,
+            "absolute_deviation": 0.012398194611462632
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.4949936454714456,
+            "ideal": 1.459,
+            "absolute_deviation": 0.03599364547144557
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.5117321191269308,
+            "ideal": 1.525,
+            "absolute_deviation": 0.013267880873069071
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.2831293777324249,
+            "ideal": 1.229,
+            "absolute_deviation": 0.054129377732424766
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 18,
+        "resname": "LEU",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.5119695764134928,
+            "ideal": 1.533,
+            "absolute_deviation": 0.021030423586507085
+          },
+          {
+            "atoms": "CB-CG",
+            "distance": 1.495090967132101,
+            "ideal": 1.521,
+            "absolute_deviation": 0.025909032867898807
+          },
+          {
+            "atoms": "CG-CD1",
+            "distance": 1.4940799844720483,
+            "ideal": 1.514,
+            "absolute_deviation": 0.01992001552795175
+          },
+          {
+            "atoms": "CG-CD2",
+            "distance": 1.4910419175864915,
+            "ideal": 1.514,
+            "absolute_deviation": 0.022958082413508496
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.4545690083320213,
+            "ideal": 1.459,
+            "absolute_deviation": 0.004430991667978779
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.5615796489452598,
+            "ideal": 1.525,
+            "absolute_deviation": 0.03657964894525989
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.2482716050603728,
+            "ideal": 1.229,
+            "absolute_deviation": 0.019271605060372732
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 19,
+        "resname": "ALA",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.5008737455229197,
+            "ideal": 1.52,
+            "absolute_deviation": 0.019126254477080273
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.5037183911889878,
+            "ideal": 1.459,
+            "absolute_deviation": 0.04471839118898768
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.58057774247267,
+            "ideal": 1.525,
+            "absolute_deviation": 0.05557774247267
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.3743907741250296,
+            "ideal": 1.229,
+            "absolute_deviation": 0.14539077412502954
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 20,
+        "resname": "ALA",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.4986880929666446,
+            "ideal": 1.52,
+            "absolute_deviation": 0.021311907033355393
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.4059235398840149,
+            "ideal": 1.459,
+            "absolute_deviation": 0.05307646011598521
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.5877436820847377,
+            "ideal": 1.525,
+            "absolute_deviation": 0.0627436820847378
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.338091551426881,
+            "ideal": 1.229,
+            "absolute_deviation": 0.10909155142688087
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 21,
+        "resname": "SER",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.485745940596845,
+            "ideal": 1.525,
+            "absolute_deviation": 0.03925405940315496
+          },
+          {
+            "atoms": "CB-OG",
+            "distance": 1.4418328613261668,
+            "ideal": 1.418,
+            "absolute_deviation": 0.02383286132616691
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.4652153425350145,
+            "ideal": 1.459,
+            "absolute_deviation": 0.006215342535014434
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.5430476337430412,
+            "ideal": 1.525,
+            "absolute_deviation": 0.018047633743041303
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.2526843177752327,
+            "ideal": 1.229,
+            "absolute_deviation": 0.02368431777523261
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 22,
+        "resname": "GLY",
+        "covalent_bonds": [
+          {
+            "atoms": "N-CA",
+            "distance": 1.4952835851436344,
+            "ideal": 1.456,
+            "absolute_deviation": 0.03928358514363439
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.5809067018644711,
+            "ideal": 1.514,
+            "absolute_deviation": 0.06690670186447112
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.2851404592494937,
+            "ideal": 1.232,
+            "absolute_deviation": 0.05314045924949373
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 23,
+        "resname": "ASN",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.4935668716197479,
+            "ideal": 1.527,
+            "absolute_deviation": 0.03343312838025203
+          },
+          {
+            "atoms": "CB-CG",
+            "distance": 1.5409029820206077,
+            "ideal": 1.506,
+            "absolute_deviation": 0.03490298202060771
+          },
+          {
+            "atoms": "CG-OD1",
+            "distance": 1.235605519573298,
+            "ideal": 1.235,
+            "absolute_deviation": 0.000605519573297908
+          },
+          {
+            "atoms": "CG-ND2",
+            "distance": 1.3023501833224427,
+            "ideal": 1.324,
+            "absolute_deviation": 0.021649816677557387
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.4345905339155134,
+            "ideal": 1.459,
+            "absolute_deviation": 0.024409466084486686
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.6452209578047572,
+            "ideal": 1.525,
+            "absolute_deviation": 0.12022095780475728
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.332773799262276,
+            "ideal": 1.229,
+            "absolute_deviation": 0.10377379926227581
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 24,
+        "resname": "CYS",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.6329632573943604,
+            "ideal": 1.526,
+            "absolute_deviation": 0.10696325739436041
+          },
+          {
+            "atoms": "CB-SG",
+            "distance": 1.8924806471929907,
+            "ideal": 1.812,
+            "absolute_deviation": 0.08048064719299064
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.4927454572029344,
+            "ideal": 1.459,
+            "absolute_deviation": 0.033745457202934315
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.4647095275173168,
+            "ideal": 1.525,
+            "absolute_deviation": 0.060290472482683155
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.3677137858484867,
+            "ideal": 1.229,
+            "absolute_deviation": 0.1387137858484866
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 25,
+        "resname": "ARG",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.4996442911570733,
+            "ideal": 1.535,
+            "absolute_deviation": 0.0353557088429266
+          },
+          {
+            "atoms": "CB-CG",
+            "distance": 1.4994549009556772,
+            "ideal": 1.521,
+            "absolute_deviation": 0.02154509904432267
+          },
+          {
+            "atoms": "CG-CD",
+            "distance": 1.523710274297577,
+            "ideal": 1.515,
+            "absolute_deviation": 0.008710274297577092
+          },
+          {
+            "atoms": "CD-NE",
+            "distance": 1.4601434860999103,
+            "ideal": 1.46,
+            "absolute_deviation": 0.00014348609991032824
+          },
+          {
+            "atoms": "NE-CZ",
+            "distance": 1.3308572425320457,
+            "ideal": 1.326,
+            "absolute_deviation": 0.004857242532045669
+          },
+          {
+            "atoms": "CZ-NH1",
+            "distance": 1.3267531797587675,
+            "ideal": 1.326,
+            "absolute_deviation": 0.0007531797587674305
+          },
+          {
+            "atoms": "CZ-NH2",
+            "distance": 1.325259219926426,
+            "ideal": 1.326,
+            "absolute_deviation": 0.0007407800735741432
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.541896559435814,
+            "ideal": 1.459,
+            "absolute_deviation": 0.08289655943581398
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.50110992269054,
+            "ideal": 1.525,
+            "absolute_deviation": 0.02389007730945991
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.3154801404810337,
+            "ideal": 1.229,
+            "absolute_deviation": 0.08648014048103358
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 26,
+        "resname": "LEU",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.4998746614300809,
+            "ideal": 1.533,
+            "absolute_deviation": 0.03312533856991906
+          },
+          {
+            "atoms": "CB-CG",
+            "distance": 1.5412793387313022,
+            "ideal": 1.521,
+            "absolute_deviation": 0.020279338731302277
+          },
+          {
+            "atoms": "CG-CD1",
+            "distance": 1.4906441560613988,
+            "ideal": 1.514,
+            "absolute_deviation": 0.02335584393860124
+          },
+          {
+            "atoms": "CG-CD2",
+            "distance": 1.493498577167049,
+            "ideal": 1.514,
+            "absolute_deviation": 0.020501422832950977
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.48116339409263,
+            "ideal": 1.459,
+            "absolute_deviation": 0.022163394092630018
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.5497503024681103,
+            "ideal": 1.525,
+            "absolute_deviation": 0.024750302468110386
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.2506194465144065,
+            "ideal": 1.229,
+            "absolute_deviation": 0.021619446514406393
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 27,
+        "resname": "SER",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.552189743555858,
+            "ideal": 1.525,
+            "absolute_deviation": 0.027189743555858126
+          },
+          {
+            "atoms": "CB-OG",
+            "distance": 1.4421879211808701,
+            "ideal": 1.418,
+            "absolute_deviation": 0.02418792118087021
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.4326915229734558,
+            "ideal": 1.459,
+            "absolute_deviation": 0.026308477026544264
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.5617663077426147,
+            "ideal": 1.525,
+            "absolute_deviation": 0.0367663077426148
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.2644591729273031,
+            "ideal": 1.229,
+            "absolute_deviation": 0.03545917292730305
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 28,
+        "resname": "VAL",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.6011527097688092,
+            "ideal": 1.543,
+            "absolute_deviation": 0.05815270976880926
+          },
+          {
+            "atoms": "CB-CG1",
+            "distance": 1.5479137572875303,
+            "ideal": 1.524,
+            "absolute_deviation": 0.023913757287530313
+          },
+          {
+            "atoms": "CB-CG2",
+            "distance": 1.5565407158182527,
+            "ideal": 1.524,
+            "absolute_deviation": 0.032540715818252686
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.4304495796776622,
+            "ideal": 1.459,
+            "absolute_deviation": 0.0285504203223379
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.5603454745664496,
+            "ideal": 1.525,
+            "absolute_deviation": 0.03534547456644965
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.263288169817164,
+            "ideal": 1.229,
+            "absolute_deviation": 0.03428816981716398
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 29,
+        "resname": "PHE",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.5616548914532946,
+            "ideal": 1.535,
+            "absolute_deviation": 0.026654891453294693
+          },
+          {
+            "atoms": "CB-CG",
+            "distance": 1.5337128153601638,
+            "ideal": 1.509,
+            "absolute_deviation": 0.024712815360163898
+          },
+          {
+            "atoms": "CG-CD1",
+            "distance": 1.4044514943564255,
+            "ideal": 1.383,
+            "absolute_deviation": 0.02145149435642546
+          },
+          {
+            "atoms": "CG-CD2",
+            "distance": 1.4035732969816717,
+            "ideal": 1.383,
+            "absolute_deviation": 0.02057329698167165
+          },
+          {
+            "atoms": "CD1-CE1",
+            "distance": 1.4100514175022127,
+            "ideal": 1.388,
+            "absolute_deviation": 0.022051417502212844
+          },
+          {
+            "atoms": "CD2-CE2",
+            "distance": 1.4056407791466488,
+            "ideal": 1.388,
+            "absolute_deviation": 0.017640779146648855
+          },
+          {
+            "atoms": "CE1-CZ",
+            "distance": 1.3882748286992745,
+            "ideal": 1.369,
+            "absolute_deviation": 0.01927482869927455
+          },
+          {
+            "atoms": "CE2-CZ",
+            "distance": 1.3881808239563032,
+            "ideal": 1.369,
+            "absolute_deviation": 0.01918082395630316
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.4793464773338258,
+            "ideal": 1.459,
+            "absolute_deviation": 0.020346477333825774
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.5246573385518456,
+            "ideal": 1.525,
+            "absolute_deviation": 0.0003426614481543133
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.3505961646621096,
+            "ideal": 1.229,
+            "absolute_deviation": 0.12159616466210954
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 30,
+        "resname": "ARG",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.5567906089130934,
+            "ideal": 1.535,
+            "absolute_deviation": 0.02179060891309348
+          },
+          {
+            "atoms": "CB-CG",
+            "distance": 1.497542987696847,
+            "ideal": 1.521,
+            "absolute_deviation": 0.023457012303153002
+          },
+          {
+            "atoms": "CG-CD",
+            "distance": 1.4925260466738934,
+            "ideal": 1.515,
+            "absolute_deviation": 0.022473953326106466
+          },
+          {
+            "atoms": "CD-NE",
+            "distance": 1.4397017052153551,
+            "ideal": 1.46,
+            "absolute_deviation": 0.020298294784644844
+          },
+          {
+            "atoms": "NE-CZ",
+            "distance": 1.306854620835845,
+            "ideal": 1.326,
+            "absolute_deviation": 0.019145379164155152
+          },
+          {
+            "atoms": "CZ-NH1",
+            "distance": 1.3253195841003789,
+            "ideal": 1.326,
+            "absolute_deviation": 0.0006804158996212006
+          },
+          {
+            "atoms": "CZ-NH2",
+            "distance": 1.3192312155190986,
+            "ideal": 1.326,
+            "absolute_deviation": 0.0067687844809014575
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.4667368543811805,
+            "ideal": 1.459,
+            "absolute_deviation": 0.007736854381180436
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.5628198872550865,
+            "ideal": 1.525,
+            "absolute_deviation": 0.03781988725508656
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.3747767091422514,
+            "ideal": 1.229,
+            "absolute_deviation": 0.14577670914225127
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 31,
+        "resname": "SER",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.4966756495647273,
+            "ideal": 1.525,
+            "absolute_deviation": 0.028324350435272594
+          },
+          {
+            "atoms": "CB-OG",
+            "distance": 1.3977102704065678,
+            "ideal": 1.418,
+            "absolute_deviation": 0.020289729593432115
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.3987186993816878,
+            "ideal": 1.459,
+            "absolute_deviation": 0.06028130061831227
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.511779415126426,
+            "ideal": 1.525,
+            "absolute_deviation": 0.013220584873573804
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.2631397389046073,
+            "ideal": 1.229,
+            "absolute_deviation": 0.0341397389046072
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 32,
+        "resname": "SER",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.5533853353241112,
+            "ideal": 1.525,
+            "absolute_deviation": 0.02838533532411125
+          },
+          {
+            "atoms": "CB-OG",
+            "distance": 1.4354333840342433,
+            "ideal": 1.418,
+            "absolute_deviation": 0.017433384034243327
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.493138975447362,
+            "ideal": 1.459,
+            "absolute_deviation": 0.034138975447362
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.6601801107108825,
+            "ideal": 1.525,
+            "absolute_deviation": 0.13518011071088254
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.3794912105555444,
+            "ideal": 1.229,
+            "absolute_deviation": 0.15049121055554426
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 33,
+        "resname": "ARG",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.5126870132317525,
+            "ideal": 1.535,
+            "absolute_deviation": 0.022312986768247445
+          },
+          {
+            "atoms": "CB-CG",
+            "distance": 1.5439915802879232,
+            "ideal": 1.521,
+            "absolute_deviation": 0.022991580287923252
+          },
+          {
+            "atoms": "CG-CD",
+            "distance": 1.5234565960341644,
+            "ideal": 1.515,
+            "absolute_deviation": 0.008456596034164487
+          },
+          {
+            "atoms": "CD-NE",
+            "distance": 1.4781880800493563,
+            "ideal": 1.46,
+            "absolute_deviation": 0.018188080049356348
+          },
+          {
+            "atoms": "NE-CZ",
+            "distance": 1.472796998910576,
+            "ideal": 1.326,
+            "absolute_deviation": 0.14679699891057596
+          },
+          {
+            "atoms": "CZ-NH1",
+            "distance": 1.4194259403012186,
+            "ideal": 1.326,
+            "absolute_deviation": 0.09342594030121854
+          },
+          {
+            "atoms": "CZ-NH2",
+            "distance": 1.3638350340125454,
+            "ideal": 1.326,
+            "absolute_deviation": 0.03783503401254529
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.4936632820016704,
+            "ideal": 1.459,
+            "absolute_deviation": 0.03466328200167035
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.4974715356226305,
+            "ideal": 1.525,
+            "absolute_deviation": 0.027528464377369444
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.2037366821693196,
+            "ideal": 1.229,
+            "absolute_deviation": 0.025263317830680476
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 34,
+        "resname": "HIS",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.5589647205758064,
+            "ideal": 1.535,
+            "absolute_deviation": 0.023964720575806453
+          },
+          {
+            "atoms": "CB-CG",
+            "distance": 1.5122833729165968,
+            "ideal": 1.492,
+            "absolute_deviation": 0.020283372916596765
+          },
+          {
+            "atoms": "CG-ND1",
+            "distance": 1.381624406269663,
+            "ideal": 1.369,
+            "absolute_deviation": 0.012624406269662991
+          },
+          {
+            "atoms": "CG-CD2",
+            "distance": 1.3465259002336347,
+            "ideal": 1.353,
+            "absolute_deviation": 0.00647409976636526
+          },
+          {
+            "atoms": "ND1-CE1",
+            "distance": 1.3285510904741307,
+            "ideal": 1.343,
+            "absolute_deviation": 0.014448909525869302
+          },
+          {
+            "atoms": "CD2-NE2",
+            "distance": 1.3901830814680494,
+            "ideal": 1.415,
+            "absolute_deviation": 0.02481691853195067
+          },
+          {
+            "atoms": "CE1-NE2",
+            "distance": 1.3427453220920198,
+            "ideal": 1.322,
+            "absolute_deviation": 0.020745322092019736
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.4826118844795488,
+            "ideal": 1.459,
+            "absolute_deviation": 0.02361188447954876
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.564723617767688,
+            "ideal": 1.525,
+            "absolute_deviation": 0.03972361776768807
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.2471002365487704,
+            "ideal": 1.229,
+            "absolute_deviation": 0.018100236548770354
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 35,
+        "resname": "CYS",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.556723803376823,
+            "ideal": 1.526,
+            "absolute_deviation": 0.0307238033768229
+          },
+          {
+            "atoms": "CB-SG",
+            "distance": 1.786369782547835,
+            "ideal": 1.812,
+            "absolute_deviation": 0.025630217452164983
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.506717624506994,
+            "ideal": 1.459,
+            "absolute_deviation": 0.047717624506993905
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.5889222762614919,
+            "ideal": 1.525,
+            "absolute_deviation": 0.06392227626149194
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.2499895999567363,
+            "ideal": 1.229,
+            "absolute_deviation": 0.020989599956736216
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 36,
+        "resname": "VAL",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.5151626975344923,
+            "ideal": 1.543,
+            "absolute_deviation": 0.02783730246550764
+          },
+          {
+            "atoms": "CB-CG1",
+            "distance": 1.5466809625776097,
+            "ideal": 1.524,
+            "absolute_deviation": 0.022680962577609654
+          },
+          {
+            "atoms": "CB-CG2",
+            "distance": 1.5510635061144338,
+            "ideal": 1.524,
+            "absolute_deviation": 0.027063506114433755
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.500145992895358,
+            "ideal": 1.459,
+            "absolute_deviation": 0.04114599289535792
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.520346670993166,
+            "ideal": 1.525,
+            "absolute_deviation": 0.004653329006834017
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.2499903999631354,
+            "ideal": 1.229,
+            "absolute_deviation": 0.020990399963135342
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 37,
+        "resname": "ALA",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.5402145954379212,
+            "ideal": 1.52,
+            "absolute_deviation": 0.020214595437921146
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.5102943421730748,
+            "ideal": 1.459,
+            "absolute_deviation": 0.051294342173074714
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.6284415863026838,
+            "ideal": 1.525,
+            "absolute_deviation": 0.10344158630268385
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.1835750926747315,
+            "ideal": 1.229,
+            "absolute_deviation": 0.045424907325268604
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 38,
+        "resname": "LYS",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.563970907657812,
+            "ideal": 1.535,
+            "absolute_deviation": 0.028970907657812184
+          },
+          {
+            "atoms": "CB-CG",
+            "distance": 1.544907440593125,
+            "ideal": 1.521,
+            "absolute_deviation": 0.023907440593124996
+          },
+          {
+            "atoms": "CG-CD",
+            "distance": 1.4982676663400294,
+            "ideal": 1.52,
+            "absolute_deviation": 0.021732333659970626
+          },
+          {
+            "atoms": "CD-CE",
+            "distance": 1.4931299340646824,
+            "ideal": 1.508,
+            "absolute_deviation": 0.014870065935317589
+          },
+          {
+            "atoms": "CE-NZ",
+            "distance": 1.5032491476797847,
+            "ideal": 1.486,
+            "absolute_deviation": 0.017249147679784693
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.4254129226297898,
+            "ideal": 1.459,
+            "absolute_deviation": 0.03358707737021027
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.57816792515879,
+            "ideal": 1.525,
+            "absolute_deviation": 0.053167925158789986
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.3433901145981388,
+            "ideal": 1.229,
+            "absolute_deviation": 0.11439011459813875
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 39,
+        "resname": "ILE",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.6031129093111314,
+            "ideal": 1.544,
+            "absolute_deviation": 0.059112909311131334
+          },
+          {
+            "atoms": "CB-CG1",
+            "distance": 1.56262279517483,
+            "ideal": 1.536,
+            "absolute_deviation": 0.026622795174829905
+          },
+          {
+            "atoms": "CB-CG2",
+            "distance": 1.557641165352277,
+            "ideal": 1.524,
+            "absolute_deviation": 0.033641165352277014
+          },
+          {
+            "atoms": "CG1-CD1",
+            "distance": 1.4812055900515635,
+            "ideal": 1.5,
+            "absolute_deviation": 0.018794409948436508
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.5092133712633216,
+            "ideal": 1.459,
+            "absolute_deviation": 0.05021337126332148
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.5579017940807436,
+            "ideal": 1.525,
+            "absolute_deviation": 0.032901794080743674
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.187316722698708,
+            "ideal": 1.229,
+            "absolute_deviation": 0.041683277301292065
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 40,
+        "resname": "ILE",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.5100254964734867,
+            "ideal": 1.544,
+            "absolute_deviation": 0.03397450352651332
+          },
+          {
+            "atoms": "CB-CG1",
+            "distance": 1.5570054592068714,
+            "ideal": 1.536,
+            "absolute_deviation": 0.021005459206871357
+          },
+          {
+            "atoms": "CB-CG2",
+            "distance": 1.5456587592350384,
+            "ideal": 1.524,
+            "absolute_deviation": 0.02165875923503835
+          },
+          {
+            "atoms": "CG1-CD1",
+            "distance": 1.4808355749373394,
+            "ideal": 1.5,
+            "absolute_deviation": 0.019164425062660584
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.4885200704055015,
+            "ideal": 1.459,
+            "absolute_deviation": 0.02952007040550142
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.480021621463687,
+            "ideal": 1.525,
+            "absolute_deviation": 0.044978378536312924
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.2558292081330167,
+            "ideal": 1.229,
+            "absolute_deviation": 0.02682920813301659
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 41,
+        "resname": "PRO",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.5611105021746539,
+            "ideal": 1.531,
+            "absolute_deviation": 0.03011050217465394
+          },
+          {
+            "atoms": "CB-CG",
+            "distance": 1.5006255362348049,
+            "ideal": 1.495,
+            "absolute_deviation": 0.005625536234804773
+          },
+          {
+            "atoms": "CG-CD",
+            "distance": 1.454030604904862,
+            "ideal": 1.502,
+            "absolute_deviation": 0.04796939509513809
+          },
+          {
+            "atoms": "CD-N",
+            "distance": 1.505197329256201,
+            "ideal": 1.474,
+            "absolute_deviation": 0.031197329256201112
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.5010033311088955,
+            "ideal": 1.468,
+            "absolute_deviation": 0.03300333110889553
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.561175518639721,
+            "ideal": 1.524,
+            "absolute_deviation": 0.037175518639720906
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.2248963221432247,
+            "ideal": 1.228,
+            "absolute_deviation": 0.0031036778567752332
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 42,
+        "resname": "PRO",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.5040332443134357,
+            "ideal": 1.531,
+            "absolute_deviation": 0.02696675568656426
+          },
+          {
+            "atoms": "CB-CG",
+            "distance": 1.518853844186464,
+            "ideal": 1.495,
+            "absolute_deviation": 0.02385384418646397
+          },
+          {
+            "atoms": "CG-CD",
+            "distance": 1.5074790214129017,
+            "ideal": 1.502,
+            "absolute_deviation": 0.005479021412901686
+          },
+          {
+            "atoms": "CD-N",
+            "distance": 1.5184775269986701,
+            "ideal": 1.474,
+            "absolute_deviation": 0.044477526998670136
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.4816497561839643,
+            "ideal": 1.468,
+            "absolute_deviation": 0.013649756183964357
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.6078569588119467,
+            "ideal": 1.524,
+            "absolute_deviation": 0.08385695881194666
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.3746930566493742,
+            "ideal": 1.228,
+            "absolute_deviation": 0.14669305664937426
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 43,
+        "resname": "SER",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.492365236796945,
+            "ideal": 1.525,
+            "absolute_deviation": 0.032634763203054806
+          },
+          {
+            "atoms": "CB-OG",
+            "distance": 1.3972591026720853,
+            "ideal": 1.418,
+            "absolute_deviation": 0.02074089732791462
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.4203805828016658,
+            "ideal": 1.459,
+            "absolute_deviation": 0.03861941719833428
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.4969078127927582,
+            "ideal": 1.525,
+            "absolute_deviation": 0.028092187207241714
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.2466499107608362,
+            "ideal": 1.229,
+            "absolute_deviation": 0.017649910760836107
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 44,
+        "resname": "LYS",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.5123151126666707,
+            "ideal": 1.535,
+            "absolute_deviation": 0.022684887333329185
+          },
+          {
+            "atoms": "CB-CG",
+            "distance": 1.499482910872946,
+            "ideal": 1.521,
+            "absolute_deviation": 0.021517089127053968
+          },
+          {
+            "atoms": "CG-CD",
+            "distance": 1.4996269536121298,
+            "ideal": 1.52,
+            "absolute_deviation": 0.020373046387870186
+          },
+          {
+            "atoms": "CD-CE",
+            "distance": 1.5294531702539962,
+            "ideal": 1.508,
+            "absolute_deviation": 0.02145317025399618
+          },
+          {
+            "atoms": "CE-NZ",
+            "distance": 1.4687249572333156,
+            "ideal": 1.486,
+            "absolute_deviation": 0.017275042766684345
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.499755980151438,
+            "ideal": 1.459,
+            "absolute_deviation": 0.04075598015143789
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.5699433110784604,
+            "ideal": 1.525,
+            "absolute_deviation": 0.0449433110784605
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.2479479155798137,
+            "ideal": 1.229,
+            "absolute_deviation": 0.018947915579813568
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 45,
+        "resname": "GLY",
+        "covalent_bonds": [
+          {
+            "atoms": "N-CA",
+            "distance": 1.4993668663806063,
+            "ideal": 1.456,
+            "absolute_deviation": 0.043366866380606384
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.6203274360449489,
+            "ideal": 1.514,
+            "absolute_deviation": 0.10632743604494888
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.38045391085686,
+            "ideal": 1.232,
+            "absolute_deviation": 0.1484539108568601
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 46,
+        "resname": "GLN",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.5131285470838225,
+            "ideal": 1.535,
+            "absolute_deviation": 0.021871452916177425
+          },
+          {
+            "atoms": "CB-CG",
+            "distance": 1.4882328446852657,
+            "ideal": 1.521,
+            "absolute_deviation": 0.032767155314734175
+          },
+          {
+            "atoms": "CG-CD",
+            "distance": 1.528446269909414,
+            "ideal": 1.506,
+            "absolute_deviation": 0.022446269909413896
+          },
+          {
+            "atoms": "CD-OE1",
+            "distance": 1.2381134842977843,
+            "ideal": 1.235,
+            "absolute_deviation": 0.0031134842977842414
+          },
+          {
+            "atoms": "CD-NE2",
+            "distance": 1.3265304368916682,
+            "ideal": 1.324,
+            "absolute_deviation": 0.0025304368916680975
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.4739687920712565,
+            "ideal": 1.459,
+            "absolute_deviation": 0.014968792071256454
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.6816923024144463,
+            "ideal": 1.525,
+            "absolute_deviation": 0.15669230241444643
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.180708262019031,
+            "ideal": 1.229,
+            "absolute_deviation": 0.048291737980969085
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 47,
+        "resname": "THR",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.6305302818408496,
+            "ideal": 1.529,
+            "absolute_deviation": 0.10153028184084967
+          },
+          {
+            "atoms": "CB-OG1",
+            "distance": 1.3282311545811596,
+            "ideal": 1.428,
+            "absolute_deviation": 0.09976884541884035
+          },
+          {
+            "atoms": "CB-CG2",
+            "distance": 1.516280646846091,
+            "ideal": 1.519,
+            "absolute_deviation": 0.002719353153908921
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.309404062923283,
+            "ideal": 1.459,
+            "absolute_deviation": 0.14959593707671703
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.6819039806124485,
+            "ideal": 1.525,
+            "absolute_deviation": 0.1569039806124486
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.2731574922216025,
+            "ideal": 1.229,
+            "absolute_deviation": 0.04415749222160237
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 48,
+        "resname": "THR",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.6872344235464138,
+            "ideal": 1.529,
+            "absolute_deviation": 0.15823442354641393
+          },
+          {
+            "atoms": "CB-OG1",
+            "distance": 1.482568042283389,
+            "ideal": 1.428,
+            "absolute_deviation": 0.05456804228338896
+          },
+          {
+            "atoms": "CB-CG2",
+            "distance": 1.3789746190557677,
+            "ideal": 1.519,
+            "absolute_deviation": 0.14002538094423223
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.3651992528565196,
+            "ideal": 1.459,
+            "absolute_deviation": 0.09380074714348052
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.3820079594560952,
+            "ideal": 1.525,
+            "absolute_deviation": 0.14299204054390469
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.353792081525077,
+            "ideal": 1.229,
+            "absolute_deviation": 0.12479208152507693
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 49,
+        "resname": "LYS",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.4945838885790244,
+            "ideal": 1.535,
+            "absolute_deviation": 0.040416111420975565
+          },
+          {
+            "atoms": "CB-CG",
+            "distance": 1.5405651560385227,
+            "ideal": 1.521,
+            "absolute_deviation": 0.019565156038522824
+          },
+          {
+            "atoms": "CG-CD",
+            "distance": 1.4996639623595682,
+            "ideal": 1.52,
+            "absolute_deviation": 0.020336037640431792
+          },
+          {
+            "atoms": "CD-CE",
+            "distance": 1.5213267236198806,
+            "ideal": 1.508,
+            "absolute_deviation": 0.013326723619880632
+          },
+          {
+            "atoms": "CE-NZ",
+            "distance": 1.471528117298476,
+            "ideal": 1.486,
+            "absolute_deviation": 0.014471882701523997
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.621656868761083,
+            "ideal": 1.459,
+            "absolute_deviation": 0.16265686876108298
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.3987108350191615,
+            "ideal": 1.525,
+            "absolute_deviation": 0.12628916498083842
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.2855963596712614,
+            "ideal": 1.229,
+            "absolute_deviation": 0.05659635967126131
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 50,
+        "resname": "PHE",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.609077375392495,
+            "ideal": 1.535,
+            "absolute_deviation": 0.07407737539249504
+          },
+          {
+            "atoms": "CB-CG",
+            "distance": 1.529078807648579,
+            "ideal": 1.509,
+            "absolute_deviation": 0.020078807648579167
+          },
+          {
+            "atoms": "CG-CD1",
+            "distance": 1.4089659328741777,
+            "ideal": 1.383,
+            "absolute_deviation": 0.0259659328741777
+          },
+          {
+            "atoms": "CG-CD2",
+            "distance": 1.4041987038877368,
+            "ideal": 1.383,
+            "absolute_deviation": 0.021198703887736814
+          },
+          {
+            "atoms": "CD1-CE1",
+            "distance": 1.4090425827490098,
+            "ideal": 1.388,
+            "absolute_deviation": 0.02104258274900994
+          },
+          {
+            "atoms": "CD2-CE2",
+            "distance": 1.4094413787029239,
+            "ideal": 1.388,
+            "absolute_deviation": 0.021441378702923952
+          },
+          {
+            "atoms": "CE1-CZ",
+            "distance": 1.3919899424924016,
+            "ideal": 1.369,
+            "absolute_deviation": 0.022989942492401605
+          },
+          {
+            "atoms": "CE2-CZ",
+            "distance": 1.3911904973798528,
+            "ideal": 1.369,
+            "absolute_deviation": 0.02219049737985279
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.6095949801114564,
+            "ideal": 1.459,
+            "absolute_deviation": 0.15059498011145633
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.4593385487953094,
+            "ideal": 1.525,
+            "absolute_deviation": 0.06566145120469047
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.343725418379812,
+            "ideal": 1.229,
+            "absolute_deviation": 0.11472541837981187
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 51,
+        "resname": "GLU",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.4566859647844477,
+            "ideal": 1.535,
+            "absolute_deviation": 0.07831403521555225
+          },
+          {
+            "atoms": "CB-CG",
+            "distance": 1.5766676885127064,
+            "ideal": 1.517,
+            "absolute_deviation": 0.05966768851270654
+          },
+          {
+            "atoms": "CG-CD",
+            "distance": 1.5135616934898952,
+            "ideal": 1.515,
+            "absolute_deviation": 0.001438306510104681
+          },
+          {
+            "atoms": "CD-OE1",
+            "distance": 1.2758189526731438,
+            "ideal": 1.252,
+            "absolute_deviation": 0.023818952673143823
+          },
+          {
+            "atoms": "CD-OE2",
+            "distance": 1.2724287799322993,
+            "ideal": 1.252,
+            "absolute_deviation": 0.0204287799322993
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.5057440021464474,
+            "ideal": 1.459,
+            "absolute_deviation": 0.04674400214644736
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.5287158009257311,
+            "ideal": 1.525,
+            "absolute_deviation": 0.0037158009257312052
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.2666759648781531,
+            "ideal": 1.229,
+            "absolute_deviation": 0.037675964878153057
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 52,
+        "resname": "LEU",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.503221207939803,
+            "ideal": 1.533,
+            "absolute_deviation": 0.029778792060196846
+          },
+          {
+            "atoms": "CB-CG",
+            "distance": 1.543778157637942,
+            "ideal": 1.521,
+            "absolute_deviation": 0.022778157637941998
+          },
+          {
+            "atoms": "CG-CD1",
+            "distance": 1.5348022673947281,
+            "ideal": 1.514,
+            "absolute_deviation": 0.020802267394728124
+          },
+          {
+            "atoms": "CG-CD2",
+            "distance": 1.53425584567894,
+            "ideal": 1.514,
+            "absolute_deviation": 0.0202558456789399
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.4945092840126486,
+            "ideal": 1.459,
+            "absolute_deviation": 0.03550928401264852
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.5030405849477257,
+            "ideal": 1.525,
+            "absolute_deviation": 0.021959415052274167
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.3517399897909355,
+            "ideal": 1.229,
+            "absolute_deviation": 0.12273998979093537
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 53,
+        "resname": "LEU",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.5610666225372962,
+            "ideal": 1.533,
+            "absolute_deviation": 0.028066622537296304
+          },
+          {
+            "atoms": "CB-CG",
+            "distance": 1.5002976371373775,
+            "ideal": 1.521,
+            "absolute_deviation": 0.020702362862622392
+          },
+          {
+            "atoms": "CG-CD1",
+            "distance": 1.4923531753576293,
+            "ideal": 1.514,
+            "absolute_deviation": 0.021646824642370666
+          },
+          {
+            "atoms": "CG-CD2",
+            "distance": 1.5253055431617626,
+            "ideal": 1.514,
+            "absolute_deviation": 0.011305543161762577
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.469575448896721,
+            "ideal": 1.459,
+            "absolute_deviation": 0.010575448896720907
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.6148108248336703,
+            "ideal": 1.525,
+            "absolute_deviation": 0.08981082483367042
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.3747356109448836,
+            "ideal": 1.229,
+            "absolute_deviation": 0.14573561094488352
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 54,
+        "resname": "ALA",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.4948401252307892,
+            "ideal": 1.52,
+            "absolute_deviation": 0.025159874769210777
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.4238307483686399,
+            "ideal": 1.459,
+            "absolute_deviation": 0.0351692516313602
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.5349459273863697,
+            "ideal": 1.525,
+            "absolute_deviation": 0.00994592738636979
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.255797754417485,
+            "ideal": 1.229,
+            "absolute_deviation": 0.026797754417484887
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 55,
+        "resname": "LYS",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.508125326357196,
+            "ideal": 1.535,
+            "absolute_deviation": 0.026874673642803826
+          },
+          {
+            "atoms": "CB-CG",
+            "distance": 1.543723096931571,
+            "ideal": 1.521,
+            "absolute_deviation": 0.02272309693157104
+          },
+          {
+            "atoms": "CG-CD",
+            "distance": 1.4842159546373288,
+            "ideal": 1.52,
+            "absolute_deviation": 0.03578404536267121
+          },
+          {
+            "atoms": "CD-CE",
+            "distance": 1.5423125493880943,
+            "ideal": 1.508,
+            "absolute_deviation": 0.03431254938809425
+          },
+          {
+            "atoms": "CE-NZ",
+            "distance": 1.4721620155404085,
+            "ideal": 1.486,
+            "absolute_deviation": 0.013837984459591501
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.5161461011393338,
+            "ideal": 1.459,
+            "absolute_deviation": 0.057146101139333716
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.5691080268738662,
+            "ideal": 1.525,
+            "absolute_deviation": 0.04410802687386628
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.3615953877712728,
+            "ideal": 1.229,
+            "absolute_deviation": 0.13259538777127267
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 56,
+        "resname": "ILE",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.5135220513755334,
+            "ideal": 1.544,
+            "absolute_deviation": 0.030477948624466622
+          },
+          {
+            "atoms": "CB-CG1",
+            "distance": 1.5460116429057063,
+            "ideal": 1.536,
+            "absolute_deviation": 0.01001164290570622
+          },
+          {
+            "atoms": "CB-CG2",
+            "distance": 1.5077897731447838,
+            "ideal": 1.524,
+            "absolute_deviation": 0.016210226855216225
+          },
+          {
+            "atoms": "CG1-CD1",
+            "distance": 1.4873473030869426,
+            "ideal": 1.5,
+            "absolute_deviation": 0.01265269691305737
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.4155002649240302,
+            "ideal": 1.459,
+            "absolute_deviation": 0.043499735075969825
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.507497595354633,
+            "ideal": 1.525,
+            "absolute_deviation": 0.017502404645366898
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.2475255508405436,
+            "ideal": 1.229,
+            "absolute_deviation": 0.018525550840543525
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 57,
+        "resname": "LYS",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.5596515636513177,
+            "ideal": 1.535,
+            "absolute_deviation": 0.02465156365131782
+          },
+          {
+            "atoms": "CB-CG",
+            "distance": 1.4997256415758178,
+            "ideal": 1.521,
+            "absolute_deviation": 0.021274358424182127
+          },
+          {
+            "atoms": "CG-CD",
+            "distance": 1.5432595374725535,
+            "ideal": 1.52,
+            "absolute_deviation": 0.023259537472553493
+          },
+          {
+            "atoms": "CD-CE",
+            "distance": 1.5284645890566138,
+            "ideal": 1.508,
+            "absolute_deviation": 0.020464589056613747
+          },
+          {
+            "atoms": "CE-NZ",
+            "distance": 1.473397095151202,
+            "ideal": 1.486,
+            "absolute_deviation": 0.012602904848797891
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.494602957310067,
+            "ideal": 1.459,
+            "absolute_deviation": 0.03560295731006691
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.5899600623915051,
+            "ideal": 1.525,
+            "absolute_deviation": 0.0649600623915052
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.2333069366544573,
+            "ideal": 1.229,
+            "absolute_deviation": 0.00430693665445725
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 58,
+        "resname": "SER",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.5701140085993743,
+            "ideal": 1.525,
+            "absolute_deviation": 0.04511400859937442
+          },
+          {
+            "atoms": "CB-OG",
+            "distance": 1.444563255797405,
+            "ideal": 1.418,
+            "absolute_deviation": 0.02656325579740515
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.523035784215197,
+            "ideal": 1.459,
+            "absolute_deviation": 0.06403578421519684
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.5082934064697102,
+            "ideal": 1.525,
+            "absolute_deviation": 0.016706593530289693
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.259806731209196,
+            "ideal": 1.229,
+            "absolute_deviation": 0.03080673120919597
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 59,
+        "resname": "GLY",
+        "covalent_bonds": [
+          {
+            "atoms": "N-CA",
+            "distance": 1.478254037707998,
+            "ideal": 1.456,
+            "absolute_deviation": 0.022254037707998053
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.6011271030121266,
+            "ideal": 1.514,
+            "absolute_deviation": 0.08712710301212656
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.2420692412261076,
+            "ideal": 1.232,
+            "absolute_deviation": 0.01006924122610764
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 60,
+        "resname": "ASP",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.510485352461255,
+            "ideal": 1.535,
+            "absolute_deviation": 0.024514647538744994
+          },
+          {
+            "atoms": "CB-CG",
+            "distance": 1.5406213032410017,
+            "ideal": 1.513,
+            "absolute_deviation": 0.02762130324100176
+          },
+          {
+            "atoms": "CG-OD1",
+            "distance": 1.27146568966685,
+            "ideal": 1.249,
+            "absolute_deviation": 0.02246568966684981
+          },
+          {
+            "atoms": "CG-OD2",
+            "distance": 1.269523926517338,
+            "ideal": 1.249,
+            "absolute_deviation": 0.02052392651733781
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.5067149697271867,
+            "ideal": 1.459,
+            "absolute_deviation": 0.047714969727186585
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.4855251596657661,
+            "ideal": 1.525,
+            "absolute_deviation": 0.03947484033423376
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.2850805422229372,
+            "ideal": 1.229,
+            "absolute_deviation": 0.056080542222937124
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 61,
+        "resname": "TYR",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.556913934679756,
+            "ideal": 1.535,
+            "absolute_deviation": 0.02191393467975611
+          },
+          {
+            "atoms": "CB-CG",
+            "distance": 1.4918129909609985,
+            "ideal": 1.512,
+            "absolute_deviation": 0.020187009039001502
+          },
+          {
+            "atoms": "CG-CD1",
+            "distance": 1.3887537578707034,
+            "ideal": 1.387,
+            "absolute_deviation": 0.0017537578707034207
+          },
+          {
+            "atoms": "CG-CD2",
+            "distance": 1.4071780271166827,
+            "ideal": 1.387,
+            "absolute_deviation": 0.020178027116682706
+          },
+          {
+            "atoms": "CD1-CE1",
+            "distance": 1.3867407832756629,
+            "ideal": 1.389,
+            "absolute_deviation": 0.002259216724337154
+          },
+          {
+            "atoms": "CD2-CE2",
+            "distance": 1.3682956551856766,
+            "ideal": 1.389,
+            "absolute_deviation": 0.020704344814323372
+          },
+          {
+            "atoms": "CE1-CZ",
+            "distance": 1.372690788196672,
+            "ideal": 1.381,
+            "absolute_deviation": 0.00830921180332811
+          },
+          {
+            "atoms": "CE2-CZ",
+            "distance": 1.4009218393614966,
+            "ideal": 1.381,
+            "absolute_deviation": 0.019921839361496607
+          },
+          {
+            "atoms": "CZ-OH",
+            "distance": 1.3661950812384018,
+            "ideal": 1.374,
+            "absolute_deviation": 0.0078049187615982785
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.4817962073105737,
+            "ideal": 1.459,
+            "absolute_deviation": 0.022796207310573635
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.580749505772498,
+            "ideal": 1.525,
+            "absolute_deviation": 0.055749505772498154
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.2453927091484032,
+            "ideal": 1.229,
+            "absolute_deviation": 0.016392709148403073
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 62,
+        "resname": "THR",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.459390968863382,
+            "ideal": 1.529,
+            "absolute_deviation": 0.06960903113661798
+          },
+          {
+            "atoms": "CB-OG1",
+            "distance": 1.4027565718969206,
+            "ideal": 1.428,
+            "absolute_deviation": 0.025243428103079335
+          },
+          {
+            "atoms": "CB-CG2",
+            "distance": 1.4870087424087315,
+            "ideal": 1.519,
+            "absolute_deviation": 0.03199125759126842
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.489109129647657,
+            "ideal": 1.459,
+            "absolute_deviation": 0.030109129647656996
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.5509393927552415,
+            "ideal": 1.525,
+            "absolute_deviation": 0.025939392755241597
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.241694406848964,
+            "ideal": 1.229,
+            "absolute_deviation": 0.012694406848963835
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 63,
+        "resname": "ASP",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.5597220906302516,
+            "ideal": 1.535,
+            "absolute_deviation": 0.02472209063025166
+          },
+          {
+            "atoms": "CB-CG",
+            "distance": 1.5378598765817384,
+            "ideal": 1.513,
+            "absolute_deviation": 0.024859876581738494
+          },
+          {
+            "atoms": "CG-OD1",
+            "distance": 1.27230263695396,
+            "ideal": 1.249,
+            "absolute_deviation": 0.023302636953959954
+          },
+          {
+            "atoms": "CG-OD2",
+            "distance": 1.227062345604331,
+            "ideal": 1.249,
+            "absolute_deviation": 0.02193765439566908
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.4873567157881118,
+            "ideal": 1.459,
+            "absolute_deviation": 0.02835671578811172
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.514916169297826,
+            "ideal": 1.525,
+            "absolute_deviation": 0.010083830702174001
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.378286254738108,
+            "ideal": 1.229,
+            "absolute_deviation": 0.14928625473810797
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 64,
+        "resname": "THR",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.5513726180386191,
+            "ideal": 1.529,
+            "absolute_deviation": 0.02237261803861923
+          },
+          {
+            "atoms": "CB-OG1",
+            "distance": 1.4057716742060211,
+            "ideal": 1.428,
+            "absolute_deviation": 0.02222832579397882
+          },
+          {
+            "atoms": "CB-CG2",
+            "distance": 1.5409101206754403,
+            "ideal": 1.519,
+            "absolute_deviation": 0.021910120675440403
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.4531128655407324,
+            "ideal": 1.459,
+            "absolute_deviation": 0.0058871344592676955
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.5470300578851086,
+            "ideal": 1.525,
+            "absolute_deviation": 0.0220300578851087
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.277702625809309,
+            "ideal": 1.229,
+            "absolute_deviation": 0.04870262580930884
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 65,
+        "resname": "ALA",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.5269531754444865,
+            "ideal": 1.52,
+            "absolute_deviation": 0.006953175444486481
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.4316246016327043,
+            "ideal": 1.459,
+            "absolute_deviation": 0.027375398367295745
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.5676830036713414,
+            "ideal": 1.525,
+            "absolute_deviation": 0.04268300367134148
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.2506162480953136,
+            "ideal": 1.229,
+            "absolute_deviation": 0.021616248095313484
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 66,
+        "resname": "ALA",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.5406083214107338,
+            "ideal": 1.52,
+            "absolute_deviation": 0.020608321410733765
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.498137844125166,
+            "ideal": 1.459,
+            "absolute_deviation": 0.039137844125165966
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.529045780871194,
+            "ideal": 1.525,
+            "absolute_deviation": 0.004045780871194005
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.2525386221590133,
+            "ideal": 1.229,
+            "absolute_deviation": 0.023538622159013256
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 67,
+        "resname": "ALA",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.5042722492953198,
+            "ideal": 1.52,
+            "absolute_deviation": 0.015727750704680243
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.4762743647438972,
+            "ideal": 1.459,
+            "absolute_deviation": 0.017274364743897097
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.574533899285754,
+            "ideal": 1.525,
+            "absolute_deviation": 0.049533899285754135
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.3793538342281868,
+            "ideal": 1.229,
+            "absolute_deviation": 0.1503538342281867
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 68,
+        "resname": "VAL",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.5446310239018246,
+            "ideal": 1.543,
+            "absolute_deviation": 0.0016310239018246797
+          },
+          {
+            "atoms": "CB-CG1",
+            "distance": 1.4995779406219605,
+            "ideal": 1.524,
+            "absolute_deviation": 0.02442205937803954
+          },
+          {
+            "atoms": "CB-CG2",
+            "distance": 1.5010612912203152,
+            "ideal": 1.524,
+            "absolute_deviation": 0.022938708779684847
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.4898754981541238,
+            "ideal": 1.459,
+            "absolute_deviation": 0.030875498154123715
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.5881426258368616,
+            "ideal": 1.525,
+            "absolute_deviation": 0.0631426258368617
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.2959645056867874,
+            "ideal": 1.229,
+            "absolute_deviation": 0.06696450568678736
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 69,
+        "resname": "GLY",
+        "covalent_bonds": [
+          {
+            "atoms": "N-CA",
+            "distance": 1.5079486065512977,
+            "ideal": 1.456,
+            "absolute_deviation": 0.05194860655129774
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.5511508630690956,
+            "ideal": 1.514,
+            "absolute_deviation": 0.03715086306909554
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.2580981678708543,
+            "ideal": 1.232,
+            "absolute_deviation": 0.026098167870854283
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 70,
+        "resname": "ARG",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.5302434446845377,
+            "ideal": 1.535,
+            "absolute_deviation": 0.004756555315462263
+          },
+          {
+            "atoms": "CB-CG",
+            "distance": 1.4990203467598426,
+            "ideal": 1.521,
+            "absolute_deviation": 0.02197965324015727
+          },
+          {
+            "atoms": "CG-CD",
+            "distance": 1.4947407802023738,
+            "ideal": 1.515,
+            "absolute_deviation": 0.020259219797626127
+          },
+          {
+            "atoms": "CD-NE",
+            "distance": 1.4394759463082387,
+            "ideal": 1.46,
+            "absolute_deviation": 0.020524053691761246
+          },
+          {
+            "atoms": "NE-CZ",
+            "distance": 1.3054784563523063,
+            "ideal": 1.326,
+            "absolute_deviation": 0.020521543647693763
+          },
+          {
+            "atoms": "CZ-NH1",
+            "distance": 1.3105029568833486,
+            "ideal": 1.326,
+            "absolute_deviation": 0.015497043116651454
+          },
+          {
+            "atoms": "CZ-NH2",
+            "distance": 1.3479647621507025,
+            "ideal": 1.326,
+            "absolute_deviation": 0.02196476215070242
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.4363380521311826,
+            "ideal": 1.459,
+            "absolute_deviation": 0.022661947868817478
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.5220190537572127,
+            "ideal": 1.525,
+            "absolute_deviation": 0.002980946242787219
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.239355881093078,
+            "ideal": 1.229,
+            "absolute_deviation": 0.010355881093077945
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 71,
+        "resname": "LYS",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.5595335841205857,
+            "ideal": 1.535,
+            "absolute_deviation": 0.024533584120585816
+          },
+          {
+            "atoms": "CB-CG",
+            "distance": 1.4987654919966646,
+            "ideal": 1.521,
+            "absolute_deviation": 0.022234508003335263
+          },
+          {
+            "atoms": "CG-CD",
+            "distance": 1.541534949328104,
+            "ideal": 1.52,
+            "absolute_deviation": 0.02153494932810407
+          },
+          {
+            "atoms": "CD-CE",
+            "distance": 1.4872756973742303,
+            "ideal": 1.508,
+            "absolute_deviation": 0.02072430262576974
+          },
+          {
+            "atoms": "CE-NZ",
+            "distance": 1.4931229018403,
+            "ideal": 1.486,
+            "absolute_deviation": 0.007122901840300067
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.4750088135329902,
+            "ideal": 1.459,
+            "absolute_deviation": 0.016008813532990107
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.5648645308779925,
+            "ideal": 1.525,
+            "absolute_deviation": 0.03986453087799258
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.2000004166665943,
+            "ideal": 1.229,
+            "absolute_deviation": 0.0289995833334058
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 72,
+        "resname": "LEU",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.5542654213486187,
+            "ideal": 1.533,
+            "absolute_deviation": 0.02126542134861875
+          },
+          {
+            "atoms": "CB-CG",
+            "distance": 1.5033100146011131,
+            "ideal": 1.521,
+            "absolute_deviation": 0.017689985398886776
+          },
+          {
+            "atoms": "CG-CD1",
+            "distance": 1.543473031834376,
+            "ideal": 1.514,
+            "absolute_deviation": 0.029473031834375885
+          },
+          {
+            "atoms": "CG-CD2",
+            "distance": 1.477546953568651,
+            "ideal": 1.514,
+            "absolute_deviation": 0.03645304643134906
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.511290177298855,
+            "ideal": 1.459,
+            "absolute_deviation": 0.05229017729885488
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.5178056529081707,
+            "ideal": 1.525,
+            "absolute_deviation": 0.007194347091829201
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.2695719751160233,
+            "ideal": 1.229,
+            "absolute_deviation": 0.04057197511602317
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 73,
+        "resname": "TYR",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.5639453315253704,
+            "ideal": 1.535,
+            "absolute_deviation": 0.028945331525370488
+          },
+          {
+            "atoms": "CB-CG",
+            "distance": 1.5423443195343896,
+            "ideal": 1.512,
+            "absolute_deviation": 0.03034431953438954
+          },
+          {
+            "atoms": "CG-CD1",
+            "distance": 1.4122963570016034,
+            "ideal": 1.387,
+            "absolute_deviation": 0.025296357001603376
+          },
+          {
+            "atoms": "CG-CD2",
+            "distance": 1.3871802334231844,
+            "ideal": 1.387,
+            "absolute_deviation": 0.00018023342318440605
+          },
+          {
+            "atoms": "CD1-CE1",
+            "distance": 1.4133286949609423,
+            "ideal": 1.389,
+            "absolute_deviation": 0.024328694960942254
+          },
+          {
+            "atoms": "CD2-CE2",
+            "distance": 1.409163226883245,
+            "ideal": 1.389,
+            "absolute_deviation": 0.02016322688324501
+          },
+          {
+            "atoms": "CE1-CZ",
+            "distance": 1.4006987541937772,
+            "ideal": 1.381,
+            "absolute_deviation": 0.0196987541937772
+          },
+          {
+            "atoms": "CE2-CZ",
+            "distance": 1.3820643979207337,
+            "ideal": 1.381,
+            "absolute_deviation": 0.0010643979207336507
+          },
+          {
+            "atoms": "CZ-OH",
+            "distance": 1.3769015941598732,
+            "ideal": 1.374,
+            "absolute_deviation": 0.002901594159873122
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.4482313351119012,
+            "ideal": 1.459,
+            "absolute_deviation": 0.010768664888098911
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.5636147223660954,
+            "ideal": 1.525,
+            "absolute_deviation": 0.03861472236609553
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.3717904358902637,
+            "ideal": 1.229,
+            "absolute_deviation": 0.14279043589026363
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 74,
+        "resname": "ARG",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.5045574100046837,
+            "ideal": 1.535,
+            "absolute_deviation": 0.030442589995316238
+          },
+          {
+            "atoms": "CB-CG",
+            "distance": 1.543980893664167,
+            "ideal": 1.521,
+            "absolute_deviation": 0.022980893664167112
+          },
+          {
+            "atoms": "CG-CD",
+            "distance": 1.5353712906004207,
+            "ideal": 1.515,
+            "absolute_deviation": 0.020371290600420755
+          },
+          {
+            "atoms": "CD-NE",
+            "distance": 1.4551628774814174,
+            "ideal": 1.46,
+            "absolute_deviation": 0.004837122518582593
+          },
+          {
+            "atoms": "NE-CZ",
+            "distance": 1.3148889686965968,
+            "ideal": 1.326,
+            "absolute_deviation": 0.011111031303403296
+          },
+          {
+            "atoms": "CZ-NH1",
+            "distance": 1.3282157204309846,
+            "ideal": 1.326,
+            "absolute_deviation": 0.0022157204309845024
+          },
+          {
+            "atoms": "CZ-NH2",
+            "distance": 1.3250822615973696,
+            "ideal": 1.326,
+            "absolute_deviation": 0.0009177384026304303
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.4146681589687384,
+            "ideal": 1.459,
+            "absolute_deviation": 0.04433184103126164
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.560786340278515,
+            "ideal": 1.525,
+            "absolute_deviation": 0.035786340278515016
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.2435039203798273,
+            "ideal": 1.229,
+            "absolute_deviation": 0.014503920379827173
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 75,
+        "resname": "LYS",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.5566184503596248,
+            "ideal": 1.535,
+            "absolute_deviation": 0.02161845035962484
+          },
+          {
+            "atoms": "CB-CG",
+            "distance": 1.5377197403948473,
+            "ideal": 1.521,
+            "absolute_deviation": 0.01671974039484736
+          },
+          {
+            "atoms": "CG-CD",
+            "distance": 1.4991627663466032,
+            "ideal": 1.52,
+            "absolute_deviation": 0.020837233653396847
+          },
+          {
+            "atoms": "CD-CE",
+            "distance": 1.4900557036567457,
+            "ideal": 1.508,
+            "absolute_deviation": 0.01794429634325434
+          },
+          {
+            "atoms": "CE-NZ",
+            "distance": 1.5040807824049875,
+            "ideal": 1.486,
+            "absolute_deviation": 0.01808078240498756
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.5122185688583514,
+            "ideal": 1.459,
+            "absolute_deviation": 0.0532185688583513
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.5466311777537651,
+            "ideal": 1.525,
+            "absolute_deviation": 0.02163117775376522
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.2682156756640417,
+            "ideal": 1.229,
+            "absolute_deviation": 0.039215675664041605
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 76,
+        "resname": "TYR",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.5576324983769443,
+            "ideal": 1.535,
+            "absolute_deviation": 0.022632498376944366
+          },
+          {
+            "atoms": "CB-CG",
+            "distance": 1.532642815531394,
+            "ideal": 1.512,
+            "absolute_deviation": 0.02064281553139402
+          },
+          {
+            "atoms": "CG-CD1",
+            "distance": 1.4069772563904508,
+            "ideal": 1.387,
+            "absolute_deviation": 0.01997725639045078
+          },
+          {
+            "atoms": "CG-CD2",
+            "distance": 1.3817474443616677,
+            "ideal": 1.387,
+            "absolute_deviation": 0.005252555638332268
+          },
+          {
+            "atoms": "CD1-CE1",
+            "distance": 1.3988109236061896,
+            "ideal": 1.389,
+            "absolute_deviation": 0.009810923606189625
+          },
+          {
+            "atoms": "CD2-CE2",
+            "distance": 1.4097577806133932,
+            "ideal": 1.389,
+            "absolute_deviation": 0.020757780613393173
+          },
+          {
+            "atoms": "CE1-CZ",
+            "distance": 1.391785903075612,
+            "ideal": 1.381,
+            "absolute_deviation": 0.010785903075611891
+          },
+          {
+            "atoms": "CE2-CZ",
+            "distance": 1.3741186266112544,
+            "ideal": 1.381,
+            "absolute_deviation": 0.006881373388745615
+          },
+          {
+            "atoms": "CZ-OH",
+            "distance": 1.3858347664855293,
+            "ideal": 1.374,
+            "absolute_deviation": 0.011834766485529169
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.4502982451895885,
+            "ideal": 1.459,
+            "absolute_deviation": 0.008701754810411577
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.5703747960280057,
+            "ideal": 1.525,
+            "absolute_deviation": 0.04537479602800576
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.2521525466172236,
+            "ideal": 1.229,
+            "absolute_deviation": 0.023152546617223546
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 77,
+        "resname": "ALA",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.5438668984080208,
+            "ideal": 1.52,
+            "absolute_deviation": 0.02386689840802081
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.4963371946189121,
+            "ideal": 1.459,
+            "absolute_deviation": 0.03733719461891205
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.5286981389404521,
+            "ideal": 1.525,
+            "absolute_deviation": 0.0036981389404522336
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.235792053704829,
+            "ideal": 1.229,
+            "absolute_deviation": 0.0067920537048289376
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 78,
+        "resname": "THR",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.4257510301591927,
+            "ideal": 1.529,
+            "absolute_deviation": 0.10324896984080723
+          },
+          {
+            "atoms": "CB-OG1",
+            "distance": 1.4775878992466058,
+            "ideal": 1.428,
+            "absolute_deviation": 0.04958789924660589
+          },
+          {
+            "atoms": "CB-CG2",
+            "distance": 1.5888766471944886,
+            "ideal": 1.519,
+            "absolute_deviation": 0.06987664719448872
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.4656636721976841,
+            "ideal": 1.459,
+            "absolute_deviation": 0.006663672197684045
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.515027062464562,
+            "ideal": 1.525,
+            "absolute_deviation": 0.00997293753543782
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.3654790368218772,
+            "ideal": 1.229,
+            "absolute_deviation": 0.13647903682187712
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 79,
+        "resname": "SER",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.5451841314225307,
+            "ideal": 1.525,
+            "absolute_deviation": 0.020184131422530838
+          },
+          {
+            "atoms": "CB-OG",
+            "distance": 1.397129199465819,
+            "ideal": 1.418,
+            "absolute_deviation": 0.02087080053418089
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.5091404838516524,
+            "ideal": 1.459,
+            "absolute_deviation": 0.05014048385165237
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.5349964169339276,
+            "ideal": 1.525,
+            "absolute_deviation": 0.009996416933927721
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.2486332528008373,
+            "ideal": 1.229,
+            "absolute_deviation": 0.019633252800837164
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 80,
+        "resname": "GLY",
+        "covalent_bonds": [
+          {
+            "atoms": "N-CA",
+            "distance": 1.481594748910781,
+            "ideal": 1.456,
+            "absolute_deviation": 0.025594748910781062
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.4860299458624648,
+            "ideal": 1.514,
+            "absolute_deviation": 0.027970054137535172
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.3667717439280056,
+            "ideal": 1.232,
+            "absolute_deviation": 0.13477174392800562
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 81,
+        "resname": "PRO",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.5759117995623992,
+            "ideal": 1.531,
+            "absolute_deviation": 0.044911799562399324
+          },
+          {
+            "atoms": "CB-CG",
+            "distance": 1.5227649194803505,
+            "ideal": 1.495,
+            "absolute_deviation": 0.027764919480350425
+          },
+          {
+            "atoms": "CG-CD",
+            "distance": 1.5236876320296104,
+            "ideal": 1.502,
+            "absolute_deviation": 0.021687632029610437
+          },
+          {
+            "atoms": "CD-N",
+            "distance": 1.4231552972181218,
+            "ideal": 1.474,
+            "absolute_deviation": 0.05084470278187814
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.482792635536068,
+            "ideal": 1.468,
+            "absolute_deviation": 0.014792635536068133
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.6746728038634895,
+            "ideal": 1.524,
+            "absolute_deviation": 0.15067280386348947
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.3787349273881462,
+            "ideal": 1.228,
+            "absolute_deviation": 0.1507349273881462
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 82,
+        "resname": "LYS",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.5735955643048831,
+            "ideal": 1.535,
+            "absolute_deviation": 0.0385955643048832
+          },
+          {
+            "atoms": "CB-CG",
+            "distance": 1.4937623639655673,
+            "ideal": 1.521,
+            "absolute_deviation": 0.027237636034432633
+          },
+          {
+            "atoms": "CG-CD",
+            "distance": 1.4961497251278035,
+            "ideal": 1.52,
+            "absolute_deviation": 0.023850274872196486
+          },
+          {
+            "atoms": "CD-CE",
+            "distance": 1.53028820814904,
+            "ideal": 1.508,
+            "absolute_deviation": 0.02228820814904009
+          },
+          {
+            "atoms": "CE-NZ",
+            "distance": 1.5070043131988715,
+            "ideal": 1.486,
+            "absolute_deviation": 0.021004313198871527
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.4258993653129948,
+            "ideal": 1.459,
+            "absolute_deviation": 0.033100634687005304
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.6563169986448851,
+            "ideal": 1.525,
+            "absolute_deviation": 0.13131699864488522
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.2473387671358576,
+            "ideal": 1.229,
+            "absolute_deviation": 0.01833876713585747
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 83,
+        "resname": "GLN",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.5661436715703954,
+            "ideal": 1.535,
+            "absolute_deviation": 0.031143671570395437
+          },
+          {
+            "atoms": "CB-CG",
+            "distance": 1.5439009035556654,
+            "ideal": 1.521,
+            "absolute_deviation": 0.02290090355566554
+          },
+          {
+            "atoms": "CG-CD",
+            "distance": 1.5265637883822605,
+            "ideal": 1.506,
+            "absolute_deviation": 0.020563788382260473
+          },
+          {
+            "atoms": "CD-OE1",
+            "distance": 1.243005229272991,
+            "ideal": 1.235,
+            "absolute_deviation": 0.008005229272990855
+          },
+          {
+            "atoms": "CD-NE2",
+            "distance": 1.3437596511281318,
+            "ideal": 1.324,
+            "absolute_deviation": 0.019759651128131717
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.4925685913886846,
+            "ideal": 1.459,
+            "absolute_deviation": 0.03356859138868451
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.4734300119109833,
+            "ideal": 1.525,
+            "absolute_deviation": 0.05156998808901658
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.3438738780108799,
+            "ideal": 1.229,
+            "absolute_deviation": 0.11487387801087978
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 84,
+        "resname": "VAL",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.6155807005532097,
+            "ideal": 1.543,
+            "absolute_deviation": 0.07258070055320975
+          },
+          {
+            "atoms": "CB-CG1",
+            "distance": 1.5616459265787492,
+            "ideal": 1.524,
+            "absolute_deviation": 0.03764592657874921
+          },
+          {
+            "atoms": "CB-CG2",
+            "distance": 1.5431114671338555,
+            "ideal": 1.524,
+            "absolute_deviation": 0.019111467133855475
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.6100891279677658,
+            "ideal": 1.459,
+            "absolute_deviation": 0.15108912796776575
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.5300947683068526,
+            "ideal": 1.525,
+            "absolute_deviation": 0.005094768306852737
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.2355079926896473,
+            "ideal": 1.229,
+            "absolute_deviation": 0.006507992689647191
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 85,
+        "resname": "VAL",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.5103261237229528,
+            "ideal": 1.543,
+            "absolute_deviation": 0.0326738762770471
+          },
+          {
+            "atoms": "CB-CG1",
+            "distance": 1.5487246365961895,
+            "ideal": 1.524,
+            "absolute_deviation": 0.02472463659618951
+          },
+          {
+            "atoms": "CB-CG2",
+            "distance": 1.5000216665101873,
+            "ideal": 1.524,
+            "absolute_deviation": 0.02397833348981271
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.5188423222968206,
+            "ideal": 1.459,
+            "absolute_deviation": 0.059842322296820516
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.622174158344288,
+            "ideal": 1.525,
+            "absolute_deviation": 0.097174158344288
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.3720947489149573,
+            "ideal": 1.229,
+            "absolute_deviation": 0.14309474891495721
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 86,
+        "resname": "PHE",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.4933522692251817,
+            "ideal": 1.535,
+            "absolute_deviation": 0.041647730774818204
+          },
+          {
+            "atoms": "CB-CG",
+            "distance": 1.5335168730731332,
+            "ideal": 1.509,
+            "absolute_deviation": 0.024516873073133327
+          },
+          {
+            "atoms": "CG-CD1",
+            "distance": 1.4014242755140212,
+            "ideal": 1.383,
+            "absolute_deviation": 0.01842427551402115
+          },
+          {
+            "atoms": "CG-CD2",
+            "distance": 1.3994645404582435,
+            "ideal": 1.383,
+            "absolute_deviation": 0.016464540458243526
+          },
+          {
+            "atoms": "CD1-CE1",
+            "distance": 1.3687121684269485,
+            "ideal": 1.388,
+            "absolute_deviation": 0.01928783157305136
+          },
+          {
+            "atoms": "CD2-CE2",
+            "distance": 1.4085119807797157,
+            "ideal": 1.388,
+            "absolute_deviation": 0.020511980779715833
+          },
+          {
+            "atoms": "CE1-CZ",
+            "distance": 1.3710339164294953,
+            "ideal": 1.369,
+            "absolute_deviation": 0.0020339164294953527
+          },
+          {
+            "atoms": "CE2-CZ",
+            "distance": 1.3736003785672164,
+            "ideal": 1.369,
+            "absolute_deviation": 0.004600378567216401
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.4104800601213758,
+            "ideal": 1.459,
+            "absolute_deviation": 0.04851993987862424
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.5967382377835135,
+            "ideal": 1.525,
+            "absolute_deviation": 0.07173823778351363
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.2096458159312584,
+            "ideal": 1.229,
+            "absolute_deviation": 0.019354184068741676
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 87,
+        "resname": "ASP",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.4907746308547112,
+            "ideal": 1.535,
+            "absolute_deviation": 0.04422536914528874
+          },
+          {
+            "atoms": "CB-CG",
+            "distance": 1.4873980637341169,
+            "ideal": 1.513,
+            "absolute_deviation": 0.02560193626588303
+          },
+          {
+            "atoms": "CG-OD1",
+            "distance": 1.2742813661040484,
+            "ideal": 1.249,
+            "absolute_deviation": 0.025281366104048297
+          },
+          {
+            "atoms": "CG-OD2",
+            "distance": 1.2696625535944581,
+            "ideal": 1.249,
+            "absolute_deviation": 0.02066255359445801
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.5006335328786975,
+            "ideal": 1.459,
+            "absolute_deviation": 0.04163353287869742
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.5508594391497896,
+            "ideal": 1.525,
+            "absolute_deviation": 0.02585943914978972
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.240389454969688,
+            "ideal": 1.229,
+            "absolute_deviation": 0.011389454969688018
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 88,
+        "resname": "LYS",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.5103502904955528,
+            "ideal": 1.535,
+            "absolute_deviation": 0.024649709504447115
+          },
+          {
+            "atoms": "CB-CG",
+            "distance": 1.4998709944525228,
+            "ideal": 1.521,
+            "absolute_deviation": 0.021129005547477098
+          },
+          {
+            "atoms": "CG-CD",
+            "distance": 1.4986156945661553,
+            "ideal": 1.52,
+            "absolute_deviation": 0.02138430543384473
+          },
+          {
+            "atoms": "CD-CE",
+            "distance": 1.5282218425346497,
+            "ideal": 1.508,
+            "absolute_deviation": 0.020221842534649648
+          },
+          {
+            "atoms": "CE-NZ",
+            "distance": 1.4653801554545498,
+            "ideal": 1.486,
+            "absolute_deviation": 0.020619844545450183
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.4767416835723166,
+            "ideal": 1.459,
+            "absolute_deviation": 0.017741683572316536
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.5549964630184856,
+            "ideal": 1.525,
+            "absolute_deviation": 0.029996463018485686
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.2517751395518286,
+            "ideal": 1.229,
+            "absolute_deviation": 0.022775139551828527
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 89,
+        "resname": "GLY",
+        "covalent_bonds": [
+          {
+            "atoms": "N-CA",
+            "distance": 1.4884844641446549,
+            "ideal": 1.456,
+            "absolute_deviation": 0.03248446414465489
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.541476240491562,
+            "ideal": 1.514,
+            "absolute_deviation": 0.027476240491562054
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.283812291575369,
+            "ideal": 1.232,
+            "absolute_deviation": 0.05181229157536893
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 90,
+        "resname": "SER",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.5554247008454005,
+            "ideal": 1.525,
+            "absolute_deviation": 0.03042470084540061
+          },
+          {
+            "atoms": "CB-OG",
+            "distance": 1.4408171292707483,
+            "ideal": 1.418,
+            "absolute_deviation": 0.022817129270748415
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.4741767193928952,
+            "ideal": 1.459,
+            "absolute_deviation": 0.01517671939289511
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.563634867863978,
+            "ideal": 1.525,
+            "absolute_deviation": 0.03863486786397807
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.2514151988848465,
+            "ideal": 1.229,
+            "absolute_deviation": 0.022415198884846443
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 91,
+        "resname": "ILE",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.521683935644981,
+            "ideal": 1.544,
+            "absolute_deviation": 0.022316064355019094
+          },
+          {
+            "atoms": "CB-CG1",
+            "distance": 1.5165582745150281,
+            "ideal": 1.536,
+            "absolute_deviation": 0.019441725484971917
+          },
+          {
+            "atoms": "CB-CG2",
+            "distance": 1.5037569617461461,
+            "ideal": 1.524,
+            "absolute_deviation": 0.020243038253853873
+          },
+          {
+            "atoms": "CG1-CD1",
+            "distance": 1.4919118606673782,
+            "ideal": 1.5,
+            "absolute_deviation": 0.008088139332621758
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.4877933324222157,
+            "ideal": 1.459,
+            "absolute_deviation": 0.0287933324222156
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.59107070867388,
+            "ideal": 1.525,
+            "absolute_deviation": 0.0660707086738801
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.215126742360647,
+            "ideal": 1.229,
+            "absolute_deviation": 0.013873257639352987
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 92,
+        "resname": "LYS",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.558473933051176,
+            "ideal": 1.535,
+            "absolute_deviation": 0.023473933051176177
+          },
+          {
+            "atoms": "CB-CG",
+            "distance": 1.5428418583898997,
+            "ideal": 1.521,
+            "absolute_deviation": 0.021841858389899826
+          },
+          {
+            "atoms": "CG-CD",
+            "distance": 1.5119854496654401,
+            "ideal": 1.52,
+            "absolute_deviation": 0.008014550334559889
+          },
+          {
+            "atoms": "CD-CE",
+            "distance": 1.5232977384608695,
+            "ideal": 1.508,
+            "absolute_deviation": 0.015297738460869459
+          },
+          {
+            "atoms": "CE-NZ",
+            "distance": 1.505385997012062,
+            "ideal": 1.486,
+            "absolute_deviation": 0.019385997012062006
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.54935115451598,
+            "ideal": 1.459,
+            "absolute_deviation": 0.09035115451597986
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.534642955217923,
+            "ideal": 1.525,
+            "absolute_deviation": 0.009642955217923133
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.3472334615796921,
+            "ideal": 1.229,
+            "absolute_deviation": 0.11823346157969206
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 93,
+        "resname": "ILE",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.5782252690918361,
+            "ideal": 1.544,
+            "absolute_deviation": 0.0342252690918361
+          },
+          {
+            "atoms": "CB-CG1",
+            "distance": 1.558758801097848,
+            "ideal": 1.536,
+            "absolute_deviation": 0.02275880109784789
+          },
+          {
+            "atoms": "CB-CG2",
+            "distance": 1.4974655254796354,
+            "ideal": 1.524,
+            "absolute_deviation": 0.026534474520364615
+          },
+          {
+            "atoms": "CG1-CD1",
+            "distance": 1.4758299360021128,
+            "ideal": 1.5,
+            "absolute_deviation": 0.024170063997887237
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.4263625065178904,
+            "ideal": 1.459,
+            "absolute_deviation": 0.03263749348210965
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.5643915750220594,
+            "ideal": 1.525,
+            "absolute_deviation": 0.03939157502205948
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.2658226574050568,
+            "ideal": 1.229,
+            "absolute_deviation": 0.03682265740505675
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 94,
+        "resname": "HIS",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.5027604599536164,
+            "ideal": 1.535,
+            "absolute_deviation": 0.03223954004638352
+          },
+          {
+            "atoms": "CB-CG",
+            "distance": 1.4691252499361653,
+            "ideal": 1.492,
+            "absolute_deviation": 0.02287475006383466
+          },
+          {
+            "atoms": "CG-ND1",
+            "distance": 1.3585249353618796,
+            "ideal": 1.369,
+            "absolute_deviation": 0.010475064638120424
+          },
+          {
+            "atoms": "CG-CD2",
+            "distance": 1.3749872726683692,
+            "ideal": 1.353,
+            "absolute_deviation": 0.021987272668369195
+          },
+          {
+            "atoms": "ND1-CE1",
+            "distance": 1.3467906296080328,
+            "ideal": 1.343,
+            "absolute_deviation": 0.0037906296080327806
+          },
+          {
+            "atoms": "CD2-NE2",
+            "distance": 1.3949999999999996,
+            "ideal": 1.415,
+            "absolute_deviation": 0.020000000000000462
+          },
+          {
+            "atoms": "CE1-NE2",
+            "distance": 1.314183396638384,
+            "ideal": 1.322,
+            "absolute_deviation": 0.007816603361616048
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.4119029711704694,
+            "ideal": 1.459,
+            "absolute_deviation": 0.04709702882953071
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.551691013056401,
+            "ideal": 1.525,
+            "absolute_deviation": 0.02669101305640109
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.2504359239881113,
+            "ideal": 1.229,
+            "absolute_deviation": 0.021435923988111227
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 95,
+        "resname": "GLY",
+        "covalent_bonds": [
+          {
+            "atoms": "N-CA",
+            "distance": 1.4991364180754199,
+            "ideal": 1.456,
+            "absolute_deviation": 0.0431364180754199
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.4902949372523564,
+            "ideal": 1.514,
+            "absolute_deviation": 0.023705062747643613
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.2363256043615691,
+            "ideal": 1.232,
+            "absolute_deviation": 0.004325604361569146
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 96,
+        "resname": "ARG",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.5676342047812046,
+            "ideal": 1.535,
+            "absolute_deviation": 0.03263420478120471
+          },
+          {
+            "atoms": "CB-CG",
+            "distance": 1.5441738891718124,
+            "ideal": 1.521,
+            "absolute_deviation": 0.02317388917181251
+          },
+          {
+            "atoms": "CG-CD",
+            "distance": 1.5299196057309687,
+            "ideal": 1.515,
+            "absolute_deviation": 0.014919605730968843
+          },
+          {
+            "atoms": "CD-NE",
+            "distance": 1.4803138180804778,
+            "ideal": 1.46,
+            "absolute_deviation": 0.02031381808047783
+          },
+          {
+            "atoms": "NE-CZ",
+            "distance": 1.3383601906811178,
+            "ideal": 1.326,
+            "absolute_deviation": 0.012360190681117711
+          },
+          {
+            "atoms": "CZ-NH1",
+            "distance": 1.3403141422815765,
+            "ideal": 1.326,
+            "absolute_deviation": 0.014314142281576459
+          },
+          {
+            "atoms": "CZ-NH2",
+            "distance": 1.3130597853867891,
+            "ideal": 1.326,
+            "absolute_deviation": 0.012940214613210932
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.4829194179050997,
+            "ideal": 1.459,
+            "absolute_deviation": 0.02391941790509966
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.5541968987229384,
+            "ideal": 1.525,
+            "absolute_deviation": 0.029196898722938514
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.2552143243287182,
+            "ideal": 1.229,
+            "absolute_deviation": 0.026214324328718064
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 97,
+        "resname": "VAL",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.5166650915742739,
+            "ideal": 1.543,
+            "absolute_deviation": 0.026334908425726056
+          },
+          {
+            "atoms": "CB-CG1",
+            "distance": 1.5457186031098933,
+            "ideal": 1.524,
+            "absolute_deviation": 0.021718603109893264
+          },
+          {
+            "atoms": "CB-CG2",
+            "distance": 1.5489561000880554,
+            "ideal": 1.524,
+            "absolute_deviation": 0.024956100088055377
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.489913084713333,
+            "ideal": 1.459,
+            "absolute_deviation": 0.030913084713332983
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.549678999018829,
+            "ideal": 1.525,
+            "absolute_deviation": 0.024678999018829195
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.2591850539138403,
+            "ideal": 1.229,
+            "absolute_deviation": 0.030185053913840187
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 98,
+        "resname": "LYS",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.5052165957097332,
+            "ideal": 1.535,
+            "absolute_deviation": 0.029783404290266713
+          },
+          {
+            "atoms": "CB-CG",
+            "distance": 1.5486965487144342,
+            "ideal": 1.521,
+            "absolute_deviation": 0.027696548714434277
+          },
+          {
+            "atoms": "CG-CD",
+            "distance": 1.4946802333609683,
+            "ideal": 1.52,
+            "absolute_deviation": 0.025319766639031682
+          },
+          {
+            "atoms": "CD-CE",
+            "distance": 1.4859034288943551,
+            "ideal": 1.508,
+            "absolute_deviation": 0.02209657110564489
+          },
+          {
+            "atoms": "CE-NZ",
+            "distance": 1.4647238647608634,
+            "ideal": 1.486,
+            "absolute_deviation": 0.02127613523913663
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.488313475044824,
+            "ideal": 1.459,
+            "absolute_deviation": 0.029313475044823845
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.6035039756732754,
+            "ideal": 1.525,
+            "absolute_deviation": 0.0785039756732755
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.3813019221010308,
+            "ideal": 1.229,
+            "absolute_deviation": 0.15230192210103066
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 99,
+        "resname": "ALA",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.492721005412599,
+            "ideal": 1.52,
+            "absolute_deviation": 0.027278994587401018
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.4636481817704696,
+            "ideal": 1.459,
+            "absolute_deviation": 0.0046481817704695505
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.5553909476398533,
+            "ideal": 1.525,
+            "absolute_deviation": 0.030390947639853394
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.268581097131752,
+            "ideal": 1.229,
+            "absolute_deviation": 0.03958109713175184
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 100,
+        "resname": "LEU",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.563555563451456,
+            "ideal": 1.533,
+            "absolute_deviation": 0.030555563451456047
+          },
+          {
+            "atoms": "CB-CG",
+            "distance": 1.4993365199313993,
+            "ideal": 1.521,
+            "absolute_deviation": 0.021663480068600638
+          },
+          {
+            "atoms": "CG-CD1",
+            "distance": 1.493669976936003,
+            "ideal": 1.514,
+            "absolute_deviation": 0.020330023063997116
+          },
+          {
+            "atoms": "CG-CD2",
+            "distance": 1.4930043536440207,
+            "ideal": 1.514,
+            "absolute_deviation": 0.02099564635597928
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.490590151584264,
+            "ideal": 1.459,
+            "absolute_deviation": 0.031590151584263815
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.5818030850899234,
+            "ideal": 1.525,
+            "absolute_deviation": 0.05680308508992349
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.3514736401424927,
+            "ideal": 1.229,
+            "absolute_deviation": 0.12247364014249262
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 101,
+        "resname": "PHE",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.5069077609462365,
+            "ideal": 1.535,
+            "absolute_deviation": 0.028092239053763457
+          },
+          {
+            "atoms": "CB-CG",
+            "distance": 1.5058084207494662,
+            "ideal": 1.509,
+            "absolute_deviation": 0.003191579250533705
+          },
+          {
+            "atoms": "CG-CD1",
+            "distance": 1.4086830729443727,
+            "ideal": 1.383,
+            "absolute_deviation": 0.025683072944372665
+          },
+          {
+            "atoms": "CG-CD2",
+            "distance": 1.4061582414507978,
+            "ideal": 1.383,
+            "absolute_deviation": 0.023158241450797812
+          },
+          {
+            "atoms": "CD1-CE1",
+            "distance": 1.4102645141958297,
+            "ideal": 1.388,
+            "absolute_deviation": 0.022264514195829754
+          },
+          {
+            "atoms": "CD2-CE2",
+            "distance": 1.4028467485794731,
+            "ideal": 1.388,
+            "absolute_deviation": 0.014846748579473212
+          },
+          {
+            "atoms": "CE1-CZ",
+            "distance": 1.3866077311193672,
+            "ideal": 1.369,
+            "absolute_deviation": 0.017607731119367198
+          },
+          {
+            "atoms": "CE2-CZ",
+            "distance": 1.3657089733907444,
+            "ideal": 1.369,
+            "absolute_deviation": 0.0032910266092556206
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.4199785209643137,
+            "ideal": 1.459,
+            "absolute_deviation": 0.039021479035686424
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.5552353519644542,
+            "ideal": 1.525,
+            "absolute_deviation": 0.03023535196445426
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.2460248793663797,
+            "ideal": 1.229,
+            "absolute_deviation": 0.01702487936637964
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 102,
+        "resname": "ASP",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.4974892320147077,
+            "ideal": 1.535,
+            "absolute_deviation": 0.03751076798529218
+          },
+          {
+            "atoms": "CB-CG",
+            "distance": 1.4919785521246616,
+            "ideal": 1.513,
+            "absolute_deviation": 0.021021447875338328
+          },
+          {
+            "atoms": "CG-OD1",
+            "distance": 1.2599444432196207,
+            "ideal": 1.249,
+            "absolute_deviation": 0.010944443219620625
+          },
+          {
+            "atoms": "CG-OD2",
+            "distance": 1.248164652599968,
+            "ideal": 1.249,
+            "absolute_deviation": 0.0008353474000322159
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.4345128092840445,
+            "ideal": 1.459,
+            "absolute_deviation": 0.02448719071595562
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.5037303614677742,
+            "ideal": 1.525,
+            "absolute_deviation": 0.021269638532225743
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.245676523018717,
+            "ideal": 1.229,
+            "absolute_deviation": 0.016676523018716916
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 103,
+        "resname": "ALA",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.5420794402364617,
+            "ideal": 1.52,
+            "absolute_deviation": 0.02207944023646169
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.4972070665075028,
+            "ideal": 1.459,
+            "absolute_deviation": 0.03820706650750272
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.5613125888174986,
+            "ideal": 1.525,
+            "absolute_deviation": 0.03631258881749866
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.247671431106764,
+            "ideal": 1.229,
+            "absolute_deviation": 0.018671431106763947
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 104,
+        "resname": "ALA",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.4937637028660185,
+            "ideal": 1.52,
+            "absolute_deviation": 0.026236297133981568
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.4907974376151847,
+            "ideal": 1.459,
+            "absolute_deviation": 0.03179743761518461
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.5448355899577149,
+            "ideal": 1.525,
+            "absolute_deviation": 0.01983558995771495
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.2651537455977435,
+            "ideal": 1.229,
+            "absolute_deviation": 0.036153745597743425
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 105,
+        "resname": "ILE",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.523747026248123,
+            "ideal": 1.544,
+            "absolute_deviation": 0.020252973751877068
+          },
+          {
+            "atoms": "CB-CG1",
+            "distance": 1.5150478540297005,
+            "ideal": 1.536,
+            "absolute_deviation": 0.020952145970299485
+          },
+          {
+            "atoms": "CB-CG2",
+            "distance": 1.5172297123375877,
+            "ideal": 1.524,
+            "absolute_deviation": 0.006770287662412278
+          },
+          {
+            "atoms": "CG1-CD1",
+            "distance": 1.5203410801527395,
+            "ideal": 1.5,
+            "absolute_deviation": 0.0203410801527395
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.4604591743694864,
+            "ideal": 1.459,
+            "absolute_deviation": 0.0014591743694862824
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.5927190587168847,
+            "ideal": 1.525,
+            "absolute_deviation": 0.06771905871688477
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.3490352108080796,
+            "ideal": 1.229,
+            "absolute_deviation": 0.12003521080807955
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 106,
+        "resname": "HIS",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.492611804857512,
+            "ideal": 1.535,
+            "absolute_deviation": 0.04238819514248782
+          },
+          {
+            "atoms": "CB-CG",
+            "distance": 1.4935176597549835,
+            "ideal": 1.492,
+            "absolute_deviation": 0.0015176597549835247
+          },
+          {
+            "atoms": "CG-ND1",
+            "distance": 1.389377558477176,
+            "ideal": 1.369,
+            "absolute_deviation": 0.020377558477175928
+          },
+          {
+            "atoms": "CG-CD2",
+            "distance": 1.3753944888649217,
+            "ideal": 1.353,
+            "absolute_deviation": 0.02239448886492168
+          },
+          {
+            "atoms": "ND1-CE1",
+            "distance": 1.3635912144040827,
+            "ideal": 1.343,
+            "absolute_deviation": 0.020591214404082736
+          },
+          {
+            "atoms": "CD2-NE2",
+            "distance": 1.4139317522426615,
+            "ideal": 1.415,
+            "absolute_deviation": 0.0010682477573384919
+          },
+          {
+            "atoms": "CE1-NE2",
+            "distance": 1.342736757521742,
+            "ideal": 1.322,
+            "absolute_deviation": 0.020736757521741866
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.4687443616913054,
+            "ideal": 1.459,
+            "absolute_deviation": 0.009744361691305325
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.5855765512897828,
+            "ideal": 1.525,
+            "absolute_deviation": 0.0605765512897829
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.369866051845946,
+            "ideal": 1.229,
+            "absolute_deviation": 0.14086605184594592
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 107,
+        "resname": "GLY",
+        "covalent_bonds": [
+          {
+            "atoms": "N-CA",
+            "distance": 1.4403798110220787,
+            "ideal": 1.456,
+            "absolute_deviation": 0.015620188977921279
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.5919202241318497,
+            "ideal": 1.514,
+            "absolute_deviation": 0.07792022413184974
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.2530945694559528,
+            "ideal": 1.232,
+            "absolute_deviation": 0.021094569455952783
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 108,
+        "resname": "GLY",
+        "covalent_bonds": [
+          {
+            "atoms": "N-CA",
+            "distance": 1.5089976805813847,
+            "ideal": 1.456,
+            "absolute_deviation": 0.052997680581384765
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.6015348887863794,
+            "ideal": 1.514,
+            "absolute_deviation": 0.08753488878637938
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.2300284549554128,
+            "ideal": 1.232,
+            "absolute_deviation": 0.0019715450445871863
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 109,
+        "resname": "LEU",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.5834715027432604,
+            "ideal": 1.533,
+            "absolute_deviation": 0.05047150274326051
+          },
+          {
+            "atoms": "CB-CG",
+            "distance": 1.5480083979100372,
+            "ideal": 1.521,
+            "absolute_deviation": 0.027008397910037285
+          },
+          {
+            "atoms": "CG-CD1",
+            "distance": 1.4870978447970395,
+            "ideal": 1.514,
+            "absolute_deviation": 0.026902155202960465
+          },
+          {
+            "atoms": "CG-CD2",
+            "distance": 1.4815596511784463,
+            "ideal": 1.514,
+            "absolute_deviation": 0.032440348821553666
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.3848823054685906,
+            "ideal": 1.459,
+            "absolute_deviation": 0.07411769453140948
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.4835878807809137,
+            "ideal": 1.525,
+            "absolute_deviation": 0.04141211921908616
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.3733295307390723,
+            "ideal": 1.229,
+            "absolute_deviation": 0.14432953073907218
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 110,
+        "resname": "ASP",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.572936425924457,
+            "ideal": 1.535,
+            "absolute_deviation": 0.03793642592445701
+          },
+          {
+            "atoms": "CB-CG",
+            "distance": 1.4877940045584264,
+            "ideal": 1.513,
+            "absolute_deviation": 0.025205995441573537
+          },
+          {
+            "atoms": "CG-OD1",
+            "distance": 1.226203082690628,
+            "ideal": 1.249,
+            "absolute_deviation": 0.022796917309372056
+          },
+          {
+            "atoms": "CG-OD2",
+            "distance": 1.2764999020759846,
+            "ideal": 1.249,
+            "absolute_deviation": 0.027499902075984517
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.5123511497003597,
+            "ideal": 1.459,
+            "absolute_deviation": 0.05335114970035959
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.5621923697163544,
+            "ideal": 1.525,
+            "absolute_deviation": 0.037192369716354534
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.2951995985175422,
+            "ideal": 1.229,
+            "absolute_deviation": 0.06619959851754209
+          }
+        ]
+      },
+      {
+        "chain": "A",
+        "residue_number": 111,
+        "resname": "PHE",
+        "covalent_bonds": [
+          {
+            "atoms": "CA-CB",
+            "distance": 1.4974318014520727,
+            "ideal": 1.535,
+            "absolute_deviation": 0.037568198547927256
+          },
+          {
+            "atoms": "CB-CG",
+            "distance": 1.540086361214851,
+            "ideal": 1.509,
+            "absolute_deviation": 0.031086361214851088
+          },
+          {
+            "atoms": "CG-CD1",
+            "distance": 1.4060394731301105,
+            "ideal": 1.383,
+            "absolute_deviation": 0.023039473130110455
+          },
+          {
+            "atoms": "CG-CD2",
+            "distance": 1.4064824918924514,
+            "ideal": 1.383,
+            "absolute_deviation": 0.02348249189245144
+          },
+          {
+            "atoms": "CD1-CE1",
+            "distance": 1.3853219842332691,
+            "ideal": 1.388,
+            "absolute_deviation": 0.002678015766730768
+          },
+          {
+            "atoms": "CD2-CE2",
+            "distance": 1.3942399363093851,
+            "ideal": 1.388,
+            "absolute_deviation": 0.006239936309385241
+          },
+          {
+            "atoms": "CE1-CZ",
+            "distance": 1.3894531298320212,
+            "ideal": 1.369,
+            "absolute_deviation": 0.02045312983202119
+          },
+          {
+            "atoms": "CE2-CZ",
+            "distance": 1.3714175148363832,
+            "ideal": 1.369,
+            "absolute_deviation": 0.0024175148363831944
+          },
+          {
+            "atoms": "N-CA",
+            "distance": 1.4278088107306244,
+            "ideal": 1.459,
+            "absolute_deviation": 0.031191189269375696
+          },
+          {
+            "atoms": "CA-C",
+            "distance": 1.5493811667888564,
+            "ideal": 1.525,
+            "absolute_deviation": 0.02438116678885649
+          },
+          {
+            "atoms": "C-O",
+            "distance": 1.2079275640534086,
+            "ideal": 1.229,
+            "absolute_deviation": 0.021072435946591472
+          }
+        ]
+      }
+    ]
+  }
+]

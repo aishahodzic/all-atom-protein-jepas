@@ -1,0 +1,40 @@
+#!/bin/bash
+# Six-block uncropped canonical LeJEPA ablation. Matches the historical
+# canonical_lejepa_v1_100k run except for encoder depth: 12 -> 6 blocks.
+#SBATCH --job-name=canon_lj_b6_100k
+#SBATCH --partition=normal
+#SBATCH --qos=long
+#SBATCH --nodes=1
+#SBATCH --ntasks=2
+#SBATCH --ntasks-per-node=2
+#SBATCH --gres=gpu:2
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=64G
+#SBATCH --time=24:00:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/canonical_lejepa/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+PYTHON_BIN=/slurm-storage/aishod/envs/la-proteina/bin/python
+RUN_NAME=canonical_lejepa_v1_6block_100k
+SCRATCH_ROOT="$HOME/tmp/$RUN_NAME/$SLURM_JOB_ID"
+
+cd "$PROJECT_ROOT"
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+
+export PYTHONPATH="$PROJECT_ROOT${PYTHONPATH:+:$PYTHONPATH}"
+export PATH="/slurm-storage/aishod/envs/la-proteina/bin:$PATH"
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+export TMPDIR="$SCRATCH_ROOT"
+export MPLCONFIGDIR="$SCRATCH_ROOT/matplotlib"
+export TRITON_CACHE_DIR="$SCRATCH_ROOT/triton"
+
+mkdir -p "$PROJECT_ROOT/logs/canonical_lejepa" "$MPLCONFIGDIR" "$TRITON_CACHE_DIR"
+
+srun --ntasks=2 "$PYTHON_BIN" \
+    -m proteinfoundation.jepa.train_canonical_lejepa \
+    run_name_="$RUN_NAME" \
+    nn_ae.encoder.nlayers=6

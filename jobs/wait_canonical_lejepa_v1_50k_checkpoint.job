@@ -1,0 +1,59 @@
+#!/bin/bash
+# CPU-only milestone gate. Slurm cannot depend on an intermediate checkpoint
+# from a still-running job, so this waits for and validates the immutable 50k
+# checkpoint without reserving a GPU.
+#SBATCH --job-name=wait_canon_lj_50k
+#SBATCH --partition=normal
+#SBATCH --qos=medium
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=8G
+#SBATCH --time=04:00:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/stb/publication_upstream/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+PYTHON_BIN=/slurm-storage/aishod/envs/la-proteina/bin/python
+CHECKPOINT="$PROJECT_ROOT/store/canonical_lejepa_v1_100k/checkpoints/step-00050000.ckpt"
+
+echo "Waiting for canonical LeJEPA checkpoint: $CHECKPOINT"
+previous_size=-1
+stable_checks=0
+while (( stable_checks < 3 )); do
+    if [[ -s "$CHECKPOINT" ]]; then
+        current_size="$(stat -c '%s' "$CHECKPOINT")"
+        if [[ "$current_size" == "$previous_size" ]]; then
+            stable_checks=$((stable_checks + 1))
+        else
+            stable_checks=0
+            previous_size="$current_size"
+        fi
+        echo "$(date -Is) size=$current_size stable_checks=$stable_checks/3"
+    else
+        echo "$(date -Is) checkpoint not present yet"
+    fi
+    (( stable_checks == 3 )) || sleep 20
+done
+
+"$PYTHON_BIN" -c '
+import sys
+import torch
+
+path = sys.argv[1]
+checkpoint = torch.load(path, map_location="cpu", weights_only=False)
+assert checkpoint.get("global_step") == 50_000, checkpoint.get("global_step")
+ema = checkpoint.get("state_dict_ema")
+assert isinstance(ema, dict) and len(ema) > 0
+meta = checkpoint.get("state_dict_ema_meta", {})
+assert meta.get("last_ema_step") == 49_984, meta
+print(
+    "Validated step={}, EMA tensors={}, last_ema_step={}".format(
+        checkpoint["global_step"], len(ema), meta["last_ema_step"]
+    )
+)
+' "$CHECKPOINT"
+
+sha256sum "$CHECKPOINT"
+echo "The step-50k checkpoint is complete and valid."

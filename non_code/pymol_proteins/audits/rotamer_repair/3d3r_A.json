@@ -1,0 +1,77 @@
+{
+  "input": "non_code/pymol_proteins/3d3r_A/3d3r_A_reconstructed_idealized.pdb",
+  "output": "non_code/pymol_proteins/3d3r_A/3d3r_A_reconstructed_idealized.fixed.pdb",
+  "overlap": 1.2,
+  "trigger": 1.8,
+  "displacement_weight": 0.02,
+  "passes": 3,
+  "severe_pairs_before": 3,
+  "severe_pairs_after": 2,
+  "before": [
+    {
+      "left_residue": 2,
+      "right_residue": 53,
+      "distance": 0.7619415988118768,
+      "atoms": [
+        "O",
+        "CE2"
+      ]
+    },
+    {
+      "left_residue": 5,
+      "right_residue": 52,
+      "distance": 1.7969554808063555,
+      "atoms": [
+        "CD1",
+        "O"
+      ]
+    },
+    {
+      "left_residue": 23,
+      "right_residue": 38,
+      "distance": 1.6823644076120965,
+      "atoms": [
+        "O",
+        "CG2"
+      ]
+    }
+  ],
+  "after": [
+    {
+      "left_residue": 5,
+      "right_residue": 52,
+      "distance": 1.7969554808063555,
+      "atoms": [
+        "CD1",
+        "O"
+      ]
+    },
+    {
+      "left_residue": 23,
+      "right_residue": 38,
+      "distance": 1.547830065038236,
+      "atoms": [
+        "O",
+        "OG1"
+      ]
+    }
+  ],
+  "choices": [
+    {
+      "pass": 1,
+      "residue_number": 38,
+      "resname": "THR",
+      "candidate": 1,
+      "score_before": 1.0221379470458671,
+      "score_after": 0.4627090686692279
+    },
+    {
+      "pass": 1,
+      "residue_number": 53,
+      "resname": "TYR",
+      "candidate": 3,
+      "score_before": 1.9070542122733256,
+      "score_after": 0.46007913908213766
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+#!/bin/bash
+# Apply the same deterministic postprocessing to the exact step-300k JEPA
+# exports and append the three-way reconstruction comparison.
+#SBATCH --job-name=rec100_p300
+#SBATCH --partition=normal
+#SBATCH --qos=short
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=100G
+#SBATCH --time=03:00:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/decoder/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+PYTHON_BIN=/data-gauss/$USER/envs/laproteina_env/bin/python3
+BIOTITE_PYTHON=/mnt/data/slurm-storage/aishod/.conda/envs/pstbench/bin/python
+COHORT="$PROJECT_ROOT/non_code/pymol_proteins/audits/reconstruction_random100_cohort.json"
+CA_ROOT="$PROJECT_ROOT/Evaluation/structure_rec/exports/ca-cond-original-random100"
+JEPA_ROOT="$PROJECT_ROOT/Evaluation/structure_rec/exports/jepa-rand70-target-step100k-decoder300k-random100"
+CA_SUMMARY="$PROJECT_ROOT/non_code/pymol_proteins/audits/ca_cond_random100_summary.json"
+JEPA_SUMMARY="$PROJECT_ROOT/non_code/pymol_proteins/audits/jepa_decoder300k_random100_summary.json"
+POST_SUMMARY="$PROJECT_ROOT/non_code/pymol_proteins/audits/jepa_decoder300k_random100_postprocessing.json"
+OUTPUT_JSON="$PROJECT_ROOT/non_code/pymol_proteins/audits/ca_cond_vs_jepa_300k_random100_postprocessed_metrics.json"
+OUTPUT_CSV="$PROJECT_ROOT/non_code/pymol_proteins/audits/ca_cond_vs_jepa_300k_random100_postprocessed_metrics.csv"
+SCRATCH_ROOT="$HOME/tmp/reconstruction-random100-post-300k-$SLURM_JOB_ID"
+
+for path in "$COHORT" "$CA_SUMMARY" "$JEPA_SUMMARY"
+do
+  [[ -s "$path" ]] || { echo "ERROR: missing direct-job output: $path" >&2; exit 1; }
+done
+
+COHORT_SHA=$(sha256sum "$COHORT" | cut -d' ' -f1)
+[[ "$COHORT_SHA" == "8dd47a6189b5758212395c02b980a6cb193df3a87ac885038822585a4238626d" ]] || {
+  echo "ERROR: frozen cohort hash changed: $COHORT_SHA" >&2
+  exit 1
+}
+
+mkdir -p "$PROJECT_ROOT/logs/decoder" "$SCRATCH_ROOT"
+export TMPDIR="$SCRATCH_ROOT"
+export MPLCONFIGDIR="$SCRATCH_ROOT/matplotlib"
+export PYTHONPATH="$PROJECT_ROOT"
+export OMP_NUM_THREADS=1
+export MKL_NUM_THREADS=1
+mkdir -p "$MPLCONFIGDIR"
+cd "$PROJECT_ROOT"
+
+srun "$PYTHON_BIN" Evaluation/structure_rec/postprocess_reconstruction_cohort.py \
+  --root "$JEPA_ROOT" \
+  --cohort "$COHORT" \
+  --protein-ids-key scored_ids \
+  --sequence-modes predicted true \
+  --workers 16 \
+  --output "$POST_SUMMARY"
+
+srun "$BIOTITE_PYTHON" Evaluation/structure_rec/compare_ca_cond_jepa_reconstruction.py \
+  --ca-root "$CA_ROOT" \
+  --jepa-root "$JEPA_ROOT" \
+  --jepa-postprocessed-root "$JEPA_ROOT" \
+  --ca-sequence-summary "$CA_SUMMARY" \
+  --jepa-sequence-summary "$JEPA_SUMMARY" \
+  --protein-ids-file "$COHORT" \
+  --protein-ids-key scored_ids \
+  --output-json "$OUTPUT_JSON" \
+  --output-csv "$OUTPUT_CSV"

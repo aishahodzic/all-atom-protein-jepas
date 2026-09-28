@@ -1,0 +1,123 @@
+#!/bin/bash
+# Full STB panels for task-supervised 768D -> 8D readouts of blocks 4, 8,
+# and 12.  The frozen encoder/token caches are unchanged: each task learns
+# LayerNorm(768) -> Linear(768, 8, bias=False) jointly with its ordinary head.
+# Existing block-specific 768D caches are reused.
+#SBATCH --job-name=stb_raw_bneck8
+# The requested normal-partition node sees Hopper's RAID through this mount.
+#SBATCH --partition=normal
+#SBATCH --qos=medium
+#SBATCH --nodelist=noether
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=64G
+#SBATCH --time=1-00:00:00
+#SBATCH --array=4,8,12%3
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/stb/publication_upstream/%x-%A_%a.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+STB_ROOT="$PROJECT_ROOT/StructTokenBench"
+TRAIN_PYTHON_BIN=/slurm-storage/aishod/envs/la-proteina/bin/python
+BOTTLENECK_PYTHON_BIN="$PROJECT_ROOT/jobs/stb_supervised_bottleneck_python"
+CHECKPOINT="$PROJECT_ROOT/store/canonical_lejepa_v1_100k/evaluation/canonical-lejepa-v1-step100000-raw-staged.ckpt"
+ENCODER_CONFIG="$STB_ROOT/100k-checkpoints/shared/exp_config_jepa_nn130m.json"
+EXPECTED_CHECKPOINT_SHA256=28f93a4224323b7366243265abd7721f2dffaaf6f8c9fd4aa4767788fd5d2bac
+EXPECTED_SOURCE_SHA256=4f09dff610adaa75c8ac51b4cf01acb001c236c72dd91ac31568ffa191484527
+EXPECTED_ENCODER_CONFIG_SHA256=98e0350d418e7d840fa245ddfd7150064e87a9ac74c72c9150a946f0f66ccd9d
+EXPECTED_BOTTLENECK_SHA256=5271dea088fa0f0a543605c8f3d3fd6f73b5c7a91221baa17df8a11fa1504d99
+EXPECTED_ENTRYPOINT_SHA256=a576d2dc7043defd468fb180dbf1267a04e3ca2b658169d2e55752dcfce09d76
+EXPECTED_CONFIG_PACKAGE_SHA256=b368779483f20ca17e2fc0a33699b21455a7fc4314a42e42d7a769600aa83672
+EXPECTED_WRAPPER_SHA256=a8ffde31bd06d92afa4dbb119628c9bca4b786b493dd58f58808be6d5bb64f18
+EXPECTED_MODEL_MODULE_SHA256=27b556b6132b3960f52d662f90e70bbc1dd8bdcb3c0befc19f4d1c2547790a84
+EXPECTED_TASK_RUNNER_SHA256=2dbd7d10b8c7f40c801cb6364e665d74710fc8fb36ac6b0886207f384651cc31
+EXPECTED_SHARED_CACHE_SHA256=706aaebbdb914dc81ae1e1fc9098b9c2c0ba7973d6deba37f6afeef6d2f28ec4
+READOUT_BLOCK="$SLURM_ARRAY_TASK_ID"
+
+case "$READOUT_BLOCK" in
+    4|8|12) ;;
+    *) echo "Unsupported supervised-bottleneck block: $READOUT_BLOCK" >&2; exit 1 ;;
+esac
+
+cd "$PROJECT_ROOT"
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+
+echo "$EXPECTED_CHECKPOINT_SHA256  $CHECKPOINT" | sha256sum -c -
+echo "$EXPECTED_ENCODER_CONFIG_SHA256  $ENCODER_CONFIG" | sha256sum -c -
+echo "$EXPECTED_BOTTLENECK_SHA256  $STB_ROOT/src/supervised_bottleneck.py" | sha256sum -c -
+echo "$EXPECTED_ENTRYPOINT_SHA256  $STB_ROOT/src/script/run_supervised_bottleneck_task.py" | sha256sum -c -
+echo "$EXPECTED_CONFIG_PACKAGE_SHA256  $STB_ROOT/src/script/config/__init__.py" | sha256sum -c -
+echo "$EXPECTED_WRAPPER_SHA256  $BOTTLENECK_PYTHON_BIN" | sha256sum -c -
+echo "$EXPECTED_MODEL_MODULE_SHA256  $STB_ROOT/src/model_module.py" | sha256sum -c -
+echo "$EXPECTED_TASK_RUNNER_SHA256  $STB_ROOT/src/script/run_supervised_task.py" | sha256sum -c -
+echo "$EXPECTED_SHARED_CACHE_SHA256  $STB_ROOT/src/shared_embedding_cache.py" | sha256sum -c -
+
+"$TRAIN_PYTHON_BIN" -c '
+import sys
+import torch
+
+checkpoint_path, expected_source_sha, block = sys.argv[1:]
+saved = torch.load(checkpoint_path, map_location="cpu", weights_only=False, mmap=True)
+provenance = saved.get("canonical_lejepa_evaluation", {})
+assert provenance.get("encoder_source") == "raw", provenance
+assert provenance.get("source_global_step") == 100_000, provenance
+assert provenance.get("source_checkpoint_sha256") == expected_source_sha, provenance
+assert provenance.get("latent_dim") == 8, provenance
+assert provenance.get("projector") is None, provenance
+assert int(block) in {4, 8, 12}, block
+print(f"Verified raw canonical encoder and post-block {block} readout: {provenance}")
+' "$CHECKPOINT" "$EXPECTED_SOURCE_SHA256" "$READOUT_BLOCK"
+
+RAID_DATA_ROOT=/mnt/hopper-raid/aishod/data
+SHARED_CACHE_ROOT="$RAID_DATA_ROOT/struct_token_bench_release_data/shared_embedding_cache"
+if [[ ! -d "$SHARED_CACHE_ROOT/v1" || ! -r "$SHARED_CACHE_ROOT/v1" ]]; then
+    echo "Hopper STB shared cache is unavailable: $SHARED_CACHE_ROOT" >&2
+    exit 1
+fi
+
+cd "$STB_ROOT"
+export STB_SKIP_BOOTSTRAP=1
+export STB_SKIP_DATA_SETUP=1
+export STB_SMOKE=0
+export STB_SHARED_EMBEDDING_CACHE=1
+export STB_SHARED_EMBEDDING_CACHE_ROOT="$SHARED_CACHE_ROOT"
+export STB_SUPERVISED_BOTTLENECK_DIM=8
+export DS_IGNORE_CUDA_DETECTION=1
+export PYTHON_BIN="$BOTTLENECK_PYTHON_BIN"
+export NUM_WORKERS=0
+export PREFETCH_FACTOR=null
+export STB_SERIAL_STRUCTURE_PREPROCESS=1
+export NCCL_SHM_DISABLE=1
+export TORCHINDUCTOR_COMPILE_THREADS=1
+export DATA_PATH="$RAID_DATA_ROOT"
+export PDB_DATA_ROOT="$RAID_DATA_ROOT/struct_token_bench_pdb_data"
+export STB_RELEASE_DATA_ROOT="$RAID_DATA_ROOT/struct_token_bench_release_data"
+export CANONICAL_LEJEPA_V1_RAW_STEP100K_CKPT="$CHECKPOINT"
+export TOKENIZER_READOUT_BLOCK="$READOUT_BLOCK"
+export ENCODER_SOURCE=online
+export D_MODEL_OVERRIDE=768
+export WANDB_MODE=disabled
+export HF_HUB_OFFLINE=1
+export PYTHONDONTWRITEBYTECODE=1
+export OMP_NUM_THREADS=4
+export OPENBLAS_NUM_THREADS=4
+export MKL_NUM_THREADS=4
+export EVALUATION_RUN_ID="slurm-${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}-canonical-lejepa-v1-raw-step100k-block${READOUT_BLOCK}-supervised-bottleneck8-all"
+export STB_LOG_ROOT="$STB_ROOT/struct_token_bench_logs/upstream-l600-v1-full/runs/$EVALUATION_RUN_ID"
+export SUMMARY_FILE="$STB_LOG_ROOT/summary_results.csv"
+export TMPDIR="$HOME/tmp/stb-canonical-raw-depth-supervised-bottleneck8/${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}"
+export MPLCONFIGDIR="$TMPDIR/matplotlib"
+export TRITON_CACHE_DIR="$TMPDIR/triton"
+export TORCH_EXTENSIONS_DIR="$TMPDIR/torch-extensions"
+mkdir -p "$STB_LOG_ROOT" "$MPLCONFIGDIR" "$TRITON_CACHE_DIR" "$TORCH_EXTENSIONS_DIR"
+
+bash src/script/run_eval.sh \
+    --protocol=upstream-l600-v1 \
+    --checkpoint=100k \
+    --experiment=canonical-lejepa-v1-raw-step100k \
+    --tasks=all

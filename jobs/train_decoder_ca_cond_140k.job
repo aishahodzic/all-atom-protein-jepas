@@ -1,0 +1,46 @@
+#!/bin/bash
+# Train a fresh native C-alpha-conditioned decoder against the frozen
+# 100k EMA C-alpha-conditioned La-Proteina encoder. This matches the plain
+# JEPA rand-70 reconstruction protocol through the first 140k decoder steps.
+#SBATCH --job-name=dec_cac_140k
+#SBATCH --partition=normal
+#SBATCH --qos=medium
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=100G
+#SBATCH --time=24:00:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/decoder/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+PYTHON_BIN=/data-gauss/$USER/envs/laproteina_env/bin/python3
+RUN_ID=ca-cond-100k-ema-decoder-140k
+SCRATCH_ROOT="$HOME/tmp/decoder-ca-cond-140k-$SLURM_JOB_ID"
+
+mkdir -p "$PROJECT_ROOT/logs/decoder" "$SCRATCH_ROOT"
+export TMPDIR="$SCRATCH_ROOT"
+export MPLCONFIGDIR="$SCRATCH_ROOT/matplotlib"
+export TRITON_CACHE_DIR="$SCRATCH_ROOT/triton"
+export PYTHONPATH="$PROJECT_ROOT"
+mkdir -p "$MPLCONFIGDIR" "$TRITON_CACHE_DIR"
+
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+
+cd "$PROJECT_ROOT/Evaluation/structure_rec"
+srun "$PYTHON_BIN" -B train_decoder.py \
+  --encoder ca-cond \
+  --run-id "$RUN_ID" \
+  --max-steps 140000 \
+  --eval-every 2000 \
+  --eval-subset-size 200 \
+  --save-every 10000 \
+  --batch-size 8 \
+  --lr 0.0001 \
+  --geometry-weight 0.0 \
+  --coordinate-mode ca-anchored \
+  --no-wandb

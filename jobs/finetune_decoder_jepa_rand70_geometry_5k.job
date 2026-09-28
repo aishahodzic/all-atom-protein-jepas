@@ -1,0 +1,59 @@
+#!/bin/bash
+# Stereochemistry-only training intervention: decoder architecture unchanged.
+# Fine-tune the best step-132k JEPA-rand70 decoder weights for at most 5k steps.
+#SBATCH --job-name=dec_jr70_geom5k
+#SBATCH --partition=normal
+#SBATCH --qos=short
+# gauss currently fails CUDA backward with an NVML allocator assertion.
+# Keep the scientific configuration identical and run on another GPU node.
+#SBATCH --exclude=gauss
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=100G
+#SBATCH --time=03:00:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/decoder/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+PYTHON_BIN=/data-gauss/$USER/envs/laproteina_env/bin/python3
+SOURCE_CKPT="$PROJECT_ROOT/Evaluation/structure_rec/checkpoints/jepa-rand-mask-70-target-80k-to-140k_final.pt"
+RUN_ID=jepa-rand-mask-70-target-geometry-w0p05-132k-to-137k
+# Keep this deliberately short: Python multiprocessing appends a long
+# resource-sharer socket name and AF_UNIX paths are limited to 108 bytes.
+SCRATCH_ROOT="$HOME/tmp/dg-$SLURM_JOB_ID"
+
+[[ -s "$SOURCE_CKPT" ]] || { echo "ERROR: missing $SOURCE_CKPT" >&2; exit 1; }
+mkdir -p "$PROJECT_ROOT/logs/decoder" "$SCRATCH_ROOT"
+export TMPDIR="$SCRATCH_ROOT"
+export MPLCONFIGDIR="$SCRATCH_ROOT/matplotlib"
+export TRITON_CACHE_DIR="$SCRATCH_ROOT/triton"
+export PYTHONPATH="$PROJECT_ROOT"
+mkdir -p "$MPLCONFIGDIR" "$TRITON_CACHE_DIR"
+
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+
+cd "$PROJECT_ROOT/Evaluation/structure_rec"
+srun "$PYTHON_BIN" -B train_decoder.py \
+  --encoder jepa-rand-mask-70 \
+  --encoder-source target \
+  --run-id "$RUN_ID" \
+  --resume-from "$SOURCE_CKPT" \
+  --resume-step 132000 \
+  --max-steps 137000 \
+  --eval-every 500 \
+  --eval-subset-size 50 \
+  --save-every 500 \
+  --batch-size 4 \
+  --lr 0.00002 \
+  --geometry-weight 0.05 \
+  --geometry-predicted-sequence-weight 0.5 \
+  --geometry-tolerance-factor 12.0 \
+  --geometry-clash-overlap 1.5 \
+  --evaluate-before-training \
+  --calibration \
+  --no-wandb

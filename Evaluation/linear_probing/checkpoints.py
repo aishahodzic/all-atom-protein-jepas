@@ -25,11 +25,50 @@ CHECKPOINTS = {
     "jepa-mutation": ("jepa/mutation/100k.ckpt", "jepa"),
     "jepa-rand-mask-50": ("jepa/random_masking_50pct/100k.ckpt", "jepa"),
     "jepa-rand-mask-70": ("jepa/random_masking_70pct/100k.ckpt", "jepa"),
+    # JEPA rand-70 D8 with independently rotated target views.  Keep this as
+    # the original full-state step-100k checkpoint so callers can select the
+    # online or EMA/target encoder explicitly.
+    "jepa-rand70-d8-independent-rotations-step100k": (
+        "/mnt/hopper-raid/aishod/runs/jepa_rand70_d8_independent_rotations_100k/"
+        "store/jepa_rand70_d8_independent_rotations_100k/checkpoints/"
+        "chk_epoch=00000019_step=000000100000.ckpt",
+        "jepa",
+    ),
     "le-jepa-mutation": ("le-jepa/mutation/100k.ckpt", "jepa"),
     "le-jepa-rand-mask-50": ("le-jepa/random_masking_50pct/100k.ckpt", "jepa"),
     "le-jepa-rand-mask-70": ("le-jepa/random_masking_70pct/100k.ckpt", "jepa"),
     "le-jepa-rand70-relative-position-rotation": (
         "le-jepa/relative-position-and-rotation/100k.ckpt", "jepa"
+    ),
+    "canonical-lejepa-v1-rotations-raw-step100k": (
+        str(
+            REPO_ROOT
+            / "store"
+            / "canonical_lejepa_rotations_100k"
+            / "evaluation"
+            / "canonical-lejepa-v1-rotations-step100000-raw-staged.ckpt"
+        ),
+        "jepa",
+    ),
+    "canonical-lejepa-v1-rotations-ema-step100k": (
+        str(
+            REPO_ROOT
+            / "store"
+            / "canonical_lejepa_rotations_100k"
+            / "evaluation"
+            / "canonical-lejepa-v1-rotations-step100000-ema-staged.ckpt"
+        ),
+        "jepa",
+    ),
+    "canonical-lejepa-residue-perview-rot-middle-lr-raw-step10k": (
+        str(
+            REPO_ROOT
+            / "store"
+            / "canonical_lejepa_crop_fixed96_residue_perview_sigreg_b96_independent_locals_k4_rotations_lr4e4_cosine_30k"
+            / "evaluation"
+            / "canonical-lejepa-residue-perview-rot-middle-lr-step10000-raw-staged.ckpt"
+        ),
+        "jepa",
     ),
     "jepa-rand50-control-30k": ("baseline_ablations/control/last.ckpt", "jepa"),
     "jepa-rand50-ema-30k": ("baseline_ablations/ema/last.ckpt", "jepa"),

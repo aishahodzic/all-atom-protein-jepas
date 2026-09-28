@@ -1,0 +1,53 @@
+#!/bin/bash
+# Locked upstream-L600 FlexRMSF probe for canonical LeJEPA V1's step-30k EMA
+# encoder. The staged checkpoint intentionally exposes EMA weights through the
+# historical online_encoder.* layout expected by StructTokenBench.
+#SBATCH --job-name=stb_canon_lj_30k_rmsf
+#SBATCH --partition=normal
+#SBATCH --qos=medium
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=64G
+#SBATCH --time=08:00:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/stb/publication_upstream/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+STB_ROOT="$PROJECT_ROOT/StructTokenBench"
+PYTHON_BIN=/slurm-storage/aishod/.conda/envs/pstbench/bin/python
+CHECKPOINT="$PROJECT_ROOT/store/canonical_lejepa_v1_100k/evaluation/canonical-lejepa-v1-step30000-ema-staged.ckpt"
+ENCODER_CONFIG="$STB_ROOT/100k-checkpoints/shared/exp_config_jepa_nn130m.json"
+
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+
+echo "7b63854104e25f9d5c78008e60525fc07aef0b77615d7c6fae23bc908fe7998b  $CHECKPOINT" | sha256sum -c -
+echo "98e0350d418e7d840fa245ddfd7150064e87a9ac74c72c9150a946f0f66ccd9d  $ENCODER_CONFIG" | sha256sum -c -
+
+cd "$STB_ROOT"
+export STB_SKIP_BOOTSTRAP=1
+export STB_SKIP_DATA_SETUP=1
+export STB_SMOKE=0
+export STB_SHARED_EMBEDDING_CACHE=1
+export DS_IGNORE_CUDA_DETECTION=1
+export PYTHON_BIN
+export NUM_WORKERS=8
+export PDB_DATA_ROOT=/mnt/hopper-raid/aishod/data/struct_token_bench_pdb_data
+export STB_RELEASE_DATA_ROOT=/mnt/hopper-raid/aishod/data/struct_token_bench_release_data
+export CANONICAL_LEJEPA_V1_EMA_STEP30K_CKPT="$CHECKPOINT"
+export EVALUATION_RUN_ID="slurm-${SLURM_JOB_ID}-canonical-lejepa-v1-ema-step30k-flexrmsf"
+export STB_LOG_ROOT="$STB_ROOT/struct_token_bench_logs/upstream-l600-v1-full/runs/$EVALUATION_RUN_ID"
+export SUMMARY_FILE="$STB_LOG_ROOT/summary_results.csv"
+export MPLCONFIGDIR="/tmp/stb-canonical-lejepa-v1-ema-30k-rmsf-mpl-${SLURM_JOB_ID}"
+export TRITON_CACHE_DIR="/tmp/stb-canonical-lejepa-v1-ema-30k-rmsf-triton-${SLURM_JOB_ID}"
+mkdir -p "$STB_LOG_ROOT" "$MPLCONFIGDIR" "$TRITON_CACHE_DIR"
+
+bash src/script/run_eval.sh \
+    --protocol=upstream-l600-v1 \
+    --checkpoint=30k \
+    --experiment=canonical-lejepa-v1-ema-step30k \
+    --tasks=FlexRMSF

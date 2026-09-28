@@ -1,0 +1,686 @@
+{
+  "protocol": {
+    "predicted_sequence_common_heavy": "Exact native/baseline/JEPA heavy-atom intersection after each decoder chooses its amino-acid sequence.",
+    "all_residue_backbone": "N, CA, C and O for every residue; this remains defined when the predicted amino-acid identity is wrong.",
+    "true_sequence_heavy": "All native heavy atoms with true amino-acid identities supplied only for atom selection; coordinates remain decoder predictions.",
+    "warning": "Both decoders receive native C-alpha coordinates, so C-alpha TM-score measures anchor preservation, not fold generation."
+  },
+  "sequence_recovery": {
+    "ca_conditioned_baseline": {
+      "macro_mean": 1.0,
+      "micro_mean": 1.0,
+      "correct_residues": 1337,
+      "total_residues": 1337
+    },
+    "jepa": {
+      "macro_mean": 0.603886782907192,
+      "micro_mean": 0.6073298429319371,
+      "correct_residues": 812,
+      "total_residues": 1337
+    },
+    "jepa_postprocessed": {
+      "macro_mean": 0.603886782907192,
+      "micro_mean": 0.6073298429319371,
+      "correct_residues": 812,
+      "total_residues": 1337
+    }
+  },
+  "aggregates": {
+    "predicted_sequence_common_heavy": {
+      "ca_conditioned_baseline": {
+        "protein_count": 9,
+        "total_matched_heavy_atoms": 9316,
+        "mean_rmsd_angstrom": 0.15571826530827415,
+        "mean_lddt": 0.9986175230020612,
+        "mean_tm_score_ca": 1.0
+      },
+      "jepa": {
+        "protein_count": 9,
+        "total_matched_heavy_atoms": 9316,
+        "mean_rmsd_angstrom": 1.0592169761657715,
+        "mean_lddt": 0.8635924235823587,
+        "mean_tm_score_ca": 1.0
+      },
+      "jepa_postprocessed": {
+        "protein_count": 9,
+        "total_matched_heavy_atoms": 9316,
+        "mean_rmsd_angstrom": 1.2909408940209284,
+        "mean_lddt": 0.8542049873360705,
+        "mean_tm_score_ca": 1.0
+      }
+    },
+    "all_residue_backbone": {
+      "ca_conditioned_baseline": {
+        "protein_count": 9,
+        "total_matched_heavy_atoms": 5348,
+        "mean_rmsd_angstrom": 0.13322443183925417,
+        "mean_lddt": 0.9990447012561998,
+        "mean_tm_score_ca": 1.0
+      },
+      "jepa": {
+        "protein_count": 9,
+        "total_matched_heavy_atoms": 5348,
+        "mean_rmsd_angstrom": 0.4421500795417362,
+        "mean_lddt": 0.9672118700280414,
+        "mean_tm_score_ca": 1.0
+      },
+      "jepa_postprocessed": {
+        "protein_count": 9,
+        "total_matched_heavy_atoms": 5348,
+        "mean_rmsd_angstrom": 0.40681888659795123,
+        "mean_lddt": 0.9755958256439732,
+        "mean_tm_score_ca": 1.0
+      }
+    },
+    "true_sequence_heavy": {
+      "ca_conditioned_baseline": {
+        "protein_count": 9,
+        "total_matched_heavy_atoms": 10638,
+        "mean_rmsd_angstrom": 0.1644410557217068,
+        "mean_lddt": 0.9982320561453929,
+        "mean_tm_score_ca": 1.0
+      },
+      "jepa": {
+        "protein_count": 9,
+        "total_matched_heavy_atoms": 10638,
+        "mean_rmsd_angstrom": 1.2828906906975641,
+        "mean_lddt": 0.8258458323426134,
+        "mean_tm_score_ca": 1.0
+      },
+      "jepa_postprocessed": {
+        "protein_count": 9,
+        "total_matched_heavy_atoms": 10638,
+        "mean_rmsd_angstrom": 1.6319294770558674,
+        "mean_lddt": 0.8103781922581346,
+        "mean_tm_score_ca": 1.0
+      }
+    }
+  },
+  "proteins": [
+    {
+      "protein_id": "1kfm_A",
+      "comparisons": {
+        "predicted_sequence_common_heavy": {
+          "ca_conditioned_baseline": {
+            "matched_heavy_atoms": 348,
+            "rmsd_angstrom": 0.13576596975326538,
+            "lddt": 0.9993325460799918,
+            "tm_score_ca": 1.0
+          },
+          "jepa": {
+            "matched_heavy_atoms": 348,
+            "rmsd_angstrom": 0.8792424201965332,
+            "lddt": 0.889831596241721,
+            "tm_score_ca": 1.0
+          },
+          "jepa_postprocessed": {
+            "matched_heavy_atoms": 348,
+            "rmsd_angstrom": 0.9964099526405334,
+            "lddt": 0.8799609796169842,
+            "tm_score_ca": 1.0
+          }
+        },
+        "all_residue_backbone": {
+          "ca_conditioned_baseline": {
+            "matched_heavy_atoms": 200,
+            "rmsd_angstrom": 0.09992088377475739,
+            "lddt": 1.0,
+            "tm_score_ca": 1.0
+          },
+          "jepa": {
+            "matched_heavy_atoms": 200,
+            "rmsd_angstrom": 0.2985273003578186,
+            "lddt": 0.9929561548892571,
+            "tm_score_ca": 1.0
+          },
+          "jepa_postprocessed": {
+            "matched_heavy_atoms": 200,
+            "rmsd_angstrom": 0.22264724969863892,
+            "lddt": 0.9981166189543469,
+            "tm_score_ca": 1.0
+          }
+        },
+        "true_sequence_heavy": {
+          "ca_conditioned_baseline": {
+            "matched_heavy_atoms": 363,
+            "rmsd_angstrom": 0.143007293343544,
+            "lddt": 0.9992151453170337,
+            "tm_score_ca": 1.0
+          },
+          "jepa": {
+            "matched_heavy_atoms": 363,
+            "rmsd_angstrom": 0.9464085102081299,
+            "lddt": 0.8806901964515055,
+            "tm_score_ca": 1.0
+          },
+          "jepa_postprocessed": {
+            "matched_heavy_atoms": 363,
+            "rmsd_angstrom": 1.107471227645874,
+            "lddt": 0.8698449317414261,
+            "tm_score_ca": 1.0
+          }
+        }
+      }
+    },
+    {
+      "protein_id": "3d3r_A",
+      "comparisons": {
+        "predicted_sequence_common_heavy": {
+          "ca_conditioned_baseline": {
+            "matched_heavy_atoms": 540,
+            "rmsd_angstrom": 0.17039936780929565,
+            "lddt": 0.9975491329479769,
+            "tm_score_ca": 1.0
+          },
+          "jepa": {
+            "matched_heavy_atoms": 540,
+            "rmsd_angstrom": 0.9585918188095093,
+            "lddt": 0.8759017341040463,
+            "tm_score_ca": 1.0
+          },
+          "jepa_postprocessed": {
+            "matched_heavy_atoms": 540,
+            "rmsd_angstrom": 0.9811503291130066,
+            "lddt": 0.8833699421965318,
+            "tm_score_ca": 1.0
+          }
+        },
+        "all_residue_backbone": {
+          "ca_conditioned_baseline": {
+            "matched_heavy_atoms": 320,
+            "rmsd_angstrom": 0.15327014029026031,
+            "lddt": 0.9981225960070822,
+            "tm_score_ca": 1.0
+          },
+          "jepa": {
+            "matched_heavy_atoms": 320,
+            "rmsd_angstrom": 0.47411513328552246,
+            "lddt": 0.9596434458758166,
+            "tm_score_ca": 1.0
+          },
+          "jepa_postprocessed": {
+            "matched_heavy_atoms": 320,
+            "rmsd_angstrom": 0.4961009621620178,
+            "lddt": 0.9642377434519812,
+            "tm_score_ca": 1.0
+          }
+        },
+        "true_sequence_heavy": {
+          "ca_conditioned_baseline": {
+            "matched_heavy_atoms": 631,
+            "rmsd_angstrom": 0.1841307431459427,
+            "lddt": 0.9967198689690021,
+            "tm_score_ca": 1.0
+          },
+          "jepa": {
+            "matched_heavy_atoms": 631,
+            "rmsd_angstrom": 1.2219239473342896,
+            "lddt": 0.8309839521876252,
+            "tm_score_ca": 1.0
+          },
+          "jepa_postprocessed": {
+            "matched_heavy_atoms": 631,
+            "rmsd_angstrom": 1.3748494386672974,
+            "lddt": 0.8360849262079421,
+            "tm_score_ca": 1.0
+          }
+        }
+      }
+    },
+    {
+      "protein_id": "5a13_G",
+      "comparisons": {
+        "predicted_sequence_common_heavy": {
+          "ca_conditioned_baseline": {
+            "matched_heavy_atoms": 1745,
+            "rmsd_angstrom": 0.13524989783763885,
+            "lddt": 0.9991537875302955,
+            "tm_score_ca": 1.0
+          },
+          "jepa": {
+            "matched_heavy_atoms": 1745,
+            "rmsd_angstrom": 1.0618783235549927,
+            "lddt": 0.8527590302714059,
+            "tm_score_ca": 1.0
+          },
+          "jepa_postprocessed": {
+            "matched_heavy_atoms": 1745,
+            "rmsd_angstrom": 1.1767975091934204,
+            "lddt": 0.8583117632115566,
+            "tm_score_ca": 1.0
+          }
+        },
+        "all_residue_backbone": {
+          "ca_conditioned_baseline": {
+            "matched_heavy_atoms": 980,
+            "rmsd_angstrom": 0.1084936186671257,
+            "lddt": 0.9993595708577372,
+            "tm_score_ca": 1.0
+          },
+          "jepa": {
+            "matched_heavy_atoms": 980,
+            "rmsd_angstrom": 0.3743409514427185,
+            "lddt": 0.9780995128359516,
+            "tm_score_ca": 1.0
+          },
+          "jepa_postprocessed": {
+            "matched_heavy_atoms": 980,
+            "rmsd_angstrom": 0.322039395570755,
+            "lddt": 0.985907821993541,
+            "tm_score_ca": 1.0
+          }
+        },
+        "true_sequence_heavy": {
+          "ca_conditioned_baseline": {
+            "matched_heavy_atoms": 1906,
+            "rmsd_angstrom": 0.14028756320476532,
+            "lddt": 0.9991036208546056,
+            "tm_score_ca": 1.0
+          },
+          "jepa": {
+            "matched_heavy_atoms": 1906,
+            "rmsd_angstrom": 1.2005046606063843,
+            "lddt": 0.827484363642632,
+            "tm_score_ca": 1.0
+          },
+          "jepa_postprocessed": {
+            "matched_heavy_atoms": 1906,
+            "rmsd_angstrom": 1.482100009918213,
+            "lddt": 0.8278564184481724,
+            "tm_score_ca": 1.0
+          }
+        }
+      }
+    },
+    {
+      "protein_id": "5fli_A",
+      "comparisons": {
+        "predicted_sequence_common_heavy": {
+          "ca_conditioned_baseline": {
+            "matched_heavy_atoms": 1274,
+            "rmsd_angstrom": 0.14925043284893036,
+            "lddt": 0.9983916101545365,
+            "tm_score_ca": 1.0
+          },
+          "jepa": {
+            "matched_heavy_atoms": 1274,
+            "rmsd_angstrom": 1.1723514795303345,
+            "lddt": 0.8405916757002042,
+            "tm_score_ca": 1.0
+          },
+          "jepa_postprocessed": {
+            "matched_heavy_atoms": 1274,
+            "rmsd_angstrom": 1.5642000436782837,
+            "lddt": 0.8152393677364056,
+            "tm_score_ca": 1.0
+          }
+        },
+        "all_residue_backbone": {
+          "ca_conditioned_baseline": {
+            "matched_heavy_atoms": 732,
+            "rmsd_angstrom": 0.12712642550468445,
+            "lddt": 0.998705125915342,
+            "tm_score_ca": 1.0
+          },
+          "jepa": {
+            "matched_heavy_atoms": 732,
+            "rmsd_angstrom": 0.46231555938720703,
+            "lddt": 0.9595203012442698,
+            "tm_score_ca": 1.0
+          },
+          "jepa_postprocessed": {
+            "matched_heavy_atoms": 732,
+            "rmsd_angstrom": 0.4171554744243622,
+            "lddt": 0.9718030005358099,
+            "tm_score_ca": 1.0
+          }
+        },
+        "true_sequence_heavy": {
+          "ca_conditioned_baseline": {
+            "matched_heavy_atoms": 1472,
+            "rmsd_angstrom": 0.1580333262681961,
+            "lddt": 0.9982888707695488,
+            "tm_score_ca": 1.0
+          },
+          "jepa": {
+            "matched_heavy_atoms": 1472,
+            "rmsd_angstrom": 1.3716248273849487,
+            "lddt": 0.802820109405086,
+            "tm_score_ca": 1.0
+          },
+          "jepa_postprocessed": {
+            "matched_heavy_atoms": 1472,
+            "rmsd_angstrom": 1.825881838798523,
+            "lddt": 0.7733969169049615,
+            "tm_score_ca": 1.0
+          }
+        }
+      }
+    },
+    {
+      "protein_id": "5l0o_A",
+      "comparisons": {
+        "predicted_sequence_common_heavy": {
+          "ca_conditioned_baseline": {
+            "matched_heavy_atoms": 1179,
+            "rmsd_angstrom": 0.14602701365947723,
+            "lddt": 0.9988088220846841,
+            "tm_score_ca": 1.0
+          },
+          "jepa": {
+            "matched_heavy_atoms": 1179,
+            "rmsd_angstrom": 1.0399365425109863,
+            "lddt": 0.8718972066673216,
+            "tm_score_ca": 1.0
+          },
+          "jepa_postprocessed": {
+            "matched_heavy_atoms": 1179,
+            "rmsd_angstrom": 1.2125400304794312,
+            "lddt": 0.8696976891421336,
+            "tm_score_ca": 1.0
+          }
+        },
+        "all_residue_backbone": {
+          "ca_conditioned_baseline": {
+            "matched_heavy_atoms": 656,
+            "rmsd_angstrom": 0.11788000911474228,
+            "lddt": 0.9992975992193678,
+            "tm_score_ca": 1.0
+          },
+          "jepa": {
+            "matched_heavy_atoms": 656,
+            "rmsd_angstrom": 0.3802452087402344,
+            "lddt": 0.9794116657413483,
+            "tm_score_ca": 1.0
+          },
+          "jepa_postprocessed": {
+            "matched_heavy_atoms": 656,
+            "rmsd_angstrom": 0.33004623651504517,
+            "lddt": 0.9865912952775114,
+            "tm_score_ca": 1.0
+          }
+        },
+        "true_sequence_heavy": {
+          "ca_conditioned_baseline": {
+            "matched_heavy_atoms": 1359,
+            "rmsd_angstrom": 0.15502092242240906,
+            "lddt": 0.998421092203203,
+            "tm_score_ca": 1.0
+          },
+          "jepa": {
+            "matched_heavy_atoms": 1359,
+            "rmsd_angstrom": 1.343537449836731,
+            "lddt": 0.8228814231890595,
+            "tm_score_ca": 1.0
+          },
+          "jepa_postprocessed": {
+            "matched_heavy_atoms": 1359,
+            "rmsd_angstrom": 1.637851357460022,
+            "lddt": 0.8158045328855584,
+            "tm_score_ca": 1.0
+          }
+        }
+      }
+    },
+    {
+      "protein_id": "5xr7_A",
+      "comparisons": {
+        "predicted_sequence_common_heavy": {
+          "ca_conditioned_baseline": {
+            "matched_heavy_atoms": 1147,
+            "rmsd_angstrom": 0.15846779942512512,
+            "lddt": 0.9986853396402148,
+            "tm_score_ca": 1.0
+          },
+          "jepa": {
+            "matched_heavy_atoms": 1147,
+            "rmsd_angstrom": 1.0309323072433472,
+            "lddt": 0.8639490042592379,
+            "tm_score_ca": 1.0
+          },
+          "jepa_postprocessed": {
+            "matched_heavy_atoms": 1147,
+            "rmsd_angstrom": 1.2630698680877686,
+            "lddt": 0.8554266040164509,
+            "tm_score_ca": 1.0
+          }
+        },
+        "all_residue_backbone": {
+          "ca_conditioned_baseline": {
+            "matched_heavy_atoms": 668,
+            "rmsd_angstrom": 0.13838142156600952,
+            "lddt": 0.9989981771343347,
+            "tm_score_ca": 1.0
+          },
+          "jepa": {
+            "matched_heavy_atoms": 668,
+            "rmsd_angstrom": 0.41486692428588867,
+            "lddt": 0.9738546829569593,
+            "tm_score_ca": 1.0
+          },
+          "jepa_postprocessed": {
+            "matched_heavy_atoms": 668,
+            "rmsd_angstrom": 0.38942641019821167,
+            "lddt": 0.9789353560614049,
+            "tm_score_ca": 1.0
+          }
+        },
+        "true_sequence_heavy": {
+          "ca_conditioned_baseline": {
+            "matched_heavy_atoms": 1310,
+            "rmsd_angstrom": 0.1671716421842575,
+            "lddt": 0.9984006917742667,
+            "tm_score_ca": 1.0
+          },
+          "jepa": {
+            "matched_heavy_atoms": 1310,
+            "rmsd_angstrom": 1.23014497756958,
+            "lddt": 0.8321335023590846,
+            "tm_score_ca": 1.0
+          },
+          "jepa_postprocessed": {
+            "matched_heavy_atoms": 1310,
+            "rmsd_angstrom": 1.5588712692260742,
+            "lddt": 0.8156660845912319,
+            "tm_score_ca": 1.0
+          }
+        }
+      }
+    },
+    {
+      "protein_id": "6o14_A",
+      "comparisons": {
+        "predicted_sequence_common_heavy": {
+          "ca_conditioned_baseline": {
+            "matched_heavy_atoms": 1023,
+            "rmsd_angstrom": 0.15146495401859283,
+            "lddt": 0.9990773151334964,
+            "tm_score_ca": 1.0
+          },
+          "jepa": {
+            "matched_heavy_atoms": 1023,
+            "rmsd_angstrom": 1.156474232673645,
+            "lddt": 0.8577509190234186,
+            "tm_score_ca": 1.0
+          },
+          "jepa_postprocessed": {
+            "matched_heavy_atoms": 1023,
+            "rmsd_angstrom": 1.5269414186477661,
+            "lddt": 0.8363534175954539,
+            "tm_score_ca": 1.0
+          }
+        },
+        "all_residue_backbone": {
+          "ca_conditioned_baseline": {
+            "matched_heavy_atoms": 580,
+            "rmsd_angstrom": 0.1175893098115921,
+            "lddt": 0.9996355216328631,
+            "tm_score_ca": 1.0
+          },
+          "jepa": {
+            "matched_heavy_atoms": 580,
+            "rmsd_angstrom": 0.5170744061470032,
+            "lddt": 0.9623836885210755,
+            "tm_score_ca": 1.0
+          },
+          "jepa_postprocessed": {
+            "matched_heavy_atoms": 580,
+            "rmsd_angstrom": 0.4809821546077728,
+            "lddt": 0.9725998027528837,
+            "tm_score_ca": 1.0
+          }
+        },
+        "true_sequence_heavy": {
+          "ca_conditioned_baseline": {
+            "matched_heavy_atoms": 1187,
+            "rmsd_angstrom": 0.16388390958309174,
+            "lddt": 0.9983162069689456,
+            "tm_score_ca": 1.0
+          },
+          "jepa": {
+            "matched_heavy_atoms": 1187,
+            "rmsd_angstrom": 1.438531517982483,
+            "lddt": 0.815182791550111,
+            "tm_score_ca": 1.0
+          },
+          "jepa_postprocessed": {
+            "matched_heavy_atoms": 1187,
+            "rmsd_angstrom": 1.8390045166015625,
+            "lddt": 0.7944878829317007,
+            "tm_score_ca": 1.0
+          }
+        }
+      }
+    },
+    {
+      "protein_id": "7cnw_A",
+      "comparisons": {
+        "predicted_sequence_common_heavy": {
+          "ca_conditioned_baseline": {
+            "matched_heavy_atoms": 1722,
+            "rmsd_angstrom": 0.15098978579044342,
+            "lddt": 0.998721091035832,
+            "tm_score_ca": 1.0
+          },
+          "jepa": {
+            "matched_heavy_atoms": 1722,
+            "rmsd_angstrom": 1.1840264797210693,
+            "lddt": 0.8494438385632747,
+            "tm_score_ca": 1.0
+          },
+          "jepa_postprocessed": {
+            "matched_heavy_atoms": 1722,
+            "rmsd_angstrom": 1.444394826889038,
+            "lddt": 0.8348427269899449,
+            "tm_score_ca": 1.0
+          }
+        },
+        "all_residue_backbone": {
+          "ca_conditioned_baseline": {
+            "matched_heavy_atoms": 1012,
+            "rmsd_angstrom": 0.12178459018468857,
+            "lddt": 0.9993034329320275,
+            "tm_score_ca": 1.0
+          },
+          "jepa": {
+            "matched_heavy_atoms": 1012,
+            "rmsd_angstrom": 0.4943554103374481,
+            "lddt": 0.957285883600524,
+            "tm_score_ca": 1.0
+          },
+          "jepa_postprocessed": {
+            "matched_heavy_atoms": 1012,
+            "rmsd_angstrom": 0.4647439420223236,
+            "lddt": 0.9660995363150563,
+            "tm_score_ca": 1.0
+          }
+        },
+        "true_sequence_heavy": {
+          "ca_conditioned_baseline": {
+            "matched_heavy_atoms": 2000,
+            "rmsd_angstrom": 0.15457525849342346,
+            "lddt": 0.9986175050527734,
+            "tm_score_ca": 1.0
+          },
+          "jepa": {
+            "matched_heavy_atoms": 2000,
+            "rmsd_angstrom": 1.3870922327041626,
+            "lddt": 0.8065805355939816,
+            "tm_score_ca": 1.0
+          },
+          "jepa_postprocessed": {
+            "matched_heavy_atoms": 2000,
+            "rmsd_angstrom": 1.8521393537521362,
+            "lddt": 0.7815742196272176,
+            "tm_score_ca": 1.0
+          }
+        }
+      }
+    },
+    {
+      "protein_id": "8cbv_A",
+      "comparisons": {
+        "predicted_sequence_common_heavy": {
+          "ca_conditioned_baseline": {
+            "matched_heavy_atoms": 338,
+            "rmsd_angstrom": 0.2038491666316986,
+            "lddt": 0.9978380624115222,
+            "tm_score_ca": 1.0
+          },
+          "jepa": {
+            "matched_heavy_atoms": 338,
+            "rmsd_angstrom": 1.0495191812515259,
+            "lddt": 0.8702068074105989,
+            "tm_score_ca": 1.0
+          },
+          "jepa_postprocessed": {
+            "matched_heavy_atoms": 338,
+            "rmsd_angstrom": 1.4529640674591064,
+            "lddt": 0.8546423955191728,
+            "tm_score_ca": 1.0
+          }
+        },
+        "all_residue_backbone": {
+          "ca_conditioned_baseline": {
+            "matched_heavy_atoms": 200,
+            "rmsd_angstrom": 0.21457348763942719,
+            "lddt": 0.9979802876070447,
+            "tm_score_ca": 1.0
+          },
+          "jepa": {
+            "matched_heavy_atoms": 200,
+            "rmsd_angstrom": 0.5635098218917847,
+            "lddt": 0.9417514945871708,
+            "tm_score_ca": 1.0
+          },
+          "jepa_postprocessed": {
+            "matched_heavy_atoms": 200,
+            "rmsd_angstrom": 0.5382281541824341,
+            "lddt": 0.9560712554532235,
+            "tm_score_ca": 1.0
+          }
+        },
+        "true_sequence_heavy": {
+          "ca_conditioned_baseline": {
+            "matched_heavy_atoms": 410,
+            "rmsd_angstrom": 0.21385884284973145,
+            "lddt": 0.9970055033991583,
+            "tm_score_ca": 1.0
+          },
+          "jepa": {
+            "matched_heavy_atoms": 410,
+            "rmsd_angstrom": 1.4062480926513672,
+            "lddt": 0.8138556167044351,
+            "tm_score_ca": 1.0
+          },
+          "jepa_postprocessed": {
+            "matched_heavy_atoms": 410,
+            "rmsd_angstrom": 2.0091962814331055,
+            "lddt": 0.7786878169850006,
+            "tm_score_ca": 1.0
+          }
+        }
+      }
+    }
+  ]
+}

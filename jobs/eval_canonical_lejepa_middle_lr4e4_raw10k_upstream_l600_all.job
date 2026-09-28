@@ -1,0 +1,64 @@
+#!/bin/bash
+# Full locked upstream-L600 STB evaluation of the middle-LR raw step-10k encoder.
+#SBATCH --job-name=stb_midlr_raw10k_all
+#SBATCH --partition=normal
+#SBATCH --qos=medium
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=64G
+#SBATCH --time=08:00:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/stb/publication_upstream/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+STB_ROOT="$PROJECT_ROOT/StructTokenBench"
+PYTHON_BIN=/slurm-storage/aishod/.conda/envs/pstbench/bin/python
+CHECKPOINT="$STB_ROOT/100k-checkpoints/canonical-lejepa/lr-ablation/canonical_lejepa_protein_middle_lr4e4_raw10k_stb.ckpt"
+ENCODER_CONFIG="$STB_ROOT/100k-checkpoints/shared/exp_config_jepa_nn130m.json"
+EXPERIMENT=canonical-lejepa-middle-lr4e4-raw-step10k
+
+test -f "$CHECKPOINT"
+test -f "$ENCODER_CONFIG"
+"$PYTHON_BIN" -c '
+import sys
+import torch
+
+checkpoint = torch.load(sys.argv[1], map_location="cpu", weights_only=False, mmap=True)
+provenance = checkpoint.get("canonical_lejepa_evaluation", {})
+assert provenance.get("source_global_step") == 10_000, provenance
+assert provenance.get("encoder_source") == "raw", provenance
+state = checkpoint.get("state_dict", {})
+online = [key for key in state if key.startswith("online_encoder.")]
+assert len(online) == 381, len(online)
+print("Verified 381 raw encoder tensors from middle-LR source step 10,000")
+' "$CHECKPOINT"
+sha256sum "$CHECKPOINT" "$ENCODER_CONFIG"
+
+cd "$STB_ROOT"
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+export STB_SKIP_BOOTSTRAP=1
+export STB_SKIP_DATA_SETUP=1
+export STB_SMOKE=0
+export STB_SHARED_EMBEDDING_CACHE=1
+export DS_IGNORE_CUDA_DETECTION=1
+export PYTHON_BIN
+export NUM_WORKERS=8
+export PDB_DATA_ROOT=/mnt/hopper-raid/aishod/data/struct_token_bench_pdb_data
+export STB_RELEASE_DATA_ROOT=/mnt/hopper-raid/aishod/data/struct_token_bench_release_data
+export EVALUATION_RUN_ID="slurm-${SLURM_JOB_ID}-${EXPERIMENT}-all"
+export STB_LOG_ROOT="$STB_ROOT/struct_token_bench_logs/upstream-l600-v1-full/runs/$EVALUATION_RUN_ID"
+export SUMMARY_FILE="$STB_LOG_ROOT/summary_results.csv"
+export MPLCONFIGDIR="/tmp/stb-${EXPERIMENT}-mpl-${SLURM_JOB_ID}"
+export TRITON_CACHE_DIR="/tmp/stb-${EXPERIMENT}-triton-${SLURM_JOB_ID}"
+mkdir -p "$STB_LOG_ROOT" "$MPLCONFIGDIR" "$TRITON_CACHE_DIR"
+
+bash src/script/run_eval.sh \
+    --protocol=upstream-l600-v1 \
+    --checkpoint=10k \
+    --experiment="$EXPERIMENT" \
+    --tasks=all

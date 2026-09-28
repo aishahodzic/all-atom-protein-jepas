@@ -1,0 +1,81 @@
+#!/bin/bash
+# Matched raw-10k mini-STB comparison for the canonical LeJEPA LR sweep.
+# Array element 0 is peak 1e-3; element 1 is peak 1e-4.
+# The four requested target fields map to Homo, CatBio, FlexRMSF, BindShake.
+#SBATCH --job-name=stb_lr_raw10k
+#SBATCH --partition=normal
+#SBATCH --qos=medium
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=64G
+#SBATCH --time=10:00:00
+#SBATCH --array=0-1
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/stb/publication_upstream/%x-%A_%a.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+STB_ROOT="$PROJECT_ROOT/StructTokenBench"
+STB_PYTHON_BIN=/slurm-storage/aishod/.conda/envs/pstbench/bin/python
+ENCODER_CONFIG="$STB_ROOT/100k-checkpoints/shared/exp_config_jepa_nn130m.json"
+CKPT_DIR="$STB_ROOT/100k-checkpoints/canonical-lejepa/lr-ablation"
+
+EXPERIMENTS=(
+    canonical-lejepa-high-lr1e3-raw-step10k
+    canonical-lejepa-low-lr1e4-raw-step10k
+)
+CHECKPOINTS=(
+    "$CKPT_DIR/canonical_lejepa_high_lr1e3_raw10k_stb.ckpt"
+    "$CKPT_DIR/canonical_lejepa_low_lr1e4_raw10k_stb.ckpt"
+)
+
+EXPERIMENT="${EXPERIMENTS[$SLURM_ARRAY_TASK_ID]}"
+CHECKPOINT="${CHECKPOINTS[$SLURM_ARRAY_TASK_ID]}"
+
+test -f "$CHECKPOINT"
+test -f "$ENCODER_CONFIG"
+
+"$STB_PYTHON_BIN" -c '
+import sys
+import torch
+
+path = sys.argv[1]
+checkpoint = torch.load(path, map_location="cpu", weights_only=False, mmap=True)
+provenance = checkpoint.get("canonical_lejepa_evaluation", {})
+assert provenance.get("source_global_step") == 10_000, provenance
+assert provenance.get("encoder_source") == "raw", provenance
+state = checkpoint.get("state_dict", {})
+online = [key for key in state if key.startswith("online_encoder.")]
+assert online, "checkpoint has no online_encoder weights"
+print(f"Verified raw step-10k checkpoint with {len(online)} online-encoder tensors")
+' "$CHECKPOINT"
+
+sha256sum "$CHECKPOINT" "$ENCODER_CONFIG"
+
+cd "$STB_ROOT"
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+export STB_SKIP_BOOTSTRAP=1
+export STB_SKIP_DATA_SETUP=1
+export STB_SMOKE=0
+export STB_SHARED_EMBEDDING_CACHE=1
+export DS_IGNORE_CUDA_DETECTION=1
+export PYTHON_BIN="$STB_PYTHON_BIN"
+export NUM_WORKERS=8
+export PDB_DATA_ROOT=/mnt/hopper-raid/aishod/data/struct_token_bench_pdb_data
+export STB_RELEASE_DATA_ROOT=/mnt/hopper-raid/aishod/data/struct_token_bench_release_data
+export EVALUATION_RUN_ID="slurm-${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}-${EXPERIMENT}-mini-stb"
+export STB_LOG_ROOT="$STB_ROOT/struct_token_bench_logs/upstream-l600-v1-full/runs/$EVALUATION_RUN_ID"
+export SUMMARY_FILE="$STB_LOG_ROOT/summary_results.csv"
+export MPLCONFIGDIR="/tmp/stb-${EXPERIMENT}-mpl-${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}"
+export TRITON_CACHE_DIR="/tmp/stb-${EXPERIMENT}-triton-${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}"
+mkdir -p "$STB_LOG_ROOT" "$MPLCONFIGDIR" "$TRITON_CACHE_DIR"
+
+bash src/script/run_eval.sh \
+    --protocol=upstream-l600-v1 \
+    --checkpoint=10k \
+    --experiment="$EXPERIMENT" \
+    --tasks=Homo,CatBio,FlexRMSF,BindShake

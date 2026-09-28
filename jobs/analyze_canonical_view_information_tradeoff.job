@@ -1,0 +1,72 @@
+#!/bin/bash
+# Matched view-agreement diagnostic for cropped protein, cropped residue, and
+# uncropped canonical LeJEPA. Each array element uses an independent GPU.
+#SBATCH --job-name=lejepa_view_tradeoff
+#SBATCH --partition=normal
+#SBATCH --qos=short
+#SBATCH --nodelist=noether
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=12
+#SBATCH --mem=56G
+#SBATCH --time=02:00:00
+#SBATCH --array=0-2%3
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/diagnostics/%x-%A_%a.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+PYTHON_BIN=/slurm-storage/aishod/.conda/envs/pstbench/bin/python
+RESULT_ROOT="$PROJECT_ROOT/Evaluation/diagnostics/results/view_information_tradeoff"
+
+LABELS=(
+    cropped-protein-raw10k
+    cropped-residue-raw10k
+    uncropped-protein-raw100k
+)
+CHECKPOINTS=(
+    "$PROJECT_ROOT/StructTokenBench/100k-checkpoints/canonical-lejepa/lr-ablation/canonical_lejepa_protein_middle_lr4e4_raw10k_full_state.ckpt"
+    "$PROJECT_ROOT/store/canonical_lejepa_crop_fixed96_residue_perview_sigreg_b96_100k_relaunch/checkpoints/step-00010000.ckpt"
+    "$PROJECT_ROOT/store/canonical_lejepa_v1_100k/checkpoints/step-00100000.ckpt"
+)
+CONFIGS=(
+    "$PROJECT_ROOT/store/canonical_lejepa_crop_fixed96_protein_perview_sigreg_b96_independent_locals_30k/checkpoints/exp_config_canonical_lejepa_crop_fixed96_protein_perview_sigreg_b96_independent_locals_30k.json"
+    "$PROJECT_ROOT/store/canonical_lejepa_crop_fixed96_residue_perview_sigreg_b96_100k_relaunch/checkpoints/exp_config_canonical_lejepa_crop_fixed96_residue_perview_sigreg_b96_100k_relaunch.json"
+    "$PROJECT_ROOT/store/canonical_lejepa_v1_100k/checkpoints/exp_config_canonical_lejepa_v1_100k.json"
+)
+STEPS=(10000 10000 100000)
+
+INDEX="$SLURM_ARRAY_TASK_ID"
+LABEL="${LABELS[$INDEX]}"
+CHECKPOINT="${CHECKPOINTS[$INDEX]}"
+CONFIG="${CONFIGS[$INDEX]}"
+STEP="${STEPS[$INDEX]}"
+
+test -s "$CHECKPOINT"
+test -s "$CONFIG"
+nvidia-smi -L
+mkdir -p "$RESULT_ROOT" "$PROJECT_ROOT/logs/diagnostics"
+
+export DATA_PATH=/mnt/hopper-raid/aishod/data
+export PYTHONPATH="$PROJECT_ROOT${PYTHONPATH:+:$PYTHONPATH}"
+export HF_HUB_OFFLINE=1
+export WANDB_MODE=disabled
+export PYTHONDONTWRITEBYTECODE=1
+export OMP_NUM_THREADS=4
+export OPENBLAS_NUM_THREADS=4
+export MKL_NUM_THREADS=4
+export TMPDIR="$HOME/tmp/view-information-tradeoff/${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}"
+export MPLCONFIGDIR="$TMPDIR/matplotlib"
+mkdir -p "$MPLCONFIGDIR"
+
+cd "$PROJECT_ROOT"
+srun "$PYTHON_BIN" Evaluation/diagnostics/analyze_canonical_view_information_tradeoff.py \
+    --checkpoint "$CHECKPOINT" \
+    --config "$CONFIG" \
+    --model-label "$LABEL" \
+    --expected-step "$STEP" \
+    --proteins 256 \
+    --minimum-length 96 \
+    --seed 20260925 \
+    --output "$RESULT_ROOT/${LABEL}.json"

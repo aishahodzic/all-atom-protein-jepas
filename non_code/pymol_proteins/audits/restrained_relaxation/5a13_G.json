@@ -1,0 +1,66 @@
+{
+  "input": "non_code/pymol_proteins/5a13_G/5a13_G_reconstructed_idealized.pdb",
+  "output": "store/geometry-repair-validation/all10/5a13_G_repaired.pdb",
+  "strength": 100.0,
+  "steps": 2000,
+  "learning_rate": 0.01,
+  "bond_tolerance_angstrom": 0.02,
+  "virtual_tolerance_angstrom": 0.03,
+  "peptide_tolerance_angstrom": 0.02,
+  "peptide_angle_cosine_tolerance": 0.015,
+  "clash_strength": 30.0,
+  "clash_overlap_angstrom": 1.2,
+  "ca_gap_threshold_angstrom": 4.5,
+  "backbone_steps": 1200,
+  "continuous_peptide_edges": 244,
+  "inserted_internal_ter_records": 0,
+  "max_ca_shift_angstrom": 0.0,
+  "mean_moved_atom_distance_angstrom": 0.07167527713283656,
+  "max_moved_atom_distance_angstrom": 1.5532731345610102,
+  "history": [
+    {
+      "step": 1,
+      "stage": "peptide",
+      "loss": 12.669798013063897,
+      "displacement": 0.0,
+      "covalent": 0.0011930482751639935,
+      "virtual": 4.67801760958554e-05,
+      "peptide": 0.08778103029359212,
+      "peptide_angles": 0.03771220651785887,
+      "clash": 0.0
+    },
+    {
+      "step": 1200,
+      "stage": "peptide",
+      "loss": 0.07136519737196276,
+      "displacement": 0.039304040685626956,
+      "covalent": 0.00012643100296974173,
+      "virtual": 0.0006682706527179424,
+      "peptide": 6.688948706069896e-06,
+      "peptide_angles": 2.0423952008060733e-05,
+      "clash": 0.0
+    },
+    {
+      "step": 1201,
+      "stage": "relaxation",
+      "loss": 0.054374760372932256,
+      "displacement": 0.017518997071730446,
+      "covalent": 0.00012640398435020926,
+      "virtual": 0.0006683155899455108,
+      "peptide": 6.69374394037372e-06,
+      "peptide_angles": 2.0434257860073176e-05,
+      "clash": 0.00015982249791661395
+    },
+    {
+      "step": 2000,
+      "stage": "relaxation",
+      "loss": 0.023152849924225855,
+      "displacement": 0.020116025673449014,
+      "covalent": 9.289191980241637e-06,
+      "virtual": 7.207782262316973e-05,
+      "peptide": 5.531393189920536e-07,
+      "peptide_angles": 1.8310100979921375e-06,
+      "clash": 2.251484849167214e-06
+    }
+  ]
+}

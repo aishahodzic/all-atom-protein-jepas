@@ -1,0 +1,91 @@
+{
+  "input": "non_code/pymol_proteins/8cbv_A/8cbv_A_reconstructed_idealized.pdb",
+  "output": "non_code/pymol_proteins/8cbv_A/8cbv_A_reconstructed_rotamer_repaired.pdb",
+  "overlap": 1.2,
+  "trigger": 1.8,
+  "displacement_weight": 0.02,
+  "passes": 3,
+  "severe_pairs_before": 4,
+  "severe_pairs_after": 0,
+  "before": [
+    {
+      "left_residue": 19,
+      "right_residue": 34,
+      "distance": 1.5510438420624988,
+      "atoms": [
+        "CD1",
+        "CZ2"
+      ]
+    },
+    {
+      "left_residue": 21,
+      "right_residue": 26,
+      "distance": 0.4641443740906488,
+      "atoms": [
+        "CD",
+        "OH"
+      ]
+    },
+    {
+      "left_residue": 26,
+      "right_residue": 44,
+      "distance": 1.0353303820520285,
+      "atoms": [
+        "CE1",
+        "OE2"
+      ]
+    },
+    {
+      "left_residue": 47,
+      "right_residue": 50,
+      "distance": 1.3693052983173617,
+      "atoms": [
+        "O",
+        "OE1"
+      ]
+    }
+  ],
+  "after": [],
+  "choices": [
+    {
+      "pass": 1,
+      "residue_number": 19,
+      "resname": "LEU",
+      "candidate": 1,
+      "score_before": 0.43713361220225727,
+      "score_after": 0.09231038981184479
+    },
+    {
+      "pass": 1,
+      "residue_number": 21,
+      "resname": "LYS",
+      "candidate": 48,
+      "score_before": 6.3086827717779,
+      "score_after": 0.3159762730188949
+    },
+    {
+      "pass": 1,
+      "residue_number": 26,
+      "resname": "TYR",
+      "candidate": 2,
+      "score_before": 1.4234589085105855,
+      "score_after": 0.06149422244200786
+    },
+    {
+      "pass": 1,
+      "residue_number": 50,
+      "resname": "GLU",
+      "candidate": 1,
+      "score_before": 0.280374794424366,
+      "score_after": 0.065394488541524
+    },
+    {
+      "pass": 2,
+      "residue_number": 21,
+      "resname": "LYS",
+      "candidate": 81,
+      "score_before": 0.12209889892068077,
+      "score_after": 0.04159268191842509
+    }
+  ]
+}

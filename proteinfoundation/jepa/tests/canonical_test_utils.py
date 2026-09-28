@@ -13,6 +13,7 @@ def tiny_canonical_config(
     num_proj: int = 8,
     packed_views: bool = False,
     alignment_level: str | None = "protein",
+    residue_visible_only_objective: bool = False,
     masked_kv_mode: str | None = "visible_only",
     residue_view_checkpointing: bool = False,
     residue_compact_visible_kv: bool = False,
@@ -31,6 +32,12 @@ def tiny_canonical_config(
     global_crop_max_length: int | None = None,
     locals_within_global: bool = False,
     shared_crop_anchor: bool = True,
+    pair_only_position_information: bool = False,
+    pair_context_to_sequence: bool = False,
+    lightweight_pair_updates: bool = False,
+    evolving_pair_repr: bool = False,
+    vicreg_rescue: bool = False,
+    vicreg_weight: float = 1.0,
 ):
     config = {
         "nn_ae": {
@@ -59,9 +66,13 @@ def tiny_canonical_config(
                 ],
                 "seq_sep_dim": 7,
                 "pair_repr_dim": 8,
-                "update_pair_repr": False,
-                "update_pair_repr_every_n": 1,
+                "pair_context_to_sequence": pair_context_to_sequence,
+                "update_pair_repr": lightweight_pair_updates,
+                "update_pair_repr_every_n": 3 if lightweight_pair_updates else 1,
                 "use_tri_mult": False,
+                "pair_update_mode": "additive",
+                "pair_update_hidden_dim": 64,
+                "tri_mult_c": 196,
                 "use_qkln": True,
                 "normalize_latent": False,
                 "latent_z_dim": 8,
@@ -84,6 +95,9 @@ def tiny_canonical_config(
             "physical_token_drop": False,
             "packed_views": packed_views,
         },
+        "pair_only_position_information": pair_only_position_information,
+        "pair_only_evolving_pair_repr": evolving_pair_repr,
+        "residue_visible_only_objective": residue_visible_only_objective,
         "readout": {"type": "mean_visible_residues"},
         "residue_view_checkpointing": residue_view_checkpointing,
         "residue_compact_visible_kv": residue_compact_visible_kv,
@@ -95,6 +109,10 @@ def tiny_canonical_config(
             "joint_views": sigreg_joint_views,
             "residue_samples_per_protein": residue_samples_per_protein,
             "independent_residue_samples": independent_residue_samples,
+            "vicreg_rescue": vicreg_rescue,
+            "vicreg_weight": vicreg_weight,
+            "vicreg_target_std": 1.0,
+            "vicreg_covariance_weight": 1.0,
         },
         "optimizer": {
             "type": "AdamW",
@@ -122,6 +140,11 @@ def tiny_canonical_config(
         config["masked_kv_mode"] = masked_kv_mode
     if sigreg_input is not None:
         config["sigreg"]["input"] = sigreg_input
+    if pair_only_position_information:
+        config["nn_ae"]["encoder"]["feats_seq"] = [
+            "x1_aatype",
+            "x1_a37coors_nm_rel",
+        ]
     return OmegaConf.create(config)
 
 

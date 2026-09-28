@@ -1,0 +1,81 @@
+% !TeX root = ../Project.tex
+\section{Conclusion}
+\label{sec:conclusion}
+
+Finally, we summarise the contributions of this thesis, assess the limitations that affected the work and provide directions for future research.
+
+\subsection{Summary of Contributions}
+
+This thesis makes several contributions towards learning predictive representations of all-atom protein structures. First, we adapt JEPA, JEPA+SIGReg and LeJEPA to the La-Proteina encoder. These models introduce masked latent prediction and view alignment as alternatives to training the encoder through coordinate reconstruction. The three approaches also let us compare different collapse-prevention mechanisms, including an EMA target encoder and SIGReg with a shared encoder.
+
+Second, we develop and test protein-specific choices for constructing the prediction problem. These include random, spatial and chemical masking, relative positional information, independent rotations, fixed-length crops and mutation actions. Through these experiments, we identify absolute residue-index and chain-length shortcuts and show how relative positions and cropping can reduce them. The rotation experiments further show that geometric augmentation can improve invariance without guaranteeing stronger downstream transfer. Together, these findings provide concrete guidance for designing protein views that remove unhelpful signals while retaining enough context for learning.
+
+Third, we evaluate the learned representations from several complementary angles. StructTokenBench compares transfer across protein- and residue-level tasks, while linear probes, t-SNE visualisations, neighbour statistics and effective rank examine how the latent spaces are organised. Reconstruction tests ask whether information needed for recovering sequence and structure remains available. This combination separates downstream utility from properties such as high effective rank or visually distinct clusters, neither of which is sufficient on its own.
+
+Finally, we examine where useful information is retained inside the encoder. Across blocks 1, 6 and 12 and the final latent, block 6 is the strongest readout for uncropped LeJEPA. Block 12 has the same 768-dimensional width, while the separately trained six-block encoder tests whether reducing depth reproduces the same benefit. These experiments establish intermediate readout selection as an important part of evaluating protein encoders rather than treating the final representation as the only available output. Thus, this work provides a tested set of JEPA-style adaptations and diagnostics for developing predictive all-atom protein models.
+
+\subsection{Limitations}
+
+The main limitations are that most configurations use one training run and that some cross-family comparisons differ in several design choices, limiting how directly the models can be compared. This section explains how these constraints affect the masking, layerwise, mutation and reconstruction findings.
+
+\subsubsection{Model Comparisons}
+
+The clearest comparisons in this thesis are within model families, where only the intended variable changes. These include the random-mask percentages and the absolute- versus relative-position variants. Comparisons across JEPA, JEPA+SIGReg and LeJEPA are less controlled because the methods differ in their objectives, encoder updates, regularisation, masks and readouts. While developing these models, we also encountered near-constant representations and effective rank close to one. We therefore adjusted masking and batch sizes to find a stable setting for each family. Cropping and discarding masked residues reduced memory use and allowed the LeJEPA models to use larger batches. 
+
+Most configurations are represented by one training run. A complete one-GPU 100k training run requires approximately 16-20 GPU-hours, followed by 6-8 GPU-hours for full StructTokenBench evaluation. Each additional seed therefore costs approximately 22-28 GPU-hours. Repeating every comparison was outside the available compute budget, so small differences may reflect initialisation, sampling or optimisation noise. Targeted repeats of the main masking, positional and cropping comparisons would provide a useful uncertainty measurement.
+
+\subsubsection{Masking and Cropping}
+
+Our masking results are easiest to interpret when the remaining configuration is fixed. The random-mask sweep isolates masking percentage, while spatial masking changes both target shape and approximate coverage. The chemical masks use relative positions, removing the direct absolute-index shortcut from this comparison. However, the two objectives change both amino-acid visibility and which coordinates are hidden, so their difference cannot be attributed to one factor alone.
+
+Cropping required a similar compromise. The matched 20/80 control shows that cropping itself reduces chain-length organisation, but its effective rank falls to $1.61/8$. With only around ten visible residues in each 48-residue local crop, this setting appears too difficult for the shorter view. We therefore use 20/50 masking in the reported cropped models, leaving around 24 local residues visible and obtaining near-full effective rank. That model also uses a larger batch, so these results motivate the selected setting without isolating masking percentage as the cause of the higher scores. Other crop lengths, mask ratios and spatially defined crops remain unexplored.
+
+\subsubsection{Downstream and Representation Evaluation}
+
+The evaluation covers complementary properties, but no single measurement establishes representation quality. StructTokenBench spans local functional sites, flexibility and protein-level remote homology, but conclusions from one benchmark may not generalise to other datasets. The task-wise results reveal that the strongest model depends on the biological scale and property being measured, but different labels and metrics prevent a meaningful aggregate ranking of residue- versus protein-level performance. Evaluation on additional structure and function benchmarks would test whether these task-specific profiles persist, as proposed in Section~\ref{sec:future-work}.
+
+Linear probes measure linearly accessible information rather than everything a nonlinear predictor could recover. The randomly initialised encoder also exposes amino-acid identity because residue identity is part of its input, so probe performance does not always reflect information learned during training. t-SNE and neighbour purity can make organisation and shortcuts visible, but do not show that a downstream predictor relies on those neighbourhoods. Effective rank detects concentration into a small number of directions, but does not measure whether those directions contain useful biological information. For this reason, we base the main interpretations on agreement between downstream transfer, probes and latent-space diagnostics rather than a change in one measurement alone.
+
+\subsubsection{Intermediate Layers}
+
+The layerwise study covers selected readouts from only two trained encoders because every block requires a separate downstream evaluation. We evaluate blocks 1, 6 and 12 rather than every layer, so we cannot establish that block 6 is the optimal readout or determine where different structural and functional properties first become accessible. Block 12 has the same 768-dimensional width as block 6 and is weaker, which shows that width alone is not sufficient. However, comparisons with the final representation still change both encoder stage and dimensionality.
+
+The separately trained six-block encoder addresses a different question. It shows that reading block 6 from the twelve-block encoder is not equivalent to training a shorter network, but one model cannot establish how encoder depth affects this behaviour more generally. Further experiments are needed to determine whether the middle-layer advantage persists across architectures and which biological information is gained or lost through later blocks.
+
+\subsubsection{Mutation Conditioning}
+
+Mutation conditioning remains an initial proposal for introducing actions into all-atom JEPA training. The current objective changes one residue identity while retaining the original coordinates because the relaxed mutant conformation is unknown. The downstream evaluation therefore cannot establish that the model predicts realistic structural, stability or functional consequences. The present experiments cover only single substitutions sampled uniformly, leaving biologically possible mutations and combinations of mutations unexplored.
+
+\subsubsection{Reconstruction and Generation}
+\label{sec:limitations-reconstruction}
+
+There are several key differences between the baseline and JEPA reconstruction pipelines. First, the baseline encoder and decoder are trained jointly to reconstruct the protein, so its latent is explicitly optimised for sequence and coordinate recovery. The JEPA encoder is instead trained to predict latent representations. Although all-atom coordinates are part of its input, its learning signal remains in latent space and never includes a coordinate-reconstruction loss. We freeze this encoder and fit the decoder afterwards, making reconstruction a new task rather than the encoder's original objective. Second, the baseline decoder receives a sampled VAE latent, while the JEPA decoder receives the deterministic latent mean. These differences limit what can be concluded from a direct comparison of their reconstruction scores.
+
+\subsection{Future Work}
+\label{sec:future-work}
+
+Building on these limitations, the next steps are to strengthen the central comparisons, further examine intermediate representations, and extend their use to mutation prediction, generation and protein dynamics.
+
+\subsubsection{Scaling and Training}
+
+With more compute, the next step is to repeat the central comparisons across training seeds and extend the mask and crop sweeps. Random, spatial and chemical masks should cover a wider range of percentages. Larger stable batches would help separate objective behaviour from optimisation noise. Testing additional crop lengths and local-mask ratios would show how much sequence context each view requires. Spatial crops defined by a three-dimensional radius would provide another test of whether structural neighbourhoods form better views than contiguous sequence windows. Longer training and broader comparisons of encoder depth and latent width would show whether the observed patterns persist with scale. Another experiment could initialise the encoder from the La-Proteina autoencoder and then fine-tune it with a JEPA objective. This would test whether predictive learning can reorganise an atomically informative representation without learning it from scratch. The resulting models should also be evaluated on additional structure and function benchmarks such as ATOM3D and TAPE to test whether their task-specific strengths extend beyond StructTokenBench \citep{townshend2020atom3d,rao2019tape}.
+
+\subsubsection{Selecting Intermediate Representations}
+
+The intermediate-layer results motivate a systematic sweep across every encoder block, model size and downstream task. Following the layerwise probing approach of \citet{joeres2026taskdataset}, the same task-specific probe could be trained on each frozen block and its performance plotted across depth. This would show where each property is most accessible and how its signal changes through the encoder. If the pattern remains, an early-exit method such as that proposed for protein language models by \citet{hart2026protein} could improve both prediction and inference efficiency.
+
+\subsubsection{Exploring Mutations}
+
+A more ambitious extension is to use latent prediction to explore which mutations preserve or improve protein properties. Evolutionary amino-acid preferences, following the motivation of EvoRank \citep{gong2024evorank}, could replace uniform substitutions with plausible actions. Relaxed mutant structures would provide targets for conformational changes, while stability and function measurements would test whether the predicted consequences are useful. Extending the objective to several coordinated substitutions could eventually move from representing known proteins towards exploring new sequences under structural and functional constraints.
+
+\subsubsection{Generation and Conformational Dynamics}
+
+Future work should first improve reconstruction from JEPA latents. A decoder that enforces valid residue geometry could reduce compressed residues and atomic overlaps. Reconstruction without native C$\alpha$ anchors would then test whether the latent preserves the complete structure rather than only the atoms around a known backbone. Following La-Proteina, latent perturbation experiments could vary individual residue embeddings and measure whether the decoded changes remain local or propagate to structurally connected residues \citep{la-proteina}. These experiments would show whether the learned space supports controlled structural changes before using it for protein generation.
+
+Inspired by SLAE, future work could evaluate conformational trajectories using multiple conformations of the same protein, ideally ordered frames from a molecular dynamics simulation \citep{chen2026slae}. We could test whether neighbouring frames remain close in latent space and whether latent distance follows structural change along the trajectory. Proteins with well-characterised open and closed conformations could provide motion trajectories. Interpolating between trajectory embeddings and decoding the intermediate points would then test whether the latent space supports gradual structural changes.
+
+\subsection{Conclusion}
+
+This thesis adapts JEPA and LeJEPA objectives to residue-level all-atom protein structures and develops a framework for examining what their representations learn. The experiments show that predictive learning can support both downstream transfer and detailed latent-space analysis, while exposing shortcuts caused by position, chain length and view construction. Relative positions, fixed-length crops and rotation augmentation provide concrete ways to modify these signals, and the layerwise study shows that valuable information may remain inside the encoder rather than in its final output.
+
+The adaptations and diagnostics developed here identify which design choices work, where they fail and what information the resulting representations retain. Future work should extend these representations towards protein dynamics, richer mutation experiments and generation, while studying more deeply how information changes across the encoder. By adapting JEPA-style learning to all-atom protein structures, this thesis contributes one step towards protein world models with a focus on representation learning.

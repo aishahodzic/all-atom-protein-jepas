@@ -1,0 +1,72 @@
+#!/bin/bash
+# Instrumented peak-VRAM check for the packed protein path at global batch 128.
+#SBATCH --job-name=canon_crop_96_prot_b128_mem
+#SBATCH --partition=normal
+#SBATCH --qos=short
+#SBATCH --nodes=1
+#SBATCH --ntasks=2
+#SBATCH --ntasks-per-node=2
+#SBATCH --gres=gpu:2
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=96G
+#SBATCH --time=00:15:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/canonical_lejepa/%x-%j.out
+
+set -uo pipefail
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+PYTHON_BIN=/slurm-storage/aishod/envs/la-proteina/bin/python
+RUN_NAME=canonical_lejepa_crop_fixed96_protein_perview_sigreg_b128_memory_probe
+SAMPLES="/tmp/${RUN_NAME}-${SLURM_JOB_ID}.gpu-memory.csv"
+cd "$PROJECT_ROOT"
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+export PYTHONPATH="$PROJECT_ROOT${PYTHONPATH:+:$PYTHONPATH}"
+export PATH="/slurm-storage/aishod/envs/la-proteina/bin:$PATH"
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+export TORCH_NCCL_ASYNC_ERROR_HANDLING=1
+export HYDRA_FULL_ERROR=1
+export MASTER_ADDR=127.0.0.1
+export MASTER_PORT=$((20000 + SLURM_JOB_ID % 18000))
+export MPLCONFIGDIR="/tmp/${RUN_NAME}-${SLURM_JOB_ID}"
+mkdir -p "$MPLCONFIGDIR" "$PROJECT_ROOT/logs/canonical_lejepa"
+: > "$SAMPLES"
+(
+    while true; do
+        nvidia-smi --query-gpu=index,memory.used,memory.total \
+            --format=csv,noheader,nounits >> "$SAMPLES"
+        sleep 0.2
+    done
+) &
+MONITOR_PID=$!
+
+srun --ntasks=2 --kill-on-bad-exit=1 --wait=30 --label "$PYTHON_BIN" \
+    -m proteinfoundation.jepa.train_canonical_lejepa \
+    run_name_="$RUN_NAME" seed=42 alignment_level=protein \
+    masked_kv_mode=visible_only residue_view_checkpointing=false \
+    residue_compact_visible_kv=false independent_view_rotations=false \
+    views.cropping=true views.packed_views=true \
+    views.global_crop_length=96 views.global_crop_fraction_min=null \
+    views.global_crop_fraction_max=null views.global_crop_min_length=96 \
+    views.global_crop_max_length=null views.local_crop_length=48 \
+    views.locals_within_global=true views.global_mask_pct=0.20 \
+    views.local_mask_pct=0.50 sigreg.input=protein_mean \
+    sigreg.joint_views=false dataset.datamodule.dataselector.min_length=96 \
+    dataset.datamodule.batch_size=64 trainer.devices=2 trainer.num_nodes=1 \
+    trainer.strategy=ddp trainer.use_distributed_sampler=false \
+    trainer.precision=bf16-mixed trainer.accumulate_grad_batches=1 \
+    trainer.max_steps=8 schedule.total_steps=100000 schedule.peak_step=12000 \
+    schedule.start_lr=1.0e-4 schedule.end_lr=4.0e-4 ema.enabled=true \
+    checkpoint.every_n_train_steps=10000 \
+    checkpoint.last_every_n_train_steps=1500 checkpoint.save_last=true \
+    checkpoint.save_weights_only=false wandb.enabled=false
+TRAIN_STATUS=$?
+
+kill "$MONITOR_PID" 2>/dev/null || true
+wait "$MONITOR_PID" 2>/dev/null || true
+awk -F',' '
+    {gpu=$1+0; used=$2+0; total=$3+0; if (used>peak[gpu]) peak[gpu]=used; capacity[gpu]=total}
+    END {for (gpu in peak) printf "B128 protein GPU%d peak MiB: %d / %d\n", gpu, peak[gpu], capacity[gpu]}
+' "$SAMPLES" | sort
+echo "B128 protein probe exit status: $TRAIN_STATUS"
+exit "$TRAIN_STATUS"

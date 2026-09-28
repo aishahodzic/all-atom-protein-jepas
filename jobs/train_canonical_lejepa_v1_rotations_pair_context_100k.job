@@ -1,0 +1,93 @@
+#!/bin/bash
+#SBATCH --job-name=canon_rot_pairctx_100k
+#SBATCH --partition=normal
+#SBATCH --qos=long
+# gauss and klein currently report NVML driver/library failures; noether has
+# two GPUs available alongside the two full-STB evaluation tasks.
+#SBATCH --nodelist=noether
+#SBATCH --nodes=1
+#SBATCH --ntasks=2
+#SBATCH --ntasks-per-node=2
+#SBATCH --gres=gpu:2
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=64G
+#SBATCH --time=24:00:00
+#SBATCH --output=/mnt/data/slurm-storage/aishod/projects/la-proteina/logs/canonical_lejepa/%x-%j.out
+
+set -euo pipefail
+
+PROJECT_ROOT=/mnt/data/slurm-storage/aishod/projects/la-proteina
+PYTHON_BIN=/slurm-storage/aishod/envs/la-proteina/bin/python
+RUN_NAME=canonical_lejepa_v1_rotations_pair_context_100k
+
+cd "$PROJECT_ROOT"
+
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
+
+export PYTHONPATH="$PROJECT_ROOT${PYTHONPATH:+:$PYTHONPATH}"
+export PATH="/slurm-storage/aishod/envs/la-proteina/bin:$PATH"
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+export MPLCONFIGDIR="$PROJECT_ROOT/store/$RUN_NAME/matplotlib-cache"
+
+mkdir -p "$MPLCONFIGDIR" "$PROJECT_ROOT/logs/canonical_lejepa"
+
+# Architectural rescue of the collapsed pair-only-position pilot. All
+# historical canonical-lejepa-v1-rotations settings remain fixed. The single
+# added bridge injects a masked mean of pair features into each residue token;
+# no positional or structural feature is added to the single-residue stream.
+# Two GPUs use local batch 8 to preserve the historical global batch of 16.
+srun --ntasks=2 "$PYTHON_BIN" \
+    -m proteinfoundation.jepa.train_canonical_lejepa \
+    run_name_="$RUN_NAME" \
+    seed=42 \
+    pair_only_position_information=true \
+    nn_ae.encoder.pair_context_to_sequence=true \
+    independent_view_rotations=true \
+    alignment_level=protein \
+    masked_kv_mode=visible_only \
+    views.cropping=false \
+    views.global_mask_pct=0.20 \
+    views.local_mask_pct=0.80 \
+    views.num_local_views=4 \
+    views.packed_views=true \
+    views.physical_token_drop=false \
+    readout.type=mean_visible_residues \
+    sigreg.input=protein_mean \
+    sigreg.weight=0.02 \
+    sigreg.knots=17 \
+    sigreg.num_proj=1024 \
+    sigreg.normalize_by_n=false \
+    sigreg.joint_views=false \
+    dataset.datamodule.batch_size=8 \
+    optimizer.type=AdamW \
+    optimizer.lr=4.0e-4 \
+    optimizer.weight_decay=0.04 \
+    optimizer.betas='[0.9,0.95]' \
+    optimizer.amsgrad=false \
+    optimizer.exclude_bias_norm=true \
+    schedule.type=LinearWarmupCosineAnnealing \
+    schedule.total_steps=100000 \
+    schedule.peak_step=12000 \
+    schedule.start_lr=1.0e-4 \
+    schedule.end_lr=4.0e-4 \
+    ema.enabled=true \
+    ema.decay=0.9999 \
+    ema.update_every=32 \
+    ema.start_step=0 \
+    ema.include='[encoder]' \
+    ema.save_key=state_dict_ema \
+    ema.device=cuda \
+    ema.dtype=float32 \
+    trainer.devices=2 \
+    trainer.num_nodes=1 \
+    trainer.strategy=ddp \
+    trainer.use_distributed_sampler=false \
+    trainer.precision=bf16-mixed \
+    trainer.max_steps=100000 \
+    trainer.accumulate_grad_batches=1 \
+    trainer.limit_val_batches=0 \
+    trainer.gradient_clip_val=null \
+    checkpoint.every_n_train_steps=10000 \
+    checkpoint.last_every_n_train_steps=1500

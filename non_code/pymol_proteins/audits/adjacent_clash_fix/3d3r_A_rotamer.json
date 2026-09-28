@@ -1,0 +1,141 @@
+{
+  "input": "non_code/pymol_proteins/3d3r_A/3d3r_A_reconstructed_idealized.pdb",
+  "output": "store/geometry-repair-validation/adjacent-clash-fix/all10/3d3r_A_rotamer.pdb",
+  "overlap": 1.2,
+  "trigger": 1.8,
+  "displacement_weight": 0.02,
+  "passes": 5,
+  "severe_pairs_before": 7,
+  "severe_pairs_after": 7,
+  "before": [
+    {
+      "left_residue": 34,
+      "right_residue": 35,
+      "distance": 1.7852299571763863,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 35,
+      "right_residue": 36,
+      "distance": 1.5853409727878733,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 36,
+      "right_residue": 37,
+      "distance": 1.1494002784060908,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 37,
+      "right_residue": 38,
+      "distance": 0.7561679707578203,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 39,
+      "right_residue": 40,
+      "distance": 0.3120608914939519,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 54,
+      "right_residue": 55,
+      "distance": 1.755543220772419,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 59,
+      "right_residue": 60,
+      "distance": 0.6704550693372378,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    }
+  ],
+  "after": [
+    {
+      "left_residue": 34,
+      "right_residue": 35,
+      "distance": 1.7852299571763863,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 35,
+      "right_residue": 36,
+      "distance": 1.5853409727878733,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 36,
+      "right_residue": 37,
+      "distance": 1.1494002784060908,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 37,
+      "right_residue": 38,
+      "distance": 0.7561679707578203,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 39,
+      "right_residue": 40,
+      "distance": 0.3120608914939519,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 54,
+      "right_residue": 55,
+      "distance": 1.755543220772419,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    },
+    {
+      "left_residue": 59,
+      "right_residue": 60,
+      "distance": 0.6704550693372378,
+      "atoms": [
+        "O",
+        "N"
+      ]
+    }
+  ],
+  "choices": []
+}

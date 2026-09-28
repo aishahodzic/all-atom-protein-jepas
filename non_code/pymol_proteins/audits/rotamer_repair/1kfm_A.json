@@ -1,0 +1,32 @@
+{
+  "input": "non_code/pymol_proteins/1kfm_A/1kfm_A_reconstructed_idealized.pdb",
+  "output": "non_code/pymol_proteins/1kfm_A/1kfm_A_reconstructed_idealized.fixed.pdb",
+  "overlap": 1.2,
+  "trigger": 1.8,
+  "displacement_weight": 0.02,
+  "passes": 3,
+  "severe_pairs_before": 1,
+  "severe_pairs_after": 0,
+  "before": [
+    {
+      "left_residue": 1,
+      "right_residue": 4,
+      "distance": 1.4155663177682605,
+      "atoms": [
+        "OG",
+        "NH2"
+      ]
+    }
+  ],
+  "after": [],
+  "choices": [
+    {
+      "pass": 1,
+      "residue_number": 1,
+      "resname": "SER",
+      "candidate": 1,
+      "score_before": 0.20650997154669792,
+      "score_after": 0.017273044725724843
+    }
+  ]
+}

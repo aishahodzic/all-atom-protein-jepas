@@ -1,0 +1,261 @@
+{
+  "protocol": {
+    "sampling_unit": "protein",
+    "protein_count": 100,
+    "replicates": 20000,
+    "seed": 20260921,
+    "interval": "percentile 95%"
+  },
+  "source_metrics": "/mnt/data/slurm-storage/aishod/projects/la-proteina/non_code/pymol_proteins/audits/ca_cond_vs_jepa_300k_random100_direct_metrics.json",
+  "source_jepa_summary": "/mnt/data/slurm-storage/aishod/projects/la-proteina/non_code/pymol_proteins/audits/jepa_decoder300k_random100_summary.json",
+  "protein_ids": [
+    "1kfm_A",
+    "3d3r_A",
+    "5a13_G",
+    "5fli_A",
+    "5l0o_A",
+    "5xr7_A",
+    "6o14_A",
+    "7cnw_A",
+    "8cbv_A",
+    "4z48_B",
+    "8ik1_B",
+    "5xr4_A",
+    "6atg_D",
+    "3uyc_B",
+    "1kn0_E",
+    "6wu9_2",
+    "6e69_A",
+    "6zkt_f",
+    "1wsj_A",
+    "6bto_B",
+    "8p50_B",
+    "5v5k_B",
+    "8xlp_5",
+    "7cnw_C",
+    "5wa8_A",
+    "6j6g_I",
+    "7bv8_P",
+    "7ard_s",
+    "6ii6_C",
+    "8pyr_G",
+    "1a8r_J",
+    "6pta_A",
+    "3pio_Q",
+    "1p7j_B",
+    "2jd6_O",
+    "9h9h_S",
+    "7wfg_O",
+    "2zjr_Q",
+    "7r48_V",
+    "9s2d_B",
+    "7x9z_A",
+    "1sqq_K",
+    "8ik1_A",
+    "5k7j_B",
+    "5xrz_H",
+    "9m3l_A",
+    "9s2d_A",
+    "8qu5_N",
+    "3r5v_A",
+    "5ipe_A",
+    "1rbs_A",
+    "5gaf_P",
+    "8fha_D",
+    "7g9d_B",
+    "6txn_C",
+    "2w81_A",
+    "9zcd_x",
+    "4wkz_B",
+    "3wpr_C",
+    "1n3t_A",
+    "5xrz_F",
+    "5eki_B",
+    "4rrr_A",
+    "4qtr_B",
+    "8cus_B",
+    "3bfk_A",
+    "5qru_A",
+    "4n4o_D",
+    "3von_D",
+    "8cbs_C",
+    "5fbq_B",
+    "3hrs_A",
+    "9e4w_J",
+    "9fks_o",
+    "2jd8_U",
+    "4etr_A",
+    "9tf5_A",
+    "4yy3_S",
+    "8etc_y",
+    "1n3r_C",
+    "6lsp_B",
+    "1ox9_B",
+    "8axp_B",
+    "8vtv_2X",
+    "1ude_A",
+    "7ndk_C",
+    "8zdj_q",
+    "1z4a_C",
+    "9z5n_d",
+    "7dy9_B",
+    "3o2u_A",
+    "3lte_K",
+    "8wmw_i",
+    "10px_2X",
+    "1n3r_H",
+    "9b3j_R",
+    "9r01_f",
+    "5imj_A",
+    "6f58_A",
+    "8s1p_T"
+  ],
+  "intervals": {
+    "predicted_sequence_common_heavy": {
+      "ca_conditioned_baseline": {
+        "rmsd_angstrom": {
+          "mean": 0.15845651142299175,
+          "ci95_lower": 0.15320842280797659,
+          "ci95_upper": 0.16420845498703418
+        },
+        "lddt": {
+          "mean": 0.9982217621764546,
+          "ci95_lower": 0.9978833782296691,
+          "ci95_upper": 0.9985150915879574
+        },
+        "tm_score_ca": {
+          "mean": 1.0,
+          "ci95_lower": 1.0,
+          "ci95_upper": 1.0
+        }
+      },
+      "jepa": {
+        "rmsd_angstrom": {
+          "mean": 1.0773643055558204,
+          "ci95_lower": 1.0519851213768125,
+          "ci95_upper": 1.1016727300658824
+        },
+        "lddt": {
+          "mean": 0.8660341916420069,
+          "ci95_lower": 0.8621475056574043,
+          "ci95_upper": 0.8699555055162089
+        },
+        "tm_score_ca": {
+          "mean": 1.0,
+          "ci95_lower": 1.0,
+          "ci95_upper": 1.0
+        }
+      }
+    },
+    "all_residue_backbone": {
+      "ca_conditioned_baseline": {
+        "rmsd_angstrom": {
+          "mean": 0.1325211901962757,
+          "ci95_lower": 0.12732926917262374,
+          "ci95_upper": 0.13824244707636535
+        },
+        "lddt": {
+          "mean": 0.9987606110973043,
+          "ci95_lower": 0.9985207008396113,
+          "ci95_upper": 0.9989760236913507
+        },
+        "tm_score_ca": {
+          "mean": 1.0,
+          "ci95_lower": 1.0,
+          "ci95_upper": 1.0
+        }
+      },
+      "jepa": {
+        "rmsd_angstrom": {
+          "mean": 0.4354420730471611,
+          "ci95_lower": 0.41841723535209896,
+          "ci95_upper": 0.4543290203288197
+        },
+        "lddt": {
+          "mean": 0.9709799617198399,
+          "ci95_lower": 0.9675662452476921,
+          "ci95_upper": 0.9738799933782529
+        },
+        "tm_score_ca": {
+          "mean": 1.0,
+          "ci95_lower": 1.0,
+          "ci95_upper": 1.0
+        }
+      }
+    },
+    "true_sequence_heavy": {
+      "ca_conditioned_baseline": {
+        "rmsd_angstrom": {
+          "mean": 0.16452038362622262,
+          "ci95_lower": 0.15902299870923162,
+          "ci95_upper": 0.170564011041075
+        },
+        "lddt": {
+          "mean": 0.9979948129531341,
+          "ci95_lower": 0.9975840641564274,
+          "ci95_upper": 0.9983377161667433
+        },
+        "tm_score_ca": {
+          "mean": 1.0,
+          "ci95_lower": 1.0,
+          "ci95_upper": 1.0
+        }
+      },
+      "jepa": {
+        "rmsd_angstrom": {
+          "mean": 1.2741700783371925,
+          "ci95_lower": 1.2416514577120543,
+          "ci95_upper": 1.3061737896502017
+        },
+        "lddt": {
+          "mean": 0.8329475105406613,
+          "ci95_lower": 0.8284768876416381,
+          "ci95_upper": 0.837689227088897
+        },
+        "tm_score_ca": {
+          "mean": 1.0,
+          "ci95_lower": 1.0,
+          "ci95_upper": 1.0
+        }
+      }
+    },
+    "true_sequence_non_ca": {
+      "ca_conditioned_baseline": {
+        "rmsd_angstrom": {
+          "mean": 0.1761431761085987,
+          "ci95_lower": 0.17022546597942712,
+          "ci95_upper": 0.182686445761472
+        },
+        "lddt": {
+          "mean": 0.9976412046633587,
+          "ci95_lower": 0.9971541304293654,
+          "ci95_upper": 0.9980479384486676
+        }
+      },
+      "jepa": {
+        "rmsd_angstrom": {
+          "mean": 1.3635665601491929,
+          "ci95_lower": 1.3291032674312593,
+          "ci95_upper": 1.3974725172519684
+        },
+        "lddt": {
+          "mean": 0.8108190042942668,
+          "ci95_lower": 0.8059300361977414,
+          "ci95_upper": 0.8159780905041203
+        }
+      }
+    },
+    "sequence_recovery": {
+      "ca_conditioned_baseline": {
+        "mean": 1.0,
+        "ci95_lower": 1.0,
+        "ci95_upper": 1.0
+      },
+      "jepa": {
+        "mean": 0.643720899861187,
+        "ci95_lower": 0.6256695212516874,
+        "ci95_upper": 0.6608506049238801
+      }
+    }
+  }
+}

@@ -1,0 +1,139 @@
+
+
+\section{Background}
+\label{sec:background}
+
+In this section, we introduce protein structure, representation learning and autoencoders, then describe the La-Proteina model, Joint-Embedding Predictive Architectures (JEPAs) and LeJEPA, which form the basis of our models.
+
+\subsection{Protein Structure}
+\label{sec:background-proteins}
+Proteins are molecules composed of amino acids. There are twenty standard amino acids, and they share a common backbone but differ in side-chain atoms. The backbone contains nitrogen (N), alpha-carbon ($C_\alpha$), carbonyl carbon (C) and oxygen (O), while the side chains vary in composition and number of atoms. Amino acids are linked together by peptide bonds to form a polypeptide chain, and amino acids within a chain are called residues. The residue sequence guides how the chain folds into a three-dimensional structure, which determines the protein's biological function and properties. Thus, protein data represent sequence through discrete residue identities, such as VAL (valine) or ALA (alanine), and structure through continuous three-dimensional coordinates $(x,y,z)$ for each atom \citep{la-proteina}.
+
+
+%missing_citation: what are proteins
+
+\subsection{Representation Learning}
+\label{sec:background-representation-learning}
+
+Embeddings provide numerical representations through which we can study proteins and predict their properties. An encoder $E_\theta$ maps the input $x$ to an embedding, or latent representation, $z=E_\theta(x)$.
+The training objective refines these embeddings by comparing the model's outputs with the targets defined for the task. In supervised learning, a model compares its predictions with known target labels.
+%missing_citation: supervised, self supervised, 
+In self-supervised learning, the model constructs targets from the data, such as by reconstructing an input or predicting masked content \citep{assran2023ijepa,caron2021dino}.
+After the initial training, transfer learning reuses the encoder for a downstream task with a different objective, such as predicting a protein property \citep{rao2019tape}.
+
+\subsection{Autoencoders and Transformer Architectures}
+\label{sec:background-transformers}
+An autoencoder combines an encoder that produces a latent representation with a decoder trained to reconstruct the input from it. The reconstruction loss trains both the encoder and the decoder, encouraging the encoder to retain information that the decoder needs.
+In a variational autoencoder (VAE), the encoder predicts a distribution over latent variables, from which a representation is sampled \citep{kingma2013autoencoding}.
+
+Both encoders and decoders can be transformer-based, meaning they process input tokens through attention and feed-forward layers. In self-attention, query, key and value vectors are computed from the same input embeddings. Query-key comparisons determine attention weights. Each weight multiplies its corresponding value vector, and the results are summed to produce the attention output \citep{vaswani2017attention}. Cross-attention instead computes queries from one set of embeddings and keys and values from another. In a residue-based protein encoder, each token describes a residue, and self-attention combines information across the protein.
+
+
+
+\subsection{La-Proteina encoder}
+\label{sec:background-autoencoder}
+La-Proteina is an all-atom protein generative model based on a partially latent representation. The C$\alpha$ coordinates are represented explicitly, while the sequence and remaining atomistic information are encoded into per-residue latents \citep{la-proteina}.
+The model combines a variational autoencoder for learning this representation with a flow-matching model for generating C$\alpha$ coordinates and residue latents. 
+
+Its encoder receives amino-acid identities and atom coordinates, from which it constructs residue and pair representations. Residue features include residue type, atom coordinates in both absolute and C$\alpha$-relative form, a chain-break indicator and a chain index.
+Pair features describe sequence separation, pairwise backbone distances (C$\alpha$-N, C$\alpha$-C$\alpha$, C$\alpha$-C, C$\alpha$-C$\beta$) and relative orientations between residues.
+The encoder uses self-attention across residues, with pair features acting as a bias in the attention scores.
+The standard encoder has 12 transformer blocks with 12 attention heads, 768-dimensional residue features and 256-dimensional pair features.
+After the transformer blocks, the encoder predicts a mean and log-scale for each residue's Gaussian latent distribution \citep[Appendix H]{la-proteina}. A latent vector is sampled from this distribution, giving a representation $z \in \mathbb{R}^{L \times 8}$ for a protein of length $L$. The decoder receives latent vectors together with the C$\alpha$ coordinates, and reconstructs the amino-acid sequence and the remaining atom coordinates. The encoder and decoder share the same transformer architecture.
+
+The VAE's training objective is a $\beta$-weighted ELBO loss with three terms: cross-entropy loss for amino-acid sequence reconstruction, squared L2 loss for atom-coordinate reconstruction, and a KL-divergence term regularising the latent distribution towards a standard Gaussian prior.
+
+
+\subsection{Self-supervised representation learning}
+\label{sec:background-world-models}
+JEPA and LeJEPA (Latent-Euclidean JEPA) are self-supervised models that compare predictions and targets in latent space rather than reconstructing the raw input. They learn from views of the same input, constructed through masking or cropping. I-JEPA uses a context encoder, an EMA target encoder and a predictor, while LeJEPA uses one shared encoder with SIGReg regularisation.
+
+
+\subsubsection{Joint-Embedding Predictive Architectures}
+\label{sec:background-jepa}
+I-JEPA applies JEPA to images through a student-teacher architecture \citep{assran2023ijepa,caron2021dino,grill2020byol}.
+We refer to the student as the context encoder $E_\theta$ and the teacher as the target encoder $E_{\bar\theta}$. The context input can be partially masked. Let $y$ denote the full image and $x=y_C$ its visible context patches at positions $C$, with $T$ denoting the target positions.  The context encoder processes only the visible patches to produce $z_x=E_\theta(x)$. The target encoder processes the full image to produce $z_y=E_{\bar\theta}(y)$, and we then select the target embeddings $z_{y,T}$ at positions $T$ \citep[Section 3]{assran2023ijepa}.
+
+A predictor $P_\phi$ uses the context embeddings and the context and target positions to predict the target embeddings. A predictor can also be action-conditioned, meaning it receives a context representation together with an action and predicts a target representation \citep{shihabi2026hijepa}. For proteins, a mutation, i.e. an amino-acid substitution at a position, can be an action. The subscripts $\theta$, $\bar\theta$ and $\phi$ denote the network parameters. The prediction loss $D$ compares the predicted and target embeddings:
+\begin{equation}
+\mathcal{L}_{\mathrm{JEPA}}
+=D\!\left(P_\phi(z_x,C,T),\operatorname{sg}(z_{y,T})\right).
+\label{eq:background-jepa-prediction}
+\end{equation}
+The I-JEPA implementation uses Smooth-L1 for $D$, which is quadratic for small errors and linear for larger errors \citep{ijepa-code}.
+Gradients update the context encoder and predictor, while the stop-gradient operation $\operatorname{sg}$ prevents updates through the target encoder. Its weights are an EMA of the context encoder's weights \citep{assran2023ijepa,caron2021dino}.
+
+Algorithm~\ref{alg:background-ijepa} summarises the I-JEPA update. The target encoder is initialised from the context encoder and updated by EMA, where $\tau$ controls how much of the previous target-encoder weights are retained. It uses $\tau=0.996$ initially and increases it linearly to one during pretraining \citep{assran2023ijepa}.
+
+\begin{algorithm}[hbt!]
+\caption{I-JEPA student-teacher update \citep{assran2023ijepa}}
+\label{alg:background-ijepa}
+\begin{algorithmic}[1]
+\Require image $y$, context mask $B_x$, target masks $\{B_i\}_{i=1}^{M}$, encoders $E_\theta$ and $E_{\bar\theta}$, predictor $P_\phi$, EMA momentum $\tau$
+\State $z_y \gets E_{\bar\theta}(y)$ \Comment{encode the complete image}
+\State $z_x\gets E_\theta\!\left(y_{B_x\setminus\bigcup_{i=1}^{M}B_i}\right)$ \Comment{encode context without target patches}
+\For{$i=1,\ldots,M$}
+    \State $z_y(i)\gets\{z_{y,j}\}_{j\in B_i}$ \Comment{select embeddings at the target positions}
+    \State $\hat z_y(i)\gets P_\phi\!\left(z_x,\{m_j\}_{j\in B_i}\right)$ \Comment{predict the selected embeddings from context}
+\EndFor
+\State $\mathcal{L}\gets M^{-1}\sum_{i=1}^{M}\sum_{j\in B_i}\operatorname{SmoothL1}(\hat z_{y,j},z_{y,j})$
+\State update $\theta$ and $\phi$ by gradient descent on $\mathcal{L}$
+\State $\bar\theta \gets \tau\bar\theta+(1-\tau)\theta$ \Comment{EMA target update}
+\end{algorithmic}
+\end{algorithm}
+
+
+\textbf{Representation collapse} occurs when the encoder maps different inputs to the same constant embedding. A collapsed model can achieve a low prediction loss without distinguishing the inputs. Dimensional collapse is a related case in which embeddings vary only within a low-rank subspace \citep{balestriero2025lejepa}. I-JEPA uses the predictor, stop-gradient and EMA target encoder as collapse-prevention heuristics \citep{assran2023ijepa}.
+
+\subsubsection{LeJEPA: Multi-view Prediction and SIGReg}
+\label{sec:background-lejepa}
+
+LeJEPA combines multi-view alignment, including global and local views, with Sketched Isotropic Gaussian Regularization (SIGReg) \citep{balestriero2025lejepa}.
+In image-based training, global views cover larger image regions, while local views use smaller crops \citep{caron2021dino,kuhn2026levjepaefficientscalable}.
+
+For one input $x_n$, LeJEPA constructs $V_g$ global views and $V_l$ local views, giving $V=V_g+V_l$ views in total \citep{balestriero2025lejepa,kuhn2026levjepaefficientscalable}. All views pass through the shared encoder $E_\theta$, and gradients from every view update its parameters. Let $z_{n,v}$ denote the embedding of view $v$, with the first $V_g$ views designated as global. LeJEPA aligns all views of an input with the mean of its global-view embeddings,
+\begin{equation}
+\mu_n=\frac{1}{V_g}\sum_{v=1}^{V_g}z_{n,v}.
+\label{eq:background-lejepa-global-mean}
+\end{equation}
+With one global view, $\mu_n$ is simply its embedding. For a batch of $B$ inputs, the prediction loss averages the squared distances to these means over inputs and views \citep[Equation 7 and Section 5.1]{balestriero2025lejepa}:
+\begin{equation}
+\mathcal{L}_{\mathrm{pred}}
+=\frac{1}{BV}\sum_{n=1}^{B}\sum_{v=1}^{V}
+\left\|\mu_n-z_{n,v}\right\|_2^2.
+\label{eq:background-lejepa-batch}
+\end{equation}
+
+\textbf{SIGReg.} To avoid representation collapse, LeJEPA adds a SIGReg term that encourages the embedding distribution to match an isotropic Gaussian, $\mathcal{N}(0,I)$. For each view $v$, it projects the batch's $B$ embeddings onto random unit directions. For a direction $a$, the projection $a^\top z_{n,v}\in\mathbb{R}$ produces one scalar per input. The resulting $B$ scalars are evaluated together to assess how closely their distribution matches a one-dimensional standard Gaussian.
+
+The Epps-Pulley statistic $T$ measures how far the distribution of these projected values deviates from a standard Gaussian \citep[Algorithm 1]{balestriero2025lejepa}. Writing $\mathcal{A}$ for the set of sampled directions, the SIGReg loss averages these penalties over directions and views:
+\begin{equation}
+\mathcal{L}_{\mathrm{SIGReg}}
+=\frac{1}{V|\mathcal{A}|}
+\sum_{v=1}^{V}\sum_{a\in\mathcal{A}}
+T\!\left(\{a^\top z_{n,v}\}_{n=1}^{B}\right).
+\label{eq:background-sigreg}
+\end{equation}
+
+LeVJEPA applies LeJEPA's random-projection test separately to each view using $M=1{,}024$ random directions per step \citep[Section 4.3]{balestriero2025lejepa} \citep[Section 3.2 and Appendix A]{kuhn2026levjepaefficientscalable}. Algorithm~\ref{alg:background-sigreg} summarises SIGReg for one view.
+
+\begin{algorithm}[hbt!]
+\caption{SIGReg for one view \citep{balestriero2025lejepa,kuhn2026levjepaefficientscalable}}
+\label{alg:background-sigreg}
+\begin{algorithmic}[1]
+\Require embeddings $Z=[z_1,\ldots,z_B]^\top\in\mathbb{R}^{B\times K}$, number of directions $M$, Epps-Pulley test $T$
+\State sample $A\in\mathbb{R}^{K\times M}$ with independent standard-Gaussian entries
+\State normalise every column $a_m$ of $A$ to unit length
+\For{$m=1,\ldots,M$}
+    \State $u_m\gets\{a_m^\top z_n\}_{n=1}^{B}$ \Comment{project the batch onto one direction}
+    \State $T_m\gets T(u_m)$ \Comment{measure deviation from $\mathcal{N}(0,1)$}
+\EndFor
+\State \textbf{return} $M^{-1}\sum_{m=1}^{M}T_m$
+\end{algorithmic}
+\end{algorithm}
+
+With this regularisation, LeJEPA does not require a separate predictor, an EMA target encoder or stop-gradient operations. Its full objective combines the prediction and SIGReg losses, with their relative weight controlled by $\lambda$ \citep[Algorithm 2]{balestriero2025lejepa}:
+\begin{equation}
+\mathcal{L}=(1-\lambda)\mathcal{L}_{\mathrm{pred}}+\lambda\mathcal{L}_{\mathrm{SIGReg}},
+\label{eq:background-lejepa-total}
+\end{equation}

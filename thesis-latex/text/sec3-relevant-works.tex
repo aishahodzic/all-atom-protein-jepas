@@ -1,0 +1,45 @@
+\section{Related Work}
+\label{sec:related-work}
+
+In this section, we introduce key protein foundation models, all-atom representation learning for protein structures and recent JEPA advances in biological applications, and position our work relative to these approaches.
+
+\paragraph{Protein Foundation Models.}
+\label{sec:related-work-foundation-models}
+Protein representation models are sequence-based, structure-based or combine both types of input.
+Among sequence models, ProtBert adapts bidirectional encoder representations from transformers (BERT), which predicts hidden words using the surrounding text before and after them \citep{devlin2019bert}.
+For proteins, the same masked language modelling (MLM) objective predicts hidden amino acids from the rest of the sequence \citep{DBLP:journals/pami/ElnaggarHDRWJGF22}.
+ProteinBERT is a separate model that combines sequence denoising with prediction of protein function annotations \citep{brandes2022proteinbert}.
+Evolutionary Scale Modelling (ESM) uses MLM to learn sequence representations containing information about secondary structure, residue contacts and biological activity \citep{rives2019esm}.
+ESM-2 scales this approach, and ESMFold uses its representations to predict atomic-level protein structures from individual sequences \citep{lin2023esmfold}.
+ESM3 extends this work with a generative multimodal model that processes protein sequence, structure and function jointly \citep{hayes2025esm3}.
+
+Structure-based protein models use protein geometry to learn representations or design proteins.
+SaProt represents each residue using its amino-acid identity together with a token derived from its structural environment, so the representation is conditioned on an input structure \citep{DBLP:conf/iclr/SuHZSZY24}.
+GearNet learns through contrastive and geometric self-prediction, while SiamDiff uses mutual denoising between diffusion trajectories of correlated protein conformers \citep{zhang2023protein,zhang2023siamdiff}. Vabs-Net focuses on a key problem with all-atom inputs: atomic structure can reveal residue identity, making residue-level pre-training tasks too easy and limiting what the representation learns. It reduces this leakage through span masking, while we encounter the same broader problem in the form of absolute-position and chain-length shortcuts (Section~\ref{sec:results-organisation}) \citep{DBLP:conf/icml/ZhaoZSLL24}. Instead of learning through structure-aware tokens, contrastive objectives, denoising or masked reconstruction, our models predict or align representations across masked all-atom views and directly examine what information they retain.
+
+\paragraph{All-atom Protein Structure Modelling.}
+Protpardelle is an all-atom diffusion model that co-designs the protein backbone, amino-acid sequence and side-chain conformations. It operates directly in sequence and structure space rather than learning a reusable residue representation \citep{chu2024allatom}. La-Proteina instead keeps the C$\alpha$ coordinates explicit and compresses amino-acid identity and the remaining atomic information into eight-dimensional residue latents (Section~\ref{sec:background-autoencoder}). Its flow-matching model generates C$\alpha$ coordinates and residue latents, which are then decoded into new sequences and all-atom structures \citep{la-proteina}. Since single-residue latent perturbations predominantly affect the reconstruction of the same residue, we reuse this encoder to ask whether predictive objectives retain wider structural context, assessing downstream transfer separately from reconstruction quality \citep{la-proteina}.
+
+\label{sec:related-work-slae}
+Strictly Local All-atom Environment (SLAE) learns a representation of each residue from the atom types and geometry of its local all-atom neighbourhood.
+It uses 128-dimensional, rotation-invariant embeddings computed without explicit amino-acid identities or residue indices.
+Like La-Proteina, it trains residue latents through sequence and coordinate reconstruction using a global transformer decoder, and additionally predicts Rosetta interaction energies.
+Its latents reflect side-chain chemistry, while changes across different structures of the same protein track residue contacts and solvent exposure.
+Unlike SLAE's reconstruction of local atomic environments, our models learn from masked all-atom protein views through latent prediction or alignment. Both studies evaluate transfer on StructTokenBench, although their architectures prevent a direct comparison of training objectives \citep{chen2026slae}.
+
+\paragraph{JEPAs for Proteins.}
+\label{sec:related-work-protjepa}
+Several protein JEPAs have recently been proposed, and the two most relevant to our work are ProtJEPA and ProteinJEPA.
+ProtJEPA trains a sequence-only student encoder to predict protein-level targets assembled from ten biological modalities, including sequence, structure and functional annotations. A trained aggregator combines the modality-specific teacher representations, and target whitening keeps the resulting embeddings spread across dimensions \citep{ravideshik2026protjepa}. Its targets combine externally supplied modalities at protein level, while our targets represent another view of the same all-atom protein.
+
+\label{sec:related-work-proteinjepa}
+ProteinJEPA is a sequence representation model that combines MLM with masked-position latent prediction \citep{ofer2026proteinjepa}.
+A predictor maps masked-input embeddings to stop-gradient targets from the same encoder applied to the complete sequence, using cosine loss and SIGReg regularisation.
+The study compares MLM with MLM+JEPA.
+The combined objective improves performance most consistently when continuing pretraining of ESM-2.
+ProteinJEPA is closest to our JEPA+SIGReg model: both use a shared encoder, predictor and SIGReg. ProteinJEPA additionally retains MLM and detaches its target representations, whereas ours learns from all-atom inputs through latent prediction.
+
+\label{sec:related-work-gap}
+\par\vspace{\baselineskip}\noindent
+JEPA has also recently been applied more broadly across molecular and biological data. M-JEPA learns representations from masked molecular graphs, Mol-JEPA predicts across molecular structure and biochemical modalities, and HI-JEPA learns from measured protein proximity and perturbation relationships \citep{iyer2026mjepa,rottach2026moljepa,shihabi2026hijepa}. Together, these recent studies show how quickly JEPA is gaining traction across molecular and biological applications.
+Within protein representation learning, ProteinJEPA and ProtJEPA evaluate predictive learning mainly through protein-level embeddings, while reconstruction-based models such as La-Proteina and SLAE learn one representation per residue. Our work connects these directions by learning predictive residue representations from all-atom protein structures. We evaluate both individual residue embeddings and protein-level transfer, asking whether compact latents retain residue-specific information and wider protein context.
