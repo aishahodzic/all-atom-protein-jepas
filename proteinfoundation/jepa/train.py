@@ -140,9 +140,10 @@ def setup_ckpt(cfg_exp, ckpt_path_store):
     args_ckpt_last = {
         "dirpath": ckpt_path_store,
         "save_weights_only": False,
-        "filename": "ignore",
+        "filename": "last",
         "every_n_train_steps": cfg_exp.log.last_ckpt_every_n_steps,
-        "save_last": True,
+        "save_last": False,
+        "enable_version_counter": False,
     }
     args_ckpt = {
         "dirpath": ckpt_path_store,
@@ -153,6 +154,7 @@ def setup_ckpt(cfg_exp, ckpt_path_store):
         "monitor": "train_loss",
         "save_top_k": 10000,
         "mode": "min",
+        "enable_version_counter": False,
     }
     checkpoint_callback = ModelCheckpoint(**args_ckpt)
     checkpoint_callback_last = ModelCheckpoint(**args_ckpt_last)

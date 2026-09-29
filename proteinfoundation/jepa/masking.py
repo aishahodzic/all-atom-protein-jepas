@@ -212,6 +212,18 @@ def spatial_3d_block_mask(batch):
     target_mask = torch.zeros_like(valid_res)
     for protein_idx in range(valid_res.shape[0]):
         residue_idx = torch.where(valid_res[protein_idx])[0]
+        if residue_idx.numel() < 2:
+            # A rare malformed crop can retain only one valid residue despite the
+            # dataset length filter. Keep it as context-only so it contributes no
+            # ill-posed spatial target while the other proteins in the batch train.
+            context_mask[protein_idx, residue_idx] = True
+            warnings.warn(
+                "spatial_3d_block_mask kept a protein with fewer than two valid "
+                "residues as context-only",
+                RuntimeWarning,
+                stacklevel=2,
+            )
+            continue
         coords = ca_coords_nm[protein_idx, residue_idx]
         if not torch.isfinite(coords).all():
             raise ValueError("valid residues contain non-finite C-alpha coordinates")
