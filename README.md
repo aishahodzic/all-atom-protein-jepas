@@ -7,13 +7,6 @@ with autoencoder controls, JEPA and JEPA+SIGReg experiments, canonical LeJEPA,
 StructTokenBench integration, representation diagnostics, and reconstruction
 evaluation.
 
-<p align="center">
-  <img src="iclr2027/figures/results/chain_length_tsne_matched_crop_control_raw10k.png" width="64%" alt="Uncropped and cropped LeJEPA residue embeddings coloured by protein chain length">
-  <img src="iclr2027/figures/results/reconst.png" width="27%" alt="Whole-protein JEPA reconstruction of 4ETR chain A overlaid on the native structure">
-</p>
-
-<p align="center"><sub>Left: chain-length organisation in uncropped and cropped LeJEPA latent spaces. Right: native 4ETR chain A (grey) and its postprocessed JEPA reconstruction (orange).</sub></p>
-
 ## How to run
 
 The complete train-to-results workflow is in
@@ -104,3 +97,18 @@ This work builds on the original
 [StructTokenBench project](https://github.com/KatarinaYuan/StructTokenBench).
 See the thesis and paper sources for the complete bibliography and experimental
 methodology.
+
+## Selected results
+
+<p align="center">
+  <img src="iclr2027/figures/results/chain_length_tsne_matched_crop_control_raw10k.png" width="92%" alt="Uncropped and cropped LeJEPA residue embeddings coloured by protein chain length">
+</p>
+
+<p align="center"><sub>Residue embeddings coloured by protein chain length: uncropped LeJEPA (left) and cropped LeJEPA (right).</sub></p>
+
+<p align="center">
+  <img src="assets/readme/4etr_A_reconstruction_transparent.png" width="34%" alt="Whole-protein JEPA reconstruction of 4ETR chain A overlaid on the native structure">
+  <img src="assets/readme/5a13_G_reconstruction_transparent.png" width="46%" alt="Whole-protein JEPA reconstruction of 5A13 chain G overlaid on the native structure">
+</p>
+
+<p align="center"><sub>Whole-protein overlays of native structures (grey) and postprocessed JEPA reconstructions (orange): 4ETR chain A (left) and 5A13 chain G (right).</sub></p>
