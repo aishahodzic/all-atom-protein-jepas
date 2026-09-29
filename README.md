@@ -66,8 +66,9 @@ no access token is stored in this repository.
 | `StructTokenBench/struct_token_bench_logs/upstream-l600-v1-full/` | Saved L600 task summaries and run manifests |
 | `Evaluation/` | Linear probes, k-NN purity, retrieval, latent visualisation, diagnostics, and reconstruction |
 | `Evaluation/**/results/` | Compact numerical results and run manifests retained in Git |
-| `thesis-latex/` | Thesis source and final thesis figures |
-| `iclr2027/` | Paper source and final paper figures |
+| `images/` | Curated thesis and paper figures, grouped by method, latent space, reconstruction, and evaluation |
+| `thesis-latex/` | Thesis source and build artifacts |
+| `iclr2027/` | Paper source and build artifacts |
 | `datasetcard/`, `modelcard/` | Dataset and model documentation |
 
 Large checkpoints, embedding caches, decoder intermediates, and bulk generated
@@ -101,14 +102,14 @@ methodology.
 ## Selected results
 
 <p align="center">
-  <img src="assets/readme/chain_length_tsne_transparent.png" width="92%" alt="Uncropped and cropped LeJEPA residue embeddings coloured by protein chain length">
+  <img src="images/latent-spaces/chain-length-crop-control-transparent.png" width="92%" alt="Uncropped and cropped LeJEPA residue embeddings coloured by protein chain length">
 </p>
 
 <p align="center"><sub>Residue embeddings coloured by protein chain length: uncropped LeJEPA (left) and cropped LeJEPA (right).</sub></p>
 
 <p align="center">
-  <img src="assets/readme/4etr_A_reconstruction_transparent.png" width="34%" alt="Whole-protein JEPA reconstruction of 4ETR chain A overlaid on the native structure">
-  <img src="assets/readme/5a13_G_reconstruction_transparent.png" width="46%" alt="Whole-protein JEPA reconstruction of 5A13 chain G overlaid on the native structure">
+  <img src="images/reconstruction/4etr_A-transparent.png" width="34%" alt="Whole-protein JEPA reconstruction of 4ETR chain A overlaid on the native structure">
+  <img src="images/reconstruction/5a13_G-transparent.png" width="46%" alt="Whole-protein JEPA reconstruction of 5A13 chain G overlaid on the native structure">
 </p>
 
 <p align="center"><sub>Whole-protein overlays of native structures (grey) and postprocessed JEPA reconstructions (orange): 4ETR chain A (left) and 5A13 chain G (right).</sub></p>

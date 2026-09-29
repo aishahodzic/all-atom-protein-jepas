@@ -329,8 +329,7 @@ These are PDB structures and audit metadata for PyMOL, not model weights.
 | Reconstruction curves | `Evaluation/structure_rec/curves/` |
 | StructTokenBench L600 summaries | `StructTokenBench/struct_token_bench_logs/upstream-l600-v1-full/` |
 | Other StructTokenBench summaries | `StructTokenBench/struct_token_bench_logs/results/` and retained run summaries |
-| Thesis figures | `thesis-latex/figures/` |
-| Paper figures | `iclr2027/figures/` |
+| Curated thesis and paper figures | `images/` |
 
 Git retains compact CSV/JSON manifests, final PNG figures, and manuscript
 sources. It excludes checkpoints, latent caches, downstream probe weights,

@@ -46,12 +46,12 @@ MAX_ITER = 1_000
 OUTPUT_TAG = "canonical-matched-crop-control-raw10k"
 RESULT = HERE / "results/canonical_matched_crop_control_raw10k.csv"
 MANIFEST = HERE / "results/canonical_matched_crop_control_raw10k.json"
-FILENAME = "chain_length_tsne_matched_crop_control_raw10k.png"
 FIGURES = (
-    HERE / "figures" / "canonical_lejepa" / FILENAME,
-    REPO / "thesis-latex" / "figures" / "results" / FILENAME,
+    REPO / "images" / "latent-spaces" / "chain-length-crop-control-paper.png",
 )
-README_FIGURE = REPO / "assets" / "readme" / "chain_length_tsne_transparent.png"
+README_FIGURE = (
+    REPO / "images" / "latent-spaces" / "chain-length-crop-control-transparent.png"
+)
 LATENTS_DIR = LINEAR / "latents"
 
 
