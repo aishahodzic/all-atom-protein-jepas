@@ -1,4 +1,4 @@
-# MSc thesis: protein representation learning with La-Proteina
+# JEPA for all-atom protein representation learning
 
 This repository contains the training code, evaluation pipelines, archived
 results, and manuscript assets for the MSc thesis and associated paper. It
@@ -7,11 +7,14 @@ with autoencoder controls, JEPA and JEPA+SIGReg experiments, canonical LeJEPA,
 StructTokenBench integration, representation diagnostics, and reconstruction
 evaluation.
 
-The default branch is the handoff and evaluation branch. Historical training
-families remain on their original branches so that their exact configurations
-and code revisions are preserved.
+<p align="center">
+  <img src="iclr2027/figures/results/chain_length_tsne_matched_crop_control_raw10k.png" width="64%" alt="Uncropped and cropped LeJEPA residue embeddings coloured by protein chain length">
+  <img src="iclr2027/figures/results/reconst.png" width="27%" alt="Whole-protein JEPA reconstruction of 4ETR chain A overlaid on the native structure">
+</p>
 
-## Start here
+<p align="center"><sub>Left: chain-length organisation in uncropped and cropped LeJEPA latent spaces. Right: native 4ETR chain A (grey) and its postprocessed JEPA reconstruction (orange).</sub></p>
+
+## How to run
 
 The complete train-to-results workflow is in
 [`docs/REPRODUCIBILITY.md`](docs/REPRODUCIBILITY.md). It covers:
@@ -48,7 +51,8 @@ paths used by the evaluation code.
 
 - Private model archive:
   [`msc-thesis-org/ckpts`](https://huggingface.co/datasets/msc-thesis-org/ckpts)
-- Checkpoint inventory and SHA-256 provenance:
+- Checkpoint inventory and SHA-256 checksums (file-integrity verification,
+  unrelated to the StructTokenBench L600 protocol):
   [`manifest.csv`](https://huggingface.co/datasets/msc-thesis-org/ckpts/blob/main/manifest.csv)
 - Selected reconstruction examples:
   [`pymol_reconstruction/`](https://huggingface.co/datasets/msc-thesis-org/ckpts/tree/main/pymol_reconstruction)
@@ -66,6 +70,7 @@ no access token is stored in this repository.
 | `configs/` | Hydra training, model, dataset, inference, and evaluation configuration |
 | `jobs/` | Exact Slurm launchers used for training, evaluation, and analysis |
 | `StructTokenBench/` | Integrated downstream benchmark and frozen-encoder wrapper |
+| `StructTokenBench/struct_token_bench_logs/upstream-l600-v1-full/` | Saved L600 task summaries and run manifests |
 | `Evaluation/` | Linear probes, k-NN purity, retrieval, latent visualisation, diagnostics, and reconstruction |
 | `Evaluation/**/results/` | Compact numerical results and run manifests retained in Git |
 | `thesis-latex/` | Thesis source and final thesis figures |

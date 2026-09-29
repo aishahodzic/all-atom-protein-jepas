@@ -157,7 +157,10 @@ training command, Hydra overrides, seed, and checkpoint selection.
 The canonical private archive is
 [`msc-thesis-org/ckpts`](https://huggingface.co/datasets/msc-thesis-org/ckpts).
 Its `manifest.csv` records manuscript labels, historical run names, global
-steps, latent dimensions, evaluated parameter sources, sizes, and SHA-256.
+steps, latent dimensions, evaluated parameter sources, sizes, and SHA-256
+checksums. SHA-256 verifies that a downloaded checkpoint is byte-for-byte
+identical to the archived file; it is unrelated to the L256/L600 evaluation
+protocols.
 
 Stage the core AE/JEPA/JEPA+SIGReg models expected by `main`:
 
@@ -247,9 +250,10 @@ STB_SKIP_BOOTSTRAP=1        # use an existing environment
 PYTHON_BIN=/path/to/python  # interpreter with STB_SKIP_BOOTSTRAP=1
 ```
 
-Outputs are below `StructTokenBench/struct_token_bench_logs/`. Retain compact
-task summaries and immutable manifests; embedding caches and probe checkpoints
-can be regenerated.
+Outputs are below `StructTokenBench/struct_token_bench_logs/`. The saved final
+L600 summaries and manifests are in
+`StructTokenBench/struct_token_bench_logs/upstream-l600-v1-full/`; embedding
+caches and probe checkpoints can be regenerated.
 
 ## 6. Representation analyses
 
@@ -323,7 +327,8 @@ These are PDB structures and audit metadata for PyMOL, not model weights.
 | Latent-space metrics/manifests | `Evaluation/latent_viz/results/` |
 | Canonical LeJEPA diagnostics | `Evaluation/diagnostics/results/` and `Evaluation/canonical_lejepa/results/` |
 | Reconstruction curves | `Evaluation/structure_rec/curves/` |
-| StructTokenBench summaries | `StructTokenBench/struct_token_bench_logs/results/` and retained run summaries |
+| StructTokenBench L600 summaries | `StructTokenBench/struct_token_bench_logs/upstream-l600-v1-full/` |
+| Other StructTokenBench summaries | `StructTokenBench/struct_token_bench_logs/results/` and retained run summaries |
 | Thesis figures | `thesis-latex/figures/` |
 | Paper figures | `iclr2027/figures/` |
 
