@@ -22,8 +22,15 @@ baseline_run_predictor: false
 # LeJEPA SIGReg mixture weight in
 # (1 - sigreg_lambda) * prediction_loss + sigreg_lambda * SIGReg.
 sigreg_lambda: 0.02
+# Opt-in positional control: replace absolute target/context embeddings with
+# one generic target query plus learned signed sequence-offset attention biases.
+# False preserves all historical checkpoint architectures.
 lejepa_relative_positions: false
+# Give the target view an additional independent uniform global rotation while
+# leaving the context in the dataloader frame. False preserves historical runs.
 jepa_independent_target_rotation: false
+# batch_size=4/accumulate=1 keeps effective batch at 4 (same as batch_size=2/accumulate=2)
+# but does it in one GPU pass instead of two -- pure throughput win, H100 was sitting at ~30% util
 dataset:
   datamodule:
     batch_size: 4

@@ -242,11 +242,6 @@ class JEPAModel(L.LightningModule):
         self.use_action_conditioning = use_action_conditioning
         if self.use_action_conditioning:
             self.mutation_embedding = nn.Embedding(20, 128)  # matches predictor hidden_dim
-        if self.lejepa_relative_positions and self.baseline_run_predictor:
-            raise ValueError(
-                "lejepa_relative_positions=true is defined for the old "
-                "cross-attention predictor; set baseline_run_predictor=false"
-            )
         if self.lejepa_relative_positions and self.use_action_conditioning:
             raise ValueError(
                 "lejepa_relative_positions is not yet defined for mutation action "
