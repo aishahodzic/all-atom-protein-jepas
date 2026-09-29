@@ -101,7 +101,7 @@ methodology.
 ## Selected results
 
 <p align="center">
-  <img src="iclr2027/figures/results/chain_length_tsne_matched_crop_control_raw10k.png" width="92%" alt="Uncropped and cropped LeJEPA residue embeddings coloured by protein chain length">
+  <img src="assets/readme/chain_length_tsne_transparent.png" width="92%" alt="Uncropped and cropped LeJEPA residue embeddings coloured by protein chain length">
 </p>
 
 <p align="center"><sub>Residue embeddings coloured by protein chain length: uncropped LeJEPA (left) and cropped LeJEPA (right).</sub></p>
