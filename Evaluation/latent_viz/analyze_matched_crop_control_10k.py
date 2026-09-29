@@ -9,7 +9,6 @@ import pathlib
 import sys
 
 import matplotlib.pyplot as plt
-import matplotlib.patheffects as path_effects
 import numpy as np
 import torch
 from tqdm import tqdm
@@ -177,7 +176,6 @@ def render_figure(
     transparent: bool = False,
 ) -> None:
     apply_thesis_style()
-    theme_safe_text = [path_effects.withStroke(linewidth=2.5, foreground="white")]
     checkpoint_ids = list(SPECS)
     fig, axes = plt.subplots(1, 2, figsize=(8.4, 3.8), squeeze=False)
     image = None
@@ -195,11 +193,11 @@ def render_figure(
             linewidths=0,
             rasterized=True,
         )
-        title = ax.set_title(
-            str(SPECS[checkpoint_id]["label"]), fontsize=17, color=BLACK
+        ax.set_title(
+            str(SPECS[checkpoint_id]["label"]),
+            fontsize=17,
+            color="white" if transparent else BLACK,
         )
-        if transparent:
-            title.set_path_effects(theme_safe_text)
         ax.set_xticks([])
         ax.set_yticks([])
         for spine in ax.spines.values():
@@ -207,12 +205,10 @@ def render_figure(
     fig.subplots_adjust(left=0.01, right=0.91, bottom=0.02, top=0.94, wspace=0.03)
     color_ax = fig.add_axes([0.925, 0.14, 0.015, 0.70])
     colorbar = fig.colorbar(image, cax=color_ax)
-    colorbar.set_label("chain length L", fontsize=14, color=BLACK)
-    colorbar.ax.tick_params(labelsize=12, colors=BLACK)
+    text_color = "white" if transparent else BLACK
+    colorbar.set_label("chain length L", fontsize=14, color=text_color)
+    colorbar.ax.tick_params(labelsize=12, colors=text_color)
     if transparent:
-        colorbar.ax.yaxis.label.set_path_effects(theme_safe_text)
-        for label in colorbar.ax.get_yticklabels():
-            label.set_path_effects(theme_safe_text)
         colorbar.outline.set_edgecolor("white")
         colorbar.outline.set_linewidth(1.5)
     for figure in figures:
