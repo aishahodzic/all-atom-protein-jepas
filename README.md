@@ -1,11 +1,12 @@
 # JEPA for all-atom protein representation learning
 
-This repository contains the training code, evaluation pipelines, archived
-results, and manuscript assets for the MSc thesis and associated paper. It
+This repository contains the training code, evaluation pipelines, and archived
+results for _All-Atom Protein JEPAs: Learning and Diagnosing Predictive Latent Representations_ (GEM Workshop at NeurIPS 2026). It
 extends [NVIDIA BioNeMo's La-Proteina](https://github.com/NVIDIA-BioNeMo/la-proteina)
 with autoencoder controls, JEPA and JEPA+SIGReg experiments, canonical LeJEPA,
 StructTokenBench integration, representation diagnostics, and reconstruction
 evaluation.
+
 
 ## How to run
 
@@ -52,8 +53,7 @@ paths used by the evaluation code.
 - Processed training data:
   [`msc-thesis-org/pdb-processed`](https://huggingface.co/datasets/msc-thesis-org/pdb-processed)
 
-Access to private Hugging Face datasets is inherited from the logged-in user;
-no access token is stored in this repository.
+The Hugging Face archives above are private; access is available on request.
 
 ## Repository map
 
@@ -98,6 +98,8 @@ This work builds on the original
 [StructTokenBench project](https://github.com/KatarinaYuan/StructTokenBench).
 See the thesis and paper sources for the complete bibliography and experimental
 methodology.
+
+La-Proteina source code is released under Apache 2.0 and its model weights under the NVIDIA Open Model License. Files under `proteinfoundation` are modified from the original source in this work.
 
 ## Selected results
 
